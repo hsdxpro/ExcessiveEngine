@@ -1,20 +1,36 @@
-# The name of our project is "HELLO". CMakeLists files in this project can 
-# refer to the root source directory of the project as ${HELLO_SOURCE_DIR} and 
-# to the root binary directory of the project as ${HELLO_BINARY_DIR}. 
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required( VERSION 2.6 )
 
-project( Unnamed-Team )
+set( project_name Unnamed-Team )
+set( DEBUG_BUILD true )
+set( ARCH_32BIT false )
+set( CMAKE_VERBOSE_MAKEFILE ON )
 
-set( EXECUTABLE_OUTPUT_PATH ../Bin )
-set( LIBRARY_OUTPUT_PATH ../Bin )
+project( ${project_name} )
+
+#set platform detection etc.
+include( Unnamed-Engine/PIL/platform_detection.cmake )
+
+if( WIN_BUILD )
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../ )
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../ )
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../ )
+else()
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR} )
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR} )
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR} )
+endif()
+
+#add externals
+include( Externals/externals.cmake )
 
 # Engine
-add_subdirectory( Unnamed-Engine/Core )
-add_subdirectory( Unnamed-Engine/GapiGL )
-add_subdirectory( Unnamed-Engine/GraphicsEngineRaster )
+add_subdirectory( Unnamed-Engine )
 
 # Editor
 add_subdirectory( Unnamed-Editor )
 
 # Game
-add_subdirectory( Games/fps )
+add_subdirectory( Games )
+
+# tools
+add_subdirectory( Tools )

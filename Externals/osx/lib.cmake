@@ -1,0 +1,5 @@
+if( ARCH_32BIT )
+  include_directories( lib32 )
+else()
+  include_directories( lib64 )
+endif()
