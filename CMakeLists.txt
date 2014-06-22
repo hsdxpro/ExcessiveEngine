@@ -13,5 +13,8 @@ add_subdirectory( Unnamed-Engine/Core )
 add_subdirectory( Unnamed-Engine/GapiGL )
 add_subdirectory( Unnamed-Engine/GraphicsEngineRaster )
 
+# Editor
+add_subdirectory( Unnamed-Editor )
+
 # Game
 add_subdirectory( Games/fps )
