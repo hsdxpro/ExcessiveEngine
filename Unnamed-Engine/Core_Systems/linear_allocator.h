@@ -17,12 +17,12 @@ class linear_allocator
   public:
     linear_allocator(i8* b, i32 s) : buffer(b), size(s), offset(0)
     {
-      ASSERT( (u32)b % 4 != 0 ); //only allocated memory!
+      ASSERT( (u32)b % 4 == 0 ); //only allocated memory!
     }
 
     void* alloc( i32 s )
     {
-      ASSERT( s % 4 != 0 ); //only aligned allocations
+      ASSERT( s % 4 == 0 ); //only aligned allocations
       void* mem_to_return = buffer + offset + s;
       offset += s;
       return mem_to_return;

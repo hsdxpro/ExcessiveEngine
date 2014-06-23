@@ -50,6 +50,7 @@ i32 main( i32 argc, i8** args )
   u32 base_size = 512 * 1024 * 1024;
   auto base_ptr = aa.allocate( base_size );
   i8* ptr = (i8*)base_ptr;
+  u32 mod = (u32)ptr % 4;
 
   linear_allocator linall( (i8*)base_ptr, base_size );
   u32 stack_size = 256 * 1024 * 1024;
