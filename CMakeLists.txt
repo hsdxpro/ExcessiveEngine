@@ -2,7 +2,7 @@ cmake_minimum_required( VERSION 2.6 )
 
 set( project_name Unnamed-Team )
 set( DEBUG_BUILD true )
-set( ARCH_32BIT false )
+set( ARCH_32BIT true )
 set( CMAKE_VERBOSE_MAKEFILE ON )
 
 project( ${project_name} )

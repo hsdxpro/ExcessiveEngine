@@ -4,8 +4,11 @@
 #include <signal.h>
 #include "logger.h"
 
-//TODO check on windows too...
-#define DEBUG_BREAK() raise(SIGTRAP);
+#ifndef WIN_BUILD
+#define DEBUG_BREAK() raise(SIGTRAP)
+#else
+#define DEBUG_BREAK() __debugbreak()
+#endif
 
 #ifdef DEBUG_BUILD
   #define ASSERT(expr) \

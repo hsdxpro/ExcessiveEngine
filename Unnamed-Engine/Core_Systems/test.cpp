@@ -12,6 +12,10 @@
 #include "basic_random.h"
 #include "mersenne_twister.h"
 
+#include "aligned_allocator.h"
+#include "linear_allocator.h"
+#include "stack_allocator.h"
+
 i32 main( i32 argc, i8** args )
 {
   crc32_init();
@@ -41,6 +45,27 @@ i32 main( i32 argc, i8** args )
   typedef random_wrapper<mersenne_twister> random_type;
   random_type::init();
   my::log << my::lock << random_type::get( 0.1, 0.9 ) << my::endl << my::unlock;
+
+  aligned_allocator<char, 16> aa;
+  u32 base_size = 512 * 1024 * 1024;
+  auto base_ptr = aa.allocate( base_size );
+  i8* ptr = (i8*)base_ptr;
+
+  linear_allocator linall( (i8*)base_ptr, base_size );
+  u32 stack_size = 256 * 1024 * 1024;
+  void* stack_mem = linall.alloc( stack_size ); //allocate 256 mb of memory for the stack
+
+  stack_allocator<16> stack( (i8*)stack_mem, stack_size );
+
+  void* mem = stack.alloc( 255 ); //allocate 256 bytes
+  marker mark = stack.get_marker();
+  stack.alloc( 254 );
+  stack.alloc( 253 );
+  stack.alloc( 252 );
+
+  stack.free_to_marker( mark );
+
+  stack.clear();
 
   return 0;
 }
