@@ -57,6 +57,13 @@ if( LINUX_BUILD )
 
   #best practice
   add_definitions( "-Wall -Wno-long-long -ansi -pedantic -std=c++0x" )
+else()
+  if( ARCH_32BIT )
+    message( "32 bit build" )
+    add_definitions( "-DARCH_32BIT" )
+  else()
+    message( "64 bit build" )
+  endif()
 endif()
 
-include_directories( Unnamed-Engine/PIL )
+include_directories( ${CMAKE_CURRENT_LIST_DIR} )
