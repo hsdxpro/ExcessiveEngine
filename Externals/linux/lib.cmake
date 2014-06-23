@@ -1,5 +1,5 @@
 if( ARCH_32BIT )
-  include_directories( lib32 )
+  link_directories( ${CMAKE_CURRENT_LIST_DIR}/lib32 )
 else()
-  include_directories( lib64 )
+  link_directories( ${CMAKE_CURRENT_LIST_DIR}/lib64 )
 endif()
