@@ -63,6 +63,7 @@ i32 main( i32 argc, i8** args )
   stack.alloc( 254 );
   stack.alloc( 253 );
   stack.alloc( 252 );
+  stack.alloc( 239 );
 
   stack.free_to_marker( mark );
 

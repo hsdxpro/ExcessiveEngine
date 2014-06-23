@@ -17,13 +17,7 @@ class stack_allocator
 
     u32 get_aligned( u32 s )
     {
-      u32 expanded = s + alignment;
-      u32 mask = (alignment - 1);
-      u32 raw_address = top + s;
-      u32 misalignment = (raw_address & mask);
-      u32 adjustment = alignment - misalignment;
-      u32 aligned_address = raw_address + adjustment;
-      return aligned_address;
+		return s + (alignment - s % alignment);
     }
 
   public:
@@ -33,7 +27,7 @@ class stack_allocator
     {
       ASSERT( top + s < size );
       u32 aligned_size = get_aligned( s );
-      i8* mem = stack + aligned_size;
+      i8* mem = stack + top;
       top += aligned_size;
       return mem;
     }
