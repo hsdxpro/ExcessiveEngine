@@ -4,25 +4,12 @@
 #include "mymath/mymath.h"
 #include "basic_types.h"
 
-class IBuffer;
-class IShaderSource;
-class IShaderProgram;
-class ITexture;
-class IFrameBuffer;
 class IVertexArray;
 
 class IGapi
 {
   public:
-    virtual IBuffer* createBuffer() = 0;
-    virtual IShaderSource* createShaderSource() = 0;
-    virtual IShaderProgram* createShaderProgram() = 0;
-    virtual ITexture* createTexture() = 0;
-    virtual IFrameBuffer* createFrameBuffer() = 0;
-    virtual IVertexArray* createVertexArray() = 0;
-
     virtual void setDepthTest(bool val) = 0;
-    virtual void setDepthFunc() = 0; //TODO
     virtual void setDepthRange(f32 near, f32 far) = 0;
     virtual void setDepthMask(bool val) = 0;
 
@@ -49,9 +36,6 @@ class IGapi
     virtual void setSyncDebugOutput(bool val) = 0;
 };
 
-class IBuffer
-{
-  
-};
+
 
 #endif
