@@ -121,5 +121,7 @@ i32 main( i32 argc, i8** args )
 
   json_example();
 
+  system( "PAUSE" );
+
   return 0;
 }
