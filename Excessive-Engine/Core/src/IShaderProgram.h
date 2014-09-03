@@ -3,17 +3,17 @@
 
 #include "mymath/mymath.h"
 
-#include "IShaderSource.h"
 #include "ITexture.h"
 #include "IBuffer.h"
 #include <vector>
+#include <string>
 
 class IShaderProgram
 {
   public:
     virtual void create() = 0;
     virtual void destroy() = 0;
-    virtual void addCompiledShaderSource(IShaderSource* source) = 0;
+    virtual void addShader(const std::string& src) = 0; //TODO
     virtual void link() = 0;
     virtual void getBinary(std::vector<i8>& data) = 0;
     virtual void loadFromBinary(const std::vector<i8>& data) = 0;

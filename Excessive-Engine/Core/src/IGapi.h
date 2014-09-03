@@ -4,8 +4,6 @@
 #include "mymath/mymath.h"
 #include "basic_types.h"
 
-class IVertexArray;
-
 class IGapi
 {
   public:
