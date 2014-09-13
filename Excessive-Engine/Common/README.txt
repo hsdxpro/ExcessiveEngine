@@ -1,3 +1,5 @@
+Stuff that is used all over the engine, but is not that big in itself.
+
 module start-up/shut-down: TODO
 ---assertions:
   -static: stl's static_assert()

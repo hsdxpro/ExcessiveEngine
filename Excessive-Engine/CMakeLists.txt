@@ -1,5 +1,5 @@
-add_subdirectory( Core_Systems )
+add_subdirectory( Common)
 add_subdirectory( PIL )
 add_subdirectory( Core )
-add_subdirectory( GapiGL )
+add_subdirectory( GraphicsApiGL )
 add_subdirectory( GraphicsEngineRaster )
