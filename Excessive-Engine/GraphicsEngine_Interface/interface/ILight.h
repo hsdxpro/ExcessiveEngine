@@ -3,24 +3,21 @@
 // namespace
 namespace ge {
 
-class IScene;
-
 ////////////////////////////////////////////////////////////////////////////////
-/// GraphicsEngine manages and displays the graphical world.
-/// No descrption yet.
+///	Light is a light in the graphical scene.
+///
 ////////////////////////////////////////////////////////////////////////////////
 
-class IGraphicsEngine
+
+class ILight 
 {
 public:
 	virtual void release() = 0;
 
-	virtual IScene* createScene() = 0;
+	virtual void setColor() = 0;
+	virtual void setPosition() = 0;
+	virtual void setDirection() = 0;
 };
-
-
-
-
 
 
 

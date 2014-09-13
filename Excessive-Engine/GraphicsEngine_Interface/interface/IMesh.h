@@ -3,26 +3,18 @@
 // namespace
 namespace ge {
 
-class IScene;
-
 ////////////////////////////////////////////////////////////////////////////////
-/// GraphicsEngine manages and displays the graphical world.
-/// No descrption yet.
+///	Mesh is a resource representing a triangle mesh.
+///
 ////////////////////////////////////////////////////////////////////////////////
 
-class IGraphicsEngine
+
+class IMesh
 {
 public:
 	virtual void release() = 0;
 
-	virtual IScene* createScene() = 0;
 };
-
-
-
-
-
-
 
 
 

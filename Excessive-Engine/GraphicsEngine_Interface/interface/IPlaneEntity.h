@@ -1,29 +1,23 @@
 #pragma once
 
+#include "IEntity.h"
+
 // namespace
 namespace ge {
 
-class IScene;
+class ITexture;
 
 ////////////////////////////////////////////////////////////////////////////////
-/// GraphicsEngine manages and displays the graphical world.
-/// No descrption yet.
+///	Plane shaped entity, may add heightmap.
+/// 
 ////////////////////////////////////////////////////////////////////////////////
 
-class IGraphicsEngine
+
+class IPlaneEntity : IEntity
 {
 public:
-	virtual void release() = 0;
-
-	virtual IScene* createScene() = 0;
+	virtual void setHeightMap(ITexture* heightMap) = 0;
 };
-
-
-
-
-
-
-
 
 
 

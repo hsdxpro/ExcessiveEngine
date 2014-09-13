@@ -3,24 +3,18 @@
 // namespace
 namespace ge {
 
-class IScene;
-
 ////////////////////////////////////////////////////////////////////////////////
-/// GraphicsEngine manages and displays the graphical world.
-/// No descrption yet.
+///	Texture is a resource representing an image/bitmap.
+///
 ////////////////////////////////////////////////////////////////////////////////
 
-class IGraphicsEngine
+class ITexture
 {
 public:
 	virtual void release() = 0;
 
-	virtual IScene* createScene() = 0;
+
 };
-
-
-
-
 
 
 

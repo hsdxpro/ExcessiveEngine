@@ -1,29 +1,21 @@
 #pragma once
 
+#include "IEntity.h"
+
 // namespace
 namespace ge {
 
-class IScene;
-
 ////////////////////////////////////////////////////////////////////////////////
-/// GraphicsEngine manages and displays the graphical world.
-/// No descrption yet.
+///	Triangle mesh entity.
+/// 
 ////////////////////////////////////////////////////////////////////////////////
 
-class IGraphicsEngine
+
+class IMeshEntity : public IEntity
 {
 public:
-	virtual void release() = 0;
-
-	virtual IScene* createScene() = 0;
+	virtual void setMesh(IMesh* mesh) = 0;
 };
-
-
-
-
-
-
-
 
 
 
