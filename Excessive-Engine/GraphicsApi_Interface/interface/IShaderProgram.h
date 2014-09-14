@@ -18,18 +18,6 @@ class IShaderProgram
     virtual void getBinary(std::vector<char>& data) = 0;
     virtual void loadFromBinary(const std::vector<char>& data) = 0;
     virtual void use() = 0;
-
-    virtual void pass(unsigned location, bool data) = 0;
-    virtual void pass(unsigned location, int data) = 0;
-    virtual void pass(unsigned location, unsigned data) = 0;
-    virtual void pass(unsigned location, mm::vec2 data) = 0;
-    virtual void pass(unsigned location, mm::vec3 data) = 0;
-    virtual void pass(unsigned location, mm::vec4 data) = 0;
-    virtual void pass(unsigned location, mm::mat2 data) = 0;
-    virtual void pass(unsigned location, mm::mat3 data) = 0;
-    virtual void pass(unsigned location, mm::mat4 data) = 0;
-    virtual void pass(unsigned location, ITexture* data) = 0;
-    virtual void pass(unsigned location, IBuffer* data) = 0;
 };
 
 #endif

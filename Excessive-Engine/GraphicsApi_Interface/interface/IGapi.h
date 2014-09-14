@@ -20,6 +20,9 @@ class IGapi
     virtual void setBlendFunc() = 0; //TODO
     virtual void setBlendColor(mm::vec4 color) = 0;
 
+    virtual void setSRGBWrites(bool val) = 0;
+    virtual void setSeamlessCubeMaps(bool val) = 0;
+    
     virtual void setViewport(int x, int y, unsigned w, unsigned h) = 0;
 
     virtual void setPolygonMode() = 0; //TODO
