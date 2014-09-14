@@ -2,13 +2,12 @@
 #define IGapi_h
 
 #include "mymath/mymath.h"
-#include "basic_types.h"
 
 class IGapi
 {
   public:
     virtual void setDepthTest(bool val) = 0;
-    virtual void setDepthRange(f32 near, f32 far) = 0;
+    virtual void setDepthRange(float near, float far) = 0;
     virtual void setDepthMask(bool val) = 0;
 
     virtual void setStencilTest(bool val) = 0;
@@ -21,7 +20,7 @@ class IGapi
     virtual void setBlendFunc() = 0; //TODO
     virtual void setBlendColor(mm::vec4 color) = 0;
 
-    virtual void setViewport(i32 x, i32 y, u32 w, u32 h) = 0;
+    virtual void setViewport(int x, int y, unsigned w, unsigned h) = 0;
 
     virtual void setPolygonMode() = 0; //TODO
     virtual void setFaceCulling(bool val) = 0;

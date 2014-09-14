@@ -1,7 +1,6 @@
 #ifndef ITexture_h
 #define ITexture_h
 
-#include "basic_types.h"
 #include <vector>
 
 //TODO
@@ -16,8 +15,8 @@ class ITexture
     virtual void setWrapping() = 0; //TODO
     virtual void setFiltering() = 0; //TODO
     virtual void update() = 0; //TODO
-    virtual void getData(std::vector<i8>& data) = 0;
-    virtual void getSubData(std::vector<i8>& data) = 0; //TODO
+    virtual void getData(std::vector<char>& data) = 0;
+    virtual void getSubData(std::vector<char>& data) = 0; //TODO
     virtual void getSize() = 0; //TODO
     virtual void genMipChain() = 0; //TODO
 };
