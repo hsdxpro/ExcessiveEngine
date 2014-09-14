@@ -1,5 +1,5 @@
-#ifndef logger_h
-#define logger_h
+#ifndef Logger_h
+#define Logger_h
 
 #include <mutex>
 #include <iostream>
@@ -22,13 +22,13 @@ namespace my
   static impl::locker lock;
   static impl::unlocker unlock;
 
-  class logger
+  class Logger
   {
     private:
     protected:
     public:
       template< class t >
-      logger& operator<<( t message )
+      Logger& operator<<( t message )
       {
         std::cout << message;
         return *this;
@@ -36,26 +36,26 @@ namespace my
   };
 
   template<>
-  inline logger& logger::operator<<( impl::locker message )
+  inline Logger& Logger::operator<<( impl::locker message )
   {
     impl::mtx.lock();
     return *this;
   }
 
   template<>
-  inline logger& logger::operator<<( impl::unlocker message )
+  inline Logger& Logger::operator<<( impl::unlocker message )
   {
     impl::mtx.unlock();
     return *this;
   }
 
-  class wlogger
+  class WLogger
   {
     private:
     protected:
     public:
       template< class t >
-      wlogger& operator<<( t message )
+      WLogger& operator<<( t message )
       {
         std::wcout << message;
         return *this;
@@ -63,21 +63,21 @@ namespace my
   };
 
   template<>
-  inline wlogger& wlogger::operator<<( impl::locker message )
+  inline WLogger& WLogger::operator<<( impl::locker message )
   {
     impl::mtx.lock();
     return *this;
   }
 
   template<>
-  inline wlogger& wlogger::operator<<( impl::unlocker message )
+  inline WLogger& WLogger::operator<<( impl::unlocker message )
   {
     impl::mtx.unlock();
     return *this;
   }
 
-  static logger log;
-  static wlogger wlog;
+  static Logger log;
+  static WLogger wlog;
 
   static std::string endl = "\n";
   static std::wstring wendl = L"\n";

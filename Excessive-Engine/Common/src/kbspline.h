@@ -1,18 +1,18 @@
 #ifndef kbspline_h
 #define kbspline_h
 
-#include "key.h"
+#include "SplineKey.h"
 #include <vector>
 
 class segment
 {
   private:
     mm::vec3 a, b, c, d;  //polynomial
-    f32 tstart, Dt; //start time, lenght
+    float tstart, Dt; //start time, lenght
   public:
     //computing coefficients
-    void init( mm::vec3& f0, mm::vec3& v0, f32 t0,
-               mm::vec3& f1, mm::vec3& v1, f32 t1 )
+    void init( mm::vec3& f0, mm::vec3& v0, float t0,
+               mm::vec3& f1, mm::vec3& v1, float t1 )
     {
       tstart = t0;
       Dt = t1 - t0;
@@ -23,9 +23,9 @@ class segment
     }
 
     //interpolation
-    mm::vec3 value( f32 t )
+    mm::vec3 value( float t )
     {
-      f32 T = t - tstart;
+      float T = t - tstart;
       return ( a * T * T * T + b * T * T + c * T + d );
     }
 };
@@ -33,9 +33,9 @@ class segment
 class KochanekBartelsSpline
 {
   private:
-    std::vector<key> keys; //array of keys
+    std::vector<SplineKey> keys; //array of keys
     std::vector<segment> segments; //array of segments
-    f32 fullTime;
+    float fullTime;
     mm::vec3 vstart, vend;
 
   public:
@@ -49,12 +49,12 @@ class KochanekBartelsSpline
       vend = ve;
     };
 
-    void addKey( const key& newkey );
-    f32 getFullTime() const;
+    void addKey( const SplineKey& newkey );
+    float getFullTime() const;
     void recalc();
-    bool removeKey( const key& rkey );
-    bool removeKeyById( i32 id );
-    mm::vec3 value( f32 t ); //interpolated value
+    bool removeKey( const SplineKey& rkey );
+    bool removeKeyById( int id );
+    mm::vec3 value( float t ); //interpolated value
 
     KochanekBartelsSpline() : fullTime( 0 ), vstart( 0 ), vend( 0 ) {}
 };

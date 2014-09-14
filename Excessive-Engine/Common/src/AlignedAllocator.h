@@ -1,17 +1,18 @@
-#ifndef aligned_allocator_h
-#define aligned_allocator_h
+#ifndef AlignedAllocator_h
+#define AlignedAllocator_h
 
 #include <memory>
 
+//allocates aligned memory
 template< class t, std::size_t alignment = 16 >
-class aligned_allocator : public std::allocator< t >
+class AlignedAllocator : public std::allocator< t >
 {
-    aligned_allocator& operator=( const aligned_allocator& ); //no assignment
+    AlignedAllocator& operator=( const AlignedAllocator& ); //no assignment
   public:
     template< class u >
     struct rebind
     {
-      typedef aligned_allocator< u, alignment > other;
+      typedef AlignedAllocator< u, alignment > other;
     } ;
 
     typename std::allocator<t>::pointer allocate( typename std::allocator<t>::size_type n, typename std::allocator<t>::const_pointer hint = 0 )
@@ -26,7 +27,7 @@ class aligned_allocator : public std::allocator< t >
         throw std::length_error( "aligned_allocator<t>::allocate() - Integer overflow." );
       }
 
-#ifdef _WIN32
+#ifdef WIN_BUILD
       void* pv = _aligned_malloc( n * sizeof( typename std::allocator<t>::value_type ), alignment );
 #else
       void* pv = 0;
@@ -46,7 +47,7 @@ class aligned_allocator : public std::allocator< t >
 
     void deallocate( typename std::allocator<t>::pointer p, typename std::allocator<t>::size_type n )
     {
-#ifdef _WIN32
+#ifdef WIN_BUILD
       _aligned_free( p );
 #else
       free( p );

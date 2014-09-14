@@ -1,8 +1,8 @@
-#ifndef random_h
-#define random_h
+#ifndef Random_h
+#define Random_h
 
 template< class t >
-class random_wrapper
+class RandomWrapper
 {
   public:
     static void init()
@@ -10,9 +10,9 @@ class random_wrapper
       t::init();
     }
 
-    static f32 get( f32 min, f32 max )
+    static float get( float min, float max )
     {
-      return min + ( max - min ) * t::get() / ( f32 )RAND_MAX;
+      return min + ( max - min ) * t::get() / ( float )RAND_MAX;
     }
 };
 

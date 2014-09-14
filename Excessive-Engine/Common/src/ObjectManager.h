@@ -1,10 +1,10 @@
-#ifndef object_manager_h
-#define object_manager_h
+#ifndef ObjectManager_h
+#define ObjectManager_h
 
 #include <limits.h>
 #include <vector>
 #include <assert.h>
-#include "basic_types.h"
+#include "BasicTypes.h"
 
 namespace om
 {
@@ -40,7 +40,7 @@ namespace om
   };
 
   template< class t >
-  class object_manager
+  class ObjectManager
   {
     private:
       typedef std::pair< id_type, t > stored_type;
@@ -117,7 +117,7 @@ namespace om
         freelist_enqueue = id & INDEX_MASK;
       }
 
-      std::vector< stored_type >& get_objects()
+      std::vector< stored_type >& getObjects()
       {
         return objects;
       }
@@ -132,7 +132,7 @@ namespace om
         return objects.end();
       }
 
-      object_manager()
+      ObjectManager()
       {
         freelist_enqueue = INNER_MASK;
         freelist_dequeue = INNER_MASK;

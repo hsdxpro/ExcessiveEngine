@@ -1,13 +1,12 @@
-#ifndef hashed_string_h
-#define hashed_string_h
+#ifndef HashedString_h
+#define HashedString_h
 
-#include "basic_types.h"
 #include "crc32.h"
 #include <map>
 
-typedef u32 stringID;
+typedef unsigned stringID;
 
-class hashed_string
+class HashedString
 {
   static std::map<stringID, std::string> hashtable;
 public:
@@ -25,7 +24,7 @@ public:
     return sid;
   }  
 
-  static std::string get_str( stringID sid )
+  static std::string getStr( stringID sid )
   {
     auto it = hashtable.find( sid );
     
@@ -36,6 +35,6 @@ public:
   }
 };
 
-std::map<stringID, std::string> hashed_string::hashtable;
+std::map<stringID, std::string> HashedString::hashtable;
 
 #endif
