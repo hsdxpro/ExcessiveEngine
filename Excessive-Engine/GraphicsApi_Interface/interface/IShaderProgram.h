@@ -13,10 +13,10 @@ class IShaderProgram
   public:
     virtual void create() = 0;
     virtual void destroy() = 0;
-    virtual void addShader(const std::string& src) = 0; //TODO
+    virtual void addShader(const char* src) = 0; //TODO
     virtual void link() = 0;
-    virtual void getBinary(std::vector<char>& data) = 0;
-    virtual void loadFromBinary(const std::vector<char>& data) = 0;
+    virtual char* getBinary() = 0;
+    virtual void loadFromBinary(char* data, unsigned size) = 0;
     virtual void use() = 0;
 };
 
