@@ -1,7 +1,3 @@
-cmake_minimum_required (VERSION 2.6)
-
-PROJECT(GraphicsEngineRaster C CXX)
-
 #########################################################################
 # Files
 
@@ -57,4 +53,3 @@ src/PlaneEntity.cpp
 # Project
 
 add_library( GraphicsEngineRaster SHARED ${sources} ${headers} ${interfaces} )
-set_target_properties( GraphicsEngineRaster PROPERTIES LINKER_LANGUAGE CXX )

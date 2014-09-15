@@ -1,40 +1,39 @@
-#ifndef spline_h
-#define spline_h
+#ifndef Spline_h
+#define Spline_h
 
-#include "basic_types.h"
 #include "kbspline.h"
 
 template< class t >
-class spline
+class Spline
 {
     t s;
   public:
-    void set_start_velocity( const mm::vec3& vstart )
+    void setStartSelocity( const mm::vec3& vstart )
     {
       s.setStartVelocity( vstart );
     }
 
-    void set_end_velocity( const mm::vec3& vend )
+    void setEndVelocity( const mm::vec3& vend )
     {
       s.setEndVelocity( vend );
     }
 
-    void add_key( const key& newkey )
+    void addKey( const SplineKey& newkey )
     {
       s.addKey( newkey );
     }
 
-    bool remove_key( const key& rkey )
+    bool removeKey( const SplineKey& rkey )
     {
       return s.removeKey( rkey );
     }
 
-    bool remove_key_by_id( i32 id )
+    bool removeKeyById( int id )
     {
       return s.removeKeyById( id );
     }
 
-    f32 get_full_time() const
+    float getFullTime() const
     {
       return s.getFullTime();
     }
@@ -44,12 +43,12 @@ class spline
       s.recalc();
     }
 
-    mm::vec3 value( f32 tt )
+    mm::vec3 value( float tt )
     {
       return s.value( tt );
     }
 };
 
-typedef spline<KochanekBartelsSpline> splinetype;
+typedef Spline<KochanekBartelsSpline> splinetype;
 
 #endif // spline_h__

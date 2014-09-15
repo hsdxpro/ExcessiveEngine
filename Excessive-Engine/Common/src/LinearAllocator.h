@@ -1,7 +1,7 @@
-#ifndef linear_allocator_h
-#define linear_allocator_h
+#ifndef LinearAllocator_h
+#define LinearAllocator_h
 
-#include "basic_types.h"
+#include "assert.h"
 
 //this should handle allocations that you know they won't be freed
 //like the pool and stack allocators etc.
@@ -9,18 +9,18 @@
 //you should also pay attention to only pass aligned memory
 //of a single large block
 //and you should only allocate aligned sizes
-class linear_allocator
+class LinearAllocator
 {
-    i8* buffer;
-    i32 size;
-    i32 offset;
+    char* buffer;
+    int size;
+    int offset;
   public:
-    linear_allocator(i8* b, i32 s) : buffer(b), size(s), offset(0)
+    LinearAllocator(char* b, int s) : buffer(b), size(s), offset(0)
     {
-      ASSERT( (u32)b % 4 == 0 ); //only allocated memory!
+      ASSERT( (unsigned)b % 4 == 0 ); //only allocated memory!
     }
 
-    void* alloc( i32 s )
+    void* alloc( int s )
     {
       ASSERT( s % 4 == 0 ); //only aligned allocations
       void* mem_to_return = buffer + offset + s;
