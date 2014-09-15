@@ -18,6 +18,9 @@ SOURCE_GROUP(\\ FILES $(sources) $(headers))
 # Main
 SOURCE_GROUP(Main FILES src/GraphicsEngine.h src/GraphicsEngine.cpp)
 
+# Utility
+SOURCE_GROUP(Utility FILES src/utility/ref_ptr.h)
+
 # Scene
 SOURCE_GROUP(Scene FILES src/Scene.h src/Scene.cpp)
 

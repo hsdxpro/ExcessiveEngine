@@ -1,7 +1,6 @@
 #include "Scene.h"
 
 
-
 void Scene::release() {
 	delete this;
 }
