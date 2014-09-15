@@ -22,7 +22,7 @@ class IFrameBuffer
     virtual void setTargets(rTargetData* data) = 0;
     virtual void use();
 
-    virtual void getError() = 0;
+    virtual bool getError() = 0;
 };
 
 #endif
