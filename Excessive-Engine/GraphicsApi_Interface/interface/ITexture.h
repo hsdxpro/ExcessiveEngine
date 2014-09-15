@@ -3,6 +3,7 @@
 
 #include <vector>
 
+//specifies the desired texture format
 struct rFormatData
 {
   unsigned red_bits;
@@ -43,6 +44,7 @@ struct rTextureUpdateData
   char* data;
 };
 
+//specifies texture sampler state
 struct rTextureSamplerData
 {
   bool is_mipmapped;
