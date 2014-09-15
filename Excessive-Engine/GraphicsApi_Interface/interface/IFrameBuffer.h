@@ -1,5 +1,4 @@
-#ifndef IFrameBuffer_h
-#define IFrameBuffer_h
+#pragma once
 
 #include "ITextureView.h"
 
@@ -13,16 +12,12 @@ struct rTargetData
   unsigned target_layer;
 };
 
-
+//dx: render target
 class IFrameBuffer
 {
   public:
-    virtual void create() = 0;
     virtual void destroy() = 0;
-    virtual void setTargets(rTargetData* data) = 0;
-    virtual void use();
+    virtual void setTargets(const std::vector< rTargetData >& data) = 0;
 
     virtual bool getError() = 0;
 };
-
-#endif

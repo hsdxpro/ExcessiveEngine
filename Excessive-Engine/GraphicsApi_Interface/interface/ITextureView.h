@@ -1,5 +1,4 @@
-#ifndef ITextureView_h
-#define ITextureView_h
+#pragma once
 
 #include "ITexture.h"
 
@@ -17,13 +16,9 @@ struct rTextureViewData
 class ITextureView
 {
   public:
-    virtual void create() = 0;
     virtual void destroy() = 0;
-    virtual void setView(const rTextureViewData& data) = 0;
     virtual void setSamplerState(const rTextureSamplerData& data) = 0;
     virtual void update(const rTextureUpdateData& data) = 0;
     virtual void getSubData(const rTextureUpdateData& data) = 0; //the pointer should be updated
     virtual rTextureData getFormat() = 0;
 };
-
-#endif

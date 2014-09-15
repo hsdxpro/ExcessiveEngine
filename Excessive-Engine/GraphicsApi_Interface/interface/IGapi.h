@@ -3,6 +3,9 @@
 
 #include "mymath/mymath.h"
 
+//TODO do this properly
+#define EXPORT
+
 enum eFunc
 {
   SHALL_NOT_PASS = 0, PASS_IF_LESS, PASS_IF_EQUAL, PASS_IF_LESS_OR_EQUAL,
@@ -79,9 +82,19 @@ struct rRasterizerState
   
 };
 
+//TODO implement GL api into GraphicsApiGL folder
 class IGapi
 {
   public:
+    static EXPORT createShaderProgram();
+    static EXPORT createFrameBuffer();
+    static EXPORT createTexture(const rTextureData& data);
+    static EXPORT createTextureView(const rTextureViewData& data);
+    static EXPORT createVertexBuffer(const rAllocData& data);
+    static EXPORT createIndexBuffer(const rAllocData& data);
+    static EXPORT createUniformBuffer(const rAllocData& data);
+    static EXPORT createVertexArray();
+  
     virtual void setDepthState(const rDepthState& state) = 0;
 
     virtual void setStencilState(const rStencilState& state) = 0;

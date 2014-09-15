@@ -1,5 +1,4 @@
-#ifndef IVertexArray_h
-#define IVertexArray_h
+#pragma once
 
 enum eVertexAttribType
 {
@@ -17,17 +16,11 @@ struct rVertexAttrib
 
 struct rVertexFormat
 {
-  rVertexAttrib generic[8];
-  rVertexAttrib texcoord[8];
+  rVertexAttrib attribs[16];
 };
 
 class IVertexArray
 {
   public:
-    virtual void create() = 0;
     virtual void destroy() = 0;
-    virtual void draw(unsigned indices) = 0;
-    virtual void use() = 0;
 };
-
-#endif

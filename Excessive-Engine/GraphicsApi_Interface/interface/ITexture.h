@@ -1,5 +1,4 @@
-#ifndef ITexture_h
-#define ITexture_h
+#pragma once
 
 #include <vector>
 
@@ -41,7 +40,7 @@ struct rTextureUpdateData
   unsigned height;
   unsigned depth;
   rFormatData format;
-  char* data;
+  std::vector< char > data;
 };
 
 //specifies texture sampler state
@@ -53,17 +52,14 @@ struct rTextureSamplerData
   bool is_clamped; //clamped to edge OR repeated
 };
 
+//TODO replace texture formats w/ enums
 class ITexture
 {
   public:
-    virtual void create() = 0;
     virtual void destroy() = 0;
-    virtual void allocate(const rTextureData& data) = 0;
     virtual void setSamplerState(const rTextureSamplerData& data) = 0;
     virtual void update(const rTextureUpdateData& data) = 0;
     virtual void getSubData(const rTextureUpdateData& data) = 0; //the pointer should be updated
     virtual rTextureData getFormat() = 0;
     virtual void genMipChain() = 0;
 };
-
-#endif
