@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 struct rAllocData
 {
   unsigned size;
@@ -15,8 +13,8 @@ class IBuffer
 {
   public:
     virtual void destroy() = 0;
-    virtual void update(unsigned offset, const std::vector< char >& data) = 0; 
-    virtual void getSubData(std::vector< char >& data, unsigned offset) = 0;
+    virtual void update(char* data, unsigned size, unsigned offset) = 0; 
+    virtual void getSubData(char* data, unsigned size, unsigned offset) = 0;
     virtual rAllocData getAllocData() = 0;
 };
 

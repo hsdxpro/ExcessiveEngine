@@ -1,5 +1,4 @@
-#ifndef IGapi_h
-#define IGapi_h
+#pragma once
 
 #include "mymath/mymath.h"
 
@@ -86,33 +85,29 @@ struct rRasterizerState
 class IGapi
 {
   public:
-    static EXPORT createShaderProgram();
-    static EXPORT createFrameBuffer();
-    static EXPORT createTexture(const rTextureData& data);
-    static EXPORT createTextureView(const rTextureViewData& data);
-    static EXPORT createVertexBuffer(const rAllocData& data);
-    static EXPORT createIndexBuffer(const rAllocData& data);
-    static EXPORT createUniformBuffer(const rAllocData& data);
-    static EXPORT createVertexArray();
+    EXPORT createShaderProgram();
+    EXPORT createFrameBuffer();
+    EXPORT createTexture(rTextureData* data);
+    EXPORT createTextureView(rTextureViewData* data);
+    EXPORT createVertexBuffer(rAllocData* data);
+    EXPORT createIndexBuffer(rAllocData* data);
+    EXPORT createUniformBuffer(rAllocData* data);
+    EXPORT createVertexArray();
   
-    virtual void setDepthState(const rDepthState& state) = 0;
+    virtual void setDepthState(rDepthState* state) = 0;
 
-    virtual void setStencilState(const rStencilState& state) = 0;
+    virtual void setStencilState(rStencilState* state) = 0;
 
-    virtual void setBlendState(const rBlendState& state) = 0;
+    virtual void setBlendState(rBlendState* state) = 0;
 
     virtual void setSRGBWrites(bool val) = 0;
     virtual void setSeamlessCubeMaps(bool val) = 0;
     
     virtual void setViewport(int x, int y, unsigned w, unsigned h) = 0;
 
-    virtual void setRasterizationState(const rRasterizerState& state) = 0;
+    virtual void setRasterizationState(rRasterizerState* state) = 0;
 
     virtual bool getError() = 0;
     virtual void setDebugOutput(bool val) = 0;
     virtual void setSyncDebugOutput(bool val) = 0;
 };
-
-
-
-#endif

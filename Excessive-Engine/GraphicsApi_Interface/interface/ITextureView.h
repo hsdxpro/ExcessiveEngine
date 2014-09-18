@@ -9,7 +9,7 @@ struct rTextureViewData
   unsigned num_levels;
   unsigned start_layer;
   unsigned num_layers;
-  rFormatData format; //texture format
+  eFormatType format; //texture format
   ITexture* base_tex;
 };
 
@@ -17,8 +17,8 @@ class ITextureView
 {
   public:
     virtual void destroy() = 0;
-    virtual void setSamplerState(const rTextureSamplerData& data) = 0;
-    virtual void update(const rTextureUpdateData& data) = 0;
-    virtual void getSubData(const rTextureUpdateData& data) = 0; //the pointer should be updated
+    virtual void setSamplerState(const rTextureSamplerData* data) = 0;
+    virtual void update(const rTextureUpdateData* data) = 0;
+    virtual void getSubData(const rTextureUpdateData* data) = 0; //the pointer should be updated
     virtual rTextureData getFormat() = 0;
 };
