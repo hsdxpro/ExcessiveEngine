@@ -43,10 +43,6 @@ src/Light.h
 src/Light.cpp
 src/Entity.h
 src/Entity.cpp
-src/MeshEntity.h
-src/MeshEntity.cpp
-src/PlaneEntity.h
-src/PlaneEntity.cpp
 )
 
 #########################################################################
