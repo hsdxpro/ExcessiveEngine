@@ -2,17 +2,6 @@
 
 #include "ITexture.h"
 
-//specifices what type of texture you'd like to allocate
-struct rTextureViewData
-{
-  unsigned start_level; //mipmap levels
-  unsigned num_levels;
-  unsigned start_layer;
-  unsigned num_layers;
-  eFormatType format; //texture format
-  ITexture* base_tex;
-};
-
 class ITextureView
 {
   public:
@@ -21,4 +10,5 @@ class ITextureView
     virtual void update(const rTextureUpdateData* data) = 0;
     virtual void getSubData(const rTextureUpdateData* data) = 0; //the pointer should be updated
     virtual rTextureData getFormat() = 0;
+    virtual void genMipChain() = 0;
 };

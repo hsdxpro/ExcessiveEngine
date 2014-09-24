@@ -30,7 +30,8 @@ struct rStencilState
   bool stencil_test;
   bool stencil_mask;
   unsigned reference_stencil_value;
-  unsigned stencil_mask;
+  unsigned mask;
+  unsigned func_mask;
   eFunc func;
   eStencilAction on_stencil_fail, on_stencil_pass_depth_fail, on_stencil_pass_depth_pass;
 };
@@ -78,21 +79,74 @@ struct rRasterizerState
   eVertexOrder vertex_order;
   bool face_culling;
   bool r_mask, g_mask, b_mask, a_mask;
-  
+};
+
+//this specifies how we'd like to use 1 texture
+//in this frame buffer object (render target)
+struct rTargetData
+{
+  ITextureView* target_texture;
+  unsigned target_index;
+  unsigned target_level;
+  unsigned target_layer;
+};
+
+enum eVertexAttribType
+{
+  ATTRIB_FLOAT = 0, ATTRIB_INT, ATTRIB_UNSIGNED_INT
+};
+
+struct rVertexAttrib
+{
+  unsigned index; //vertex stream index
+  unsigned data_components; //4 for vec4
+  eVertexAttribType type;
+  unsigned offset, size;
+  unsigned divisor;
+};
+
+//specifices what type of texture you'd like to allocate
+struct rTextureData
+{
+  unsigned num_levels; //mipmap levels
+  unsigned width;
+  unsigned height;
+  unsigned depth;
+  eFormatType format; //texture format
+  bool is_layered;
+  bool is_cubemap;
+};
+
+enum eDimensions
+{
+  ONE = 0, TWO, THREE
+};
+
+//specifices what type of texture you'd like to allocate
+struct rTextureViewData
+{
+  unsigned start_level; //mipmap levels
+  unsigned num_levels;
+  unsigned start_layer;
+  unsigned num_layers;
+  eFormatType format; //texture format
+  ITexture* base_tex;
+  //new texture target
+  eDimensions dim;
+  bool is_layered;
+  bool is_cubemap;
 };
 
 //TODO implement GL api into GraphicsApiGL folder
 class IGapi
 {
   public:
-    EXPORT createShaderProgram();
-    EXPORT createFrameBuffer();
-    EXPORT createTexture(rTextureData* data);
-    EXPORT createTextureView(rTextureViewData* data);
-    EXPORT createVertexBuffer(rAllocData* data);
-    EXPORT createIndexBuffer(rAllocData* data);
-    EXPORT createUniformBuffer(rAllocData* data);
-    EXPORT createVertexArray();
+    EXPORT IShaderProgram* createShaderProgram() = 0;
+    EXPORT ITexture* createTexture(rTextureData* data) = 0;
+    EXPORT ITextureView* createTextureView(rTextureViewData* data) = 0;
+    EXPORT IVertexBuffer* createVertexBuffer(rAllocData* data) = 0;
+    EXPORT IIndexBuffer* createIndexBuffer(rAllocData* data) = 0;
+    EXPORT IUniformBuffer* createUniformBuffer(rAllocData* data) = 0;
   
     virtual void setDepthState(rDepthState* state) = 0;
 
@@ -110,4 +164,13 @@ class IGapi
     virtual bool getError() = 0;
     virtual void setDebugOutput(bool val) = 0;
     virtual void setSyncDebugOutput(bool val) = 0;
+    
+    //pass input/output to shader
+    virtual void passTextureView(IShaderProgram* s, ITextureView* tex, unsigned index) = 0;
+    virtual void passRenderTargets(IShaderProgram* s, rTargetData* render_targets, unsigned size) = 0;
+    virtual void passUniformBuffer(IShaderProgram* s, IUniformBuffer* buf) = 0;
+    virtual void passVertexBuffer(IShaderProgram* s, IVertexBuffer* vbos, unsigned num_vbos) = 0;
+    
+    //draw stuff
+    virtual void draw(IShaderProgram* s, unsigned num_indices) = 0;
 };

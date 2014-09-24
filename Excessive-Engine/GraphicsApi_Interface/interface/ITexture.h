@@ -74,18 +74,6 @@ enum eFormatType
   STENCIL16
 };
 
-//specifices what type of texture you'd like to allocate
-struct rTextureData
-{
-  unsigned num_levels; //mipmap levels
-  unsigned width;
-  unsigned height;
-  unsigned depth;
-  eFormatType format; //texture format
-  bool is_layered;
-  bool is_cubemap;
-};
-
 //specifies how you'd like to update the texture
 struct rTextureUpdateData
 {
@@ -109,7 +97,6 @@ struct rTextureSamplerData
   bool is_clamped; //clamped to edge OR repeated
 };
 
-//TODO replace texture formats w/ enums
 class ITexture
 {
   public:
