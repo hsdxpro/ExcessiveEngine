@@ -2,8 +2,6 @@
 
 #include "mymath/mymath.h"
 
-//TODO do this properly
-#define EXPORT
 
 enum eFunc
 {

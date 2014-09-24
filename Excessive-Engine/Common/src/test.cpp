@@ -17,6 +17,10 @@
 
 #include "json/json.h"
 
+#include <iostream>
+#include <memory>
+using namespace std;
+
 std::string json_str = "{ \"encoding\" : \"UTF-8\", \"plug-ins\" : [ \"python\", \"c++\", \"ruby\" ], \"indent\" : { \"length\" : 3, \"use_space\": true } }";
 
 void json_example()
@@ -119,6 +123,14 @@ int main( int argc, char** args )
   stack.clear();
 
   json_example();
+
+
+  ////////////////////////////////////////////////////////////////////////////
+  // ez itt peti cucca, töröld ki ha nagyon nem tetszik
+  cout << sizeof(std::unique_ptr<int>);
+
+
+  ////////////////////////////////////////////////////////////////////////////
 
   system( "PAUSE" );
 

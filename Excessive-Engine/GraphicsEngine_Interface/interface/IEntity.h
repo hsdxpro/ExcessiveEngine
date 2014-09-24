@@ -14,14 +14,15 @@ class IMaterial;
 
 class IEntity
 {
-public:
-	virtual void release() = 0;
-	
+public:	
 	virtual void setPosition() = 0;
 	virtual void setRotation() = 0;
 	virtual void setScale() = 0;
 
+	virtual void setMesh(IMesh* mesh) = 0;
 	virtual void setMaterial(IMaterial* material) = 0;
+	virtual IMesh* getMesh() const = 0;
+	virtual IMaterial* getMaterial() const = 0;
 };
 
 
