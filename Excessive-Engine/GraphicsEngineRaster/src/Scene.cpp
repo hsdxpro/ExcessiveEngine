@@ -22,6 +22,15 @@ void Scene::release() {
 }
 
 
+Entity* Scene::createEntity() {
+	return nullptr;
+}
+
+Light* Scene::createLight() {
+	return nullptr;
+}
+
+
 void Scene::erase(ge::IEntity* entity) {
 	auto it = entities.find((Entity*)entity);
 	if (it != entities.end()) {

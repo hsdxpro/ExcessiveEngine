@@ -139,12 +139,12 @@ struct rTextureViewData
 class IGapi
 {
   public:
-    EXPORT IShaderProgram* createShaderProgram() = 0;
-    EXPORT ITexture* createTexture(rTextureData* data) = 0;
-    EXPORT ITextureView* createTextureView(rTextureViewData* data) = 0;
-    EXPORT IVertexBuffer* createVertexBuffer(rAllocData* data) = 0;
-    EXPORT IIndexBuffer* createIndexBuffer(rAllocData* data) = 0;
-    EXPORT IUniformBuffer* createUniformBuffer(rAllocData* data) = 0;
+    virtual IShaderProgram* createShaderProgram() = 0;
+	virtual ITexture* createTexture(rTextureData* data) = 0;
+	virtual ITextureView* createTextureView(rTextureViewData* data) = 0;
+	virtual IVertexBuffer* createVertexBuffer(rAllocData* data) = 0;
+	virtual IIndexBuffer* createIndexBuffer(rAllocData* data) = 0;
+	virtual IUniformBuffer* createUniformBuffer(rAllocData* data) = 0;
   
     virtual void setDepthState(rDepthState* state) = 0;
 

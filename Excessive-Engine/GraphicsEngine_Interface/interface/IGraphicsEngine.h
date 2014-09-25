@@ -4,6 +4,9 @@
 namespace ge {
 
 class IScene;
+class IMesh;
+class IMaterial;
+class ITexture;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// GraphicsEngine manages and displays the graphical world.
@@ -23,8 +26,8 @@ public:
 	virtual ITexture* createTexture() = 0;
 
 	// states | just as examples, not stable yet
-	virtual void setTargetWindow();
-	virtual void setScreenSize(int width, int height);
+		// virtual void setTargetWindow();
+		// virtual void setScreenSize(int width, int height);
 
 	// interact
 	virtual void update() = 0;
