@@ -1,21 +1,8 @@
 #ifndef mm_mat3_impl_h
 #define mm_mat3_impl_h
 
-//class declaration only
-namespace mymath
-{
-  namespace impl
-  {
-    template< typename t >
-    class MYMATH_GPU_ALIGNED mat3i;
-  }
-}
-
 #include "mm_vec3_impl.h"
 #include "mm_vec_func.h"
-#include "mm_mat4_impl.h"
-
-#include "mm_quat_func.h"
 
 namespace mymath
 {
@@ -44,22 +31,6 @@ namespace mymath
           m[0] = vec3i<t>( m0, m1, m2 );
           m[1] = vec3i<t>( m3, m4, m5 );
           m[2] = vec3i<t>( m6, m7, m8 );
-        }
-
-        mat3i(const mat4i<t>& mat)
-        {
-          m[0] = mat[0].xyz;
-          m[1] = mat[1].xyz;
-          m[2] = mat[2].xyz;
-        }
-
-        mat3i(const quati<t>& q)
-        {
-          const mat3i<t> other = mat3_cast(q);
-          for(int i = 0; i < 3; ++i)
-          {
-            m[i] = other[i];
-          }
         }
 
         // 1 column per vector

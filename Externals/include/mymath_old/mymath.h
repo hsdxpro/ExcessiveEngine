@@ -22,9 +22,6 @@
 #include "mm_mat4_impl.h"
 #include "mm_mat_func.h"
 
-#include "mm_quat_impl.h"
-#include "mm_quat_func.h"
-
 #include "mm_util.h"
 #include "mm_frame.h"
 #include "mm_camera.h"
@@ -62,8 +59,6 @@ namespace mymath
   typedef impl::mat3i<float> mat3;
 
   typedef impl::mat4i<float> mat4;
-
-  typedef impl::quati<float> quat;
 }
 
 #endif

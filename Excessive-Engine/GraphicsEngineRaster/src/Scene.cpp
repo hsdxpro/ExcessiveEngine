@@ -9,12 +9,7 @@ Scene::Scene() {
 }
 
 Scene::~Scene() {
-	for (auto v : entities) {
-		delete v;
-	}
-	for (auto v : lights) {
-		delete v;
-	}
+	clear();
 }
 
 void Scene::release() {
@@ -22,12 +17,19 @@ void Scene::release() {
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+// scene content add/erase
+
 Entity* Scene::createEntity() {
-	return nullptr;
+	Entity* e = new Entity;
+	entities.insert(e);
+	return e;
 }
 
 Light* Scene::createLight() {
-	return nullptr;
+	Light* l = new Light;
+	lights.insert(l);
+	return l;
 }
 
 
@@ -44,5 +46,16 @@ void Scene::erase(ge::ILight* light) {
 	if (it != lights.end()) {
 		delete *it;
 		lights.erase(it);
+	}
+}
+
+
+void Scene::clear()
+{
+	for (auto v : entities) {
+		delete v;
+	}
+	for (auto v : lights) {
+		delete v;
 	}
 }

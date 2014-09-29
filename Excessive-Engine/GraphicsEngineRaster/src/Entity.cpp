@@ -16,11 +16,11 @@ Entity::~Entity() {
 
 ////////////////////////////////////////////////////////////////////////////////
 // transformation data
-void Entity::setPosition() {
+void Entity::setPos() {
 	return;
 }
 
-void Entity::setRotation() {
+void Entity::setRot() {
 	return;
 }
 

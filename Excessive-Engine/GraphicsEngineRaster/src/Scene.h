@@ -3,7 +3,6 @@
 #include "../GraphicsEngine_Interface/interface/IScene.h"
 #include <unordered_set>
 
-
 #include "Entity.h"
 #include "Light.h"
 
@@ -21,6 +20,8 @@ public:
 	Light* createLight() override;
 	void erase(ge::IEntity* entity) override;
 	void erase(ge::ILight* light) override;
+
+	void clear() override;
 	
 private:
 	std::unordered_set<Entity*> entities;

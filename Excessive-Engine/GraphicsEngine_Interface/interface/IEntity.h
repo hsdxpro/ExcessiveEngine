@@ -15,8 +15,8 @@ class IMaterial;
 class IEntity
 {
 public:	
-	virtual void setPosition() = 0;
-	virtual void setRotation() = 0;
+	virtual void setPos() = 0;
+	virtual void setRot() = 0;
 	virtual void setScale() = 0;
 
 	virtual void setMesh(IMesh* mesh) = 0;

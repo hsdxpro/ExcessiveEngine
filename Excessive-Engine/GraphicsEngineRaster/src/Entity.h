@@ -17,8 +17,8 @@ public:
 	Entity();
 	~Entity();
 	
-	void setPosition() override;
-	void setRotation() override;
+	void setPos() override;
+	void setRot() override;
 	void setScale() override;
 
 	virtual void setMesh(ge::IMesh* mesh) override;
@@ -29,6 +29,9 @@ public:
 	Material* getMaterial() const override;
 
 private:
+	// mtl
 	ref_ptr<Mesh> mesh;
 	ref_ptr<Material> mtl;
+	// pos-rot-scale
+	
 };
