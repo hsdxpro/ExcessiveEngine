@@ -1,5 +1,7 @@
 #pragma once
 
+#include <mymath/mymath.h>
+
 // namespace
 namespace ge {
 
@@ -15,9 +17,9 @@ class IMaterial;
 class IEntity
 {
 public:	
-	virtual void setPos() = 0;
-	virtual void setRot() = 0;
-	virtual void setScale() = 0;
+	virtual void setPos(const mm::vec3&) = 0;
+	virtual void setRot(const mm::quat&) = 0;
+	virtual void setScale(const mm::vec3&) = 0;
 
 	virtual void setMesh(IMesh* mesh) = 0;
 	virtual void setMaterial(IMaterial* material) = 0;

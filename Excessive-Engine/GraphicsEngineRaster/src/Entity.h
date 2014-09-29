@@ -17,9 +17,9 @@ public:
 	Entity();
 	~Entity();
 	
-	void setPos() override;
-	void setRot() override;
-	void setScale() override;
+	void setPos(const mm::vec3&) override;
+	void setRot(const mm::quat&) override;
+	void setScale(const mm::vec3&) override;
 
 	virtual void setMesh(ge::IMesh* mesh) override;
 	virtual void setMaterial(ge::IMaterial* mtl) override;
@@ -33,5 +33,7 @@ private:
 	ref_ptr<Mesh> mesh;
 	ref_ptr<Material> mtl;
 	// pos-rot-scale
-	
+	mm::vec3 pos;
+	mm::quat rot;
+	mm::vec3 scale;
 };
