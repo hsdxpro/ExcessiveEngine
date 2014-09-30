@@ -2,8 +2,12 @@
 
 #include "mymath/mymath.h"
 
+#include "IBuffer.h"
+#include "IShaderProgram.h"
+#include "ITexture.h"
+#include "ITextureView.h"
 
-enum eFunc
+enum eCompareFunc
 {
   SHALL_NOT_PASS = 0, PASS_IF_LESS, PASS_IF_EQUAL, PASS_IF_LESS_OR_EQUAL,
   PASS_IF_GREATER, PASS_IF_NOT_EQUAL, PASS_IF_GREATER_OR_EQUAL, SHALL_PASS
@@ -14,7 +18,7 @@ struct rDepthState
   bool depth_test;
   bool depth_mask;
   float near, far;
-  eFunc func;
+  eCompareFunc func;
 };
 
 enum eStencilAction
@@ -30,7 +34,7 @@ struct rStencilState
   unsigned reference_stencil_value;
   unsigned mask;
   unsigned func_mask;
-  eFunc func;
+  eCompareFunc func;
   eStencilAction on_stencil_fail, on_stencil_pass_depth_fail, on_stencil_pass_depth_pass;
 };
 
@@ -147,17 +151,14 @@ class IGapi
 	virtual IUniformBuffer* createUniformBuffer(rAllocData* data) = 0;
   
     virtual void setDepthState(rDepthState* state) = 0;
-
     virtual void setStencilState(rStencilState* state) = 0;
-
     virtual void setBlendState(rBlendState* state) = 0;
+	virtual void setRasterizationState(rRasterizerState* state) = 0;
 
     virtual void setSRGBWrites(bool val) = 0;
     virtual void setSeamlessCubeMaps(bool val) = 0;
     
-    virtual void setViewport(int x, int y, unsigned w, unsigned h) = 0;
-
-    virtual void setRasterizationState(rRasterizerState* state) = 0;
+    virtual void setViewport(int x, int y, unsigned w, unsigned h) = 0;    
 
     virtual bool getError() = 0;
     virtual void setDebugOutput(bool val) = 0;
