@@ -97,6 +97,18 @@ struct rTextureSamplerData
   bool is_clamped; //clamped to edge OR repeated
 };
 
+//specifices what type of texture you'd like to allocate
+struct rTextureData
+{
+  unsigned num_levels; //mipmap levels
+  unsigned width;
+  unsigned height;
+  unsigned depth;
+  eFormatType format; //texture format
+  bool is_layered;
+  bool is_cubemap;
+};
+
 class ITexture
 {
   public:

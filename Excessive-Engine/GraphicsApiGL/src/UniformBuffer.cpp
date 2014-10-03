@@ -1,5 +1,7 @@
 #include "UniformBuffer.h"
 
+#include <string>
+
 void UniformBuffer::destroy()
 {
   glDeleteBuffers( 1, &id );
@@ -10,7 +12,7 @@ void UniformBuffer::update(char* data, unsigned size, unsigned offset)
 {
   if( data )
   {
-    void* ptr = glMapNamedBufferRange( id, GL_UNIFORM_BUFFER, offset, size, GL_WRITE_ONLY);
+    void* ptr = glMapNamedBufferRange( id, offset, size, GL_WRITE_ONLY);
     memcpy( ptr, data, size );
     glUnmapNamedBuffer( id );
   }

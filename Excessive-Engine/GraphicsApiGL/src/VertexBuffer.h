@@ -1,8 +1,9 @@
 #pragma once
 
+#include "GL/glew.h"
 #include "IBuffer.h"
 
-class VertexBuffer : public IBuffer
+class VertexBuffer : public IVertexBuffer
 {
   public:
     rAllocData adata;

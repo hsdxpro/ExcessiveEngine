@@ -1,5 +1,7 @@
 #include "IndexBuffer.h"
 
+#include <string>
+
 void IndexBuffer::destroy()
 {
   glDeleteBuffers( 1, &id );
@@ -10,7 +12,7 @@ void IndexBuffer::update(char* data, unsigned size, unsigned offset)
 {
   if( data )
   {
-    void* ptr = glMapNamedBufferRange( id, GL_ELEMENT_ARRAY_BUFFER, offset, size, GL_WRITE_ONLY);
+    void* ptr = glMapNamedBufferRange( id, offset, size, GL_WRITE_ONLY);
     memcpy( ptr, data, size );
     glUnmapNamedBuffer( id );
   }

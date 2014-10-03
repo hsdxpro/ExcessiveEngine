@@ -1,8 +1,9 @@
 #pragma once
 
+#include "GL/glew.h"
 #include "IBuffer.h"
 
-class UniformBuffer : public IBuffer
+class UniformBuffer : public IUniformBuffer
 {
   public:
     rAllocData adata;

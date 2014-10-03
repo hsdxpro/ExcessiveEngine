@@ -1,6 +1,8 @@
 #pragma once
 
+#include "GL/glew.h"
 #include "ITextureView.h"
+#include "IGapi.h"
 
 class TextureView : public ITextureView
 {

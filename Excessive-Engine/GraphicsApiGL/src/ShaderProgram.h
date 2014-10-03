@@ -1,5 +1,9 @@
 #pragma once
 
+#include "GL/glew.h"
+
+#include "IShaderProgram.h"
+
 class ShaderProgram : public IShaderProgram
 {
   public:

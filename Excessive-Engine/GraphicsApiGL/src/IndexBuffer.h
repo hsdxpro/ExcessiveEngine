@@ -2,7 +2,9 @@
 
 #include "IBuffer.h"
 
-class IndexBuffer : public IBuffer
+#include "GL/glew.h"
+
+class IndexBuffer : public IIndexBuffer
 {
   public:
     rAllocData adata;

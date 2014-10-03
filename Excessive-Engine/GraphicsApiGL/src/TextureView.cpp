@@ -1,5 +1,7 @@
 #include "TextureView.h"
 
+#include "Texture.h"
+
 void TextureView::destroy()
 {
   glDeleteTextures( 1, &id );
@@ -59,38 +61,38 @@ void TextureView::setSamplerState(const rTextureSamplerData* data)
 
 void TextureView::update(const rTextureUpdateData* data)
 {
-  if( data && target )
+  if( data )
   {
     if( dim == ONE )
     {
-      glTextureSubImage2D( id, target, data->level, data->x_offset, data->width, texture_formats[data->format], texture_types[data->format], data->data );
+      glTextureSubImage1D( id, data->level, data->x_offset, data->width, texture_formats[data->format], texture_types[data->format], data->data );
     }
     else if( dim == TWO )
     {
-      glTextureSubImage2D( id, target, data->level, data->x_offset, data->y_offset, data->width, data->height, texture_formats[data->format], texture_types[data->format], data->data );
+      glTextureSubImage2D( id, data->level, data->x_offset, data->y_offset, data->width, data->height, texture_formats[data->format], texture_types[data->format], data->data );
     }
     else //threesome
     {
-      glTextureSubImage3D( id, target, data->level, data->x_offset, data->y_offset, data->z_offset, data->width, data->height, data->depth, texture_formats[data->format], texture_types[data->format], data->data );
+      glTextureSubImage3D( id, data->level, data->x_offset, data->y_offset, data->z_offset, data->width, data->height, data->depth, texture_formats[data->format], texture_types[data->format], data->data );
     }
   }
 }
 
 void TextureView::getSubData(const rTextureUpdateData* data)
 {
-  if( data && target )
+  if( data )
   {
     if( dim == ONE )
     {
-      glTextureSubImage2D( id, target, data->level, data->x_offset, data->width, texture_formats[data->format], texture_types[data->format], ((data->width - data->x_offset) * texture_sizes[data->format]) / 8, data->data );
+      glGetTextureSubImage( id, data->level, data->x_offset, 0, 0, data->width, 1, 1, texture_formats[data->format], texture_types[data->format], ((data->width - data->x_offset) * texture_sizes[data->format]) / 8, data->data );
     }
     else if( dim == TWO )
     {
-      glTextureSubImage2D( id, target, data->level, data->x_offset, data->y_offset, data->width, data->height, texture_formats[data->format], texture_types[data->format], ((data->width - data->x_offset) * (data->height - data->y_offset) * texture_sizes[data->format]) / 8, data->data );
+      glGetTextureSubImage( id, data->level, data->x_offset, data->y_offset, 0, data->width, data->height, 1, texture_formats[data->format], texture_types[data->format], ((data->width - data->x_offset) * (data->height - data->y_offset) * texture_sizes[data->format]) / 8, data->data );
     }
     else //threesome
     {
-      glTextureSubImage3D( id, target, data->level, data->x_offset, data->y_offset, data->z_offset, data->width, data->height, data->depth, texture_formats[data->format], texture_types[data->format], ((data->width - data->x_offset) * (data->height - data->y_offset) * (data->depth - data->z_offset) * texture_sizes[data->format]) / 8, data->data );
+      glGetTextureSubImage( id, data->level, data->x_offset, data->y_offset, data->z_offset, data->width, data->height, data->depth, texture_formats[data->format], texture_types[data->format], ((data->width - data->x_offset) * (data->height - data->y_offset) * (data->depth - data->z_offset) * texture_sizes[data->format]) / 8, data->data );
     }
   }
 }

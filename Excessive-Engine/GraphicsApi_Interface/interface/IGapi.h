@@ -23,7 +23,7 @@ struct rDepthState
 
 enum eStencilAction
 {
-  KEEP_VALUE = 0, ZERO_OUT, REPLACE_W_REF, INCREMENT, INCREMENT_WRAP, DECREMENT, 
+  KEEP_VALUE = 0, stencilZERO_OUT, REPLACE_W_REF, INCREMENT, INCREMENT_WRAP, DECREMENT, 
   DECREMENT_WRAP, INVERT_BITS
 };
 
@@ -45,7 +45,7 @@ enum eBlendEquation
 
 enum eBlendFunc
 {
-  ZERO_OUT = 0, ONE_OUT, SRC_COLOR, ONE_MIN_SRC_COLOR, DST_COLOR, ONE_MIN_DST_COLOR,
+  blendZERO_OUT = 0, ONE_OUT, SRC_COLOR, ONE_MIN_SRC_COLOR, DST_COLOR, ONE_MIN_DST_COLOR,
   SRC_ALPHA, ONE_MINUS_SRC_ALPHA, DST_ALPHA, ONE_MINUS_DST_ALPHA, CONSTANT_COLOR, 
   ONE_MINUS_CONSTANT_COLOR, CONSTANT_ALPHA, ONE_MINUS_CONSTANT_ALPHA, SRC_ALPHA_SATURATE,
   SECOND_SRC_COLOR, ONE_MINUS_SECOND_SRC_COLOR, SECOND_SRC_ALPHA, ONE_MINUS_SECOND_SRC_ALPHA
@@ -105,18 +105,6 @@ struct rVertexAttrib
   eVertexAttribType type;
   unsigned offset, size;
   unsigned divisor;
-};
-
-//specifices what type of texture you'd like to allocate
-struct rTextureData
-{
-  unsigned num_levels; //mipmap levels
-  unsigned width;
-  unsigned height;
-  unsigned depth;
-  eFormatType format; //texture format
-  bool is_layered;
-  bool is_cubemap;
 };
 
 enum eDimensions

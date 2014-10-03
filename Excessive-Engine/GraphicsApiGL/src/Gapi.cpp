@@ -9,7 +9,7 @@
 
 GLenum func_data[] =
 {
-  GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL, GL_GREATER, GL_NOTEQUAL, GL_GEQUAL, GL_ALWAYS );
+  GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL, GL_GREATER, GL_NOTEQUAL, GL_GEQUAL, GL_ALWAYS
 };
 
 GLenum stencil_op_data[] = 
@@ -24,8 +24,8 @@ GLenum blend_eq_data[] =
 
 GLenum blend_func_data[] =
 {
-  GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA. GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA
-}
+  GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA
+};
 
 GLenum raster_mode_data[] = 
 {
@@ -62,57 +62,57 @@ ITexture* Gapi::createTexture(rTextureData* data)
       if( data->depth > 1 )
       {
         //3D
-        dim = THREE;
+        tex->dim = THREE;
         
         if( data->is_layered )
         {
           if( data->is_cubemap )
           {
-            target = GL_TEXTURE_CUBE_ARRAY;
+            tex->target = GL_TEXTURE_CUBE_MAP_ARRAY;
           }
           else
           {
-            target = GL_TEXTURE_2D_ARRAY;
+            tex->target = GL_TEXTURE_2D_ARRAY;
           }
         }
         else
         {
-          target = GL_TEXTURE_3D;
+          tex->target = GL_TEXTURE_3D;
         }
         
-        glTexStorage3D( target, data->num_levels, texture_internal_formats[data->format], data->width, data->height, data->depth );        
+        glTexStorage3D( tex->target, data->num_levels, texture_internal_formats[data->format], data->width, data->height, data->depth );        
       }
       else
       {
         //2D
-        dim = TWO;
+        tex->dim = TWO;
         
         if( data->is_layered )
         {
-          target = GL_TEXTURE_1D_ARRAY;
+          tex->target = GL_TEXTURE_1D_ARRAY;
         }
         else if( data->is_cubemap )
         {
-          target = GL_TEXTURE_CUBE_MAP;
+          tex->target = GL_TEXTURE_CUBE_MAP;
         }
         else
         {
-          target = GL_TEXTURE_2D;
+          tex->target = GL_TEXTURE_2D;
         }
         
-        glTexStorage2D( target, data->num_levels, texture_internal_formats[data->format], data->width, data->height );
+        glTexStorage2D( tex->target, data->num_levels, texture_internal_formats[data->format], data->width, data->height );
       }
     }
     else
     {
       //1D
-      dim = ONE;
+      tex->dim = ONE;
       
-      target = GL_TEXTURE_1D;
-      glTexStorage1D( target, data->num_levels, texture_internal_formats[data->format], data->width );
+      tex->target = GL_TEXTURE_1D;
+      glTexStorage1D( tex->target, data->num_levels, texture_internal_formats[data->format], data->width );
     }
     
-    d = *data;
+    tex->d = *data;
   }
   
   return tex;
@@ -152,7 +152,7 @@ ITextureView* Gapi::createTextureView(rTextureViewData* data)
       {
         if( data->is_cubemap )
         {
-          tex->target = GL_TEXTURE_CUBE_ARRAY;
+          tex->target = GL_TEXTURE_CUBE_MAP_ARRAY;
         }
         else
         {
@@ -168,7 +168,7 @@ ITextureView* Gapi::createTextureView(rTextureViewData* data)
     glTextureView(	tex->id,
     tex->target,
     static_cast<Texture*>(data->base_tex)->id,
-    data->texture_internal_formats,
+    texture_internal_formats[data->format],
     data->start_level,
     data->num_levels,
     data->start_layer,
@@ -184,11 +184,11 @@ IVertexBuffer* Gapi::createVertexBuffer(rAllocData* data)
   glGenBuffers( 1, &vbo->id );
   
   
-  glNamedBufferStorage( vbo->id, data->size, GL_DYNAMIC_STORAGE_BIT | 
+  glNamedBufferStorage( vbo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
                                              (data->is_readable ? GL_MAP_READ_BIT : 0) |
                                              (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
                                              (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                             (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT) );
+                                             (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );
 
   return vbo;
 }
@@ -198,11 +198,11 @@ IIndexBuffer* Gapi::createIndexBuffer(rAllocData* data)
   IndexBuffer* ibo = new IndexBuffer();
   glGenBuffers( 1, &ibo->id );
   
-  glNamedBufferStorage( vbo->id, data->size, GL_DYNAMIC_STORAGE_BIT | 
+  glNamedBufferStorage( ibo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
                                            (data->is_readable ? GL_MAP_READ_BIT : 0) |
                                            (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
                                            (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT) );
+                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );
   
   return ibo;
 }
@@ -212,11 +212,11 @@ IUniformBuffer* Gapi::createUniformBuffer(rAllocData* data)
   UniformBuffer* ubo = new UniformBuffer();
   glGenBuffers( 1, &ubo->id );
   
-  glNamedBufferStorage( vbo->id, data->size, GL_DYNAMIC_STORAGE_BIT | 
+  glNamedBufferStorage( ubo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
                                            (data->is_readable ? GL_MAP_READ_BIT : 0) |
                                            (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
                                            (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT) );
+                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );
   
   return ubo;
 }
@@ -278,7 +278,7 @@ void Gapi::setBlendState(rBlendState* state)
       glDisable( GL_BLEND );
     }
     
-    glBlendColor( blend_color.x, blend_color.y, blend_color.z, blend_color.w );
+    glBlendColor( state->blend_color.x, state->blend_color.y, state->blend_color.z, state->blend_color.w );
     
     glBlendEquation( blend_eq_data[state->equation] );
     
@@ -312,7 +312,7 @@ void Gapi::setSeamlessCubeMaps(bool val)
 
 void Gapi::setViewport(int x, int y, unsigned w, unsigned h)
 {
-  glViewPort( x, y, w, h );
+  glViewport( x, y, w, h );
 }
 
 void Gapi::setRasterizationState(rRasterizerState* state)
@@ -332,11 +332,11 @@ void Gapi::setDebugOutput(bool val)
 {
   if( val )
   {
-    glEnable(GL_DEBUG_OUTPUT)​;
+    glEnable(GL_DEBUG_OUTPUT);
   }
   else
   {
-    glDisable(GL_DEBUG_OUTPUT)​;
+    glDisable(GL_DEBUG_OUTPUT);
   }
 }
 

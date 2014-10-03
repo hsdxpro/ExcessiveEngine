@@ -1,6 +1,8 @@
 #pragma once
 
-#include "../../GraphicsApi_Interface/interface/IGapi.h"
+#include "IGapi.h"
+
+#include "GL/glew.h"
 
 class Gapi : public IGapi
 {

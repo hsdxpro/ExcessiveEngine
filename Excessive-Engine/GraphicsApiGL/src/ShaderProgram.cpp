@@ -1,12 +1,16 @@
 #include "ShaderProgram.h"
 
+#include <vector>
+
+using namespace std;
+
 //TODO add error checking in debug mode maybe?
 
 //should be indexed by an eShaderType enum
 GLenum shader_types[] = 
 {
-  GL_VERTEX_SHADER, GL_TESSELLATION_CONTROL_SHADER, GL_TESSELLATION_EVALUATION_SHADER,
-  GL_GEOMETRY_SHADER, GL_PIXEL_SHADER, GL_COMPUTE_SHADER
+  GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER, GL_TESS_EVALUATION_SHADER,
+  GL_GEOMETRY_SHADER, GL_FRAGMENT_SHADER, GL_COMPUTE_SHADER
 };
 
 #define INFOLOG_SIZE 4096
@@ -22,7 +26,7 @@ void ShaderProgram::addShader(const char* src, eShaderType type)
   static GLchar infolog[INFOLOG_SIZE];
   
   GLuint shader_id = glCreateShader( shader_types[type] );
-  glShaderSource( shader_id, 1, &c, 0 );
+  glShaderSource( shader_id, 1, &src, 0 );
   glCompileShader( shader_id );
   glAttachShader( id, shader_id );
   glDeleteShader( id );
@@ -55,9 +59,9 @@ void ShaderProgram::getBinary(char** data, unsigned* size)
       *data = new char[*size];
       
       char* ptr = *data;
-      static_cast<GLint*>(ptr)[0] = bufsize;
+      reinterpret_cast<GLint*>(ptr)[0] = bufsize;
       ptr += sizeof(GLint);
-      static_cast<GLenum*>(ptr)[0] = format;
+      reinterpret_cast<GLenum*>(ptr)[0] = format;
       ptr += sizeof(GLenum);
       memcpy( ptr, buf.data(), bufsize );
     }
@@ -69,9 +73,9 @@ void ShaderProgram::loadFromBinary(char* data, unsigned size)
   if( data )
   {
     char* ptr = data;
-    GLint size = static_cast<GLint*>(ptr)[0];
+    GLint size = reinterpret_cast<GLint*>(ptr)[0];
     ptr += sizeof(GLint);
-    GLenum format = static_cast<GLenum*>(ptr)[0];
+    GLenum format = reinterpret_cast<GLenum*>(ptr)[0];
     ptr += sizeof(GLenum);
     
     glProgramBinary( id, format, ptr, size );

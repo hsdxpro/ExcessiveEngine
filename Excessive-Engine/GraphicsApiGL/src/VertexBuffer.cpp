@@ -1,5 +1,7 @@
 #include "VertexBuffer.h"
 
+#include <string>
+
 void VertexBuffer::destroy()
 {
   glDeleteBuffers( 1, &id );
@@ -10,7 +12,7 @@ void VertexBuffer::update(char* data, unsigned size, unsigned offset)
 {
   if( data )
   {
-    void* ptr = glMapNamedBufferRange( id, GL_ARRAY_BUFFER, offset, size, GL_WRITE_ONLY);
+    void* ptr = glMapNamedBufferRange( id, offset, size, GL_WRITE_ONLY);
     memcpy( ptr, data, size );
     glUnmapNamedBuffer( id );
   }
