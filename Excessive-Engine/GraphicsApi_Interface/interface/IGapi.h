@@ -2,6 +2,10 @@
 
 #include "mymath/mymath.h"
 
+#include "ITextureView.h"
+#include "ITexture.h"
+#include "IBuffer.h"
+#include "IShaderProgram.h"
 
 enum eFunc
 {

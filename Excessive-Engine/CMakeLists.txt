@@ -1,3 +1,5 @@
+message( "-Excessive-Engine" )
+
 add_subdirectory( Common)
 add_subdirectory( PIL )
 add_subdirectory( Core )

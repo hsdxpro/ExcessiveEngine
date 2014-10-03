@@ -1,3 +1,5 @@
+message( "-platform-detection" )
+
 #the platform independence layer should be included first
 
 if( DEBUG_BUILD )
