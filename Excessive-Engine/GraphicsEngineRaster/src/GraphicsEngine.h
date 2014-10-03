@@ -1,5 +1,6 @@
 #include "../GraphicsEngine_Interface/interface/IGraphicsEngine.h"
 
+#include <unordered_set>
 
 // must be included because of covariant return type override
 #include "Scene.h"
@@ -34,4 +35,9 @@ public:
 	// interact
 	void update() override;
 
+private:
+	std::unordered_set<Scene*> scenes;
+	std::unordered_set<Mesh*> meshes;
+	std::unordered_set<Material*> materials;
+	std::unordered_set<Texture*> textures;
 };

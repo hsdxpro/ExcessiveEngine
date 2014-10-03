@@ -1,8 +1,6 @@
 #include "Light.h"
 
-void Light::release() {
-	delete this;
-}
+
 
 void Light::setColor() {
 	return;

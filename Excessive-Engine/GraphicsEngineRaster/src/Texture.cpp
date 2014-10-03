@@ -1,4 +1,5 @@
 #include "Texture.h"
+#include <memory>
 #include <iostream> // for debug only
 
 
@@ -33,9 +34,10 @@ void Texture::release() {
 // load
 
 void Texture::load(const char* file_path) {
-
+	size_t s = strlen(file_path);
+	auto wstr = std::make_unique<wchar_t>(s);
+	return load(wstr.get());
 }
-
 
 void Texture::load(const wchar_t* file_path) {
 

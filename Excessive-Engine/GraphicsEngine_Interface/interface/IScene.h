@@ -22,7 +22,7 @@ public:
 	virtual void erase(IEntity* entity) = 0;
 	virtual void erase(ILight* light) = 0;
 
-	
+	virtual void clear() = 0;	
 };
 
 
