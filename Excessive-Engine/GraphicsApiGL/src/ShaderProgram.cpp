@@ -29,7 +29,7 @@ void ShaderProgram::addShader(const char* src, eShaderType type)
   glShaderSource( shader_id, 1, &src, 0 );
   glCompileShader( shader_id );
   glAttachShader( id, shader_id );
-  glDeleteShader( id );
+  glDeleteShader( shader_id );
 }
 
 void ShaderProgram::link()

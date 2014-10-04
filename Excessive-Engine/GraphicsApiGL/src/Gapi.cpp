@@ -19,16 +19,18 @@ EXPORT IGapi* getGapi()
     gapi = new Gapi();
 
     GLenum glew_error = glewInit();
-    glGetError(); //ignore glew errors
+    
+    GLenum error;
+    while ((error = glGetError()) != GL_NO_ERROR);
 
     if( glew_error != GLEW_OK )
     {
       cerr << "Error initializing GLEW: " << glewGetErrorString( glew_error ) << endl;
     }
 
-    if( !GLEW_VERSION_4_4 )
+    if( !GLEW_VERSION_4_5 )
     {
-      cerr << "Error: GL 4.4 is required" << endl;
+      cerr << "Error: GL 4.5 is required" << endl;
     }
   }
 
@@ -108,6 +110,7 @@ ITexture* Gapi::createTexture(rTextureData* data)
           tex->target = GL_TEXTURE_3D;
         }
         
+        glBindTexture( tex->target, tex->id );
         glTexStorage3D( tex->target, data->num_levels, texture_internal_formats[data->format], data->width, data->height, data->depth );        
       }
       else
@@ -128,6 +131,7 @@ ITexture* Gapi::createTexture(rTextureData* data)
           tex->target = GL_TEXTURE_2D;
         }
         
+        glBindTexture( tex->target, tex->id );
         glTexStorage2D( tex->target, data->num_levels, texture_internal_formats[data->format], data->width, data->height );
       }
     }
@@ -137,6 +141,8 @@ ITexture* Gapi::createTexture(rTextureData* data)
       tex->dim = ONE;
       
       tex->target = GL_TEXTURE_1D;
+
+      glBindTexture( tex->target, tex->id );
       glTexStorage1D( tex->target, data->num_levels, texture_internal_formats[data->format], data->width );
     }
     
@@ -211,13 +217,17 @@ IVertexBuffer* Gapi::createVertexBuffer(rAllocData* data)
   VertexBuffer* vbo = new VertexBuffer();
   glGenBuffers( 1, &vbo->id );
   
-  
-  glNamedBufferStorage( vbo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
+  glBindBuffer( GL_ARRAY_BUFFER, vbo->id );
+  glBufferData( GL_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_DRAW );
+
+  //TODO this doesn't work yet...
+  /*glNamedBufferStorage( vbo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
                                              (data->is_readable ? GL_MAP_READ_BIT : 0) |
                                              (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
                                              (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                             (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );
+                                             (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
 
+  vbo->adata = *data;
   return vbo;
 }
 
@@ -226,12 +236,17 @@ IIndexBuffer* Gapi::createIndexBuffer(rAllocData* data)
   IndexBuffer* ibo = new IndexBuffer();
   glGenBuffers( 1, &ibo->id );
   
-  glNamedBufferStorage( ibo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
+  glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo->id );
+  glBufferData( GL_ELEMENT_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_DRAW );
+
+  //TODO this doesn't work yet...
+  /*glNamedBufferStorage( ibo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
                                            (data->is_readable ? GL_MAP_READ_BIT : 0) |
                                            (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
                                            (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );
+                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
   
+  ibo->adata = *data;
   return ibo;
 }
 
@@ -240,12 +255,17 @@ IUniformBuffer* Gapi::createUniformBuffer(rAllocData* data)
   UniformBuffer* ubo = new UniformBuffer();
   glGenBuffers( 1, &ubo->id );
   
-  glNamedBufferStorage( ubo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
+  glBindBuffer( GL_UNIFORM_BUFFER, ubo->id );
+  glBufferData( GL_UNIFORM_BUFFER, data->size, 0, GL_DYNAMIC_DRAW );
+
+  //TODO this doesn't work yet...
+  /*glNamedBufferStorage( ubo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
                                            (data->is_readable ? GL_MAP_READ_BIT : 0) |
                                            (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
                                            (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );
+                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
   
+  ubo->adata = *data;
   return ubo;
 }
 
@@ -395,7 +415,12 @@ void Gapi::passUniformBuffer(IShaderProgram* s, IUniformBuffer* buf)
   //TODO
 }
 
-void Gapi::passVertexBuffer(IShaderProgram* s, IVertexBuffer* vbos, unsigned num_vbos)
+void Gapi::passVertexBuffers(IShaderProgram* s, IVertexBuffer* vbos, unsigned num_vbos)
+{
+  //TODO
+}
+
+void Gapi::passIndexBuffer(IShaderProgram* s, IIndexBuffer* ibo)
 {
   //TODO
 }

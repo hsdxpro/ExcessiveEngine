@@ -12,22 +12,30 @@
 #include <fstream>
 using namespace std;
 
+#include "mymath/mymath.h"
+using namespace mymath;
+
 const char* vshd = 
-"#version 440 core \n"
+"#version 450 core \n"
 "uniform mat4 mvp; \n"
 "in vec4 in_vertex; \n"
+"in vec2 in_texcoord; \n"
+"out vec2 texcoord; \n"
 "void main() \n"
 "{ \n"
-"gl_Position = mvp * in_vertex; \n"
+"  texcoord = in_texcoord; \n"
+"  gl_Position = mvp * in_vertex; \n"
 "} \n";
 
 const char* pshd = 
-"#version 440 core \n"
+"#version 450 core \n"
+"uniform sampler2D tex;"
 "uniform mat4 mvp; \n"
+"in vec2 texcoord; \n"
 "out vec4 color; \n"
 "void main() \n"
 "{ \n"
-"color = vec4(1); \n"
+"color = texture(tex, texcoord); \n"
 "} \n";
 
 std::string get_app_path();
@@ -39,6 +47,7 @@ int main( int argc, char** args )
 {
   string app_path = get_app_path();
 
+  //initialize sfml
   sf::Window w;
   w.create( sf::VideoMode( 512, 512 ), "Graphics Api GL Test" );
 
@@ -49,6 +58,7 @@ int main( int argc, char** args )
 
   w.setVerticalSyncEnabled( true );
 
+  //load GL Graphics Api dll
   string dll_path = app_path + "Debug/GraphicsApiGL.dll";
 
   fstream f;
@@ -57,10 +67,7 @@ int main( int argc, char** args )
   if( !f.is_open() )
     cerr << "couldn't open dll." << endl;
   else
-  {
-    cerr << "Dll opened" << endl;
     f.close();
-  }
 
   std::replace( dll_path.begin(), dll_path.end(), '/', '\\' );
   auto dll = LoadLibrary( dll_path.c_str() );
@@ -71,17 +78,191 @@ int main( int argc, char** args )
     getGapi = (getGapiType)GetProcAddress( dll, "getGapi" );
   }
 
+  //set up the GL Gapi
   IGapi* gapi = getGapi();
+
+  gapi->setDebugOutput( true );
+  gapi->setSeamlessCubeMaps( true );
+  gapi->setSyncDebugOutput( true );
+
+  //set up the shader program
   auto sp = gapi->createShaderProgram();
   sp->addShader(vshd, VERTEX_SHADER);
   sp->addShader(pshd, PIXEL_SHADER);
+  sp->link();
 
-  /*bool run = false;
+  //example binary shader store/load
+  char* data;
+  unsigned size;
+  sp->getBinary(&data, &size);
+  
+  f.open("shader.shaderbin", ios::binary | ios::out );
+  f.write( (const char*)&size, sizeof(unsigned) );
+  f.write( data, size );
+  f.close();
 
+  data = 0;
+  size = 0;
+
+  f.open("shader.shaderbin", ios::binary | ios::in );
+  f.read( (char*)&size, sizeof(unsigned) );
+  f.read( data = new char[size], size );
+  f.close();
+
+  sp->loadFromBinary( data, size );
+
+  //set up texture
+  string image_path = app_path + "image.png";
+  sf::Image im;
+  im.loadFromFile( image_path );
+
+  rTextureData texdata;
+  texdata.width = im.getSize().x;
+  texdata.height = im.getSize().y;
+  texdata.depth = 1;
+  texdata.format = RGBA8;
+  texdata.is_cubemap = false;
+  texdata.is_layered = false;
+  texdata.num_levels = 1;
+
+  auto tex = gapi->createTexture(&texdata);
+
+  rTextureUpdateData texupdata;
+  texupdata.data = (char*)im.getPixelsPtr();
+  texupdata.depth = texdata.depth;
+  texupdata.format = texdata.format;
+  texupdata.width = texdata.width;
+  texupdata.height = texdata.height;
+  texupdata.level = 0;
+  texupdata.x_offset = 0;
+  texupdata.y_offset = 0;
+  texupdata.z_offset = 0;
+
+  tex->update( &texupdata );
+
+  rTextureSamplerData smpdata;
+  smpdata.is_anisotropic = false;
+  smpdata.is_bilinear = true;
+  smpdata.is_clamped = true;
+  smpdata.is_mipmapped = false;
+
+  tex->setSamplerState( &smpdata );
+
+  //set up the texture view
+  rTextureViewData texviewdata;
+  texviewdata.base_tex = tex;
+  texviewdata.dim = TWO;
+  texviewdata.format = texdata.format;
+  texviewdata.is_cubemap = texdata.is_cubemap;
+  texviewdata.is_layered = texdata.is_layered;
+  texviewdata.num_layers = 1;
+  texviewdata.num_levels = 1;
+  texviewdata.start_layer = 0;
+  texviewdata.start_level = 0;
+
+  auto texview = gapi->createTextureView( &texviewdata );
+  texview->setSamplerState( &smpdata );
+
+  //set up the mesh
+  vector<vec3> vertices;
+  vector<vec2> texcoords;
+  vector<unsigned> indices;
+
+  indices.push_back( 0 );
+  indices.push_back( 1 );
+  indices.push_back( 2 );
+
+  indices.push_back( 0 );
+  indices.push_back( 2 );
+  indices.push_back( 3 );
+
+  vertices.push_back( vec3( -1, -1, 0 ) );
+  vertices.push_back( vec3( 1, -1, 0 ) );
+  vertices.push_back( vec3( 1, 1, 0 ) );
+  vertices.push_back( vec3( -1, 1, 0 ) );
+
+  texcoords.push_back( vec2( 0, 0 ) );
+  texcoords.push_back( vec2( 1, 0 ) );
+  texcoords.push_back( vec2( 1, 1 ) );
+  texcoords.push_back( vec2( 0, 1 ) );
+
+  rAllocData tex_alloc_data;
+  tex_alloc_data.is_persistent = false;
+  tex_alloc_data.is_readable = true;
+  tex_alloc_data.is_writable = true;
+  tex_alloc_data.prefer_cpu_storage = false;
+  tex_alloc_data.size = texcoords.size() * sizeof(vec2);
+
+  rAllocData vtx_alloc_data;
+  vtx_alloc_data.is_persistent = false;
+  vtx_alloc_data.is_readable = true;
+  vtx_alloc_data.is_writable = true;
+  vtx_alloc_data.prefer_cpu_storage = false;
+  vtx_alloc_data.size = vertices.size() * sizeof(vec3);
+
+  rAllocData idx_alloc_data;
+  idx_alloc_data.is_persistent = false;
+  idx_alloc_data.is_readable = true;
+  idx_alloc_data.is_writable = true;
+  idx_alloc_data.prefer_cpu_storage = false;
+  idx_alloc_data.size = indices.size() * sizeof(unsigned);
+
+  IVertexBuffer* vbos[2];
+  vbos[0] = gapi->createVertexBuffer( &vtx_alloc_data );
+  vbos[1] = gapi->createVertexBuffer( &tex_alloc_data );
+
+  auto idx_buf = gapi->createIndexBuffer( &idx_alloc_data );
+
+  vbos[0]->update( (char*)vertices.data(), vertices.size() * sizeof(vec3), 0 );
+  vbos[1]->update( (char*)texcoords.data(), texcoords.size() * sizeof(vec2), 0 );
+
+  idx_buf->update( (char*)indices.data(), indices.size() * sizeof(unsigned), 0 );
+
+  //set up the uniform buffer
+  rAllocData ubo_alloc_data;
+  ubo_alloc_data.is_persistent = false;
+  ubo_alloc_data.is_readable = true;
+  ubo_alloc_data.is_writable = true;
+  ubo_alloc_data.prefer_cpu_storage = false;
+  ubo_alloc_data.size = 1 * sizeof(mat4);
+
+  mat4 mvp = ortographic( -1.0f, 1.0f, -1.0f, 1.0f, 0.0f, -1.0f );
+
+  auto ubo_buf = gapi->createUniformBuffer( &ubo_alloc_data );
+  
+  ubo_buf->update( (char*)&mvp[0][0], sizeof(mat4), 0 );
+
+  //draw stuff
+  gapi->setViewport( 0, 0, 512, 512 );
+
+  bool run = true;
+  sf::Event ev;
   while( run )
   {
+    while( w.pollEvent( ev ) )
+    {
+      if( ev.type == sf::Event::Closed ||
+          (
+            ev.type == sf::Event::KeyPressed &&
+            ev.key.code == sf::Keyboard::Escape
+          )
+        )
+      {
+        run = false;
+      }
+
+      //handle events
+    }
+
+    //TODO something like this...
+    gapi->passTextureView( sp, texview, 0 );
+    gapi->passUniformBuffer( sp, ubo_buf );
+    gapi->passVertexBuffers( sp, vbos[0], 2 );
+    gapi->passIndexBuffer( sp, idx_buf ); 
+    gapi->draw( sp, indices.size() );
+
     w.display();
-  }*/
+  }
 
   FreeLibrary(dll);
 

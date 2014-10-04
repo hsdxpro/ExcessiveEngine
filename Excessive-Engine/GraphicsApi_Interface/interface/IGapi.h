@@ -129,7 +129,6 @@ struct rTextureViewData
   bool is_cubemap;
 };
 
-//TODO implement GL api into GraphicsApiGL folder
 class IGapi
 {
   public:
@@ -158,7 +157,8 @@ class IGapi
     virtual void passTextureView(IShaderProgram* s, ITextureView* tex, unsigned index) = 0;
     virtual void passRenderTargets(IShaderProgram* s, rTargetData* render_targets, unsigned size) = 0;
     virtual void passUniformBuffer(IShaderProgram* s, IUniformBuffer* buf) = 0;
-    virtual void passVertexBuffer(IShaderProgram* s, IVertexBuffer* vbos, unsigned num_vbos) = 0;
+    virtual void passVertexBuffers(IShaderProgram* s, IVertexBuffer* vbos, unsigned num_vbos) = 0;
+    virtual void passIndexBuffer(IShaderProgram* s, IIndexBuffer* ibo) = 0;
     
     //draw stuff
     virtual void draw(IShaderProgram* s, unsigned num_indices) = 0;

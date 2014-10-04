@@ -12,7 +12,7 @@ void UniformBuffer::update(char* data, unsigned size, unsigned offset)
 {
   if( data )
   {
-    void* ptr = glMapNamedBufferRange( id, offset, size, GL_WRITE_ONLY);
+    void* ptr = glMapNamedBufferRange( id, offset, size, GL_MAP_WRITE_BIT );
     memcpy( ptr, data, size );
     glUnmapNamedBuffer( id );
   }

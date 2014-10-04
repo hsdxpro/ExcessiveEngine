@@ -11,6 +11,7 @@ add_library( GraphicsApiGL SHARED ${sources} ${headers} ${interfaces} )
 target_link_libraries( GraphicsApiGL glew32 opengl32 )
 
 add_executable( GLGapiTest test.cpp )
+add_dependencies( GLGapiTest GraphicsApiGL )
 
 target_link_libraries( GLGapiTest 
 debug sfml-main-d optimized sfml-main
