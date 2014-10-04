@@ -13,5 +13,5 @@ class ShaderProgram : public IShaderProgram
     void addShader(const char* src, eShaderType type);
     void link();
     void getBinary(char** data, unsigned* size);
-    void loadFromBinary(char* data, unsigned size);
+    void loadFromBinary(char* data);
 };

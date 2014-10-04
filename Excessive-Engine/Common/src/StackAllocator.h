@@ -1,7 +1,7 @@
 #ifndef StackAllocator_h
 #define StackAllocator_h
 
-#include "assert.h"
+#include "custom_assert.h"
 
 typedef unsigned marker;
 

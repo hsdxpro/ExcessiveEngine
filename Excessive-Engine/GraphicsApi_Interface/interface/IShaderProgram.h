@@ -17,5 +17,5 @@ class IShaderProgram
     virtual void link() = 0;
     //overwrites pointer at data, size
     virtual void getBinary(char** data, unsigned* size) = 0;
-    virtual void loadFromBinary(char* data, unsigned size) = 0;
+    virtual void loadFromBinary(char* data) = 0;
 };

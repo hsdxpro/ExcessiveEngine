@@ -1,14 +1,14 @@
-#include "IndexBuffer.h"
+#include "Buffer.h"
 
 #include <string>
 
-void IndexBuffer::destroy()
+void Buffer::destroy()
 {
   glDeleteBuffers( 1, &id );
   id = 0;
 }
 
-void IndexBuffer::update(char* data, unsigned size, unsigned offset)
+void Buffer::update(char* data, unsigned size, unsigned offset)
 {
   if( data )
   {
@@ -18,7 +18,7 @@ void IndexBuffer::update(char* data, unsigned size, unsigned offset)
   }
 }
 
-void IndexBuffer::getSubData(char* data, unsigned size, unsigned offset)
+void Buffer::getSubData(char* data, unsigned size, unsigned offset)
 {
   if( data )
   {
@@ -26,7 +26,7 @@ void IndexBuffer::getSubData(char* data, unsigned size, unsigned offset)
   }
 }
 
-rAllocData IndexBuffer::getAllocData()
+rAllocData Buffer::getAllocData()
 {
   return adata;
 }

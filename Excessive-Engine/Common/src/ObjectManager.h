@@ -3,7 +3,7 @@
 
 #include <limits.h>
 #include <vector>
-#include <assert.h>
+#include "custom_assert.h"
 #include "BasicTypes.h"
 
 namespace om

@@ -1,5 +1,6 @@
 #include "TextureView.h"
 
+#include "custom_assert.h"
 #include "Texture.h"
 
 void TextureView::destroy()
@@ -11,10 +12,10 @@ void TextureView::destroy()
 //TODO move these to a common function maybe?
 void TextureView::setSamplerState(const rTextureSamplerData* data)
 {
-  if( data && target )
+  ASSERT( data && target )
   {
     //GL needs a glTextureParameterx so that no stupid binding is needed
-    if( currently_bound_textures[0] != id )
+    //if( currently_bound_textures[0] != id )
     {
       glBindTextureUnit( 0, id );
       currently_bound_textures[0] = id;
@@ -61,7 +62,7 @@ void TextureView::setSamplerState(const rTextureSamplerData* data)
 
 void TextureView::update(const rTextureUpdateData* data)
 {
-  if( data )
+  ASSERT( data )
   {
     if( dim == ONE )
     {
@@ -80,20 +81,9 @@ void TextureView::update(const rTextureUpdateData* data)
 
 void TextureView::getSubData(const rTextureUpdateData* data)
 {
-  if( data )
+  ASSERT( data )
   {
-    if( dim == ONE )
-    {
-      glGetTextureSubImage( id, data->level, data->x_offset, 0, 0, data->width, 1, 1, texture_formats[data->format], texture_types[data->format], ((data->width - data->x_offset) * texture_sizes[data->format]) / 8, data->data );
-    }
-    else if( dim == TWO )
-    {
-      glGetTextureSubImage( id, data->level, data->x_offset, data->y_offset, 0, data->width, data->height, 1, texture_formats[data->format], texture_types[data->format], ((data->width - data->x_offset) * (data->height - data->y_offset) * texture_sizes[data->format]) / 8, data->data );
-    }
-    else //threesome
-    {
-      glGetTextureSubImage( id, data->level, data->x_offset, data->y_offset, data->z_offset, data->width, data->height, data->depth, texture_formats[data->format], texture_types[data->format], ((data->width - data->x_offset) * (data->height - data->y_offset) * (data->depth - data->z_offset) * texture_sizes[data->format]) / 8, data->data );
-    }
+    glGetTextureSubImage( id, data->level, data->x_offset, data->y_offset, data->z_offset, data->width, data->height, data->depth, texture_formats[data->format], texture_types[data->format], ((data->width - data->x_offset) * (data->height - data->y_offset) * (data->depth - data->z_offset) * texture_sizes[data->format]) / 8, data->data );
   }
 }
 

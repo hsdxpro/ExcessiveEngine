@@ -1,4 +1,4 @@
-#include "assert.h"
+#include "custom_assert.h"
 #include "HashedString.h"
 
 #include "Spline.h"

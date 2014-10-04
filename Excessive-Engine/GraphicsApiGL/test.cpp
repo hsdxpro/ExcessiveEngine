@@ -17,25 +17,27 @@ using namespace mymath;
 
 const char* vshd = 
 "#version 450 core \n"
-"uniform mat4 mvp; \n"
-"in vec4 in_vertex; \n"
-"in vec2 in_texcoord; \n"
+"layout(std140) uniform constant_data \n"
+"{ \n"
+"  mat4 mvp; \n"
+"} cd; \n"
+"layout(location=0) in vec3 in_vertex; \n"
+"layout(location=1) in vec2 in_texcoord; \n"
 "out vec2 texcoord; \n"
 "void main() \n"
 "{ \n"
 "  texcoord = in_texcoord; \n"
-"  gl_Position = mvp * in_vertex; \n"
+"  gl_Position = cd.mvp * vec4(in_vertex, 1); \n"
 "} \n";
 
 const char* pshd = 
 "#version 450 core \n"
-"uniform sampler2D tex;"
-"uniform mat4 mvp; \n"
+"layout(binding=0) uniform sampler2D tex;"
 "in vec2 texcoord; \n"
-"out vec4 color; \n"
+"layout(location=0) out vec4 color; \n"
 "void main() \n"
 "{ \n"
-"color = texture(tex, texcoord); \n"
+"  color = texture(tex, texcoord); \n"
 "} \n";
 
 std::string get_app_path();
@@ -92,6 +94,7 @@ int main( int argc, char** args )
   sp->link();
 
   //example binary shader store/load
+  /**
   char* data;
   unsigned size;
   sp->getBinary(&data, &size);
@@ -109,7 +112,8 @@ int main( int argc, char** args )
   f.read( data = new char[size], size );
   f.close();
 
-  sp->loadFromBinary( data, size );
+  sp->loadFromBinary( data );
+  /**/
 
   //set up texture
   string image_path = app_path + "image.png";
@@ -207,14 +211,13 @@ int main( int argc, char** args )
   idx_alloc_data.prefer_cpu_storage = false;
   idx_alloc_data.size = indices.size() * sizeof(unsigned);
 
-  IVertexBuffer* vbos[2];
-  vbos[0] = gapi->createVertexBuffer( &vtx_alloc_data );
-  vbos[1] = gapi->createVertexBuffer( &tex_alloc_data );
+  auto vtx_buf = gapi->createVertexBuffer( &vtx_alloc_data );
+  auto tex_buf = gapi->createVertexBuffer( &tex_alloc_data );
 
   auto idx_buf = gapi->createIndexBuffer( &idx_alloc_data );
 
-  vbos[0]->update( (char*)vertices.data(), vertices.size() * sizeof(vec3), 0 );
-  vbos[1]->update( (char*)texcoords.data(), texcoords.size() * sizeof(vec2), 0 );
+  vtx_buf->update( (char*)vertices.data(), vertices.size() * sizeof(vec3), 0 );
+  tex_buf->update( (char*)texcoords.data(), texcoords.size() * sizeof(vec2), 0 );
 
   idx_buf->update( (char*)indices.data(), indices.size() * sizeof(unsigned), 0 );
 
@@ -233,20 +236,13 @@ int main( int argc, char** args )
   ubo_buf->update( (char*)&mvp[0][0], sizeof(mat4), 0 );
 
   //draw stuff
-  gapi->setViewport( 0, 0, 512, 512 );
-
   bool run = true;
   sf::Event ev;
   while( run )
   {
     while( w.pollEvent( ev ) )
     {
-      if( ev.type == sf::Event::Closed ||
-          (
-            ev.type == sf::Event::KeyPressed &&
-            ev.key.code == sf::Keyboard::Escape
-          )
-        )
+      if( ev.type == sf::Event::Closed || ( ev.type == sf::Event::KeyPressed && ev.key.code == sf::Keyboard::Escape ) )
       {
         run = false;
       }
@@ -254,10 +250,33 @@ int main( int argc, char** args )
       //handle events
     }
 
-    //TODO something like this...
+    static vector<IVertexBuffer*> vbos;
+    static vector<rVertexAttrib> attribs;
+
+    vbos.clear();
+    vbos.push_back(vtx_buf);
+    vbos.push_back(tex_buf);
+
+    attribs.clear();
+
+    rVertexAttrib attr;
+    attr.data_components = 3;
+    attr.divisor = 0;
+    attr.index = 0;
+    attr.offset = 0;
+    attr.size = 0;
+    attr.type = ATTRIB_FLOAT;
+    attribs.push_back(attr);
+
+    attr.data_components = 2;
+    attr.index = 1;
+    attribs.push_back(attr);
+
+    gapi->setViewport( 0, 0, 512, 512 );
+    gapi->passRenderTargets( sp, 0, 0  );
     gapi->passTextureView( sp, texview, 0 );
-    gapi->passUniformBuffer( sp, ubo_buf );
-    gapi->passVertexBuffers( sp, vbos[0], 2 );
+    gapi->passUniformBuffer( sp, ubo_buf, 0 );
+    gapi->passVertexBuffers( sp, (IVertexBuffer*)vbos.data(), attribs.data(), vbos.size() );
     gapi->passIndexBuffer( sp, idx_buf ); 
     gapi->draw( sp, indices.size() );
 

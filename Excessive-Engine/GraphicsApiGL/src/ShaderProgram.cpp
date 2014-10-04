@@ -1,6 +1,7 @@
 #include "ShaderProgram.h"
 
 #include <vector>
+#include "custom_assert.h"
 
 using namespace std;
 
@@ -40,7 +41,7 @@ void ShaderProgram::link()
 void ShaderProgram::getBinary(char** data, unsigned* size)
 {
   //no nullptr, stupid!
-  if( data && size )
+  ASSERT( data && size )
   {
     vector<char> buf;
     GLenum format = 0;
@@ -68,9 +69,9 @@ void ShaderProgram::getBinary(char** data, unsigned* size)
   }
 }
 
-void ShaderProgram::loadFromBinary(char* data, unsigned size)
+void ShaderProgram::loadFromBinary(char* data)
 {
-  if( data )
+  ASSERT( data )
   {
     char* ptr = data;
     GLint size = reinterpret_cast<GLint*>(ptr)[0];

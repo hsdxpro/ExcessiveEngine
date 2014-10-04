@@ -1,7 +1,7 @@
 #ifndef LinearAllocator_h
 #define LinearAllocator_h
 
-#include "assert.h"
+#include "custom_assert.h"
 
 //this should handle allocations that you know they won't be freed
 //like the pool and stack allocators etc.
