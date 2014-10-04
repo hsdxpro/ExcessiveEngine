@@ -7,6 +7,8 @@
 #include "IBuffer.h"
 #include "IShaderProgram.h"
 
+#define EXPORT extern "C" __declspec(dllexport)
+
 enum eCompareFunc
 {
   SHALL_NOT_PASS = 0, PASS_IF_LESS, PASS_IF_EQUAL, PASS_IF_LESS_OR_EQUAL,
@@ -61,7 +63,7 @@ struct rBlendState
 
 enum eRasterizationMode
 {
-  POINT = 0, WIREFRAME, SOLID
+  rastPOINT = 0, WIREFRAME, SOLID
 };
 
 enum eWhichFace
@@ -161,3 +163,6 @@ class IGapi
     //draw stuff
     virtual void draw(IShaderProgram* s, unsigned num_indices) = 0;
 };
+
+EXPORT IGapi* getGapi();
+typedef IGapi* (*getGapiType)(void);

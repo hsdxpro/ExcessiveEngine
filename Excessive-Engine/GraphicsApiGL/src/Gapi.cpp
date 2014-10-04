@@ -7,6 +7,34 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 
+#include <iostream>
+using namespace std;
+
+static Gapi* gapi = 0;
+
+EXPORT IGapi* getGapi()
+{
+  if( !gapi )
+  {
+    gapi = new Gapi();
+
+    GLenum glew_error = glewInit();
+    glGetError(); //ignore glew errors
+
+    if( glew_error != GLEW_OK )
+    {
+      cerr << "Error initializing GLEW: " << glewGetErrorString( glew_error ) << endl;
+    }
+
+    if( !GLEW_VERSION_4_4 )
+    {
+      cerr << "Error: GL 4.4 is required" << endl;
+    }
+  }
+
+  return gapi;
+}
+
 GLenum func_data[] =
 {
   GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL, GL_GREATER, GL_NOTEQUAL, GL_GEQUAL, GL_ALWAYS
@@ -372,7 +400,7 @@ void Gapi::passVertexBuffer(IShaderProgram* s, IVertexBuffer* vbos, unsigned num
   //TODO
 }
 
-void draw(IShaderProgram* s, unsigned num_indices)
+void Gapi::draw(IShaderProgram* s, unsigned num_indices)
 {
   //TODO
 }
