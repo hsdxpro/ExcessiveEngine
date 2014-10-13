@@ -32,7 +32,7 @@ const char* vshd =
 
 const char* pshd = 
 "#version 440 core \n"
-"layout(binding=0) uniform sampler2D tex;"
+"layout(binding=0) uniform sampler2D tex; \n"
 "in vec2 texcoord; \n"
 "layout(location=0) out vec4 color; \n"
 "void main() \n"

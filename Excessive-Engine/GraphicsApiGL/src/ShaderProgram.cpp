@@ -29,7 +29,7 @@ void ShaderProgram::addShader(const char* src, eShaderType type)
 #ifdef DEBUG_SHADER_ERRORS
   GLchar infolog[INFOLOG_SIZE];
   infolog[0] = '\0';
-  glGetShaderInfoLog( id, INFOLOG_SIZE, 0, infolog );
+  glGetShaderInfoLog( shader_id, INFOLOG_SIZE, 0, infolog );
   cerr << infolog << endl;
 #endif
 
