@@ -7,7 +7,7 @@
 
 #define MAX_TEXTURE_SLOTS 16
 
-static GLuint currently_bound_textures[MAX_TEXTURE_SLOTS];
+//static GLuint currently_bound_textures[MAX_TEXTURE_SLOTS];
 static unsigned max_anisotropy = 4; //TODO we'd need a way to set this up...
 extern GLenum texture_formats[69];
 extern GLenum texture_types[69];

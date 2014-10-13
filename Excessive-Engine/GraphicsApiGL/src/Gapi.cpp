@@ -32,9 +32,9 @@ EXPORT IGapi* getGapi()
       cerr << "Error initializing GLEW: " << glewGetErrorString( glew_error ) << endl;
     }
 
-    if( !GLEW_VERSION_4_5 )
+    if( !GLEW_VERSION_4_4 )
     {
-      cerr << "Error: GL 4.5 is required" << endl;
+      cerr << "Error: GL 4.4 is required" << endl;
     }
 
     //use a single global vao
@@ -226,11 +226,19 @@ IVertexBuffer* Gapi::createVertexBuffer(rAllocData* data)
   glGenBuffers( 1, &vbo->id );
   
   glBindBuffer( GL_ARRAY_BUFFER, vbo->id ); //TODO not sure if we need this
-  glNamedBufferStorage( vbo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
+  /*glNamedBufferStorage( vbo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
                                              (data->is_readable ? GL_MAP_READ_BIT : 0) |
                                              (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
                                              (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                             (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );
+                                             (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
+
+  /*glBufferStorage( GL_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
+                                             (data->is_readable ? GL_MAP_READ_BIT : 0) |
+                                             (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
+                                             (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
+                                             (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
+
+  glBufferData( GL_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_DRAW );
 
   vbo->adata = *data;
   return vbo;
@@ -242,12 +250,20 @@ IIndexBuffer* Gapi::createIndexBuffer(rAllocData* data)
   glGenBuffers( 1, &ibo->id );
   
   glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo->id );
-  glNamedBufferStorage( ibo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
+  /*glNamedBufferStorage( ibo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
                                            (data->is_readable ? GL_MAP_READ_BIT : 0) |
                                            (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
                                            (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );
+                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
+
+  /*glBufferStorage( GL_ELEMENT_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
+                                             (data->is_readable ? GL_MAP_READ_BIT : 0) |
+                                             (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
+                                             (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
+                                             (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
   
+  glBufferData( GL_ELEMENT_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_DRAW );
+
   ibo->adata = *data;
   return ibo;
 }
@@ -258,12 +274,20 @@ IUniformBuffer* Gapi::createUniformBuffer(rAllocData* data)
   glGenBuffers( 1, &ubo->id );
   
   glBindBuffer( GL_UNIFORM_BUFFER, ubo->id );
-  glNamedBufferStorage( ubo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
+  /*glNamedBufferStorage( ubo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
                                            (data->is_readable ? GL_MAP_READ_BIT : 0) |
                                            (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
                                            (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );
+                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
   
+  /*glBufferStorage( GL_UNIFORM_BUFFER, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
+                                             (data->is_readable ? GL_MAP_READ_BIT : 0) |
+                                             (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
+                                             (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
+                                             (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
+
+  glBufferData( GL_UNIFORM_BUFFER, data->size, 0, GL_DYNAMIC_DRAW );
+
   ubo->adata = *data;
   return ubo;
 }
@@ -404,7 +428,9 @@ void Gapi::passTextureView(IShaderProgram* s, ITextureView* tex, unsigned index)
   ASSERT( s && tex );
   //TODO
   glUseProgram( static_cast<ShaderProgram*>(s)->id );
-  glBindTextureUnit( index, static_cast<TextureView*>(tex)->id );
+  //glBindTextureUnit( index, static_cast<TextureView*>(tex)->id );
+  glActiveTexture( GL_TEXTURE0 + index );
+  glBindTexture( static_cast<TextureView*>(tex)->target, static_cast<TextureView*>(tex)->id );
 }
 
 void Gapi::passRenderTargets(IShaderProgram* s, rTargetData* render_targets, unsigned size)

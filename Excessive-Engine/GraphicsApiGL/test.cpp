@@ -16,7 +16,7 @@ using namespace std;
 using namespace mymath;
 
 const char* vshd = 
-"#version 450 core \n"
+"#version 440 core \n"
 "layout(std140) uniform constant_data \n"
 "{ \n"
 "  mat4 mvp; \n"
@@ -31,7 +31,7 @@ const char* vshd =
 "} \n";
 
 const char* pshd = 
-"#version 450 core \n"
+"#version 440 core \n"
 "layout(binding=0) uniform sampler2D tex;"
 "in vec2 texcoord; \n"
 "layout(location=0) out vec4 color; \n"
@@ -93,8 +93,8 @@ int main( int argc, char** args )
   sp->addShader(pshd, PIXEL_SHADER);
   sp->link();
 
-  //example binary shader store/load
   /**
+  //example binary shader store/load
   char* data;
   unsigned size;
   sp->getBinary(&data, &size);
@@ -192,21 +192,21 @@ int main( int argc, char** args )
 
   rAllocData tex_alloc_data;
   tex_alloc_data.is_persistent = false;
-  tex_alloc_data.is_readable = true;
+  tex_alloc_data.is_readable = false;
   tex_alloc_data.is_writable = true;
   tex_alloc_data.prefer_cpu_storage = false;
   tex_alloc_data.size = texcoords.size() * sizeof(vec2);
 
   rAllocData vtx_alloc_data;
   vtx_alloc_data.is_persistent = false;
-  vtx_alloc_data.is_readable = true;
+  vtx_alloc_data.is_readable = false;
   vtx_alloc_data.is_writable = true;
   vtx_alloc_data.prefer_cpu_storage = false;
   vtx_alloc_data.size = vertices.size() * sizeof(vec3);
 
   rAllocData idx_alloc_data;
   idx_alloc_data.is_persistent = false;
-  idx_alloc_data.is_readable = true;
+  idx_alloc_data.is_readable = false;
   idx_alloc_data.is_writable = true;
   idx_alloc_data.prefer_cpu_storage = false;
   idx_alloc_data.size = indices.size() * sizeof(unsigned);

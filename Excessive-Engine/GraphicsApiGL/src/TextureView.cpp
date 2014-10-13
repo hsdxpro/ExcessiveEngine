@@ -17,8 +17,9 @@ void TextureView::setSamplerState(const rTextureSamplerData* data)
     //GL needs a glTextureParameterx so that no stupid binding is needed
     //if( currently_bound_textures[0] != id )
     {
-      glBindTextureUnit( 0, id );
-      currently_bound_textures[0] = id;
+      glBindTexture( target, id );
+      //glBindTextureUnit( 0, id );
+      //currently_bound_textures[0] = id;
     }
   
     if( data->is_anisotropic )

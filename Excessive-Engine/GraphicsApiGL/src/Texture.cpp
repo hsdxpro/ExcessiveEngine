@@ -309,8 +309,9 @@ void Texture::setSamplerState(const rTextureSamplerData* data)
     //GL needs a glTextureParameterx so that no stupid binding is needed
     //if( currently_bound_textures[0] != id )
     {
-      glBindTextureUnit( 0, id );
-      currently_bound_textures[0] = id;
+      glBindTexture( target, id );
+      //glBindTextureUnit( 0, id );
+      //currently_bound_textures[0] = id;
     }
   
     if( data->is_anisotropic )
@@ -356,17 +357,22 @@ void Texture::update(const rTextureUpdateData* data)
 {
   ASSERT( data )
   {
+    glBindTexture( target, id );
+
     if( dim == ONE )
     {
-      glTextureSubImage1D( id, data->level, data->x_offset, data->width, texture_formats[data->format], texture_types[data->format], data->data );
+      glTexSubImage1D( target, data->level, data->x_offset, data->width, texture_formats[data->format], texture_types[data->format], data->data );
+      //glTextureSubImage1D( id, data->level, data->x_offset, data->width, texture_formats[data->format], texture_types[data->format], data->data );
     }
     else if( dim == TWO )
     {
-      glTextureSubImage2D( id, data->level, data->x_offset, data->y_offset, data->width, data->height, texture_formats[data->format], texture_types[data->format], data->data );
+      glTexSubImage2D( target, data->level, data->x_offset, data->y_offset, data->width, data->height, texture_formats[data->format], texture_types[data->format], data->data );
+      //glTextureSubImage2D( id, data->level, data->x_offset, data->y_offset, data->width, data->height, texture_formats[data->format], texture_types[data->format], data->data );
     }
     else //threesome
     {
-      glTextureSubImage3D( id, data->level, data->x_offset, data->y_offset, data->z_offset, data->width, data->height, data->depth, texture_formats[data->format], texture_types[data->format], data->data );
+      glTexSubImage3D( id, data->level, data->x_offset, data->y_offset, data->z_offset, data->width, data->height, data->depth, texture_formats[data->format], texture_types[data->format], data->data );
+      //glTextureSubImage3D( id, data->level, data->x_offset, data->y_offset, data->z_offset, data->width, data->height, data->depth, texture_formats[data->format], texture_types[data->format], data->data );
     }
   }
 }
