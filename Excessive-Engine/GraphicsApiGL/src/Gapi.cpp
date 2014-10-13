@@ -481,6 +481,14 @@ void Gapi::draw(IShaderProgram* s, unsigned num_indices)
 {
   ASSERT(s);
   //TODO
+#ifdef DEBUG_SHADER_ERRORS
+  glValidateProgram( static_cast<ShaderProgram*>(s)->id );
+  GLchar infolog[INFOLOG_SIZE];
+  infolog[0] = '\0';
+  glGetProgramInfoLog( static_cast<ShaderProgram*>(s)->id, INFOLOG_SIZE, 0, infolog );
+  cerr << infolog << endl;
+#endif
+
   glUseProgram( static_cast<ShaderProgram*>(s)->id );
   glDrawElements( GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, 0 );
 }

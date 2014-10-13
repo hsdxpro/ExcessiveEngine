@@ -14,8 +14,6 @@ GLenum shader_types[] =
   GL_GEOMETRY_SHADER, GL_FRAGMENT_SHADER, GL_COMPUTE_SHADER
 };
 
-#define INFOLOG_SIZE 4096
-
 void ShaderProgram::destroy()
 {
   glDeleteProgram( id );    
@@ -24,11 +22,17 @@ void ShaderProgram::destroy()
 
 void ShaderProgram::addShader(const char* src, eShaderType type)
 {
-  static GLchar infolog[INFOLOG_SIZE];
-  
   GLuint shader_id = glCreateShader( shader_types[type] );
   glShaderSource( shader_id, 1, &src, 0 );
   glCompileShader( shader_id );
+
+#ifdef DEBUG_SHADER_ERRORS
+  GLchar infolog[INFOLOG_SIZE];
+  infolog[0] = '\0';
+  glGetShaderInfoLog( id, INFOLOG_SIZE, 0, infolog );
+  cerr << infolog << endl;
+#endif
+
   glAttachShader( id, shader_id );
   glDeleteShader( shader_id );
 }
@@ -36,6 +40,13 @@ void ShaderProgram::addShader(const char* src, eShaderType type)
 void ShaderProgram::link()
 {
   glLinkProgram( id );
+
+#ifdef DEBUG_SHADER_ERRORS
+  GLchar infolog[INFOLOG_SIZE];
+  infolog[0] = '\0';
+  glGetProgramInfoLog( id, INFOLOG_SIZE, 0, infolog );
+  cerr << infolog << endl;
+#endif
 }
 
 void ShaderProgram::getBinary(char** data, unsigned* size)
