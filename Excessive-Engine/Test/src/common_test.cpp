@@ -1,3 +1,5 @@
+#include "tests.h"
+
 #include "custom_assert.h"
 #include "HashedString.h"
 
@@ -69,7 +71,7 @@ void json_example()
   std::cout << root;
 }
 
-int main( int argc, char** args )
+int CommonTest()
 {
   crc32Init();
   stringID id = HashedString::hash( "hello" );
