@@ -32,9 +32,9 @@ EXPORT IGapi* getGapi()
       cerr << "Error initializing GLEW: " << glewGetErrorString( glew_error ) << endl;
     }
 
-    if( !GLEW_VERSION_4_4 )
+    if( !GLEW_VERSION_4_5 )
     {
-      cerr << "Error: GL 4.4 is required" << endl;
+      cerr << "Error: GL 4.5 is required" << endl;
     }
 
     cout << "Vendor: " << glGetString( GL_VENDOR ) << endl;
