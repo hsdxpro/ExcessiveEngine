@@ -45,9 +45,6 @@ EXPORT IGapi* getGapi()
     //use a single global vao
     glGenVertexArrays( 1, &global_vao );
     glBindVertexArray( global_vao );
-
-    glClearColor( 0, 0, 0, 0 );
-    glClear( GL_COLOR_BUFFER_BIT );
   }
 
   return gapi;
@@ -230,8 +227,6 @@ ITextureView* Gapi::createTextureView(rTextureViewData* data)
 
 IVertexBuffer* Gapi::createVertexBuffer(rAllocData* data)
 {
-  glBindVertexArray( global_vao );
-
   VertexBuffer* vbo = new VertexBuffer();
   glGenBuffers( 1, &vbo->id );
   
@@ -256,8 +251,6 @@ IVertexBuffer* Gapi::createVertexBuffer(rAllocData* data)
 
 IIndexBuffer* Gapi::createIndexBuffer(rAllocData* data)
 {
-  glBindVertexArray( global_vao );
-
   IndexBuffer* ibo = new IndexBuffer();
   glGenBuffers( 1, &ibo->id );
   
@@ -439,17 +432,13 @@ void Gapi::passTextureView(IShaderProgram* s, ITextureView* tex, unsigned index)
 {
   ASSERT( s && tex );
   //TODO
-  glUseProgram( static_cast<ShaderProgram*>(s)->id );
-  //glBindTextureUnit( index, static_cast<TextureView*>(tex)->id );
-  glActiveTexture( GL_TEXTURE0 + index );
-  glBindTexture( static_cast<TextureView*>(tex)->target, static_cast<TextureView*>(tex)->id );
+  glBindTextureUnit( index, static_cast<TextureView*>(tex)->id );
 }
 
 void Gapi::passRenderTargets(IShaderProgram* s, rTargetData* render_targets, unsigned size)
 {
   ASSERT( s );
   //TODO
-  glUseProgram( static_cast<ShaderProgram*>(s)->id );
   glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 }
 
@@ -457,7 +446,6 @@ void Gapi::passUniformBuffer(IShaderProgram* s, IUniformBuffer* buf, unsigned in
 {
   ASSERT( s && buf );
   //TODO
-  glUseProgram( static_cast<ShaderProgram*>(s)->id );
   glBindBufferBase( GL_UNIFORM_BUFFER, index, static_cast<UniformBuffer*>(buf)->id );
 }
 
@@ -470,8 +458,6 @@ void Gapi::passVertexBuffers(IShaderProgram* s, IVertexBuffer** vbos, rVertexAtt
 {
   ASSERT( s && vbos && attrib_data );
   //TODO
-  glUseProgram( static_cast<ShaderProgram*>(s)->id );
-  glBindVertexArray( global_vao );
 
   for( int c = 0; c < num_vbos; ++c )
   {
@@ -487,8 +473,6 @@ void Gapi::passIndexBuffer(IShaderProgram* s, IIndexBuffer* ibo)
 {
   ASSERT( s && ibo );
   //TODO
-  glUseProgram( static_cast<ShaderProgram*>(s)->id );
-  glBindVertexArray( global_vao );
   glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBuffer*>(ibo)->id );
 }
 
@@ -505,6 +489,5 @@ void Gapi::draw(IShaderProgram* s, unsigned num_indices)
 #endif
 
   glUseProgram( static_cast<ShaderProgram*>(s)->id );
-  glBindVertexArray( global_vao );
   glDrawElements( GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, 0 );
 }
