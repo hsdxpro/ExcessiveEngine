@@ -13,10 +13,17 @@
 #include <iostream>
 using namespace std;
 
+#ifdef _MSC_VER
+#define EXPORT __declspec(dllexport)
+#else
+#define EXPORT
+#endif
+
 static Gapi* gapi = 0;
 static GLuint global_vao = 0;
 
-EXPORT IGapi* getGapi()
+extern "C"
+EXPORT IGapi* CreateGraphicsApi()
 {
   if( !gapi )
   {
