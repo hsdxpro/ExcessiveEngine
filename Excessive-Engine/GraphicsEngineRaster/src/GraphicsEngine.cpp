@@ -5,12 +5,20 @@ using std::cout;
 using std::endl;
 
 
+#ifdef WIN32
+#define EXPORT __declspec(dllexport)
+#else
+#define EXPORT
+#endif
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Export Create function
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-ge::IGraphicsEngine* CreateGraphicsEngine() {
+extern "C"
+EXPORT ge::IGraphicsEngine* CreateGraphicsEngine() {
 	return new GraphicsEngine();
 }
 
