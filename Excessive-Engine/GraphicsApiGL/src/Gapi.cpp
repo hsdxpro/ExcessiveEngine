@@ -19,40 +19,34 @@ using namespace std;
 #define EXPORT
 #endif
 
-static Gapi* gapi = 0;
-static GLuint global_vao = 0;
-
 extern "C"
-EXPORT IGapi* CreateGraphicsApi()
+EXPORT IGapi* createGraphicsApi()
 {
-  if( !gapi )
-  {
-    gapi = new Gapi();
+  Gapi* gapi = new Gapi();
 
-    GLenum glew_error = glewInit();
+  GLenum glew_error = glewInit();
     
-    GLenum error;
-    while ((error = glGetError()) != GL_NO_ERROR);
+  GLenum error;
+  while ((error = glGetError()) != GL_NO_ERROR);
 
-    if( glew_error != GLEW_OK )
-    {
-      cerr << "Error initializing GLEW: " << glewGetErrorString( glew_error ) << endl;
-    }
-
-    if( !GLEW_VERSION_4_5 )
-    {
-      cerr << "Error: GL 4.5 is required" << endl;
-    }
-
-    cout << "Vendor: " << glGetString( GL_VENDOR ) << endl;
-    cout << "Renderer: " << glGetString( GL_RENDERER ) << endl;
-    cout << "OpenGL version: " << glGetString( GL_VERSION ) << endl;
-    cout << "GLSL version: " << glGetString( GL_SHADING_LANGUAGE_VERSION ) << endl;
-
-    //use a single global vao
-    glGenVertexArrays( 1, &global_vao );
-    glBindVertexArray( global_vao );
+  if( glew_error != GLEW_OK )
+  {
+    cerr << "Error initializing GLEW: " << glewGetErrorString( glew_error ) << endl;
   }
+
+  if( !GLEW_VERSION_4_5 )
+  {
+    cerr << "Error: GL 4.5 is required" << endl;
+  }
+
+  cout << "Vendor: " << glGetString( GL_VENDOR ) << endl;
+  cout << "Renderer: " << glGetString( GL_RENDERER ) << endl;
+  cout << "OpenGL version: " << glGetString( GL_VERSION ) << endl;
+  cout << "GLSL version: " << glGetString( GL_SHADING_LANGUAGE_VERSION ) << endl;
+
+  //use a single global vao
+  glGenVertexArrays( 1, &gapi->global_vao );
+  glBindVertexArray( gapi->global_vao );
 
   return gapi;
 }
@@ -435,24 +429,27 @@ void Gapi::setSyncDebugOutput(bool val)
   }
 }
 
-void Gapi::passTextureView(IShaderProgram* s, ITextureView* tex, unsigned index)
+void Gapi::setShaderProgram(IShaderProgram* sp)
 {
-  ASSERT( s && tex );
-  //TODO
+  ASSERT(sp);
+  glUseProgram(static_cast<ShaderProgram*>(sp)->id);
+}
+
+void Gapi::passTextureView(ITextureView* tex, unsigned index)
+{
+  ASSERT( tex );
   glBindTextureUnit( index, static_cast<TextureView*>(tex)->id );
 }
 
-void Gapi::passRenderTargets(IShaderProgram* s, rTargetData* render_targets, unsigned size)
+void Gapi::passRenderTargets(rTargetData* render_targets, unsigned size)
 {
-  ASSERT( s );
   //TODO
   glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 }
 
-void Gapi::passUniformBuffer(IShaderProgram* s, IUniformBuffer* buf, unsigned index)
+void Gapi::passUniformBuffer(IUniformBuffer* buf, unsigned index)
 {
-  ASSERT( s && buf );
-  //TODO
+  ASSERT( buf );
   glBindBufferBase( GL_UNIFORM_BUFFER, index, static_cast<UniformBuffer*>(buf)->id );
 }
 
@@ -461,10 +458,9 @@ GLenum attrib_array[] =
   GL_FLOAT, GL_INT, GL_UNSIGNED_INT
 };
 
-void Gapi::passVertexBuffers(IShaderProgram* s, IVertexBuffer** vbos, rVertexAttrib* attrib_data, unsigned num_vbos)
+void Gapi::passVertexBuffers(IVertexBuffer** vbos, rVertexAttrib* attrib_data, unsigned num_vbos)
 {
-  ASSERT( s && vbos && attrib_data );
-  //TODO
+  ASSERT( vbos && attrib_data );
 
   for( int c = 0; c < num_vbos; ++c )
   {
@@ -472,21 +468,18 @@ void Gapi::passVertexBuffers(IShaderProgram* s, IVertexBuffer** vbos, rVertexAtt
     glBindBuffer( GL_ARRAY_BUFFER, id );
     glEnableVertexAttribArray( attrib_data[c].index );
     glVertexAttribPointer( attrib_data[c].index, attrib_data[c].data_components, attrib_array[attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset );
-    //glVertexAttribDivisor( attrib_data[c].index, attrib_data[c].divisor );
+    //glVertexAttribDivisor( attrib_data[c].index, attrib_data[c].divisor ); //instancing stuff
   }
 }
 
-void Gapi::passIndexBuffer(IShaderProgram* s, IIndexBuffer* ibo)
+void Gapi::passIndexBuffer(IIndexBuffer* ibo)
 {
-  ASSERT( s && ibo );
-  //TODO
+  ASSERT( ibo );
   glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBuffer*>(ibo)->id );
 }
 
-void Gapi::draw(IShaderProgram* s, unsigned num_indices)
+void Gapi::draw(unsigned num_indices)
 {
-  ASSERT(s);
-  //TODO
 #ifdef DEBUG_SHADER_ERRORS
   glValidateProgram( static_cast<ShaderProgram*>(s)->id );
   GLchar infolog[INFOLOG_SIZE];
@@ -495,6 +488,5 @@ void Gapi::draw(IShaderProgram* s, unsigned num_indices)
   cerr << infolog << endl;
 #endif
 
-  glUseProgram( static_cast<ShaderProgram*>(s)->id );
   glDrawElements( GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, 0 );
 }

@@ -93,3 +93,30 @@ void ShaderProgram::loadFromBinary(char* data)
     glProgramBinary( id, format, ptr, size );
   }
 }
+
+int ShaderProgram::getUniformBlockIndex( const char* str )
+{
+  ASSERT(str);
+  return glGetUniformBlockIndex( id, str );
+}
+
+int ShaderProgram::getAttributeIndex( const char* str )
+{
+  ASSERT(str);
+  return glGetAttribLocation( id, str );
+}
+
+int ShaderProgram::getSamplerIndex( const char* str )
+{
+  ASSERT(str);
+  int loc = glGetUniformLocation( id, str );
+  int idx;
+  glGetUniformiv( id, loc, &idx );
+  return idx;
+}
+
+int ShaderProgram::getRenderTargetIndex( const char* str )
+{
+  ASSERT(str);
+  return glGetFragDataLocation( id, str );
+}

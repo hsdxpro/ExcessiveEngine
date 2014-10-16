@@ -18,4 +18,9 @@ class IShaderProgram
     //overwrites pointer at data, size
     virtual void getBinary(char** data, unsigned* size) = 0;
     virtual void loadFromBinary(char* data) = 0;
+
+    virtual int getUniformBlockIndex( const char* str ) = 0;
+    virtual int getAttributeIndex( const char* str ) = 0;
+    virtual int getSamplerIndex( const char* str ) = 0;
+    virtual int getRenderTargetIndex( const char* str ) = 0;
 };
