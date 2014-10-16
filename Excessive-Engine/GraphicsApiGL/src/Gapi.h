@@ -35,7 +35,7 @@ class Gapi : public IGapi
     void passTextureView(IShaderProgram* s, ITextureView* tex, unsigned index);
     void passRenderTargets(IShaderProgram* s, rTargetData* render_targets, unsigned size);
     void passUniformBuffer(IShaderProgram* s, IUniformBuffer* buf, unsigned index);
-    void passVertexBuffers(IShaderProgram* s, IVertexBuffer* vbos, rVertexAttrib* attrib_data, unsigned num_vbos);
+    void passVertexBuffers(IShaderProgram* s, IVertexBuffer** vbos, rVertexAttrib* attrib_data, unsigned num_vbos);
     void passIndexBuffer(IShaderProgram* s, IIndexBuffer* ibo);
     
     //draw stuff

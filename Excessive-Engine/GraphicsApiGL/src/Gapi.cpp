@@ -37,9 +37,17 @@ EXPORT IGapi* getGapi()
       cerr << "Error: GL 4.4 is required" << endl;
     }
 
+    cout << "Vendor: " << glGetString( GL_VENDOR ) << endl;
+    cout << "Renderer: " << glGetString( GL_RENDERER ) << endl;
+    cout << "OpenGL version: " << glGetString( GL_VERSION ) << endl;
+    cout << "GLSL version: " << glGetString( GL_SHADING_LANGUAGE_VERSION ) << endl;
+
     //use a single global vao
     glGenVertexArrays( 1, &global_vao );
     glBindVertexArray( global_vao );
+
+    glClearColor( 0, 0, 0, 0 );
+    glClear( GL_COLOR_BUFFER_BIT );
   }
 
   return gapi;
@@ -222,6 +230,8 @@ ITextureView* Gapi::createTextureView(rTextureViewData* data)
 
 IVertexBuffer* Gapi::createVertexBuffer(rAllocData* data)
 {
+  glBindVertexArray( global_vao );
+
   VertexBuffer* vbo = new VertexBuffer();
   glGenBuffers( 1, &vbo->id );
   
@@ -246,6 +256,8 @@ IVertexBuffer* Gapi::createVertexBuffer(rAllocData* data)
 
 IIndexBuffer* Gapi::createIndexBuffer(rAllocData* data)
 {
+  glBindVertexArray( global_vao );
+
   IndexBuffer* ibo = new IndexBuffer();
   glGenBuffers( 1, &ibo->id );
   
@@ -454,15 +466,17 @@ GLenum attrib_array[] =
   GL_FLOAT, GL_INT, GL_UNSIGNED_INT
 };
 
-void Gapi::passVertexBuffers(IShaderProgram* s, IVertexBuffer* vbos, rVertexAttrib* attrib_data, unsigned num_vbos)
+void Gapi::passVertexBuffers(IShaderProgram* s, IVertexBuffer** vbos, rVertexAttrib* attrib_data, unsigned num_vbos)
 {
   ASSERT( s && vbos && attrib_data );
   //TODO
   glUseProgram( static_cast<ShaderProgram*>(s)->id );
+  glBindVertexArray( global_vao );
 
   for( int c = 0; c < num_vbos; ++c )
   {
-    glBindBuffer( GL_ARRAY_BUFFER, static_cast<VertexBuffer*>(vbos+c)->id );
+    GLuint id = static_cast<VertexBuffer*>(vbos[c])->id;
+    glBindBuffer( GL_ARRAY_BUFFER, id );
     glEnableVertexAttribArray( attrib_data[c].index );
     glVertexAttribPointer( attrib_data[c].index, attrib_data[c].data_components, attrib_array[attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset );
     //glVertexAttribDivisor( attrib_data[c].index, attrib_data[c].divisor );
@@ -474,6 +488,7 @@ void Gapi::passIndexBuffer(IShaderProgram* s, IIndexBuffer* ibo)
   ASSERT( s && ibo );
   //TODO
   glUseProgram( static_cast<ShaderProgram*>(s)->id );
+  glBindVertexArray( global_vao );
   glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBuffer*>(ibo)->id );
 }
 
@@ -490,5 +505,6 @@ void Gapi::draw(IShaderProgram* s, unsigned num_indices)
 #endif
 
   glUseProgram( static_cast<ShaderProgram*>(s)->id );
+  glBindVertexArray( global_vao );
   glDrawElements( GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, 0 );
 }

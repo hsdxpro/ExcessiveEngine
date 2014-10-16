@@ -17,27 +17,34 @@ using namespace mymath;
 
 const char* vshd = 
 "#version 440 core \n"
-"layout(std140) uniform constant_data \n"
+/*"layout(std140) uniform constant_data \n"
 "{ \n"
 "  mat4 mvp; \n"
-"} cd; \n"
+"} cd; \n"*/
+"const mat4 mvp = mat4 \n"
+"( 1, 0,  0,    -0, \n"
+"  0, 1,  0,    -0, \n"
+"  0, 0, -0.01, -0, \n"
+"  0, 0,  0,     1 ); \n"
 "layout(location=0) in vec3 in_vertex; \n"
 "layout(location=1) in vec2 in_texcoord; \n"
 "out vec2 texcoord; \n"
 "void main() \n"
 "{ \n"
 "  texcoord = in_texcoord; \n"
-"  gl_Position = cd.mvp * vec4(in_vertex, 1); \n"
+//"  gl_Position = cd.mvp * vec4(in_vertex, 1); \n"
+"  gl_Position = mvp * vec4(in_vertex, 1); \n"
 "} \n";
 
 const char* pshd = 
 "#version 440 core \n"
-"layout(binding=0) uniform sampler2D tex; \n"
+//"layout(binding=0) uniform sampler2D tex; \n"
 "in vec2 texcoord; \n"
 "layout(location=0) out vec4 color; \n"
 "void main() \n"
 "{ \n"
-"  color = texture(tex, texcoord); \n"
+//"  color = texture(tex, texcoord); \n"
+"  color = vec4(1); \n"
 "} \n";
 
 std::string get_app_path();
@@ -82,6 +89,7 @@ int main( int argc, char** args )
 
   //set up the GL Gapi
   IGapi* gapi = getGapi();
+  w.display();
 
   gapi->setDebugOutput( true );
   gapi->setSeamlessCubeMaps( true );
@@ -116,7 +124,7 @@ int main( int argc, char** args )
   /**/
 
   //set up texture
-  string image_path = app_path + "image.png";
+  /*string image_path = app_path + "image.png";
   sf::Image im;
   im.loadFromFile( image_path );
 
@@ -165,7 +173,7 @@ int main( int argc, char** args )
   texviewdata.start_level = 0;
 
   auto texview = gapi->createTextureView( &texviewdata );
-  texview->setSamplerState( &smpdata );
+  texview->setSamplerState( &smpdata );*/
 
   //set up the mesh
   vector<vec3> vertices;
@@ -222,7 +230,7 @@ int main( int argc, char** args )
   idx_buf->update( (char*)indices.data(), indices.size() * sizeof(unsigned), 0 );
 
   //set up the uniform buffer
-  rAllocData ubo_alloc_data;
+  /*rAllocData ubo_alloc_data;
   ubo_alloc_data.is_persistent = false;
   ubo_alloc_data.is_readable = true;
   ubo_alloc_data.is_writable = true;
@@ -233,7 +241,7 @@ int main( int argc, char** args )
 
   auto ubo_buf = gapi->createUniformBuffer( &ubo_alloc_data );
   
-  ubo_buf->update( (char*)&mvp[0][0], sizeof(mat4), 0 );
+  ubo_buf->update( (char*)&mvp[0][0], sizeof(mat4), 0 );*/
 
   //draw stuff
   bool run = true;
@@ -274,9 +282,9 @@ int main( int argc, char** args )
 
     gapi->setViewport( 0, 0, 512, 512 );
     gapi->passRenderTargets( sp, 0, 0  );
-    gapi->passTextureView( sp, texview, 0 );
-    gapi->passUniformBuffer( sp, ubo_buf, 0 );
-    gapi->passVertexBuffers( sp, (IVertexBuffer*)vbos.data(), attribs.data(), vbos.size() );
+    //gapi->passTextureView( sp, texview, 0 );
+    //gapi->passUniformBuffer( sp, ubo_buf, 0 );
+    gapi->passVertexBuffers( sp, &vbos[0], attribs.data(), vbos.size() );
     gapi->passIndexBuffer( sp, idx_buf ); 
     gapi->draw( sp, indices.size() );
 
