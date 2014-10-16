@@ -1,0 +1,7 @@
+#include "IGraphicsEngine.h"
+#include "IScene.h"
+#include "IEntity.h"
+#include "ILight.h"
+#include "IMesh.h"
+#include "IMaterial.h"
+#include "ITexture.h"
