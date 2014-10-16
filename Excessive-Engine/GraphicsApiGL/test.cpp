@@ -16,7 +16,7 @@ using namespace std;
 using namespace mymath;
 
 const char* vshd = 
-"#version 440 core \n"
+"#version 450 core \n"
 "layout(std140) uniform constant_data \n"
 "{ \n"
 "  mat4 mvp; \n"
@@ -31,13 +31,13 @@ const char* vshd =
 "} \n";
 
 const char* pshd = 
-"#version 440 core \n"
+"#version 450 core \n"
 "layout(binding=0) uniform sampler2D tex; \n"
 "in vec2 texcoord; \n"
 "layout(location=0) out vec4 color; \n"
 "void main() \n"
 "{ \n"
-"  color = texture(tex, texcoord); \n"
+"  color = texture(tex, vec2(texcoord.x, 1-texcoord.y)); \n"
 "} \n";
 
 std::string get_app_path();
@@ -93,7 +93,7 @@ int main( int argc, char** args )
   sp->addShader(pshd, PIXEL_SHADER);
   sp->link();
 
-  /**
+  /**/
   //example binary shader store/load
   char* data;
   unsigned size;
@@ -276,7 +276,7 @@ int main( int argc, char** args )
     gapi->passRenderTargets( sp, 0, 0  );
     gapi->passTextureView( sp, texview, 0 );
     gapi->passUniformBuffer( sp, ubo_buf, 0 );
-    gapi->passVertexBuffers( sp, (IVertexBuffer*)vbos.data(), attribs.data(), vbos.size() );
+    gapi->passVertexBuffers( sp, &vbos[0], attribs.data(), vbos.size() );
     gapi->passIndexBuffer( sp, idx_buf ); 
     gapi->draw( sp, indices.size() );
 
