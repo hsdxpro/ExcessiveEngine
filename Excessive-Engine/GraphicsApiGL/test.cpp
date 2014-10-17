@@ -1,7 +1,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
-#include "IGapi.h"
+#include "GraphicsApi"
 
 #include "SFML/System.hpp"
 #include "SFML/Window.hpp"
@@ -73,15 +73,16 @@ int main( int argc, char** args )
 
   std::replace( dll_path.begin(), dll_path.end(), '/', '\\' );
   auto dll = LoadLibrary( dll_path.c_str() );
-  getGapiType getGapi = 0;
+  using GetApiT = IGapi*(*)();
+  IGapi*(*CreatGraphicsApi)() = nullptr;
 
   if( dll )
   {
-    getGapi = (getGapiType)GetProcAddress( dll, "getGapi" );
+	  CreatGraphicsApi = (GetApiT)GetProcAddress(dll, "getGapi");
   }
 
   //set up the GL Gapi
-  IGapi* gapi = getGapi();
+  IGapi* gapi = CreatGraphicsApi();
 
   gapi->setDebugOutput( true );
   gapi->setSeamlessCubeMaps( true );
@@ -155,7 +156,7 @@ int main( int argc, char** args )
   //set up the texture view
   rTextureViewData texviewdata;
   texviewdata.base_tex = tex;
-  texviewdata.dim = TWO;
+  texviewdata.dim = eDimensions::TWO;
   texviewdata.format = texdata.format;
   texviewdata.is_cubemap = texdata.is_cubemap;
   texviewdata.is_layered = texdata.is_layered;
@@ -265,7 +266,7 @@ int main( int argc, char** args )
     attr.index = 0;
     attr.offset = 0;
     attr.size = 0;
-    attr.type = ATTRIB_FLOAT;
+    attr.type = eVertexAttribType::ATTRIB_FLOAT;
     attribs.push_back(attr);
 
     attr.data_components = 2;

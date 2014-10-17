@@ -112,7 +112,7 @@ ITexture* Gapi::createTexture(rTextureData* data)
       if( data->depth > 1 )
       {
         //3D
-        tex->dim = THREE;
+        tex->dim = eDimensions::THREE;
         
         if( data->is_layered )
         {
@@ -136,7 +136,7 @@ ITexture* Gapi::createTexture(rTextureData* data)
       else
       {
         //2D
-        tex->dim = TWO;
+		  tex->dim = eDimensions::TWO;
         
         if( data->is_layered )
         {
@@ -158,7 +158,7 @@ ITexture* Gapi::createTexture(rTextureData* data)
     else
     {
       //1D
-      tex->dim = ONE;
+		tex->dim = eDimensions::ONE;
       
       tex->target = GL_TEXTURE_1D;
 
@@ -181,11 +181,11 @@ ITextureView* Gapi::createTextureView(rTextureViewData* data)
   {
     tex->dim = data->dim;
   
-    if( data->dim == ONE )
+	if (data->dim == eDimensions::ONE)
     {
       tex->target = GL_TEXTURE_1D;
     }
-    else if( data->dim == TWO )
+	else if (data->dim == eDimensions::TWO)
     {
       if( data->is_layered )
       {
@@ -321,7 +321,7 @@ void Gapi::setDepthState(rDepthState* state)
     
     glDepthRangef( state->near, state->far );
     
-    glDepthFunc( func_data[state->func] );
+    glDepthFunc( func_data[(unsigned)state->func] );
   }
 }
 
@@ -342,9 +342,9 @@ void Gapi::setStencilState(rStencilState* state)
     
     glStencilMask( state->mask );
     
-    glStencilFunc( func_data[state->func], state->reference_stencil_value, state->func_mask );
+    glStencilFunc( func_data[(unsigned)state->func], state->reference_stencil_value, state->func_mask );
     
-    glStencilOp( stencil_op_data[state->on_stencil_fail], stencil_op_data[state->on_stencil_pass_depth_fail], stencil_op_data[state->on_stencil_pass_depth_pass] );
+    glStencilOp( stencil_op_data[(unsigned)state->on_stencil_fail], stencil_op_data[(unsigned)state->on_stencil_pass_depth_fail], stencil_op_data[(unsigned)state->on_stencil_pass_depth_pass] );
   }
 }
 
@@ -363,9 +363,9 @@ void Gapi::setBlendState(rBlendState* state)
     
     glBlendColor( state->blend_color.x, state->blend_color.y, state->blend_color.z, state->blend_color.w );
     
-    glBlendEquation( blend_eq_data[state->equation] );
+    glBlendEquation( blend_eq_data[(unsigned)state->equation] );
     
-    glBlendFunc( blend_func_data[state->src_func], blend_func_data[state->dst_func] );
+	glBlendFunc(blend_func_data[(unsigned)state->src_func], blend_func_data[(unsigned)state->dst_func]);
   }
 }
 
@@ -400,9 +400,9 @@ void Gapi::setViewport(int x, int y, unsigned w, unsigned h)
 
 void Gapi::setRasterizationState(rRasterizerState* state)
 {
-  glPolygonMode(GL_FRONT_AND_BACK, raster_mode_data[state->mode]);
-  glFrontFace( raster_order_data[state->vertex_order] );
-  glCullFace( raster_face_data[state->face] );
+  glPolygonMode(GL_FRONT_AND_BACK, raster_mode_data[(unsigned)state->mode]);
+  glFrontFace(raster_order_data[(unsigned)state->vertex_order]);
+  glCullFace(raster_face_data[(unsigned)state->face]);
   glColorMask( state->r_mask, state->g_mask, state->b_mask, state->a_mask );
 }
 
@@ -471,7 +471,7 @@ void Gapi::passVertexBuffers(IShaderProgram* s, IVertexBuffer** vbos, rVertexAtt
     GLuint id = static_cast<VertexBuffer*>(vbos[c])->id;
     glBindBuffer( GL_ARRAY_BUFFER, id );
     glEnableVertexAttribArray( attrib_data[c].index );
-    glVertexAttribPointer( attrib_data[c].index, attrib_data[c].data_components, attrib_array[attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset );
+    glVertexAttribPointer( attrib_data[c].index, attrib_data[c].data_components, attrib_array[(unsigned)attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset );
     //glVertexAttribDivisor( attrib_data[c].index, attrib_data[c].divisor );
   }
 }

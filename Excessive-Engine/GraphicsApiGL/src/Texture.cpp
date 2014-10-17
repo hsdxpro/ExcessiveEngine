@@ -357,11 +357,11 @@ void Texture::update(const rTextureUpdateData* data)
 {
   ASSERT( data )
   {
-    if( dim == ONE )
+	  if (dim == eDimensions::ONE)
     {
       glTextureSubImage1D( id, data->level, data->x_offset, data->width, texture_formats[data->format], texture_types[data->format], data->data );
     }
-    else if( dim == TWO )
+    else if( dim == eDimensions::TWO )
     {
       glTextureSubImage2D( id, data->level, data->x_offset, data->y_offset, data->width, data->height, texture_formats[data->format], texture_types[data->format], data->data );
     }

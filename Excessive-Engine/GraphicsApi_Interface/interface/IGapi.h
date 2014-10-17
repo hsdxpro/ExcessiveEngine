@@ -7,8 +7,10 @@
 #include "IBuffer.h"
 #include "IShaderProgram.h"
 
+#include <cstdint>
+
 //!! PASS_IF is redundant, remove from name; rename SHALL_PASS to ALWAYS
-enum eCompareFunc
+enum class eCompareFunc : uint32_t
 {
 	SHALL_NOT_PASS = 0, PASS_IF_LESS, PASS_IF_EQUAL, PASS_IF_LESS_OR_EQUAL,
 	PASS_IF_GREATER, PASS_IF_NOT_EQUAL, PASS_IF_GREATER_OR_EQUAL, SHALL_PASS
@@ -22,7 +24,7 @@ struct rDepthState
 	eCompareFunc func;
 };
 //!! rename (redundancy): INVERT_BITS->INVERT, KEEP_VALUE->KEEP, REPLACE_W_REF->REPLACE
-enum eStencilAction
+enum class eStencilAction : uint32_t
 {
 	KEEP_VALUE = 0, ZERO_OUT, REPLACE_W_REF, INCREMENT, INCREMENT_WRAP, DECREMENT, 
 	DECREMENT_WRAP, INVERT_BITS
@@ -39,12 +41,12 @@ struct rStencilState
 	eStencilAction on_stencil_fail, on_stencil_pass_depth_fail, on_stencil_pass_depth_pass;
 };
 //!! ambiguous: which is A and which is B? may use SRC_MINUS_DEST
-enum eBlendEquation
+enum class eBlendEquation : uint32_t
 {
 	A_PLUS_B = 0, A_MINUS_B, B_MINUS_A, MIN_A_B, MAX_A_B
 };
 
-enum eBlendFunc
+enum class eBlendFunc : uint32_t
 {
 	ZERO_OUT = 0, ONE_OUT, SRC_COLOR, ONE_MIN_SRC_COLOR, DST_COLOR, ONE_MIN_DST_COLOR,
 	SRC_ALPHA, ONE_MINUS_SRC_ALPHA, DST_ALPHA, ONE_MINUS_DST_ALPHA, CONSTANT_COLOR, 
@@ -60,17 +62,17 @@ struct rBlendState
 	eBlendFunc src_func, dst_func;
 };
 
-enum eRasterizationMode
+enum class eRasterizationMode : uint32_t
 {
 	POINT = 0, WIREFRAME, SOLID
 };
 
-enum eWhichFace //!! redundancy *
+enum class eWhichFace : uint32_t//!! redundancy *
 {
 	FRONT = 0, BACK, FRONT_AND_BACK
 };
 
-enum eVertexOrder //!! redundancy *
+enum class eVertexOrder : uint32_t //!! redundancy *
 {
 	CLOCKWISE = 0, COUNTER_CLOCKWISE
 };
@@ -101,7 +103,7 @@ struct rTargetData
 	unsigned target_layer;
 };
 
-enum eVertexAttribType
+enum class eVertexAttribType : uint32_t
 {
   ATTRIB_FLOAT = 0, ATTRIB_INT, ATTRIB_UNSIGNED_INT
 };
@@ -115,7 +117,7 @@ struct rVertexAttrib
 	unsigned divisor;
 };
 //!! unnecessary enum: replace with an integer, enums can be made just as wrong as an int, since they are an int...
-enum eDimensions
+enum class eDimensions : uint32_t
 {
 	ONE = 0, TWO, THREE
 };

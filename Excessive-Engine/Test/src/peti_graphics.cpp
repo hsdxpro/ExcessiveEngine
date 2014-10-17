@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <Graphics.h>
+#include <GraphicsEngine>
 
 using namespace ge;
 
