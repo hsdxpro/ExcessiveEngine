@@ -26,7 +26,7 @@ struct rDepthState
 //!! rename (redundancy): INVERT_BITS->INVERT, KEEP_VALUE->KEEP, REPLACE_W_REF->REPLACE
 enum class eStencilAction : uint32_t
 {
-	KEEP_VALUE = 0, ZERO_OUT, REPLACE_W_REF, INCREMENT, INCREMENT_WRAP, DECREMENT, 
+	KEEP_VALUE = 0, stencilZERO_OUT, REPLACE_W_REF, INCREMENT, INCREMENT_WRAP, DECREMENT, 
 	DECREMENT_WRAP, INVERT_BITS
 };
 
@@ -48,7 +48,7 @@ enum class eBlendEquation : uint32_t
 
 enum class eBlendFunc : uint32_t
 {
-	ZERO_OUT = 0, ONE_OUT, SRC_COLOR, ONE_MIN_SRC_COLOR, DST_COLOR, ONE_MIN_DST_COLOR,
+	blendZERO_OUT = 0, ONE_OUT, SRC_COLOR, ONE_MIN_SRC_COLOR, DST_COLOR, ONE_MIN_DST_COLOR,
 	SRC_ALPHA, ONE_MINUS_SRC_ALPHA, DST_ALPHA, ONE_MINUS_DST_ALPHA, CONSTANT_COLOR, 
 	ONE_MINUS_CONSTANT_COLOR, CONSTANT_ALPHA, ONE_MINUS_CONSTANT_ALPHA, SRC_ALPHA_SATURATE,
 	SECOND_SRC_COLOR, ONE_MINUS_SECOND_SRC_COLOR, SECOND_SRC_ALPHA, ONE_MINUS_SECOND_SRC_ALPHA
@@ -64,7 +64,7 @@ struct rBlendState
 
 enum class eRasterizationMode : uint32_t
 {
-	POINT = 0, WIREFRAME, SOLID
+	rastPOINT = 0, WIREFRAME, SOLID
 };
 
 enum class eWhichFace : uint32_t//!! redundancy *
@@ -162,16 +162,14 @@ class IGapi
     virtual void setSyncDebugOutput(bool val) = 0;
 
     //pass input/output to shader
-    virtual void passTextureView(IShaderProgram* s, ITextureView* tex, unsigned index) = 0;
-    virtual void passRenderTargets(IShaderProgram* s, rTargetData* render_targets, unsigned size) = 0;
-    virtual void passUniformBuffer(IShaderProgram* s, IUniformBuffer* buf, unsigned index) = 0;
-    virtual void passVertexBuffers(IShaderProgram* s, IVertexBuffer** vbos, rVertexAttrib* attrib_data, unsigned num_vbos) = 0;
-    virtual void passIndexBuffer(IShaderProgram* s, IIndexBuffer* ibo) = 0;
+    virtual void setShaderProgram(IShaderProgram* sp) = 0;
+
+    virtual void passTextureView(ITextureView* tex, unsigned index) = 0;
+    virtual void passRenderTargets(rTargetData* render_targets, unsigned size) = 0;
+    virtual void passUniformBuffer(IUniformBuffer* buf, unsigned index) = 0;
+    virtual void passVertexBuffers(IVertexBuffer** vbos, rVertexAttrib* attrib_data, unsigned num_vbos) = 0;
+    virtual void passIndexBuffer(IIndexBuffer* ibo) = 0;
     
     //draw stuff
-    virtual void draw(IShaderProgram* s, unsigned num_indices) = 0;
-	//!! Why is shader program handled differently?
-	//!! Shader program has the same relation to the pipeline as anything else: it's bound to the pipeline.
-	//!! Therefore bind it the same way as a setShaderProgram() call.
-	//!! This implies renaming others as setIndexBuffer etc.
+    virtual void draw(unsigned num_indices) = 0;
 };

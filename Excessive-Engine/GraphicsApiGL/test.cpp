@@ -21,8 +21,8 @@ const char* vshd =
 "{ \n"
 "  mat4 mvp; \n"
 "} cd; \n"
-"layout(location=0) in vec3 in_vertex; \n"
-"layout(location=1) in vec2 in_texcoord; \n"
+"in vec3 in_vertex; \n"
+"in vec2 in_texcoord; \n"
 "out vec2 texcoord; \n"
 "void main() \n"
 "{ \n"
@@ -32,9 +32,9 @@ const char* vshd =
 
 const char* pshd = 
 "#version 450 core \n"
-"layout(binding=0) uniform sampler2D tex; \n"
+"uniform sampler2D tex; \n"
 "in vec2 texcoord; \n"
-"layout(location=0) out vec4 color; \n"
+"out vec4 color; \n"
 "void main() \n"
 "{ \n"
 "  color = texture(tex, vec2(texcoord.x, 1-texcoord.y)); \n"
@@ -44,6 +44,8 @@ std::string get_app_path();
 #ifdef WIN_BUILD
 char* realpath( const char* path, char** ret );
 #endif
+
+typedef IGapi* (*getGapiType)(void);
 
 int main( int argc, char** args )
 {
@@ -73,16 +75,15 @@ int main( int argc, char** args )
 
   std::replace( dll_path.begin(), dll_path.end(), '/', '\\' );
   auto dll = LoadLibrary( dll_path.c_str() );
-  using GetApiT = IGapi*(*)();
-  IGapi*(*CreatGraphicsApi)() = nullptr;
+  getGapiType createGraphicsApi = 0;
 
   if( dll )
   {
-	  CreatGraphicsApi = (GetApiT)GetProcAddress(dll, "getGapi");
+    createGraphicsApi = (getGapiType)GetProcAddress( dll, "createGraphicsApi" );
   }
 
   //set up the GL Gapi
-  IGapi* gapi = CreatGraphicsApi();
+  IGapi* gapi = createGraphicsApi();
 
   gapi->setDebugOutput( true );
   gapi->setSeamlessCubeMaps( true );
@@ -263,23 +264,24 @@ int main( int argc, char** args )
     rVertexAttrib attr;
     attr.data_components = 3;
     attr.divisor = 0;
-    attr.index = 0;
+    attr.index = sp->getAttributeIndex( "in_vertex" );
     attr.offset = 0;
     attr.size = 0;
     attr.type = eVertexAttribType::ATTRIB_FLOAT;
     attribs.push_back(attr);
 
     attr.data_components = 2;
-    attr.index = 1;
+    attr.index = sp->getAttributeIndex( "in_texcoord" );
     attribs.push_back(attr);
 
     gapi->setViewport( 0, 0, 512, 512 );
-    gapi->passRenderTargets( sp, 0, 0  );
-    gapi->passTextureView( sp, texview, 0 );
-    gapi->passUniformBuffer( sp, ubo_buf, 0 );
-    gapi->passVertexBuffers( sp, &vbos[0], attribs.data(), vbos.size() );
-    gapi->passIndexBuffer( sp, idx_buf ); 
-    gapi->draw( sp, indices.size() );
+    gapi->setShaderProgram( sp );
+    gapi->passRenderTargets( 0, 0 );
+    gapi->passTextureView( texview, sp->getSamplerIndex( "tex" ) );
+    gapi->passUniformBuffer( ubo_buf, sp->getUniformBlockIndex( "constant_data" ) );
+    gapi->passVertexBuffers( &vbos[0], attribs.data(), vbos.size() );
+    gapi->passIndexBuffer( idx_buf ); 
+    gapi->draw( indices.size() );
 
     w.display();
   }

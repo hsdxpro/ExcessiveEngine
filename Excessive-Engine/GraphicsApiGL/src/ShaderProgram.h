@@ -20,4 +20,9 @@ class ShaderProgram : public IShaderProgram
     void link();
     void getBinary(char** data, unsigned* size);
     void loadFromBinary(char* data);
+
+    int getUniformBlockIndex( const char* str );
+    int getAttributeIndex( const char* str );
+    int getSamplerIndex( const char* str );
+    int getRenderTargetIndex( const char* str );
 };
