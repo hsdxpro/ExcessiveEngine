@@ -17,8 +17,12 @@ class VertexBuffer : public Buffer, public IVertexBuffer
       memcpy( ptr, data, size );
       glUnmapBuffer( GL_ARRAY_BUFFER );*/
 
-      glBindBuffer( GL_ARRAY_BUFFER, id );
-      glBufferSubData( GL_ARRAY_BUFFER, offset, size, data );
+      void* ptr = glMapNamedBufferRange( id, offset, size, GL_MAP_WRITE_BIT );
+      memcpy( ptr, data, size );
+      glUnmapNamedBuffer( id );
+
+      //glBindBuffer( GL_ARRAY_BUFFER, id );
+      //glBufferSubData( GL_ARRAY_BUFFER, offset, size, data );
     }
 
     void getSubData(char* data, unsigned size, unsigned offset)

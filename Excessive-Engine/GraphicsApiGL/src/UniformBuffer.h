@@ -16,8 +16,12 @@ class UniformBuffer : public Buffer, public IUniformBuffer
       memcpy( ptr, data, size );
       glUnmapBuffer( GL_UNIFORM_BUFFER );*/
 
-      glBindBuffer( GL_UNIFORM_BUFFER, id );
-      glBufferSubData( GL_UNIFORM_BUFFER, offset, size, data );
+      void* ptr = glMapNamedBufferRange( id, offset, size, GL_MAP_WRITE_BIT );
+      memcpy( ptr, data, size );
+      glUnmapNamedBuffer( id );
+
+      //glBindBuffer( GL_UNIFORM_BUFFER, id );
+      //glBufferSubData( GL_UNIFORM_BUFFER, offset, size, data );
     }
 
     void getSubData(char* data, unsigned size, unsigned offset)

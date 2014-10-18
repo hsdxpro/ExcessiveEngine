@@ -16,8 +16,12 @@ class IndexBuffer : public Buffer, public IIndexBuffer
       memcpy( ptr, data, size );
       glUnmapBuffer( GL_ELEMENT_ARRAY_BUFFER );*/
 
-      glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, id );
-      glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, offset, size, data );
+      void* ptr = glMapNamedBufferRange( id, offset, size, GL_MAP_WRITE_BIT );
+      memcpy( ptr, data, size );
+      glUnmapNamedBuffer( id );
+
+      //glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, id );
+      //glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, offset, size, data );
     }
 
     void getSubData(char* data, unsigned size, unsigned offset)

@@ -45,7 +45,7 @@ EXPORT IGapi* createGraphicsApi()
   cout << "GLSL version: " << glGetString( GL_SHADING_LANGUAGE_VERSION ) << endl;
 
   //use a single global vao
-  glGenVertexArrays( 1, &gapi->global_vao );
+  glCreateVertexArrays( 1, &gapi->global_vao );
   glBindVertexArray( gapi->global_vao );
 
   return gapi;
@@ -96,7 +96,6 @@ IShaderProgram* Gapi::createShaderProgram()
 ITexture* Gapi::createTexture(rTextureData* data)
 {
   Texture* tex = new Texture();
-  glGenTextures( 1, &tex->id );
   tex->target = 0;
   
   ASSERT( data )
@@ -124,8 +123,8 @@ ITexture* Gapi::createTexture(rTextureData* data)
           tex->target = GL_TEXTURE_3D;
         }
         
-        glBindTexture( tex->target, tex->id );
-        glTexStorage3D( tex->target, data->num_levels, texture_internal_formats[data->format], data->width, data->height, data->depth );        
+        glCreateTextures( tex->target, 1, &tex->id );
+        glTextureStorage3D( tex->id, data->num_levels, texture_internal_formats[data->format], data->width, data->height, data->depth );        
       }
       else
       {
@@ -145,8 +144,8 @@ ITexture* Gapi::createTexture(rTextureData* data)
           tex->target = GL_TEXTURE_2D;
         }
         
-        glBindTexture( tex->target, tex->id );
-        glTexStorage2D( tex->target, data->num_levels, texture_internal_formats[data->format], data->width, data->height );
+        glCreateTextures( tex->target, 1, &tex->id );
+        glTextureStorage2D( tex->id, data->num_levels, texture_internal_formats[data->format], data->width, data->height );
       }
     }
     else
@@ -156,8 +155,8 @@ ITexture* Gapi::createTexture(rTextureData* data)
       
       tex->target = GL_TEXTURE_1D;
 
-      glBindTexture( tex->target, tex->id );
-      glTexStorage1D( tex->target, data->num_levels, texture_internal_formats[data->format], data->width );
+      glCreateTextures( tex->target, 1, &tex->id );
+      glTextureStorage1D( tex->id, data->num_levels, texture_internal_formats[data->format], data->width );
     }
     
     tex->d = *data;
@@ -169,7 +168,6 @@ ITexture* Gapi::createTexture(rTextureData* data)
 ITextureView* Gapi::createTextureView(rTextureViewData* data)
 {
   TextureView* tex = new TextureView();
-  glGenTextures( 1, &tex->id );
   
   ASSERT( data )
   {
@@ -213,6 +211,8 @@ ITextureView* Gapi::createTextureView(rTextureViewData* data)
       }
     }
   
+    //glCreateTextures( tex->target, 1, &tex->id );
+    glGenTextures( 1, &tex->id );
     glTextureView(	tex->id,
     tex->target,
     static_cast<Texture*>(data->base_tex)->id,
@@ -229,14 +229,14 @@ ITextureView* Gapi::createTextureView(rTextureViewData* data)
 IVertexBuffer* Gapi::createVertexBuffer(rAllocData* data)
 {
   VertexBuffer* vbo = new VertexBuffer();
-  glGenBuffers( 1, &vbo->id );
+  glCreateBuffers( 1, &vbo->id );
   
-  glBindBuffer( GL_ARRAY_BUFFER, vbo->id ); //TODO not sure if we need this
-  /*glNamedBufferStorage( vbo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
+  //glBindBuffer( GL_ARRAY_BUFFER, vbo->id ); //TODO not sure if we need this
+  glNamedBufferStorage( vbo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
                                              (data->is_readable ? GL_MAP_READ_BIT : 0) |
                                              (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
                                              (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                             (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
+                                             (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );
 
   /*glBufferStorage( GL_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
                                              (data->is_readable ? GL_MAP_READ_BIT : 0) |
@@ -244,7 +244,7 @@ IVertexBuffer* Gapi::createVertexBuffer(rAllocData* data)
                                              (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
                                              (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
 
-  glBufferData( GL_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_DRAW );
+  //glBufferData( GL_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_DRAW );
 
   vbo->adata = *data;
   return vbo;
@@ -253,14 +253,14 @@ IVertexBuffer* Gapi::createVertexBuffer(rAllocData* data)
 IIndexBuffer* Gapi::createIndexBuffer(rAllocData* data)
 {
   IndexBuffer* ibo = new IndexBuffer();
-  glGenBuffers( 1, &ibo->id );
+  glCreateBuffers( 1, &ibo->id );
   
-  glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo->id );
-  /*glNamedBufferStorage( ibo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
+  //glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo->id );
+  glNamedBufferStorage( ibo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
                                            (data->is_readable ? GL_MAP_READ_BIT : 0) |
                                            (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
                                            (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
+                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );
 
   /*glBufferStorage( GL_ELEMENT_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
                                              (data->is_readable ? GL_MAP_READ_BIT : 0) |
@@ -268,7 +268,7 @@ IIndexBuffer* Gapi::createIndexBuffer(rAllocData* data)
                                              (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
                                              (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
   
-  glBufferData( GL_ELEMENT_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_DRAW );
+  //glBufferData( GL_ELEMENT_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_DRAW );
 
   ibo->adata = *data;
   return ibo;
@@ -277,14 +277,14 @@ IIndexBuffer* Gapi::createIndexBuffer(rAllocData* data)
 IUniformBuffer* Gapi::createUniformBuffer(rAllocData* data)
 {
   UniformBuffer* ubo = new UniformBuffer();
-  glGenBuffers( 1, &ubo->id );
+  glCreateBuffers( 1, &ubo->id );
   
-  glBindBuffer( GL_UNIFORM_BUFFER, ubo->id );
-  /*glNamedBufferStorage( ubo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
+  //glBindBuffer( GL_UNIFORM_BUFFER, ubo->id );
+  glNamedBufferStorage( ubo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
                                            (data->is_readable ? GL_MAP_READ_BIT : 0) |
                                            (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
                                            (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
+                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );
   
   /*glBufferStorage( GL_UNIFORM_BUFFER, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
                                              (data->is_readable ? GL_MAP_READ_BIT : 0) |
@@ -292,7 +292,7 @@ IUniformBuffer* Gapi::createUniformBuffer(rAllocData* data)
                                              (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
                                              (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
 
-  glBufferData( GL_UNIFORM_BUFFER, data->size, 0, GL_DYNAMIC_DRAW );
+  //glBufferData( GL_UNIFORM_BUFFER, data->size, 0, GL_DYNAMIC_DRAW );
 
   ubo->adata = *data;
   return ubo;
@@ -465,17 +465,24 @@ void Gapi::passVertexBuffers(IVertexBuffer** vbos, rVertexAttrib* attrib_data, u
   for( int c = 0; c < num_vbos; ++c )
   {
     GLuint id = static_cast<VertexBuffer*>(vbos[c])->id;
-    glBindBuffer( GL_ARRAY_BUFFER, id );
+    /*glBindBuffer( GL_ARRAY_BUFFER, id );
     glEnableVertexAttribArray( attrib_data[c].index );
-    glVertexAttribPointer( attrib_data[c].index, attrib_data[c].data_components, attrib_array[attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset );
+    glVertexAttribPointer( attrib_data[c].index, attrib_data[c].data_components, attrib_array[attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset );*/
     //glVertexAttribDivisor( attrib_data[c].index, attrib_data[c].divisor ); //instancing stuff
+
+    glEnableVertexArrayAttrib( global_vao, attrib_data[c].index );
+    glVertexArrayVertexBuffer( global_vao, attrib_data[c].index, id, attrib_data[c].offset, 0 );
+    glVertexArrayAttribFormat( global_vao, attrib_data[c].index, attrib_data[c].data_components, attrib_array[attrib_data[c].type], false, attrib_data[c].offset );
+    glVertexArrayAttribBinding( global_vao, attrib_data[c].index, attrib_data[c].index );
+    //glVertexArrayBindingDivisor( global_vao, attrib_data[c].index, attrib_data[c].divisor ); //instancing stuff
   }
 }
 
 void Gapi::passIndexBuffer(IIndexBuffer* ibo)
 {
   ASSERT( ibo );
-  glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBuffer*>(ibo)->id );
+  //glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBuffer*>(ibo)->id );
+  glVertexArrayElementBuffer( global_vao, static_cast<IndexBuffer*>(ibo)->id );
 }
 
 void Gapi::draw(unsigned num_indices)
