@@ -3,14 +3,14 @@
 #include "IBuffer.h"
 #include "GL/glew.h"
 
-class Buffer : IBuffer
+class Buffer : public IBuffer
 {
   public:
-    rAllocData adata;
+    rDesc adata;
     GLuint id;
 
-    void destroy();
-    void update(char* data, unsigned size, unsigned offset); 
-    void getSubData(char* data, unsigned size, unsigned offset);
-    rAllocData getAllocData();
+    void destroy() override;
+    void update(char* data, unsigned size, unsigned offset) override; 
+    void getSubData(char* data, unsigned size, unsigned offset) override;
+    rDesc getDesc() override;
 };

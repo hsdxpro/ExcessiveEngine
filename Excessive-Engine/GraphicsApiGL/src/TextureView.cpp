@@ -88,7 +88,7 @@ void TextureView::getSubData(const rTextureUpdateData* data)
   }
 }
 
-rTextureData TextureView::getFormat()
+auto TextureView::getDesc() -> rDesc
 {
   return d;
 }

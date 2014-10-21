@@ -380,7 +380,7 @@ void Texture::getSubData(const rTextureUpdateData* data)
   }
 }
 
-rTextureData Texture::getFormat()
+auto Texture::getDesc() -> rDesc
 {
   return d;
 }

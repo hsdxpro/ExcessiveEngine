@@ -93,24 +93,22 @@ IShaderProgram* Gapi::createShaderProgram()
   return sp;
 }
 
-ITexture* Gapi::createTexture(rTextureData* data)
+ITexture* Gapi::createTexture(const ITexture::rDesc& data)
 {
   Texture* tex = new Texture();
   glGenTextures( 1, &tex->id );
   tex->target = 0;
   
-  ASSERT( data )
-  {
-    if( data->height > 1 )
+    if( data.height > 1 )
     {
-      if( data->depth > 1 )
+      if( data.depth > 1 )
       {
         //3D
         tex->dim =eDimensions::THREE;
         
-        if( data->is_layered )
+        if( data.is_layered )
         {
-          if( data->is_cubemap )
+          if( data.is_cubemap )
           {
             tex->target = GL_TEXTURE_CUBE_MAP_ARRAY;
           }
@@ -125,18 +123,18 @@ ITexture* Gapi::createTexture(rTextureData* data)
         }
         
         glBindTexture( tex->target, tex->id );
-        glTexStorage3D( tex->target, data->num_levels, texture_internal_formats[data->format], data->width, data->height, data->depth );        
+        glTexStorage3D( tex->target, data.num_levels, texture_internal_formats[data.format], data.width, data.height, data.depth );        
       }
       else
       {
         //2D
         tex->dim =eDimensions::TWO;
         
-        if( data->is_layered )
+        if( data.is_layered )
         {
           tex->target = GL_TEXTURE_1D_ARRAY;
         }
-        else if( data->is_cubemap )
+        else if( data.is_cubemap )
         {
           tex->target = GL_TEXTURE_CUBE_MAP;
         }
@@ -146,7 +144,7 @@ ITexture* Gapi::createTexture(rTextureData* data)
         }
         
         glBindTexture( tex->target, tex->id );
-        glTexStorage2D( tex->target, data->num_levels, texture_internal_formats[data->format], data->width, data->height );
+        glTexStorage2D( tex->target, data.num_levels, texture_internal_formats[data.format], data.width, data.height );
       }
     }
     else
@@ -157,35 +155,32 @@ ITexture* Gapi::createTexture(rTextureData* data)
       tex->target = GL_TEXTURE_1D;
 
       glBindTexture( tex->target, tex->id );
-      glTexStorage1D( tex->target, data->num_levels, texture_internal_formats[data->format], data->width );
+      glTexStorage1D( tex->target, data.num_levels, texture_internal_formats[data.format], data.width );
     }
     
-    tex->d = *data;
-  }
+    tex->d = data;
   
   return tex;
 }
 
-ITextureView* Gapi::createTextureView(rTextureViewData* data)
+ITextureView* Gapi::createTextureView(const ITextureView::rDesc& data)
 {
   TextureView* tex = new TextureView();
   glGenTextures( 1, &tex->id );
+
+    tex->dim = data.dim;
   
-  ASSERT( data )
-  {
-    tex->dim = data->dim;
-  
-    if( data->dim ==eDimensions::ONE )
+    if( data.dim ==eDimensions::ONE )
     {
       tex->target = GL_TEXTURE_1D;
     }
-    else if( data->dim ==eDimensions::TWO )
+    else if( data.dim ==eDimensions::TWO )
     {
-      if( data->is_layered )
+      if( data.is_layered )
       {
         tex->target = GL_TEXTURE_1D_ARRAY;
       }
-      else if( data->is_cubemap )
+      else if( data.is_cubemap )
       {
         tex->target = GL_TEXTURE_CUBE_MAP;
       }
@@ -196,9 +191,9 @@ ITextureView* Gapi::createTextureView(rTextureViewData* data)
     }
     else
     {
-      if( data->is_layered )
+      if( data.is_layered )
       {
-        if( data->is_cubemap )
+        if( data.is_cubemap )
         {
           tex->target = GL_TEXTURE_CUBE_MAP_ARRAY;
         }
@@ -215,18 +210,17 @@ ITextureView* Gapi::createTextureView(rTextureViewData* data)
   
     glTextureView(	tex->id,
     tex->target,
-    static_cast<Texture*>(data->base_tex)->id,
-    texture_internal_formats[data->format],
-    data->start_level,
-    data->num_levels,
-    data->start_layer,
-    data->num_layers );
-  }
+    static_cast<Texture*>(data.base_tex)->id,
+    texture_internal_formats[data.format],
+    data.start_level,
+    data.num_levels,
+    data.start_layer,
+    data.num_layers );
   
   return tex;
 }
 
-IVertexBuffer* Gapi::createVertexBuffer(rAllocData* data)
+IVertexBuffer* Gapi::createVertexBuffer(const IVertexBuffer::rDesc& data)
 {
   VertexBuffer* vbo = new VertexBuffer();
   glGenBuffers( 1, &vbo->id );
@@ -244,13 +238,13 @@ IVertexBuffer* Gapi::createVertexBuffer(rAllocData* data)
                                              (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
                                              (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
 
-  glBufferData( GL_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_DRAW );
+  glBufferData( GL_ARRAY_BUFFER, data.size, 0, GL_DYNAMIC_DRAW );
 
-  vbo->adata = *data;
+  vbo->adata = data;
   return vbo;
 }
 
-IIndexBuffer* Gapi::createIndexBuffer(rAllocData* data)
+IIndexBuffer* Gapi::createIndexBuffer(const IIndexBuffer::rDesc& data)
 {
   IndexBuffer* ibo = new IndexBuffer();
   glGenBuffers( 1, &ibo->id );
@@ -268,13 +262,13 @@ IIndexBuffer* Gapi::createIndexBuffer(rAllocData* data)
                                              (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
                                              (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
   
-  glBufferData( GL_ELEMENT_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_DRAW );
+  glBufferData( GL_ELEMENT_ARRAY_BUFFER, data.size, 0, GL_DYNAMIC_DRAW );
 
-  ibo->adata = *data;
+  ibo->adata = data;
   return ibo;
 }
 
-IUniformBuffer* Gapi::createUniformBuffer(rAllocData* data)
+IUniformBuffer* Gapi::createUniformBuffer(const IUniformBuffer::rDesc& data)
 {
   UniformBuffer* ubo = new UniformBuffer();
   glGenBuffers( 1, &ubo->id );
@@ -292,17 +286,15 @@ IUniformBuffer* Gapi::createUniformBuffer(rAllocData* data)
                                              (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
                                              (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
 
-  glBufferData( GL_UNIFORM_BUFFER, data->size, 0, GL_DYNAMIC_DRAW );
+  glBufferData( GL_UNIFORM_BUFFER, data.size, 0, GL_DYNAMIC_DRAW );
 
-  ubo->adata = *data;
+  ubo->adata = data;
   return ubo;
 }
 
-void Gapi::setDepthState(rDepthState* state)
+void Gapi::setDepthState(const rDepthState& state)
 {
-  ASSERT( state )
-  {
-    if( state->depth_test )
+    if( state.depth_test )
     {
       glEnable( GL_DEPTH_TEST );
     }
@@ -311,19 +303,16 @@ void Gapi::setDepthState(rDepthState* state)
       glDisable( GL_DEPTH_TEST );
     }
     
-    glDepthMask( state->depth_mask );
+    glDepthMask( state.depth_mask );
     
-    glDepthRangef( state->near, state->far );
+    glDepthRangef( state.near, state.far );
     
-    glDepthFunc( func_data[(unsigned)state->func] );
-  }
+    glDepthFunc( func_data[(unsigned)state.func] );
 }
 
-void Gapi::setStencilState(rStencilState* state)
+void Gapi::setStencilState(const rStencilState& state)
 {
-  ASSERT( state )
-  {
-    if( state->stencil_test )
+    if( state.stencil_test )
     {
       glEnable( GL_STENCIL_TEST );
     }
@@ -332,21 +321,18 @@ void Gapi::setStencilState(rStencilState* state)
       glDisable( GL_STENCIL_TEST );
     }
     
-    glDepthMask( state->stencil_mask );
+    glDepthMask( state.stencil_mask );
     
-    glStencilMask( state->mask );
+    glStencilMask( state.mask );
     
-	glStencilFunc(func_data[(unsigned)state->func], state->reference_stencil_value, state->func_mask);
+	glStencilFunc(func_data[(unsigned)state.func], state.reference_stencil_value, state.func_mask);
     
-	glStencilOp(stencil_op_data[(unsigned)state->on_stencil_fail], stencil_op_data[(unsigned)state->on_stencil_pass_depth_fail], stencil_op_data[(unsigned)state->on_stencil_pass_depth_pass]);
-  }
+	glStencilOp(stencil_op_data[(unsigned)state.on_stencil_fail], stencil_op_data[(unsigned)state.on_stencil_pass_depth_fail], stencil_op_data[(unsigned)state.on_stencil_pass_depth_pass]);
 }
 
-void Gapi::setBlendState(rBlendState* state)
+void Gapi::setBlendState(const rBlendState& state)
 { 
-  ASSERT( state )
-  {
-    if( state->blend_test )
+    if( state.blend_test )
     {
       glEnable( GL_BLEND );
     }
@@ -355,12 +341,11 @@ void Gapi::setBlendState(rBlendState* state)
       glDisable( GL_BLEND );
     }
     
-    glBlendColor( state->blend_color.x, state->blend_color.y, state->blend_color.z, state->blend_color.w );
+    glBlendColor( state.blend_color.x, state.blend_color.y, state.blend_color.z, state.blend_color.w );
     
-	glBlendEquation(blend_eq_data[(unsigned)state->equation]);
+	glBlendEquation(blend_eq_data[(unsigned)state.equation]);
     
-	glBlendFunc(blend_func_data[(unsigned)state->src_func], blend_func_data[(unsigned)state->dst_func]);
-  }
+	glBlendFunc(blend_func_data[(unsigned)state.src_func], blend_func_data[(unsigned)state.dst_func]);
 }
 
 void Gapi::setSRGBWrites(bool val)
@@ -392,12 +377,12 @@ void Gapi::setViewport(int x, int y, unsigned w, unsigned h)
   glViewport( x, y, w, h );
 }
 
-void Gapi::setRasterizationState(rRasterizerState* state)
+void Gapi::setRasterizationState(const rRasterizerState& state)
 {
-	glPolygonMode(GL_FRONT_AND_BACK, raster_mode_data[(unsigned)state->mode]);
-	glFrontFace(raster_order_data[(unsigned)state->vertex_order]);
-	glCullFace(raster_face_data[(unsigned)state->face]);
-  glColorMask( state->r_mask, state->g_mask, state->b_mask, state->a_mask );
+	glPolygonMode(GL_FRONT_AND_BACK, raster_mode_data[(unsigned)state.mode]);
+	glFrontFace(raster_order_data[(unsigned)state.vertex_order]);
+	glCullFace(raster_face_data[(unsigned)state.face]);
+  glColorMask( state.r_mask, state.g_mask, state.b_mask, state.a_mask );
 }
 
 bool Gapi::getError() //true if error
@@ -435,19 +420,19 @@ void Gapi::setShaderProgram(IShaderProgram* sp)
   glUseProgram(static_cast<ShaderProgram*>(sp)->id);
 }
 
-void Gapi::passTextureView(ITextureView* tex, unsigned index)
+void Gapi::setTextureView(ITextureView* tex, unsigned index)
 {
   ASSERT( tex );
   glBindTextureUnit( index, static_cast<TextureView*>(tex)->id );
 }
 
-void Gapi::passRenderTargets(rTargetData* render_targets, unsigned size)
+void Gapi::setRenderTargets(const rRenderTargetInfo* render_targets, unsigned size)
 {
   //TODO
   glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 }
 
-void Gapi::passUniformBuffer(IUniformBuffer* buf, unsigned index)
+void Gapi::setUniformBuffer(IUniformBuffer* buf, unsigned index)
 {
   ASSERT( buf );
   glBindBufferBase( GL_UNIFORM_BUFFER, index, static_cast<UniformBuffer*>(buf)->id );
@@ -458,13 +443,13 @@ GLenum attrib_array[] =
   GL_FLOAT, GL_INT, GL_UNSIGNED_INT
 };
 
-void Gapi::passVertexBuffers(IVertexBuffer** vbos, rVertexAttrib* attrib_data, unsigned num_vbos)
+void Gapi::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, unsigned num_buffers)
 {
-  ASSERT( vbos && attrib_data );
+	ASSERT(buffers && attrib_data);
 
-  for( int c = 0; c < num_vbos; ++c )
+	for (int c = 0; c < num_buffers; ++c)
   {
-    GLuint id = static_cast<VertexBuffer*>(vbos[c])->id;
+	  GLuint id = static_cast<VertexBuffer*>(buffers[c])->id;
     glBindBuffer( GL_ARRAY_BUFFER, id );
     glEnableVertexAttribArray( attrib_data[c].index );
 	glVertexAttribPointer(attrib_data[c].index, attrib_data[c].data_components, attrib_array[(unsigned)attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset);
@@ -472,7 +457,7 @@ void Gapi::passVertexBuffers(IVertexBuffer** vbos, rVertexAttrib* attrib_data, u
   }
 }
 
-void Gapi::passIndexBuffer(IIndexBuffer* ibo)
+void Gapi::setIndexBuffer(IIndexBuffer* ibo)
 {
   ASSERT( ibo );
   glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBuffer*>(ibo)->id );

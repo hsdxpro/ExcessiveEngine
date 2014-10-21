@@ -1,21 +1,22 @@
 #pragma once
 
-struct rAllocData
-{
-  unsigned size;
-  bool is_readable;
-  bool is_writable;
-  bool is_persistent;
-  bool prefer_cpu_storage;
-};
+#include <cstdint>
 
 class IBuffer
 {
-  public:
-    virtual void destroy() = 0;
-    virtual void update(char* data, unsigned size, unsigned offset) = 0; 
-    virtual void getSubData(char* data, unsigned size, unsigned offset) = 0;
-    virtual rAllocData getAllocData() = 0;
+public:
+	struct rDesc {
+		uint32_t size;
+		bool is_readable;
+		bool is_writable;
+		bool is_persistent;
+		bool prefer_cpu_storage;
+	};
+public:
+	virtual void destroy() = 0;
+	virtual void update(char* data, unsigned size, unsigned offset) = 0; 
+	virtual void getSubData(char* data, unsigned size, unsigned offset) = 0;
+	virtual rDesc getDesc() = 0;
 };
 
 //Implement the ones below

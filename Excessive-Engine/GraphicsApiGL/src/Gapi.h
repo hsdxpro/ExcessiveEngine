@@ -9,38 +9,35 @@ class Gapi : public IGapi
   public:
     unsigned global_vao;
   
-    IShaderProgram* createShaderProgram();
-    ITexture* createTexture(rTextureData* data);
-    ITextureView* createTextureView(rTextureViewData* data);
-    IVertexBuffer* createVertexBuffer(rAllocData* data);
-    IIndexBuffer* createIndexBuffer(rAllocData* data);
-    IUniformBuffer* createUniformBuffer(rAllocData* data);
+    IShaderProgram* createShaderProgram() override;
+    ITexture* createTexture(const ITexture::rDesc& data) override;
+	ITextureView* createTextureView(const ITextureView::rDesc& data) override;
+	IVertexBuffer* createVertexBuffer(const IVertexBuffer::rDesc& data) override;
+	IIndexBuffer* createIndexBuffer(const IIndexBuffer::rDesc& data) override;
+	IUniformBuffer* createUniformBuffer(const IUniformBuffer::rDesc& data) override;
   
-    void setDepthState(rDepthState* state);
+    void setDepthState(const rDepthState& state) override;
+    void setStencilState(const rStencilState& state) override;
+    void setBlendState(const rBlendState& state) override;
 
-    void setStencilState(rStencilState* state);
-
-    void setBlendState(rBlendState* state);
-
-    void setSRGBWrites(bool val);
-    void setSeamlessCubeMaps(bool val);
+    void setSRGBWrites(bool val) override;
+    void setSeamlessCubeMaps(bool val) override;
     
-    void setViewport(int x, int y, unsigned w, unsigned h);
+    void setViewport(int x, int y, unsigned w, unsigned h) override;
 
-    void setRasterizationState(rRasterizerState* state);
+    void setRasterizationState(const rRasterizerState& state) override;
 
-    bool getError();
-    void setDebugOutput(bool val);
-    void setSyncDebugOutput(bool val);
+    bool getError() override;
+    void setDebugOutput(bool val) override;
+    void setSyncDebugOutput(bool val) override;
     
     //pass input/output to shader
-    void setShaderProgram(IShaderProgram* sp);
-
-    void passTextureView(ITextureView* tex, unsigned index);
-    void passRenderTargets(rTargetData* render_targets, unsigned size);
-    void passUniformBuffer(IUniformBuffer* buf, unsigned index);
-    void passVertexBuffers(IVertexBuffer** vbos, rVertexAttrib* attrib_data, unsigned num_vbos);
-    void passIndexBuffer(IIndexBuffer* ibo);
+    void setShaderProgram(IShaderProgram* sp) override;
+    void setTextureView(ITextureView* tex, unsigned index) override;
+	void setRenderTargets(const rRenderTargetInfo* render_targets, unsigned size) override;
+	void setUniformBuffer(IUniformBuffer* buf, unsigned index) override;
+	void setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, unsigned num_buffers) override;
+	void setIndexBuffer(IIndexBuffer* ibo) override;
     
     //draw stuff
     void draw(unsigned num_indices);

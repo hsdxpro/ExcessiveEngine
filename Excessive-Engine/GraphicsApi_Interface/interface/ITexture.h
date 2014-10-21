@@ -97,25 +97,27 @@ struct rTextureSamplerData
   bool is_clamped; //clamped to edge OR repeated
 };
 
-//specifices what type of texture you'd like to allocate
-struct rTextureData
-{
-  unsigned num_levels; //mipmap levels
-  unsigned width;
-  unsigned height;
-  unsigned depth;
-  eFormatType format; //texture format
-  bool is_layered;
-  bool is_cubemap;
-};
 
 class ITexture
 {
-  public:
+public:
+
+	//specifices what type of texture you'd like to allocate
+	struct rDesc 
+	{
+		unsigned num_levels; //mipmap levels
+		unsigned width;
+		unsigned height;
+		unsigned depth;
+		eFormatType format; //texture format
+		bool is_layered;
+		bool is_cubemap;
+	};
+public:
     virtual void destroy() = 0;
     virtual void setSamplerState(const rTextureSamplerData* data) = 0;
     virtual void update(const rTextureUpdateData* data) = 0;
     virtual void getSubData(const rTextureUpdateData* data) = 0; //the pointer should be updated
-    virtual rTextureData getFormat() = 0;
+    virtual rDesc getDesc() = 0;
     virtual void genMipChain() = 0;
 };

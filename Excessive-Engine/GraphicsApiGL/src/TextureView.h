@@ -10,12 +10,12 @@ class TextureView : public ITextureView
     GLuint id;
     GLenum target;
     eDimensions dim;
-    rTextureData d;
+    rDesc d;
     
     void destroy();
-    void setSamplerState(const rTextureSamplerData* data);
-    void update(const rTextureUpdateData* data);
-    void getSubData(const rTextureUpdateData* data);
-    rTextureData getFormat();
-    void genMipChain();
+	void setSamplerState(const rTextureSamplerData* data) override;
+	void update(const rTextureUpdateData* data) override;
+	void getSubData(const rTextureUpdateData* data) override;
+	rDesc getDesc() override;
+    void genMipChain() override;
 };

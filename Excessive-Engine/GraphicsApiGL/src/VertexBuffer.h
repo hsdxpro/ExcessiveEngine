@@ -26,8 +26,8 @@ class VertexBuffer : public Buffer, public IVertexBuffer
       Buffer::getSubData(data, size, offset);
     }
 
-    rAllocData getAllocData()
+    rDesc getDesc()
     {
-      return Buffer::getAllocData();
+      return Buffer::getDesc();
     }
 };

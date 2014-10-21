@@ -29,7 +29,7 @@ void Buffer::getSubData(char* data, unsigned size, unsigned offset)
   }*/
 }
 
-rAllocData Buffer::getAllocData()
+auto Buffer::getDesc() -> rDesc
 {
   return adata;
 }
