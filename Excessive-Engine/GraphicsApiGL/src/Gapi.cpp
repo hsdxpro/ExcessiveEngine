@@ -104,7 +104,7 @@ ITexture* Gapi::createTexture(const ITexture::rDesc& data)
       if( data.depth > 1 )
       {
         //3D
-        tex->dim =eDimensions::THREE;
+        tex->dim = 3;
         
         if( data.is_layered )
         {
@@ -128,7 +128,7 @@ ITexture* Gapi::createTexture(const ITexture::rDesc& data)
       else
       {
         //2D
-        tex->dim =eDimensions::TWO;
+        tex->dim = 2;
         
         if( data.is_layered )
         {
@@ -150,7 +150,7 @@ ITexture* Gapi::createTexture(const ITexture::rDesc& data)
     else
     {
       //1D
-      tex->dim =eDimensions::ONE;
+      tex->dim = 1;
       
       tex->target = GL_TEXTURE_1D;
 
@@ -170,11 +170,11 @@ ITextureView* Gapi::createTextureView(const ITextureView::rDesc& data)
 
     tex->dim = data.dim;
   
-    if( data.dim ==eDimensions::ONE )
+    if( data.dim == 1 )
     {
       tex->target = GL_TEXTURE_1D;
     }
-    else if( data.dim ==eDimensions::TWO )
+    else if( data.dim == 2 )
     {
       if( data.is_layered )
       {
@@ -294,7 +294,7 @@ IUniformBuffer* Gapi::createUniformBuffer(const IUniformBuffer::rDesc& data)
 
 void Gapi::setDepthState(const rDepthState& state)
 {
-    if( state.depth_test )
+    if( state.enable_test )
     {
       glEnable( GL_DEPTH_TEST );
     }
@@ -303,7 +303,7 @@ void Gapi::setDepthState(const rDepthState& state)
       glDisable( GL_DEPTH_TEST );
     }
     
-    glDepthMask( state.depth_mask );
+    glDepthMask( state.enable_write );
     
     glDepthRangef( state.near, state.far );
     
@@ -312,7 +312,7 @@ void Gapi::setDepthState(const rDepthState& state)
 
 void Gapi::setStencilState(const rStencilState& state)
 {
-    if( state.stencil_test )
+    if( state.enable_test )
     {
       glEnable( GL_STENCIL_TEST );
     }
@@ -321,18 +321,18 @@ void Gapi::setStencilState(const rStencilState& state)
       glDisable( GL_STENCIL_TEST );
     }
     
-    glDepthMask( state.stencil_mask );
+    glDepthMask( state.enable_write );
     
     glStencilMask( state.mask );
     
-	glStencilFunc(func_data[(unsigned)state.func], state.reference_stencil_value, state.func_mask);
+	glStencilFunc(func_data[(unsigned)state.func], state.reference, state.func_mask);
     
 	glStencilOp(stencil_op_data[(unsigned)state.on_stencil_fail], stencil_op_data[(unsigned)state.on_stencil_pass_depth_fail], stencil_op_data[(unsigned)state.on_stencil_pass_depth_pass]);
 }
 
 void Gapi::setBlendState(const rBlendState& state)
 { 
-    if( state.blend_test )
+    if( state.enable )
     {
       glEnable( GL_BLEND );
     }
@@ -448,13 +448,13 @@ void Gapi::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib
 	ASSERT(buffers && attrib_data);
 
 	for (int c = 0; c < num_buffers; ++c)
-  {
-	  GLuint id = static_cast<VertexBuffer*>(buffers[c])->id;
-    glBindBuffer( GL_ARRAY_BUFFER, id );
-    glEnableVertexAttribArray( attrib_data[c].index );
-	glVertexAttribPointer(attrib_data[c].index, attrib_data[c].data_components, attrib_array[(unsigned)attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset);
-    //glVertexAttribDivisor( attrib_data[c].index, attrib_data[c].divisor ); //instancing stuff
-  }
+	{
+		GLuint id = static_cast<VertexBuffer*>(buffers[c])->id;
+		glBindBuffer( GL_ARRAY_BUFFER, id );
+		glEnableVertexAttribArray( attrib_data[c].index );
+		glVertexAttribPointer(attrib_data[c].index, attrib_data[c].data_components, attrib_array[(unsigned)attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset);
+		//glVertexAttribDivisor( attrib_data[c].index, attrib_data[c].divisor ); //instancing stuff
+	}
 }
 
 void Gapi::setIndexBuffer(IIndexBuffer* ibo)

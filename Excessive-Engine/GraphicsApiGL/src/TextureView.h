@@ -9,7 +9,7 @@ class TextureView : public ITextureView
   public:
     GLuint id;
     GLenum target;
-    eDimensions dim;
+    unsigned dim;
     rDesc d;
     
     void destroy();

@@ -15,12 +15,14 @@ void TextureView::setSamplerState(const rTextureSamplerData* data)
   ASSERT( data && target )
   {
     //GL needs a glTextureParameterx so that no stupid binding is needed
-    //if( currently_bound_textures[0] != id )
+    /*
+	if( currently_bound_textures[0] != id )
     {
-      //glBindTexture( target, id );
-      //glBindTextureUnit( 0, id );
-      //currently_bound_textures[0] = id;
+      glBindTexture( target, id );
+      glBindTextureUnit( 0, id );
+      currently_bound_textures[0] = id;
     }
+	*/
   
     if( data->is_anisotropic )
     {
@@ -65,11 +67,11 @@ void TextureView::update(const rTextureUpdateData* data)
 {
   ASSERT( data )
   {
-    if( dim == eDimensions::ONE )
+    if( dim == 1 )
     {
       glTextureSubImage1D( id, data->level, data->x_offset, data->width, texture_formats[data->format], texture_types[data->format], data->data );
     }
-    else if( dim == eDimensions::TWO )
+    else if( dim == 2 )
     {
       glTextureSubImage2D( id, data->level, data->x_offset, data->y_offset, data->width, data->height, texture_formats[data->format], texture_types[data->format], data->data );
     }

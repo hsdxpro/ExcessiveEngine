@@ -16,7 +16,7 @@ public:
 		eFormatType format; //texture format
 		ITexture* base_tex;
 		//new texture target
-		eDimensions dim;
+		unsigned dim;
 		bool is_layered;
 		bool is_cubemap;
 	};
