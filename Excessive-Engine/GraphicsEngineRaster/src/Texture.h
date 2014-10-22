@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../GraphicsEngine_Interface/interface/ITexture.h"
+#include <GraphicsApi>
 
 
 class Texture : public ge::ITexture 
@@ -16,4 +17,7 @@ public:
 	void load(const wchar_t* file_path);
 private:
 	size_t refcount;
+
+	// gpu resource
+	ITexture* tex;
 };

@@ -50,4 +50,5 @@ src/Entity.cpp
 #########################################################################
 # Project
 
+include_directories("../GraphicsApi_Interface/interface/")
 add_library( GraphicsEngineRaster SHARED ${sources} ${headers} ${interfaces} )

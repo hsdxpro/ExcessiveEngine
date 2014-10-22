@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
+#include <GraphicsApi>
 #include "../GraphicsEngine_Interface/interface/IMesh.h"
 
 
@@ -44,9 +46,9 @@ private:
 		void* vertex_data;
 		size_t vertex_bytes;
 		uint32_t* index_data;
-		size_t index_num;
+		size_t index_num; // 3 per face
 		size_t* mat_ids;
-		size_t mat_ids_num;
+		size_t mat_ids_num; // only beginning of each group, ending calculated
 	};
 
 	// optimize data for gpu drawing
@@ -63,4 +65,9 @@ private:
 private:
 	size_t refcount;
 	ResourceData* res_data; // temporary cache for setWhatever
+
+	// mesh gpu resource
+	IVertexBuffer* vb;
+	IIndexBuffer* ib;
+	std::vector<size_t*> mat_ids;
 };
