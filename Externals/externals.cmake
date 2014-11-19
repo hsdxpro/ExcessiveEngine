@@ -1,3 +1,5 @@
+message( "-externals" )
+
 if( LINUX_BUILD )
   include( ${CMAKE_CURRENT_LIST_DIR}/linux/lib.cmake )
 endif()
