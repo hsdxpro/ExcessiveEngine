@@ -1,0 +1,1 @@
+Raster renderer implementation of the GraphicsEngine interface
