@@ -16,7 +16,7 @@ using namespace std;
 using namespace mymath;
 
 const char* vshd = 
-"#version 450 core \n"
+"#version 440 core \n"
 "layout(std140) uniform constant_data \n"
 "{ \n"
 "  mat4 mvp; \n"
@@ -31,7 +31,7 @@ const char* vshd =
 "} \n";
 
 const char* pshd = 
-"#version 450 core \n"
+"#version 440 core \n"
 "uniform sampler2D tex; \n"
 "in vec2 texcoord; \n"
 "out vec4 color; \n"

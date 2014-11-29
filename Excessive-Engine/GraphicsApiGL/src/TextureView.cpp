@@ -31,34 +31,52 @@ void TextureView::setSamplerState(const rTextureSamplerData* data)
     
     if( data->is_clamped )
     {
-      glTextureParameteri( id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-      glTextureParameteri( id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-      glTextureParameteri( id, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE );
+	  // TODO 4.5
+      //glTextureParameteri( id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+      //glTextureParameteri( id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+      //glTextureParameteri( id, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE );
+
+	  glTexParameteri(id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	  glTexParameteri(id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	  glTexParameteri(id, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     }
     else
     {
-      glTextureParameteri( id, GL_TEXTURE_WRAP_S, GL_REPEAT );
-      glTextureParameteri( id, GL_TEXTURE_WRAP_T, GL_REPEAT );
-      glTextureParameteri( id, GL_TEXTURE_WRAP_R, GL_REPEAT );
+	  // TODO 4.5
+      //glTextureParameteri( id, GL_TEXTURE_WRAP_S, GL_REPEAT );
+      //glTextureParameteri( id, GL_TEXTURE_WRAP_T, GL_REPEAT );
+      //glTextureParameteri( id, GL_TEXTURE_WRAP_R, GL_REPEAT );
+
+	  glTexParameteri(id, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	  glTexParameteri(id, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	  glTexParameteri(id, GL_TEXTURE_WRAP_R, GL_REPEAT);
     }
     
     if( data->is_bilinear )
     {
       if( data->is_mipmapped )
       {
-        glTextureParameteri( id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+		// TODO 4.5
+        //glTextureParameteri( id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+		glTexParameteri(id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
       }
       
-      glTextureParameteri( id, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+	  // TODO 4.5
+      //glTextureParameteri( id, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+	  glTexParameteri(id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
     else
     {
       if( data->is_mipmapped )
       {
-        glTextureParameteri( id, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST );
+		// TODO 4.5
+        //glTextureParameteri( id, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST );
+		glTexParameteri(id, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
       }
       
+	  // TODO 4.5
       glTextureParameteri( id, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+	  glTexParameteri(id, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     }
   }
 }
