@@ -424,7 +424,8 @@ void Gapi::setTextureView(ITextureView* tex, unsigned index)
 {
   ASSERT( tex );
   //glBindTextureUnit( index, static_cast<TextureView*>(tex)->id );
-  glBindTextures(index, 1, &static_cast<TextureView*>(tex)->id);
+  glActiveTexture( GL_TEXTURE0 + index );
+  glBindTexture(static_cast<TextureView*>(tex)->target, static_cast<TextureView*>(tex)->id);
 }
 
 void Gapi::setRenderTargets(const rRenderTargetInfo* render_targets, unsigned size)

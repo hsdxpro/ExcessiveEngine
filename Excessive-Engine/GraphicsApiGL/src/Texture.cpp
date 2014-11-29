@@ -309,7 +309,8 @@ void Texture::setSamplerState(const rTextureSamplerData* data)
     //GL needs a glTextureParameterx so that no stupid binding is needed
     //if( currently_bound_textures[0] != id )
     {
-      //glBindTexture( target, id );
+      glActiveTexture( GL_TEXTURE0 );
+      glBindTexture( target, id );
       //glBindTextureUnit( 0, id );
       //currently_bound_textures[0] = id;
     }
@@ -326,9 +327,9 @@ void Texture::setSamplerState(const rTextureSamplerData* data)
      //glTextureParameteri( id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
      //glTextureParameteri( id, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE );
 
-	 glTexParameteri(id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	 glTexParameteri( id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-	 glTexParameteri( id, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE );
+	 glTexParameteri( target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	 glTexParameteri( target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+	 glTexParameteri( target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE );
     }
     else
     {
@@ -337,9 +338,9 @@ void Texture::setSamplerState(const rTextureSamplerData* data)
       //glTextureParameteri( id, GL_TEXTURE_WRAP_T, GL_REPEAT );
       //glTextureParameteri( id, GL_TEXTURE_WRAP_R, GL_REPEAT );
 
-	  glTexParameteri(id, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	  glTexParameteri(id, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	  glTexParameteri(id, GL_TEXTURE_WRAP_R, GL_REPEAT);
+	  glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	  glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	  glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_REPEAT);
     }
     
     if( data->is_bilinear )
@@ -348,12 +349,12 @@ void Texture::setSamplerState(const rTextureSamplerData* data)
       {
 		// TODO 4.5
 		//glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri( id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+        glTexParameteri( target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
       }
       
 	  // TODO 4.5
       //glTextureParameteri( id, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	  glTexParameteri(id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	  glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
     else
     {
@@ -361,11 +362,11 @@ void Texture::setSamplerState(const rTextureSamplerData* data)
       {
 		  // TODO 4.5
         //glTextureParameteri( id, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST );
-		glTexParameteri(id, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
       }
 	  // TODO 4.5
 	  //glTextureParameteri(id, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-      glTexParameteri( id, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+      glTexParameteri( target, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
     }
   }
 }
@@ -374,6 +375,9 @@ void Texture::update(const rTextureUpdateData* data)
 {
   ASSERT( data )
   {
+    glActiveTexture( GL_TEXTURE0 );
+    glBindTexture( target, id );
+    
 	  if (dim == 1)
     {
       glTextureSubImage1D( id, data->level, data->x_offset, data->width, texture_formats[data->format], texture_types[data->format], data->data );
@@ -381,7 +385,7 @@ void Texture::update(const rTextureUpdateData* data)
     else if( dim == 2)
     {
       //glTextureSubImage2D( id, data->level, data->x_offset, data->y_offset, data->width, data->height, texture_formats[data->format], texture_types[data->format], data->data );
-	  glTexSubImage2D(id, data->level, data->x_offset, data->y_offset, data->width, data->height, texture_formats[data->format], texture_types[data->format], data->data);
+	  glTexSubImage2D(target, data->level, data->x_offset, data->y_offset, data->width, data->height, texture_formats[data->format], texture_types[data->format], data->data);
 	  
     }
     else //threesome
