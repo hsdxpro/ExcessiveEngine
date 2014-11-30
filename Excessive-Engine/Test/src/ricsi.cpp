@@ -17,8 +17,8 @@ int Ricsi() {
 
 	//// Init window
 	IWindow::rDesc winDesc;
-		winDesc.w = 800;
-		winDesc.h = 600;
+		winDesc.clientW = 800;
+		winDesc.clientH = 600;
 		winDesc.capText = L"Excessive-Engine -> Ricsi teszt";
 	gWindow = Factory::createWindow(winDesc);
 

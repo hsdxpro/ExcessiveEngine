@@ -7,24 +7,20 @@
 class IWindow
 {
 public:
-	struct rDesc
-	{
-		u16 w;
-		u16 h;
+	struct rDesc {
+		u16 clientW;
+		u16 clientH;
 		wchar_t* capText; // TMP, REMOVE THAT
 	};
 
-	enum class eMsg
-	{
+	enum class eMsg {
 		CLOSED,
 		KEY_PRESSED,
 	};
 
-	struct rEvent
-	{
+	struct rEvent {
 		eMsg msg;
 		ISys::eKey key;
-		//key
 	};
 
 public:
