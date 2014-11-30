@@ -7,6 +7,7 @@ class IScene;
 class IMesh;
 class IMaterial;
 class ITexture;
+class IGapi;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// GraphicsEngine manages and displays the graphical world.
@@ -15,8 +16,16 @@ class ITexture;
 
 class IGraphicsEngine
 {
+
+public:
+	struct rDesc
+	{
+		
+	};
+
 public:
 	// interface
+	//static IGraphicsEngine* create(const rDesc& d);
 	virtual void release() = 0;
 
 	// create stuff
@@ -31,11 +40,16 @@ public:
 
 	// interact
 	virtual void update() = 0;
+
+	// getters
+	virtual ge::IGapi* getGapi() = 0;
 };
 
-
-
-
+//IGraphicsEngine* IGraphicsEngine::create(const IGraphicsEngine::rDesc& d)
+//{
+//	// TODO
+//	return nullptr;
+//}
 
 
 
