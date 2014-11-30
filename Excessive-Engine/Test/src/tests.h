@@ -6,11 +6,12 @@
 int PetiTestGeneric();
 int CommonTest();
 int PetiGraphics();
-
+int Ricsi();
 
 const std::map<std::string, int(*)(void)> test_cases = {
 	// add you test here
-		{"peti_test_generic", PetiTestGeneric},
-		{"common_test", CommonTest},
-		{"peti_graphics", PetiGraphics},
+		{"peti_test_generic",	PetiTestGeneric},
+		{"peti_graphics",		PetiGraphics },
+		{"common_test",			CommonTest},
+		{"ricsi",				Ricsi },
 };
