@@ -37,6 +37,9 @@ GraphicsEngine::GraphicsEngine() {
 	// lóóóófasz rizzsel
 }
 
+//void GraphicsEngine::init(const IGraphicsEngine::rDesc& d) {
+//}
+
 GraphicsEngine::~GraphicsEngine() {
 	// lófasz rizzsel
 }
@@ -70,4 +73,8 @@ Texture* GraphicsEngine::createTexture() {
 // update
 void GraphicsEngine::update() {
 	cout << "Updating frame..." << endl;
+}
+
+ge::IGapi* GraphicsEngine::getGapi() {
+	return nullptr;
 }

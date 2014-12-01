@@ -2,7 +2,10 @@
 #pragma once
 
 #include "BasicTypes.h"
-#include "ISys.h"
+#include "Sys.h"
+
+// TMP, REMOVE THAT
+#include <string>
 
 class IWindow
 {
@@ -10,7 +13,7 @@ public:
 	struct rDesc {
 		u16 clientW;
 		u16 clientH;
-		wchar_t* capText; // TMP, REMOVE THAT
+		std::wstring capText;
 	};
 
 	enum class eMsg {
@@ -20,18 +23,17 @@ public:
 
 	struct rEvent {
 		eMsg msg;
-		ISys::eKey key;
+		Sys::eKey key;
 	};
 
 public:
-	// Window events
-	virtual bool PopEvent(rEvent* evt_out) = 0;
-
+	virtual void init(const rDesc& d) = 0;
 	virtual void close() = 0;
+
+	virtual bool popEvent(rEvent* evt_out) = 0;
 
 	virtual void displayClientRect() = 0;
 
 	// getters
 	virtual bool isOpen() = 0;
-protected:
 };

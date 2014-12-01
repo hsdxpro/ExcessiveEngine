@@ -1,13 +1,14 @@
 #include "Factory.h"
+#include "Sys.h"
 
-ge::IGraphicsEngine* Factory::createGraphicsEngine(const ge::IGraphicsEngine::rDesc& d)
-{
-	// TODO
+ge::IGraphicsEngine* Factory::createGraphicsEngineRaster() {
+	return ((ge::IGraphicsEngine*(*)())Sys::getDllProcAddress(Sys::loadDLL("GraphicsEngineRaster"), "CreateGraphicsEngine"))();
+}
+
+ge::IGraphicsEngine* Factory::createGraphicsEngineRT() {
 	return nullptr;
 }
 
-IWindow* Factory::createWindow(const IWindow::rDesc& d)
-{
-	// TODO
+IWindow* Factory::createWindow() {
 	return nullptr;
 }

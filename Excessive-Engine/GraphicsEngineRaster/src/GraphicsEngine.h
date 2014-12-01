@@ -21,6 +21,7 @@ public:
 	GraphicsEngine();
 	~GraphicsEngine();
 
+	//void init(const IGraphicsEngine::rDesc& d);
 	void release() override;
 
 	// create stuff
@@ -34,6 +35,8 @@ public:
 
 	// interact
 	void update() override;
+
+	ge::IGapi* getGapi();
 
 private:
 	std::unordered_set<Scene*> scenes;

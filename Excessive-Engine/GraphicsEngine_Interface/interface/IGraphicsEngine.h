@@ -16,16 +16,14 @@ class IGapi;
 
 class IGraphicsEngine
 {
-
 public:
-	struct rDesc
-	{
-		
+	struct rDesc {
 	};
 
 public:
 	// interface
 	//static IGraphicsEngine* create(const rDesc& d);
+	//virtual void init(const rDesc& d) = 0;
 	virtual void release() = 0;
 
 	// create stuff

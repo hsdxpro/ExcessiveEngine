@@ -1,6 +1,7 @@
 message( "-Excessive-Engine" )
 
-add_subdirectory( Common)
+add_subdirectory( Common )
+add_subdirectory( CommonWin )
 add_subdirectory( PIL )
 add_subdirectory( Core )
 add_subdirectory( GraphicsApiGL )
