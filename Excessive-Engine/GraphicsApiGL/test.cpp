@@ -16,7 +16,7 @@ using namespace std;
 using namespace mymath;
 
 const char* vshd = 
-"#version 450 core \n"
+"#version 440 core \n"
 "layout(std140) uniform constant_data \n"
 "{ \n"
 "  mat4 mvp; \n"
@@ -31,7 +31,7 @@ const char* vshd =
 "} \n";
 
 const char* pshd = 
-"#version 450 core \n"
+"#version 440 core \n"
 "uniform sampler2D tex; \n"
 "in vec2 texcoord; \n"
 "out vec4 color; \n"
@@ -122,7 +122,7 @@ int main( int argc, char** args )
   sf::Image im;
   im.loadFromFile( image_path );
 
-  rTextureData texdata;
+  ITexture::rDesc texdata;
   texdata.width = im.getSize().x;
   texdata.height = im.getSize().y;
   texdata.depth = 1;
@@ -131,7 +131,7 @@ int main( int argc, char** args )
   texdata.is_layered = false;
   texdata.num_levels = 1;
 
-  auto tex = gapi->createTexture(&texdata);
+  auto tex = gapi->createTexture(texdata);
 
   rTextureUpdateData texupdata;
   texupdata.data = (char*)im.getPixelsPtr();
@@ -155,9 +155,9 @@ int main( int argc, char** args )
   tex->setSamplerState( &smpdata );
 
   //set up the texture view
-  rTextureViewData texviewdata;
+  ITextureView::rDesc texviewdata;
   texviewdata.base_tex = tex;
-  texviewdata.dim = eDimensions::TWO;
+  texviewdata.dim = 2;// eDimensions::TWO;
   texviewdata.format = texdata.format;
   texviewdata.is_cubemap = texdata.is_cubemap;
   texviewdata.is_layered = texdata.is_layered;
@@ -166,7 +166,7 @@ int main( int argc, char** args )
   texviewdata.start_layer = 0;
   texviewdata.start_level = 0;
 
-  auto texview = gapi->createTextureView( &texviewdata );
+  auto texview = gapi->createTextureView( texviewdata );
   texview->setSamplerState( &smpdata );
 
   //set up the mesh
@@ -192,31 +192,31 @@ int main( int argc, char** args )
   texcoords.push_back( vec2( 1, 1 ) );
   texcoords.push_back( vec2( 0, 1 ) );
 
-  rAllocData tex_alloc_data;
+  IBuffer::rDesc tex_alloc_data;
   tex_alloc_data.is_persistent = false;
   tex_alloc_data.is_readable = false;
   tex_alloc_data.is_writable = true;
   tex_alloc_data.prefer_cpu_storage = false;
   tex_alloc_data.size = texcoords.size() * sizeof(vec2);
 
-  rAllocData vtx_alloc_data;
+  IBuffer::rDesc vtx_alloc_data;
   vtx_alloc_data.is_persistent = false;
   vtx_alloc_data.is_readable = false;
   vtx_alloc_data.is_writable = true;
   vtx_alloc_data.prefer_cpu_storage = false;
   vtx_alloc_data.size = vertices.size() * sizeof(vec3);
 
-  rAllocData idx_alloc_data;
+  IBuffer::rDesc idx_alloc_data;
   idx_alloc_data.is_persistent = false;
   idx_alloc_data.is_readable = false;
   idx_alloc_data.is_writable = true;
   idx_alloc_data.prefer_cpu_storage = false;
   idx_alloc_data.size = indices.size() * sizeof(unsigned);
 
-  auto vtx_buf = gapi->createVertexBuffer( &vtx_alloc_data );
-  auto tex_buf = gapi->createVertexBuffer( &tex_alloc_data );
+  auto vtx_buf = gapi->createVertexBuffer( vtx_alloc_data );
+  auto tex_buf = gapi->createVertexBuffer( tex_alloc_data );
 
-  auto idx_buf = gapi->createIndexBuffer( &idx_alloc_data );
+  auto idx_buf = gapi->createIndexBuffer( idx_alloc_data );
 
   vtx_buf->update( (char*)vertices.data(), vertices.size() * sizeof(vec3), 0 );
   tex_buf->update( (char*)texcoords.data(), texcoords.size() * sizeof(vec2), 0 );
@@ -224,7 +224,7 @@ int main( int argc, char** args )
   idx_buf->update( (char*)indices.data(), indices.size() * sizeof(unsigned), 0 );
 
   //set up the uniform buffer
-  rAllocData ubo_alloc_data;
+  IBuffer::rDesc ubo_alloc_data;
   ubo_alloc_data.is_persistent = false;
   ubo_alloc_data.is_readable = true;
   ubo_alloc_data.is_writable = true;
@@ -233,7 +233,7 @@ int main( int argc, char** args )
 
   mat4 mvp = ortographic( -1.0f, 1.0f, -1.0f, 1.0f, 0.0f, -1.0f );
 
-  auto ubo_buf = gapi->createUniformBuffer( &ubo_alloc_data );
+  auto ubo_buf = gapi->createUniformBuffer( ubo_alloc_data );
   
   ubo_buf->update( (char*)&mvp[0][0], sizeof(mat4), 0 );
 
@@ -267,7 +267,7 @@ int main( int argc, char** args )
     attr.index = sp->getAttributeIndex( "in_vertex" );
     attr.offset = 0;
     attr.size = 0;
-    attr.type = eVertexAttribType::ATTRIB_FLOAT;
+    attr.type = eVertexAttribType::FLOAT;
     attribs.push_back(attr);
 
     attr.data_components = 2;
@@ -276,11 +276,11 @@ int main( int argc, char** args )
 
     gapi->setViewport( 0, 0, 512, 512 );
     gapi->setShaderProgram( sp );
-    gapi->passRenderTargets( 0, 0 );
-    gapi->passTextureView( texview, sp->getSamplerIndex( "tex" ) );
-    gapi->passUniformBuffer( ubo_buf, sp->getUniformBlockIndex( "constant_data" ) );
-    gapi->passVertexBuffers( &vbos[0], attribs.data(), vbos.size() );
-    gapi->passIndexBuffer( idx_buf ); 
+    gapi->setRenderTargets( 0, 0 );
+    gapi->setTextureView( texview, sp->getSamplerIndex( "tex" ) );
+    gapi->setUniformBuffer( ubo_buf, sp->getUniformBlockIndex( "constant_data" ) );
+    gapi->setVertexBuffers( &vbos[0], attribs.data(), vbos.size() );
+    gapi->setIndexBuffer( idx_buf ); 
     gapi->draw( indices.size() );
 
     w.display();

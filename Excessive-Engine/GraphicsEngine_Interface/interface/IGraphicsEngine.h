@@ -7,6 +7,7 @@ class IScene;
 class IMesh;
 class IMaterial;
 class ITexture;
+class IGapi;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// GraphicsEngine manages and displays the graphical world.
@@ -15,6 +16,10 @@ class ITexture;
 
 class IGraphicsEngine
 {
+public:
+	struct rCfg {
+	};
+
 public:
 	// interface
 	virtual void release() = 0;
@@ -31,15 +36,10 @@ public:
 
 	// interact
 	virtual void update() = 0;
+
+	// getters
+	virtual ge::IGapi* getGapi() = 0;
 };
-
-
-
-
-
-
-
-
 
 
 } // namespace

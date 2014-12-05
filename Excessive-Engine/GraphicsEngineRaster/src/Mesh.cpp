@@ -3,6 +3,7 @@
 #include <memory>
 #include <iostream> // only for debug!!
 
+#include <GraphicsApi>
 
 #ifdef _MSC_VER
 #pragma message("Mesh.cpp: Add vertex format & vertex stride")

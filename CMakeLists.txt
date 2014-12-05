@@ -7,6 +7,57 @@ set( DEBUG_BUILD true )
 set( ARCH_32BIT true )
 set( CMAKE_VERBOSE_MAKEFILE ON )
 
+OPTION(BUILD_EXCESSIVE_WITH_DLL "BUILD_EXCESSIVE_WITH_DLL" ON)
+
+if(BUILD_EXCESSIVE_WITH_DLL)
+	add_definitions( -DBUILD_DLL )
+endif()
+
+if( NOT BUILD_EXCESSIVE_WITH_DLL)
+	add_definitions( -DBUILD_STATIC )
+endif()
+
+if(WIN32)
+	add_definitions( -DWIN )
+elseif(UNIX)
+	add_definitions( -DLIN )
+elseif(APPLE)
+	add_definitions( -DMAC )
+endif()
+
+set(BUILD_CONFIG_LIST_DEBUG	"D_32"
+				"D_64")
+
+set(BUILD_CONFIG_LIST_RELEASE	"R_32"
+				"R_64")
+
+
+foreach(buildName ${BUILD_CONFIG_LIST_DEBUG})
+	string(TOUPPER ${buildName} buildName)
+
+	set(CMAKE_CXX_FLAGS_${buildName} ${CMAKE_CXX_FLAGS_DEBUG})
+	set(CMAKE_EXE_LINKER_FLAGS_${buildName} ${CMAKE_EXE_LINKER_FLAGS_DEBUG})
+	set(CMAKE_MODULE_LINKER_FLAGS_${buildName} ${CMAKE_MODULE_LINKER_FLAGS_DEBUG})
+	set(CMAKE_SHARED_LINKER_FLAGS_${buildName} ${CMAKE_SHARED_LINKER_FLAGS_DEBUG})
+endforeach()
+
+foreach(buildName ${BUILD_CONFIG_LIST_RELEASE})
+	string(TOUPPER ${buildName} buildName)
+
+	set(CMAKE_CXX_FLAGS_${buildName} ${CMAKE_CXX_FLAGS_RELEASE})
+	set(CMAKE_EXE_LINKER_FLAGS_${buildName} ${CMAKE_EXE_LINKER_FLAGS_RELEASE} )
+	set(CMAKE_MODULE_LINKER_FLAGS_${buildName} ${CMAKE_MODULE_LINKER_FLAGS_RELEASE})
+	set(CMAKE_SHARED_LINKER_FLAGS_${buildName} ${CMAKE_SHARED_LINKER_FLAGS_RELEASE})
+endforeach()
+
+# Solution Configurations
+if(CMAKE_CONFIGURATION_TYPES)
+   set(CMAKE_CONFIGURATION_TYPES ${BUILD_CONFIG_LIST_DEBUG} ${BUILD_CONFIG_LIST_RELEASE} )
+   set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING
+     "Reset the configurations to what we need"
+     FORCE)
+endif()
+
 project( ${project_name} )
 
 #set platform detection etc.

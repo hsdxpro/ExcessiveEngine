@@ -18,8 +18,8 @@ using std::endl;
 ////////////////////////////////////////////////////////////////////////////////
 
 extern "C"
-EXPORT ge::IGraphicsEngine* CreateGraphicsEngine() {
-	return new GraphicsEngine();
+EXPORT ge::IGraphicsEngine* CreateGraphicsEngine(const ge::IGraphicsEngine::rCfg& d) {
+	return new ge::GraphicsEngineRaster(d);
 }
 
 
@@ -33,41 +33,45 @@ EXPORT ge::IGraphicsEngine* CreateGraphicsEngine() {
 ////////////////////////////////////////////////////////////////////////////////
 // ctor, dtor, release
 
-GraphicsEngine::GraphicsEngine() {
+ge::GraphicsEngineRaster::GraphicsEngineRaster(const rCfg& d) {
 	// lóóóófasz rizzsel
 }
 
-GraphicsEngine::~GraphicsEngine() {
+ge::GraphicsEngineRaster::~GraphicsEngineRaster() {
 	// lófasz rizzsel
 }
 
 
-void GraphicsEngine::release() {
+void ge::GraphicsEngineRaster::release() {
 	delete this;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // create stuff
-Scene* GraphicsEngine::createScene() {
+Scene* ge::GraphicsEngineRaster::createScene() {
 	return new Scene;
 }
 
-Mesh* GraphicsEngine::createMesh() {
+Mesh* ge::GraphicsEngineRaster::createMesh() {
 	return new Mesh;
 }
 
-Material* GraphicsEngine::createMaterial() {
+Material* ge::GraphicsEngineRaster::createMaterial() {
 	return new Material;
 }
 
-Texture* GraphicsEngine::createTexture() {
+Texture* ge::GraphicsEngineRaster::createTexture() {
 	return new Texture;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // update
-void GraphicsEngine::update() {
+void ge::GraphicsEngineRaster::update() {
 	cout << "Updating frame..." << endl;
+}
+
+ge::IGapi* ge::GraphicsEngineRaster::getGapi() {
+	return nullptr;
 }

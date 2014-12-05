@@ -14,13 +14,16 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-class GraphicsEngine : public ge::IGraphicsEngine 
+namespace ge {
+
+class GraphicsEngineRaster : public ge::IGraphicsEngine
 {
 public:
 	// ctor, dtor, release
-	GraphicsEngine();
-	~GraphicsEngine();
+	GraphicsEngineRaster(const rCfg& d);
+	~GraphicsEngineRaster();
 
+	//void init(const IGraphicsEngine::rDesc& d);
 	void release() override;
 
 	// create stuff
@@ -30,10 +33,12 @@ public:
 	Texture* createTexture() override;
 
 	// states
-		// empty
+	// empty
 
 	// interact
 	void update() override;
+
+	ge::IGapi* getGapi();
 
 private:
 	std::unordered_set<Scene*> scenes;
@@ -41,3 +46,5 @@ private:
 	std::unordered_set<Material*> materials;
 	std::unordered_set<Texture*> textures;
 };
+
+} // namespace ge
