@@ -7,7 +7,13 @@ FILE( GLOB_RECURSE interfaces ../GraphicsApi_Interface/interface/*)
 include_directories( "../GraphicsApi_Interface/interface/" )
 include_directories( "../Common/src/" )
 
-add_library( GraphicsApiGL SHARED ${sources} ${headers} ${interfaces} )
+if(BUILD_EXCESSIVE_WITH_DLL)
+	add_library( GraphicsApiGL SHARED ${sources} ${headers} ${interfaces} )
+elseif( NOT BUILD_EXCESSIVE_WITH_DLL)
+	add_library( GraphicsApiGL STATIC ${sources} ${headers} ${interfaces} )
+endif()
+
+
 
 target_link_libraries( GraphicsApiGL glew32 opengl32 )
 

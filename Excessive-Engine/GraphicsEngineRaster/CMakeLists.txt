@@ -51,7 +51,9 @@ src/Entity.cpp
 # Project
 
 include_directories("../GraphicsApi_Interface/interface/")
-#add_library( GraphicsEngineRaster SHARED ${sources} ${headers} ${interfaces} )
 
-#RESEARCH
-add_library( GraphicsEngineRaster STATIC ${sources} ${headers} ${interfaces} )
+if(BUILD_EXCESSIVE_WITH_DLL)
+	add_library( GraphicsEngineRaster SHARED ${sources} ${headers} ${interfaces} )
+elseif( NOT BUILD_EXCESSIVE_WITH_DLL)
+	add_library( GraphicsEngineRaster STATIC ${sources} ${headers} ${interfaces} )
+endif()
