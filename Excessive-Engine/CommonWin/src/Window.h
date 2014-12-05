@@ -2,11 +2,10 @@
 #pragma once
 #include "..\Common\src\IWindow.h"
 
-class Window
+class Window : public IWindow
 {
 public:
 	Window(const IWindow::rDesc& d);
-	void init(const IWindow::rDesc& d);
 
 	bool popEvent(IWindow::rEvent* evt_out);
 

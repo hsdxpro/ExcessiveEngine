@@ -7,6 +7,53 @@ set( DEBUG_BUILD true )
 set( ARCH_32BIT true )
 set( CMAKE_VERBOSE_MAKEFILE ON )
 
+
+if(UNIX)
+	add_definitions(-DLIN)
+	SET(OS, "Lin")
+elseif(WIN32)
+	add_definitions(-DWIN)
+	SET(OS, "Win")
+elseif(APPLE)
+	add_definitions(-DMAC)
+	SET(OS, "Mac")
+endif()
+
+set(BUILD_CONFIG_LIST_DEBUG	"D_STATIC_32"
+				"D_STATIC_64"
+				"D_DLL_32"
+				"D_DLL_64")
+
+set(BUILD_CONFIG_LIST_RELEASE 	"R_STATIC_32"
+				"R_STATIC_64"
+				"R_DLL_32"
+				"R_DLL_64")
+
+
+foreach(buildName ${BUILD_CONFIG_LIST_DEBUG})
+	string(TOUPPER ${buildName} buildName)
+	set(CMAKE_CXX_FLAGS_${buildName} ${CMAKE_CXX_FLAGS_DEBUG})
+	set(CMAKE_EXE_LINKER_FLAGS_${buildName} ${CMAKE_EXE_LINKER_FLAGS_DEBUG})
+	set(CMAKE_MODULE_LINKER_FLAGS_${buildName} ${CMAKE_MODULE_LINKER_FLAGS_DEBUG})
+	set(CMAKE_SHARED_LINKER_FLAGS_${buildName} ${CMAKE_SHARED_LINKER_FLAGS_DEBUG})
+endforeach()
+
+foreach(buildName ${BUILD_CONFIG_LIST_RELEASE})
+	string(TOUPPER ${buildName} buildName)
+	set(CMAKE_CXX_FLAGS_${buildName} ${CMAKE_CXX_FLAGS_RELEASE})
+	set(CMAKE_EXE_LINKER_FLAGS_${buildName} ${CMAKE_EXE_LINKER_FLAGS_RELEASE})
+	set(CMAKE_MODULE_LINKER_FLAGS_${buildName} ${CMAKE_MODULE_LINKER_FLAGS_RELEASE})
+	set(CMAKE_SHARED_LINKER_FLAGS_${buildName} ${CMAKE_SHARED_LINKER_FLAGS_RELEASE})
+endforeach()
+
+# Solution Configurations
+if(CMAKE_CONFIGURATION_TYPES)
+   set(CMAKE_CONFIGURATION_TYPES ${BUILD_CONFIG_LIST_DEBUG} ${BUILD_CONFIG_LIST_RELEASE} )
+   set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING
+     "Reset the configurations to what we need"
+     FORCE)
+endif()
+
 project( ${project_name} )
 
 #set platform detection etc.

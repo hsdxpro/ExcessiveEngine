@@ -17,13 +17,11 @@ class IGapi;
 class IGraphicsEngine
 {
 public:
-	struct rDesc {
+	struct rCfg {
 	};
 
 public:
 	// interface
-	//static IGraphicsEngine* create(const rDesc& d);
-	//virtual void init(const rDesc& d) = 0;
 	virtual void release() = 0;
 
 	// create stuff
@@ -42,16 +40,6 @@ public:
 	// getters
 	virtual ge::IGapi* getGapi() = 0;
 };
-
-//IGraphicsEngine* IGraphicsEngine::create(const IGraphicsEngine::rDesc& d)
-//{
-//	// TODO
-//	return nullptr;
-//}
-
-
-
-
 
 
 } // namespace

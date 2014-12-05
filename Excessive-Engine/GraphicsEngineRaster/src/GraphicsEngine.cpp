@@ -18,8 +18,8 @@ using std::endl;
 ////////////////////////////////////////////////////////////////////////////////
 
 extern "C"
-EXPORT ge::IGraphicsEngine* CreateGraphicsEngine() {
-	return new GraphicsEngine();
+EXPORT ge::IGraphicsEngine* CreateGraphicsEngine(const ge::IGraphicsEngine::rCfg& d) {
+	return new GraphicsEngine(d);
 }
 
 
@@ -33,12 +33,9 @@ EXPORT ge::IGraphicsEngine* CreateGraphicsEngine() {
 ////////////////////////////////////////////////////////////////////////////////
 // ctor, dtor, release
 
-GraphicsEngine::GraphicsEngine() {
+GraphicsEngine::GraphicsEngine(const rCfg& d) {
 	// lóóóófasz rizzsel
 }
-
-//void GraphicsEngine::init(const IGraphicsEngine::rDesc& d) {
-//}
 
 GraphicsEngine::~GraphicsEngine() {
 	// lófasz rizzsel

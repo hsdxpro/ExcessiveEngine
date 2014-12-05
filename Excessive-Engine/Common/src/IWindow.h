@@ -27,7 +27,6 @@ public:
 	};
 
 public:
-	virtual void init(const rDesc& d) = 0;
 	virtual void close() = 0;
 
 	virtual bool popEvent(rEvent* evt_out) = 0;

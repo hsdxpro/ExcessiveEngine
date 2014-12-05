@@ -5,18 +5,15 @@
 
 ge::IGraphicsEngine*	gEngine;
 ge::IGapi*				gGapi;
-IWindow*					gWindow;
+IWindow*				gWindow;
 
 int Ricsi() {
 	
 	
 	// Init graphics engine
-	gEngine = Factory::createGraphicsEngineRaster();
-	
-	ge::IGraphicsEngine::rDesc gDesc;
-	//	gDesc....
-	//	gDesc...
-	//gEngine->init(gDesc);
+	ge::IGraphicsEngine::rCfg gDesc;
+
+	gEngine = Factory::createGraphicsEngineRaster(gDesc);
 	gGapi = gEngine->getGapi();
 
 	//// Init window
@@ -24,7 +21,7 @@ int Ricsi() {
 		winDesc.clientW = 800;
 		winDesc.clientH = 600;
 		winDesc.capText = L"Excessive-Engine -> Ricsi teszt";
-	//gWindow = new Window(winDesc);
+	gWindow = Factory::createWindow(winDesc);
 
 	
 	IWindow::rEvent ev;

@@ -1,17 +1,17 @@
 #include "Window.h"
+#include "SFML\Window\Window.hpp"
+
+
 
 Window::Window(const IWindow::rDesc& d) {
-	init(d);
-}
-
-void Window::init(const IWindow::rDesc& d) {
-
+	sf::Window w;
+	w.create(sf::VideoMode(d.clientW, d.clientH), d.capText);
+	w.setVerticalSyncEnabled(true);
 }
 
 bool Window::popEvent(IWindow::rEvent* evt_out) {
 	// TODO
-	return true;
-}
+	return true;}
 
 void Window::close() {
 

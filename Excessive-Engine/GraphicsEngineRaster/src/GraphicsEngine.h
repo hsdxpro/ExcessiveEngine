@@ -18,7 +18,7 @@ class GraphicsEngine : public ge::IGraphicsEngine
 {
 public:
 	// ctor, dtor, release
-	GraphicsEngine();
+	GraphicsEngine(const rCfg& d);
 	~GraphicsEngine();
 
 	//void init(const IGraphicsEngine::rDesc& d);
