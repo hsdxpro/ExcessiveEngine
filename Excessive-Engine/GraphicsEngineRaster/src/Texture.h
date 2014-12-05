@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../GraphicsEngine_Interface/interface/ITexture.h"
-#include <GraphicsApi>
 
+class ITexture;
 
 class Texture : public ge::ITexture 
 {

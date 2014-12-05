@@ -7,6 +7,16 @@ set( DEBUG_BUILD true )
 set( ARCH_32BIT true )
 set( CMAKE_VERBOSE_MAKEFILE ON )
 
+OPTION(BUILD_EXCESSIVE_WITH_DLL "BUILD_EXCESSIVE_WITH_DLL" ON)
+
+if(BUILD_EXCESSIVE_WITH_DLL)
+	add_definitions( -DBUILD_DLL )
+endif()
+
+if( NOT BUILD_EXCESSIVE_WITH_DLL)
+	add_definitions( -DBUILD_STATIC )
+endif()
+
 if(WIN32)
 	add_definitions( -DWIN )
 elseif(UNIX)
@@ -15,19 +25,16 @@ elseif(APPLE)
 	add_definitions( -DMAC )
 endif()
 
-set(BUILD_CONFIG_LIST_DEBUG	"D_STATIC_32"
-				"D_STATIC_64"
-				"D_DLL_32"
-				"D_DLL_64")
+set(BUILD_CONFIG_LIST_DEBUG	"D_32"
+				"D_64")
 
-set(BUILD_CONFIG_LIST_RELEASE 	"R_STATIC_32"
-				"R_STATIC_64"
-				"R_DLL_32"
-				"R_DLL_64")
+set(BUILD_CONFIG_LIST_RELEASE	"R_32"
+				"R_64")
 
 
 foreach(buildName ${BUILD_CONFIG_LIST_DEBUG})
 	string(TOUPPER ${buildName} buildName)
+
 	set(CMAKE_CXX_FLAGS_${buildName} ${CMAKE_CXX_FLAGS_DEBUG})
 	set(CMAKE_EXE_LINKER_FLAGS_${buildName} ${CMAKE_EXE_LINKER_FLAGS_DEBUG})
 	set(CMAKE_MODULE_LINKER_FLAGS_${buildName} ${CMAKE_MODULE_LINKER_FLAGS_DEBUG})
@@ -36,8 +43,9 @@ endforeach()
 
 foreach(buildName ${BUILD_CONFIG_LIST_RELEASE})
 	string(TOUPPER ${buildName} buildName)
+
 	set(CMAKE_CXX_FLAGS_${buildName} ${CMAKE_CXX_FLAGS_RELEASE})
-	set(CMAKE_EXE_LINKER_FLAGS_${buildName} ${CMAKE_EXE_LINKER_FLAGS_RELEASE})
+	set(CMAKE_EXE_LINKER_FLAGS_${buildName} ${CMAKE_EXE_LINKER_FLAGS_RELEASE} )
 	set(CMAKE_MODULE_LINKER_FLAGS_${buildName} ${CMAKE_MODULE_LINKER_FLAGS_RELEASE})
 	set(CMAKE_SHARED_LINKER_FLAGS_${buildName} ${CMAKE_SHARED_LINKER_FLAGS_RELEASE})
 endforeach()

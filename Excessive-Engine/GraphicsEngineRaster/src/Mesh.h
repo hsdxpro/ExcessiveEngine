@@ -2,9 +2,11 @@
 
 #include <cstdint>
 #include <vector>
-#include <GraphicsApi>
+
 #include "../GraphicsEngine_Interface/interface/IMesh.h"
 
+class IVertexBuffer;
+class IIndexBuffer;
 
 class Mesh : public ge::IMesh
 {
