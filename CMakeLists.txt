@@ -7,16 +7,12 @@ set( DEBUG_BUILD true )
 set( ARCH_32BIT true )
 set( CMAKE_VERBOSE_MAKEFILE ON )
 
-
-if(UNIX)
-	add_definitions(-DLIN)
-	SET(OS, "Lin")
-elseif(WIN32)
-	add_definitions(-DWIN)
-	SET(OS, "Win")
+if(WIN32)
+	add_definitions( -DWIN )
+elseif(UNIX)
+	add_definitions( -DLIN )
 elseif(APPLE)
-	add_definitions(-DMAC)
-	SET(OS, "Mac")
+	add_definitions( -DMAC )
 endif()
 
 set(BUILD_CONFIG_LIST_DEBUG	"D_STATIC_32"

@@ -7,8 +7,8 @@ add_library( CommonWin STATIC ${sources} ${headers} )
 
 target_link_libraries( CommonWin 
 debug sfml-main-d optimized sfml-main
-debug sfml-system-d optimized sfml-system-s
-debug sfml-window-d optimized sfml-window-s
-debug sfml-graphics-d optimized sfml-graphics-s
-debug sfml-audio-d optimized sfml-audio-s
-debug sfml-network-d optimized sfml-network-s )
+debug sfml-system-d optimized sfml-system
+debug sfml-window-d optimized sfml-window
+debug sfml-graphics-d optimized sfml-graphics
+debug sfml-audio-d optimized sfml-audio
+debug sfml-network-d optimized sfml-network )

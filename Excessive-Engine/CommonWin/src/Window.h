@@ -2,6 +2,9 @@
 #pragma once
 #include "..\Common\src\IWindow.h"
 
+#include "SFML\Window\Window.hpp"
+#include "SFML\Window\Event.hpp"
+
 class Window : public IWindow
 {
 public:
@@ -15,4 +18,8 @@ public:
 
 	// getters
 	bool isOpen();
+
+protected:
+	sf::Window w;
+	sf::Event evt;
 };

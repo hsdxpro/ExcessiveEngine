@@ -244,10 +244,10 @@ int main( int argc, char** args )
   {
     while( w.pollEvent( ev ) )
     {
-      if( ev.type == sf::Event::Closed || ( ev.type == sf::Event::KeyPressed && ev.key.code == sf::Keyboard::Escape ) )
-      {
-        run = false;
-      }
+      //if( ev.type == sf::Event::Closed || ( ev.type == sf::Event::KeyPressed && ev.key.code == sf::Keyboard::Escape ) )
+      //{
+      //  run = false;
+      //}
 
       //handle events
     }

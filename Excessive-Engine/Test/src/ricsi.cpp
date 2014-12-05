@@ -20,15 +20,14 @@ int Ricsi() {
 	IWindow::rDesc winDesc;
 		winDesc.clientW = 800;
 		winDesc.clientH = 600;
-		winDesc.capText = L"Excessive-Engine -> Ricsi teszt";
+		winDesc.capText = "Excessive-Engine -> Ricsi teszt";
 	gWindow = Factory::createWindow(winDesc);
 
 	
 	IWindow::rEvent ev;
-	while (gWindow->isOpen())
-	{
+	while (gWindow->isOpen()) {
 		while (gWindow->popEvent(&ev))
-			if (ev.msg == IWindow::eMsg::CLOSED || (ev.msg == IWindow::eMsg::KEY_PRESSED && ev.key == Sys::eKey::ESCAPE))
+			if (ev.msg == IWindow::eMsg::KEY_PRESS && ev.key == Sys::eKey::ESCAPE)
 				gWindow->close();
 	
 		// Update graphics engine
