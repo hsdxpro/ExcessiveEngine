@@ -44,4 +44,14 @@ class IGapi
     
     //draw stuff
     virtual void draw(unsigned num_indices) = 0;
+
+	// REVIEW THESE
+	virtual void setVertexFormat();
+	virtual void setVertexBuffers(
+		IVertexBuffer** buffers,
+		unsigned* strides,
+		unsigned* offsets,
+		unsigned slot,
+		unsigned num_buffers
+		);
 };
