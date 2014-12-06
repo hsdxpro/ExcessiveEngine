@@ -13,9 +13,8 @@ elseif( NOT BUILD_EXCESSIVE_WITH_DLL)
 	add_library( GraphicsApiGL STATIC ${sources} ${headers} ${interfaces} )
 endif()
 
-
-
 target_link_libraries( GraphicsApiGL glew32 opengl32 )
 
 add_executable( GLGapiTest test.cpp )
 add_dependencies( GLGapiTest GraphicsApiGL )
+target_link_libraries( GLGapiTest Common)

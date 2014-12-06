@@ -32,6 +32,5 @@ void Window::displayClientRect() {
 }
 
 bool Window::isOpen() {
-	// TODO
-	return true;
+	return w.isOpen();
 }
