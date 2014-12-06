@@ -3,3 +3,7 @@ LocalProject
 *~
 Debug
 Release
+D_32
+D_64
+R_32
+R_64

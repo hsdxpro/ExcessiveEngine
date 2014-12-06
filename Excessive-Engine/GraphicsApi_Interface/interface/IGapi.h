@@ -52,8 +52,8 @@ class IGapi
 	/*
 	@see IInputLayout.h	
 	*/
-	virtual IInputLayout* createInputLayout(InputElement* elements, size_t num_elements);
-	virtual void setInputLayout(IInputLayout* layout);
+	virtual IInputLayout* createInputLayout(InputElement* elements, size_t num_elements) = 0;
+	virtual void setInputLayout(IInputLayout* layout) = 0;
 
 	/*
 	Egyszerûen bindeli a vertex buffereket a megfelelõ 'slot'-ba.
@@ -65,5 +65,5 @@ class IGapi
 		unsigned* strides, // size of one vertex in bytes; for each buffer
 		unsigned* offsets, // how many bytes the 0th vertex is offseted from start of buffer
 		unsigned start_slot, // bind 1st buffer here
-		unsigned num_buffers); 
+		unsigned num_buffers) = 0; 
 };

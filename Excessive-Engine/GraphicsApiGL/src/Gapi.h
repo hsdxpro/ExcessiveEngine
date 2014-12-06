@@ -44,13 +44,13 @@ class Gapi : public IGapi
     void draw(unsigned num_indices);
 
 	// input layout & vertex streams
-	IInputLayout* createInputLayout(InputElement* elements, size_t num_elements) override;
-	void setInputLayout(IInputLayout* layout) override;
+	IInputLayout* createInputLayout(InputElement* elements, size_t num_elements) override { return nullptr; }
+	void setInputLayout(IInputLayout* layout) override {}
 
 	void setVertexStreams(
 		IVertexBuffer** buffers,
 		unsigned* strides,
 		unsigned* offsets,
 		unsigned start_slot,
-		unsigned num_buffers) override;
+		unsigned num_buffers) override {}
 };
