@@ -9,7 +9,8 @@ IWindow*				gWindow;
 
 int Ricsi() {
 	
-	
+	int asd = sizeof(size_t);
+
 	// Init graphics engine
 	ge::IGraphicsEngine::rCfg gDesc;
 
