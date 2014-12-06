@@ -4,6 +4,7 @@
 
 #include "GL/glew.h"
 
+
 class Gapi : public IGapi
 {
   public:
@@ -39,6 +40,17 @@ class Gapi : public IGapi
 	void setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, unsigned num_buffers) override;
 	void setIndexBuffer(IIndexBuffer* ibo) override;
     
-    //draw stuff
+    // draw stuff
     void draw(unsigned num_indices);
+
+	// input layout & vertex streams
+	IInputLayout* createInputLayout(InputElement* elements, size_t num_elements) override;
+	void setInputLayout(IInputLayout* layout) override;
+
+	void setVertexStreams(
+		IVertexBuffer** buffers,
+		unsigned* strides,
+		unsigned* offsets,
+		unsigned start_slot,
+		unsigned num_buffers) override;
 };

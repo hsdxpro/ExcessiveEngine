@@ -7,6 +7,7 @@
 #include "ITexture.h"
 #include "IBuffer.h"
 #include "IShaderProgram.h"
+#include "IInputLayout.h"
 
 #include <cstdint>
 
@@ -45,13 +46,24 @@ class IGapi
     //draw stuff
     virtual void draw(unsigned num_indices) = 0;
 
-	// REVIEW THESE
-	virtual void setVertexFormat();
-	virtual void setVertexBuffers(
-		IVertexBuffer** buffers,
-		unsigned* strides,
-		unsigned* offsets,
-		unsigned slot,
-		unsigned num_buffers
-		);
+	// input layout & vertex streams
+#pragma message("Marci: ezt is implementálnod kéne [setVertexBuffer]")
+
+	/*
+	@see IInputLayout.h	
+	*/
+	virtual IInputLayout* createInputLayout(InputElement* elements, size_t num_elements);
+	virtual void setInputLayout(IInputLayout* layout);
+
+	/*
+	Egyszerûen bindeli a vertex buffereket a megfelelõ 'slot'-ba.
+	Ha több buffert adunk meg, akkor azokat a start_slot, start_slot+1, start_slot+2 helyekre bindeli.
+	A nullptr buffer unbindeli az adott slotból a buffert.
+	*/
+	virtual void setVertexStreams(
+		IVertexBuffer** buffers, // buffers to bind
+		unsigned* strides, // size of one vertex in bytes; for each buffer
+		unsigned* offsets, // how many bytes the 0th vertex is offseted from start of buffer
+		unsigned start_slot, // bind 1st buffer here
+		unsigned num_buffers); 
 };

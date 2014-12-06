@@ -119,7 +119,7 @@ struct rRenderTargetInfo
 
 enum class eVertexAttribType : uint32_t
 {
-	FLOAT = 0, INT, UNSIGNED_INT
+	FLOAT = 0, INT, UINT, SHORT, USHORT, BYTE, UBYTE
 };
 
 struct rVertexAttrib
@@ -130,3 +130,6 @@ struct rVertexAttrib
 	unsigned offset, size;
 	unsigned divisor;
 };
+
+
+
