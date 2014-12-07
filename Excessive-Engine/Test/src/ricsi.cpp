@@ -8,29 +8,29 @@ ge::IGapi*				gGapi;
 IWindow*				gWindow;
 
 int Ricsi() {
-	
-	int asd = sizeof(size_t);
 
-	// Init graphics engine
-	ge::IGraphicsEngine::rCfg gDesc;
-
+	// Init GraphicsEngine
+	ge::rGraphicsEngine gDesc;
+		gDesc.gapi = Factory::createGapiGL();
 	gEngine = Factory::createGraphicsEngineRaster(gDesc);
+
+	// Get the API belonging to graphics engine
 	gGapi = gEngine->getGapi();
 
 	//// Init window
-	IWindow::rDesc winDesc;
-		winDesc.clientW = 800;
-		winDesc.clientH = 600;
-		winDesc.capText = "Excessive-Engine -> Ricsi teszt";
-	gWindow = Factory::createWindow(winDesc);
+	rWindow d;
+		d.clientW = 800;
+		d.clientH = 600;
+		d.capText = "Excessive-Engine -> Ricsi teszt";
+	gWindow = Factory::createWindow(d);
 
 	
-	IWindow::rEvent ev;
+	rWindowEvent ev;
 	while (gWindow->isOpen()) {
 		while (gWindow->popEvent(&ev))
-			if (ev.msg == IWindow::eMsg::KEY_PRESS && ev.key == Sys::eKey::ESCAPE)
+			if (ev.msg == eWindowMsg::KEY_PRESS && ev.key == eKey::ESCAPE)
 				gWindow->close();
-	
+
 		// Update graphics engine
 		gEngine->update();
 

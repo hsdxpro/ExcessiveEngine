@@ -1,5 +1,6 @@
 #pragma once
 
+
 // namespace
 namespace ge {
 
@@ -9,6 +10,11 @@ class IMaterial;
 class ITexture;
 class IGapi;
 
+struct rGraphicsEngine {
+	ge::IGapi* gapi;
+};
+
+
 ////////////////////////////////////////////////////////////////////////////////
 /// GraphicsEngine manages and displays the graphical world.
 /// No descrption yet.
@@ -16,10 +22,6 @@ class IGapi;
 
 class IGraphicsEngine
 {
-public:
-	struct rCfg {
-	};
-
 public:
 	// interface
 	virtual void release() = 0;
