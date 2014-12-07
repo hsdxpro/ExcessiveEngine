@@ -1,11 +1,10 @@
 #pragma once
 
-#include "IGapi.h"
-
 #include "GL/glew.h"
+#include "../../GraphicsApi_Interface/interface/IGapi.h"
 
 
-class Gapi : public IGapi
+class GapiGL : public IGapi
 {
   public:
     unsigned global_vao;
