@@ -74,5 +74,5 @@ void ge::GraphicsEngineRaster::update() {
 }
 
 ge::IGapi* ge::GraphicsEngineRaster::getGapi() {
-	return nullptr;
+	return gapi;
 }

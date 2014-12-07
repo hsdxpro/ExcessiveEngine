@@ -95,7 +95,7 @@ IShaderProgram* GapiGL::createShaderProgram()
 
 ITexture* GapiGL::createTexture(const ITexture::rDesc& data)
 {
-  Texture* tex = new Texture();
+  TextureGL* tex = new TextureGL();
   glGenTextures( 1, &tex->id );
   tex->target = 0;
   
@@ -210,7 +210,7 @@ ITextureView* GapiGL::createTextureView(const ITextureView::rDesc& data)
   
     glTextureView(	tex->id,
     tex->target,
-    static_cast<Texture*>(data.base_tex)->id,
+    static_cast<TextureGL*>(data.base_tex)->id,
     texture_internal_formats[data.format],
     data.start_level,
     data.num_levels,

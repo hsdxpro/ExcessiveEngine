@@ -296,13 +296,13 @@ GLenum texture_internal_formats[] =
   GL_STENCIL_INDEX16
 };
 
-void Texture::destroy()
+void TextureGL::destroy()
 {
   glDeleteTextures( 1, &id );
   id = 0;
 }
 
-void Texture::setSamplerState(const rTextureSamplerData* data)
+void TextureGL::setSamplerState(const rTextureSamplerData* data)
 {
   ASSERT( data && target )
   {
@@ -371,7 +371,7 @@ void Texture::setSamplerState(const rTextureSamplerData* data)
   }
 }
 
-void Texture::update(const rTextureUpdateData* data)
+void TextureGL::update(const rTextureUpdateData* data)
 {
   ASSERT( data )
   {
@@ -395,7 +395,7 @@ void Texture::update(const rTextureUpdateData* data)
   }
 }
 
-void Texture::getSubData(const rTextureUpdateData* data)
+void TextureGL::getSubData(const rTextureUpdateData* data)
 {
   ASSERT( data )
   {
@@ -403,12 +403,12 @@ void Texture::getSubData(const rTextureUpdateData* data)
   }
 }
 
-auto Texture::getDesc() -> rDesc
+auto TextureGL::getDesc() -> rDesc
 {
   return d;
 }
 
-void Texture::genMipChain()
+void TextureGL::genMipChain()
 {
   glGenerateTextureMipmap( id );
 }
