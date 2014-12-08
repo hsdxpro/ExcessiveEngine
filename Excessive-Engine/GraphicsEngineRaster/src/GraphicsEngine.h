@@ -38,7 +38,7 @@ public:
 	// interact
 	void update() override;
 
-	ge::IGapi* getGapi();
+	IGapi* getGapi();
 
 private:
 	std::unordered_set<Scene*> scenes;
@@ -47,7 +47,7 @@ private:
 	std::unordered_set<Material*> materials;
 	std::unordered_set<Texture*> textures;
 
-	ge::IGapi* gapi;
+	IGapi* gapi;
 };
 
 } // namespace ge

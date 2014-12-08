@@ -11,15 +11,20 @@
 
 #include <cstdint>
 
+
 class IGapi
 {
   public:
-    virtual IShaderProgram* createShaderProgram() = 0;
-	virtual ITexture* createTexture(const ITexture::rDesc& data) = 0;
-	virtual ITextureView* createTextureView(const ITextureView::rDesc& data) = 0;
-	virtual IVertexBuffer* createVertexBuffer(const IVertexBuffer::rDesc& data) = 0;
-	virtual IIndexBuffer* createIndexBuffer(const IIndexBuffer::rDesc& data) = 0;
+    //virtual IShaderProgram* createShaderProgram() = 0;
+	virtual IShaderProgram* createShaderProgram(const rShaderProgPaths& data) = 0;
+	virtual IShaderProgram* createShaderProgram(const rShaderProgSources& data) = 0;
+
 	virtual IUniformBuffer* createUniformBuffer(const IUniformBuffer::rDesc& data) = 0;
+	virtual IVertexBuffer*	createVertexBuffer(const IVertexBuffer::rDesc& data) = 0;
+	virtual ITextureView*	createTextureView(const ITextureView::rDesc& data) = 0;
+	virtual IIndexBuffer*	createIndexBuffer(const IIndexBuffer::rDesc& data) = 0;
+	virtual ITexture*		createTexture(const ITexture::rDesc& data) = 0;
+	
   
     virtual void setDepthState(const rDepthState& state) = 0;
     virtual void setStencilState(const rStencilState& state) = 0;

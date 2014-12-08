@@ -90,11 +90,10 @@ int main( int argc, char** args )
   //gapi->setSyncDebugOutput( true );
 
   //set up the shader program
-  auto sp = gapi->createShaderProgram();
-  sp->addShader(vshd, VERTEX_SHADER);
-  sp->addShader(pshd, PIXEL_SHADER);
-  sp->link();
-
+  rShaderProgSources s;
+  s.psSrc = pshd;
+  s.vsSrc = vshd;
+  auto sp = gapi->createShaderProgram(s);
   /**/
   //example binary shader store/load
   //char* data;

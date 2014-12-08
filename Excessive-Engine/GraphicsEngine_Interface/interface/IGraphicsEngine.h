@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../GraphicsApi_Interface/interface/IGapi.h"
 
 // namespace
 namespace ge {
@@ -8,10 +9,9 @@ class IScene;
 class IMesh;
 class IMaterial;
 class ITexture;
-class IGapi;
 
 struct rGraphicsEngine {
-	ge::IGapi* gapi;
+	IGapi* gapi;
 };
 
 
@@ -40,7 +40,7 @@ public:
 	virtual void update() = 0;
 
 	// getters
-	virtual ge::IGapi* getGapi() = 0;
+	virtual IGapi* getGapi() = 0;
 };
 
 

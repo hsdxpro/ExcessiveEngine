@@ -21,11 +21,11 @@ ge::IGraphicsEngine* Factory::createGraphicsEngineRaster(const ge::rGraphicsEngi
 #endif
 }
 
-ge::IGapi* Factory::createGapiGL() {
+IGapi* Factory::createGapiGL() {
 #ifdef BUILD_DLL	
-	return ((ge::IGapi*(*)())Sys::getDllProcAddress(Sys::loadDLL("GraphicsApiGL"), "createGraphicsApi"))();
+	return ((IGapi*(*)())Sys::getDllProcAddress(Sys::loadDLL(Sys::getWorkDir() + "GraphicsApiGL"), "createGraphicsApi"))();
 #elif BUILD_STATIC	
-	return (ge::IGapi*)new GapiGL();
+	return (IGapi*)new GapiGL();
 #endif
 }
 

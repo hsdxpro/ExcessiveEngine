@@ -73,6 +73,6 @@ void ge::GraphicsEngineRaster::update() {
 	cout << "Updating frame..." << endl;
 }
 
-ge::IGapi* ge::GraphicsEngineRaster::getGapi() {
+IGapi* ge::GraphicsEngineRaster::getGapi() {
 	return gapi;
 }

@@ -86,11 +86,136 @@ GLenum raster_order_data[] =
   GL_CW, GL_CCW
 };
 
-IShaderProgram* GapiGL::createShaderProgram()
+//IShaderProgram* GapiGL::createShaderProgram()
+//{
+//  ShaderProgram* sp = new ShaderProgram();
+//  sp->id = glCreateProgram();
+//  return sp;
+//}
+
+IShaderProgram* GapiGL::createShaderProgram(const rShaderProgPaths& data)
 {
-  ShaderProgram* sp = new ShaderProgram();
-  sp->id = glCreateProgram();
-  return sp;
+	// TODO
+	ShaderProgram* sp = new ShaderProgram();
+	return sp;
+}
+
+IShaderProgram* GapiGL::createShaderProgram(const rShaderProgSources& data)
+{
+	ShaderProgram* sp = new ShaderProgram();
+	sp->id = glCreateProgram();
+	if(data.vsSrc != 0)				sp->addShader(data.vsSrc,				VERTEX_SHADER);
+	if(data.psSrc != 0)				sp->addShader(data.psSrc,				PIXEL_SHADER);
+	if(data.tessCtrlSrc != 0)		sp->addShader(data.tessCtrlSrc,			TESSELLATION_CONTROL_SHADER);
+	if(data.tessEvaluationSrc != 0)	sp->addShader(data.tessEvaluationSrc,	TESSELLATION_EVALUATION_SHADER);
+	if(data.gsSrc != 0)				sp->addShader(data.gsSrc,				GEOMETRY_SHADER);
+	sp->link();
+	return sp;
+}
+
+IUniformBuffer* GapiGL::createUniformBuffer(const IUniformBuffer::rDesc& data)
+{
+	UniformBuffer* ubo = new UniformBuffer();
+	glGenBuffers(1, &ubo->id);
+
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo->id);
+	/*glNamedBufferStorage( ubo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT |
+	(data->is_readable ? GL_MAP_READ_BIT : 0) |
+	(data->is_writable ? GL_MAP_WRITE_BIT : 0) |
+	(data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
+	(data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
+
+	/*glBufferStorage( GL_UNIFORM_BUFFER, data->size, 0, GL_DYNAMIC_STORAGE_BIT |
+	(data->is_readable ? GL_MAP_READ_BIT : 0) |
+	(data->is_writable ? GL_MAP_WRITE_BIT : 0) |
+	(data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
+	(data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
+
+	glBufferData(GL_UNIFORM_BUFFER, data.size, 0, GL_DYNAMIC_DRAW);
+
+	ubo->adata = data;
+	return ubo;
+}
+
+IVertexBuffer* GapiGL::createVertexBuffer(const IVertexBuffer::rDesc& data)
+{
+	VertexBuffer* vbo = new VertexBuffer();
+	glGenBuffers(1, &vbo->id);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo->id); //TODO not sure if we need this
+	/*glNamedBufferStorage( vbo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT |
+	(data->is_readable ? GL_MAP_READ_BIT : 0) |
+	(data->is_writable ? GL_MAP_WRITE_BIT : 0) |
+	(data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
+	(data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
+
+	/*glBufferStorage( GL_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_STORAGE_BIT |
+	(data->is_readable ? GL_MAP_READ_BIT : 0) |
+	(data->is_writable ? GL_MAP_WRITE_BIT : 0) |
+	(data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
+	(data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
+
+	glBufferData(GL_ARRAY_BUFFER, data.size, 0, GL_DYNAMIC_DRAW);
+
+	vbo->adata = data;
+	return vbo;
+}
+
+ITextureView* GapiGL::createTextureView(const ITextureView::rDesc& data)
+{
+	TextureView* tex = new TextureView();
+	glGenTextures(1, &tex->id);
+
+	tex->dim = data.dim;
+
+	if (data.dim == 1)
+	{
+		tex->target = GL_TEXTURE_1D;
+	}
+	else if (data.dim == 2)
+	{
+		if (data.is_layered)
+		{
+			tex->target = GL_TEXTURE_1D_ARRAY;
+		}
+		else if (data.is_cubemap)
+		{
+			tex->target = GL_TEXTURE_CUBE_MAP;
+		}
+		else
+		{
+			tex->target = GL_TEXTURE_2D;
+		}
+	}
+	else
+	{
+		if (data.is_layered)
+		{
+			if (data.is_cubemap)
+			{
+				tex->target = GL_TEXTURE_CUBE_MAP_ARRAY;
+			}
+			else
+			{
+				tex->target = GL_TEXTURE_2D_ARRAY;
+			}
+		}
+		else
+		{
+			tex->target = GL_TEXTURE_3D;
+		}
+	}
+
+	glTextureView(tex->id,
+		tex->target,
+		static_cast<TextureGL*>(data.base_tex)->id,
+		texture_internal_formats[data.format],
+		data.start_level,
+		data.num_levels,
+		data.start_layer,
+		data.num_layers);
+
+	return tex;
 }
 
 ITexture* GapiGL::createTexture(const ITexture::rDesc& data)
@@ -163,133 +288,28 @@ ITexture* GapiGL::createTexture(const ITexture::rDesc& data)
   return tex;
 }
 
-ITextureView* GapiGL::createTextureView(const ITextureView::rDesc& data)
-{
-  TextureView* tex = new TextureView();
-  glGenTextures( 1, &tex->id );
-
-    tex->dim = data.dim;
-  
-    if( data.dim == 1 )
-    {
-      tex->target = GL_TEXTURE_1D;
-    }
-    else if( data.dim == 2 )
-    {
-      if( data.is_layered )
-      {
-        tex->target = GL_TEXTURE_1D_ARRAY;
-      }
-      else if( data.is_cubemap )
-      {
-        tex->target = GL_TEXTURE_CUBE_MAP;
-      }
-      else
-      {
-        tex->target = GL_TEXTURE_2D;
-      }
-    }
-    else
-    {
-      if( data.is_layered )
-      {
-        if( data.is_cubemap )
-        {
-          tex->target = GL_TEXTURE_CUBE_MAP_ARRAY;
-        }
-        else
-        {
-          tex->target = GL_TEXTURE_2D_ARRAY;
-        }
-      }
-      else
-      {
-        tex->target = GL_TEXTURE_3D;
-      }
-    }
-  
-    glTextureView(	tex->id,
-    tex->target,
-    static_cast<TextureGL*>(data.base_tex)->id,
-    texture_internal_formats[data.format],
-    data.start_level,
-    data.num_levels,
-    data.start_layer,
-    data.num_layers );
-  
-  return tex;
-}
-
-IVertexBuffer* GapiGL::createVertexBuffer(const IVertexBuffer::rDesc& data)
-{
-  VertexBuffer* vbo = new VertexBuffer();
-  glGenBuffers( 1, &vbo->id );
-  
-  glBindBuffer( GL_ARRAY_BUFFER, vbo->id ); //TODO not sure if we need this
-  /*glNamedBufferStorage( vbo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
-                                             (data->is_readable ? GL_MAP_READ_BIT : 0) |
-                                             (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
-                                             (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                             (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
-
-  /*glBufferStorage( GL_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
-                                             (data->is_readable ? GL_MAP_READ_BIT : 0) |
-                                             (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
-                                             (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                             (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
-
-  glBufferData( GL_ARRAY_BUFFER, data.size, 0, GL_DYNAMIC_DRAW );
-
-  vbo->adata = data;
-  return vbo;
-}
-
 IIndexBuffer* GapiGL::createIndexBuffer(const IIndexBuffer::rDesc& data)
 {
-  IndexBuffer* ibo = new IndexBuffer();
-  glGenBuffers( 1, &ibo->id );
-  
-  glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo->id );
-  /*glNamedBufferStorage( ibo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
-                                           (data->is_readable ? GL_MAP_READ_BIT : 0) |
-                                           (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
-                                           (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
+	IndexBuffer* ibo = new IndexBuffer();
+	glGenBuffers(1, &ibo->id);
 
-  /*glBufferStorage( GL_ELEMENT_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
-                                             (data->is_readable ? GL_MAP_READ_BIT : 0) |
-                                             (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
-                                             (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                             (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
-  
-  glBufferData( GL_ELEMENT_ARRAY_BUFFER, data.size, 0, GL_DYNAMIC_DRAW );
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo->id);
+	/*glNamedBufferStorage( ibo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT |
+	(data->is_readable ? GL_MAP_READ_BIT : 0) |
+	(data->is_writable ? GL_MAP_WRITE_BIT : 0) |
+	(data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
+	(data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
 
-  ibo->adata = data;
-  return ibo;
-}
+	/*glBufferStorage( GL_ELEMENT_ARRAY_BUFFER, data->size, 0, GL_DYNAMIC_STORAGE_BIT |
+	(data->is_readable ? GL_MAP_READ_BIT : 0) |
+	(data->is_writable ? GL_MAP_WRITE_BIT : 0) |
+	(data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
+	(data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
 
-IUniformBuffer* GapiGL::createUniformBuffer(const IUniformBuffer::rDesc& data)
-{
-  UniformBuffer* ubo = new UniformBuffer();
-  glGenBuffers( 1, &ubo->id );
-  
-  glBindBuffer( GL_UNIFORM_BUFFER, ubo->id );
-  /*glNamedBufferStorage( ubo->id, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
-                                           (data->is_readable ? GL_MAP_READ_BIT : 0) |
-                                           (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
-                                           (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                           (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
-  
-  /*glBufferStorage( GL_UNIFORM_BUFFER, data->size, 0, GL_DYNAMIC_STORAGE_BIT | 
-                                             (data->is_readable ? GL_MAP_READ_BIT : 0) |
-                                             (data->is_writable ? GL_MAP_WRITE_BIT : 0) |
-                                             (data->is_persistent ? GL_MAP_PERSISTENT_BIT : 0) |
-                                             (data->prefer_cpu_storage ? GL_CLIENT_STORAGE_BIT : 0) );*/
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.size, 0, GL_DYNAMIC_DRAW);
 
-  glBufferData( GL_UNIFORM_BUFFER, data.size, 0, GL_DYNAMIC_DRAW );
-
-  ubo->adata = data;
-  return ubo;
+	ibo->adata = data;
+	return ibo;
 }
 
 void GapiGL::setDepthState(const rDepthState& state)
