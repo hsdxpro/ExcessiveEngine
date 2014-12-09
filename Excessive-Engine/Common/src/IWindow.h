@@ -46,9 +46,6 @@ struct rWindowEvent {
 class IWindow
 {
 public:
-	
-
-public:
 	virtual void close() = 0;
 
 	virtual bool popEvent(rWindowEvent* evt_out) = 0;

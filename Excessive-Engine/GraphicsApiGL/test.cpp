@@ -1,7 +1,10 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
+#include "Factory.h"
+
 #include "GraphicsApi"
+
 
 #include "SFML/System.hpp"
 #include "SFML/Window.hpp"
@@ -83,8 +86,9 @@ int main( int argc, char** args )
   }
 
   //set up the GL Gapi
-  IGapi* gapi = createGraphicsApi();
+  // IGapi* gapi = createGraphicsApi();
 
+  IGapi* gapi = Factory::createGapiGL();
   //gapi->setDebugOutput( true );
   //gapi->setSeamlessCubeMaps( true );
   //gapi->setSyncDebugOutput( true );

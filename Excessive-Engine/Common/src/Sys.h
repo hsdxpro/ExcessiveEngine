@@ -1,6 +1,8 @@
 // Static class that encapsulates the Operating System.
 #pragma once
 
+#include <string>
+
 enum class eKey {
 	Unknown = -1, ///< Unhandled key
 	A = 0,        ///< The A key
@@ -105,10 +107,9 @@ enum class eKey {
 	F15,          ///< The F15 key
 	PAUSE,        ///< The Pause key
 
-	COUNT      ///< Keep last -- the total number of keyboard keys
+	COUNT,      ///< Keep last -- the total number of keyboard keys
 };
 
-#include <string>
 class Sys
 {
 public:
