@@ -122,7 +122,24 @@ struct rRenderTargetInfo
 
 enum class eVertexAttribType : uint32_t
 {
-	FLOAT = 0, SINT, UINT, SNORM, UNORM, 
+	// 32 bit
+	FLOAT = 0,
+	SINT_32,
+	UINT_32,
+	SNORM_32,
+	UNORM_32,
+	// 16 bit
+	HALF,
+	SINT_16,
+	UINT_16,
+	SNORM_16,
+	UNORM_16,
+	// 8 bit
+	SINT_8,
+	UINT_8,
+	SNORM_8,
+	UNORM_8,
+
 };
 
 struct rVertexAttrib
