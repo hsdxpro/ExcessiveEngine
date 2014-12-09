@@ -3,14 +3,14 @@
 #include "custom_assert.h"
 #include "Texture.h"
 
-void TextureView::destroy()
+void TextureViewGL::destroy()
 {
   glDeleteTextures( 1, &id );
   id = 0;
 }
 
 //TODO move these to a common function maybe?
-void TextureView::setSamplerState(const rTextureSamplerData* data)
+void TextureViewGL::setSamplerState(const rTextureSampler* data)
 {
   ASSERT( data && target )
   {
@@ -81,7 +81,7 @@ void TextureView::setSamplerState(const rTextureSamplerData* data)
   }
 }
 
-void TextureView::update(const rTextureUpdateData* data)
+void TextureViewGL::update(const rTextureUpdate* data)
 {
   ASSERT( data )
   {
@@ -100,7 +100,7 @@ void TextureView::update(const rTextureUpdateData* data)
   }
 }
 
-void TextureView::getSubData(const rTextureUpdateData* data)
+void TextureViewGL::getSubData(const rTextureUpdate* data)
 {
   ASSERT( data )
   {
@@ -108,12 +108,12 @@ void TextureView::getSubData(const rTextureUpdateData* data)
   }
 }
 
-auto TextureView::getDesc() -> rDesc
+auto TextureViewGL::getDesc() -> rDesc
 {
   return d;
 }
 
-void TextureView::genMipChain()
+void TextureViewGL::genMipChain()
 {
   glGenerateTextureMipmap( id );
 }

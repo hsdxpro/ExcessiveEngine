@@ -9,15 +9,20 @@ class GapiGL : public IGapi
   public:
     unsigned global_vao;
   
-	IShaderProgram* createShaderProgram(const rShaderProgPaths& data) override;
-	IShaderProgram* createShaderProgram(const rShaderProgSources& data) override;
+	GapiGL();
+
+	//IShaderProgram* createShaderProgram() override;
+	IShaderProgram* createShaderProgram(const rShaderPaths& data) override;
+	IShaderProgram* createShaderProgram(const rShaderSources& data) override;
 
 	IUniformBuffer* createUniformBuffer(const IUniformBuffer::rDesc& data) override;
 	IVertexBuffer*	createVertexBuffer(const IVertexBuffer::rDesc& data) override;
 	ITextureView*	createTextureView(const ITextureView::rDesc& data) override;
-	ITexture*		createTexture(const ITexture::rDesc& data) override;
+	ITexture*		createTexture(const rTexture& data) override;
+	ITexture*		createTexture(const std::string& path) override;
 	IIndexBuffer*	createIndexBuffer(const IIndexBuffer::rDesc& data) override;
     
+	void WriteTexture(ITexture* t, const rTextureUpdate& d);
 	
     void setDepthState(const rDepthState& state) override;
     void setStencilState(const rStencilState& state) override;

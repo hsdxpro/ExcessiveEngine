@@ -75,7 +75,7 @@ enum eFormatType
 };
 
 //specifies how you'd like to update the texture
-struct rTextureUpdateData
+struct rTextureUpdate
 {
   unsigned level;
   unsigned x_offset;
@@ -89,7 +89,7 @@ struct rTextureUpdateData
 };
 
 //specifies texture sampler state
-struct rTextureSamplerData
+struct rTextureSampler
 {
   bool is_mipmapped;
   bool is_bilinear;
@@ -97,27 +97,41 @@ struct rTextureSamplerData
   bool is_clamped; //clamped to edge OR repeated
 };
 
+//specifices what type of texture you'd like to allocate
+struct rTexture
+{
+	unsigned num_levels; //mipmap levels
+	unsigned width;
+	unsigned height;
+	unsigned depth;
+	eFormatType format; //texture format
+	bool is_layered;
+	bool is_cubemap;
+};
+
+struct rDesc
+{
+	unsigned start_level; //mipmap levels
+	unsigned num_levels;
+	unsigned start_layer;
+	unsigned num_layers;
+	eFormatType format; //texture format
+	ITexture* base_tex;
+	//new texture target
+	unsigned dim;
+	bool is_layered;
+	bool is_cubemap;
+};
 
 class ITexture
 {
 public:
-
-	//specifices what type of texture you'd like to allocate
-	struct rDesc 
-	{
-		unsigned num_levels; //mipmap levels
-		unsigned width;
-		unsigned height;
-		unsigned depth;
-		eFormatType format; //texture format
-		bool is_layered;
-		bool is_cubemap;
-	};
-public:
     virtual void destroy() = 0;
-    virtual void setSamplerState(const rTextureSamplerData* data) = 0;
-    virtual void update(const rTextureUpdateData* data) = 0;
-    virtual void getSubData(const rTextureUpdateData* data) = 0; //the pointer should be updated
-    virtual rDesc getDesc() = 0;
+	//virtual void update(const rTextureUpdate* data) = 0;
+
+    virtual void setSamplerState(const rTextureSampler* data) = 0;
+
+	virtual const rTexture& getDesc() = 0;
+    virtual void getSubData(const rTextureUpdate* data) = 0; //the pointer should be updated
     virtual void genMipChain() = 0;
 };

@@ -122,7 +122,7 @@ struct rRenderTargetInfo
 
 enum class eVertexAttribType : uint32_t
 {
-	FLOAT = 1, SINT, UINT, SNORM, UNORM, 
+	FLOAT = 0, SINT, UINT, SNORM, UNORM, 
 };
 
 struct rVertexAttrib
@@ -134,9 +134,9 @@ struct rVertexAttrib
 	unsigned divisor;
 };
 
-struct rShaderProgPaths
+struct rShaderPaths
 {
-	rShaderProgPaths() :vsPath(0), tessCtrlPath(0), tessEvaluationPath(0), gsPath(0), psPath(0){}
+	rShaderPaths() :vsPath(0), tessCtrlPath(0), tessEvaluationPath(0), gsPath(0), psPath(0){}
 	char const* vsPath;
 	char const* tessCtrlPath;
 	char const* tessEvaluationPath;
@@ -144,9 +144,9 @@ struct rShaderProgPaths
 	char const* psPath;
 };
 
-struct rShaderProgSources
+struct rShaderSources
 {
-	rShaderProgSources():vsSrc(0), tessCtrlSrc(0), tessEvaluationSrc(0), gsSrc(0), psSrc(0){}
+	rShaderSources() :vsSrc(0), tessCtrlSrc(0), tessEvaluationSrc(0), gsSrc(0), psSrc(0){}
 	char const* vsSrc;
 	char const* tessCtrlSrc;
 	char const* tessEvaluationSrc;

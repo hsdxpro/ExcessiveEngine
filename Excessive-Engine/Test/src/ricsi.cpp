@@ -39,6 +39,13 @@ IWindow*				gWindow;
 
 int Ricsi() {
 
+	// Init window
+	rWindow d;
+	d.clientW = 800;
+	d.clientH = 600;
+	d.capText = "Excessive-Engine -> Ricsi teszt";
+	gWindow = Factory::createWindow(d);
+
 	// Init GraphicsEngine
 	ge::rGraphicsEngine gDesc;
 		gDesc.gapi = Factory::createGapiGL();
@@ -47,52 +54,15 @@ int Ricsi() {
 	// Get the API belonging to graphics engine
 	gGapi = gEngine->getGapi();
 
-	// Init window
-	rWindow d;
-		d.clientW = 800;
-		d.clientH = 600;
-		d.capText = "Excessive-Engine -> Ricsi teszt";
-	gWindow = Factory::createWindow(d);
-
 	// Create simple shaderProgram
-	rShaderProgSources s;
+	rShaderSources s;
 		s.vsSrc = vsSimple;
 		s.psSrc = psSimple;
-	//gGapi->createShaderProgram(s);
-
-	std::string asd= Sys::getWorkDir();
+	gGapi->createShaderProgram(s);
 
 	// Create texture that we draw as FSQ
-	//rTextureDesc d;
-	//ITexture* tex = gGapi->createTexture(Sys::getWorkDir() + "image.png");
-	//
-	//string image_path = app_path + "image.png";
-	//sf::Image im;
-	//im.loadFromFile(image_path);
-	//
-	//ITexture::rDesc texdata;
-	//texdata.width = im.getSize().x;
-	//texdata.height = im.getSize().y;
-	//texdata.depth = 1;
-	//texdata.format = RGBA8;
-	//texdata.is_cubemap = false;
-	//texdata.is_layered = false;
-	//texdata.num_levels = 1;
-	//
-	//auto tex = gapi->createTexture(texdata);
-	//
-	//rTextureUpdateData texupdata;
-	//texupdata.data = (char*)im.getPixelsPtr();
-	//texupdata.depth = texdata.depth;
-	//texupdata.format = texdata.format;
-	//texupdata.width = texdata.width;
-	//texupdata.height = texdata.height;
-	//texupdata.level = 0;
-	//texupdata.x_offset = 0;
-	//texupdata.y_offset = 0;
-	//texupdata.z_offset = 0;
-	//
-	//tex->update(&texupdata);
+	ITexture* tex = gGapi->createTexture(Sys::getWorkDir() + "image.png");
+
 
 	rWindowEvent ev;
 	while (gWindow->isOpen()) {

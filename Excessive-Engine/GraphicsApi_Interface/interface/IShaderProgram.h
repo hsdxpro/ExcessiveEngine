@@ -11,10 +11,11 @@ enum eShaderType
 class IShaderProgram
 {
   public:
-    virtual void destroy() = 0;
+    //virtual void destroy() = 0;
     //src is the shader source string
     //virtual void addShader(const char* src, eShaderType type) = 0; 
     //virtual void link() = 0;
+
     ////overwrites pointer at data, size
     virtual void getBinary(char** data, unsigned* size) = 0;
     virtual void loadFromBinary(char* data) = 0;

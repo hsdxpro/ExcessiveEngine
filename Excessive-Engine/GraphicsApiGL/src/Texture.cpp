@@ -302,7 +302,7 @@ void TextureGL::destroy()
   id = 0;
 }
 
-void TextureGL::setSamplerState(const rTextureSamplerData* data)
+void TextureGL::setSamplerState(const rTextureSampler* data)
 {
   ASSERT( data && target )
   {
@@ -371,31 +371,7 @@ void TextureGL::setSamplerState(const rTextureSamplerData* data)
   }
 }
 
-void TextureGL::update(const rTextureUpdateData* data)
-{
-  ASSERT( data )
-  {
-    glActiveTexture( GL_TEXTURE0 );
-    glBindTexture( target, id );
-    
-	  if (dim == 1)
-    {
-      glTextureSubImage1D( id, data->level, data->x_offset, data->width, texture_formats[data->format], texture_types[data->format], data->data );
-    }
-    else if( dim == 2)
-    {
-      //glTextureSubImage2D( id, data->level, data->x_offset, data->y_offset, data->width, data->height, texture_formats[data->format], texture_types[data->format], data->data );
-	  glTexSubImage2D(target, data->level, data->x_offset, data->y_offset, data->width, data->height, texture_formats[data->format], texture_types[data->format], data->data);
-	  
-    }
-    else //threesome
-    {
-      glTextureSubImage3D( id, data->level, data->x_offset, data->y_offset, data->z_offset, data->width, data->height, data->depth, texture_formats[data->format], texture_types[data->format], data->data );
-    }
-  }
-}
-
-void TextureGL::getSubData(const rTextureUpdateData* data)
+void TextureGL::getSubData(const rTextureUpdate* data)
 {
   ASSERT( data )
   {
@@ -403,9 +379,9 @@ void TextureGL::getSubData(const rTextureUpdateData* data)
   }
 }
 
-auto TextureGL::getDesc() -> rDesc
+const rTexture& TextureGL::getDesc()
 {
-  return d;
+	return desc;
 }
 
 void TextureGL::genMipChain()

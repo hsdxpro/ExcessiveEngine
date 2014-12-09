@@ -20,12 +20,12 @@ class TextureGL : public ITexture
     GLuint id;
     GLenum target;
     unsigned dim;
-    rDesc d;
+    rTexture desc;
   
     void destroy() override;
-    void setSamplerState(const rTextureSamplerData* data) override;
-	void update(const rTextureUpdateData* data) override;
-	void getSubData(const rTextureUpdateData* data) override; //the pointer should be updated
-	rDesc getDesc() override;
+    void setSamplerState(const rTextureSampler* data) override;
+
+	const rTexture& getDesc() override;
+	void getSubData(const rTextureUpdate* data) override; //the pointer should be updated
 	void genMipChain() override;
 };

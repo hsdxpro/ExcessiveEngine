@@ -22,9 +22,9 @@ public:
 	};
 public:
     virtual void destroy() = 0;
-    virtual void setSamplerState(const rTextureSamplerData* data) = 0;
-    virtual void update(const rTextureUpdateData* data) = 0;
-    virtual void getSubData(const rTextureUpdateData* data) = 0; //the pointer should be updated
+    virtual void setSamplerState(const rTextureSampler* d) = 0;
+    virtual void update(const rTextureUpdate* d) = 0;
+    virtual void getSubData(const rTextureUpdate* d) = 0; //the pointer should be updated
     virtual rDesc getDesc() = 0;
     virtual void genMipChain() = 0;
 };

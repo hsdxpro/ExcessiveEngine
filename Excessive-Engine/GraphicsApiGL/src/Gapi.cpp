@@ -11,6 +11,7 @@
 #include "IndexBuffer.h"
 
 #include <iostream>
+#include "SFML\Graphics\Image.hpp"
 using namespace std;
 
 #ifdef _MSC_VER
@@ -22,68 +23,68 @@ using namespace std;
 extern "C"
 EXPORT IGapi* createGraphicsApi()
 {
-  GapiGL* gapi = new GapiGL();
+	return new GapiGL();
+}
 
-  GLenum glew_error = glewInit();
-    
-  GLenum error;
-  while ((error = glGetError()) != GL_NO_ERROR);
+GapiGL::GapiGL() {
+	GLenum glew_error = glewInit();
 
-  if( glew_error != GLEW_OK )
-  {
-    cerr << "Error initializing GLEW: " << glewGetErrorString( glew_error ) << endl;
-  }
+	GLenum error;
+	while ((error = glGetError()) != GL_NO_ERROR);
 
-  if( !GLEW_VERSION_4_5 )
-  {
-    cerr << "Error: GL 4.5 is required" << endl;
-  }
+	if (glew_error != GLEW_OK)
+	{
+		cerr << "Error initializing GLEW: " << glewGetErrorString(glew_error) << endl;
+	}
 
-  cout << "Vendor: " << glGetString( GL_VENDOR ) << endl;
-  cout << "Renderer: " << glGetString( GL_RENDERER ) << endl;
-  cout << "OpenGL version: " << glGetString( GL_VERSION ) << endl;
-  cout << "GLSL version: " << glGetString( GL_SHADING_LANGUAGE_VERSION ) << endl;
+	if (!GLEW_VERSION_4_5)
+	{
+		cerr << "Error: GL 4.5 is required" << endl;
+	}
 
-  //use a single global vao
-  glGenVertexArrays( 1, &gapi->global_vao );
-  glBindVertexArray( gapi->global_vao );
+	cout << "Vendor: " << glGetString(GL_VENDOR) << endl;
+	cout << "Renderer: " << glGetString(GL_RENDERER) << endl;
+	cout << "OpenGL version: " << glGetString(GL_VERSION) << endl;
+	cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
 
-  return gapi;
+	//use a single global vao
+	glGenVertexArrays(1, &global_vao);
+	glBindVertexArray(global_vao);
 }
 
 GLenum func_data[] =
 {
-  GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL, GL_GREATER, GL_NOTEQUAL, GL_GEQUAL, GL_ALWAYS
+	GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL, GL_GREATER, GL_NOTEQUAL, GL_GEQUAL, GL_ALWAYS
 };
 
-GLenum stencil_op_data[] = 
+GLenum stencil_op_data[] =
 {
-  GL_KEEP, GL_ZERO, GL_REPLACE, GL_INCR, GL_INCR_WRAP, GL_DECR, GL_DECR_WRAP, GL_INVERT 
+	GL_KEEP, GL_ZERO, GL_REPLACE, GL_INCR, GL_INCR_WRAP, GL_DECR, GL_DECR_WRAP, GL_INVERT
 };
 
 GLenum blend_eq_data[] =
 {
-  GL_FUNC_ADD, GL_FUNC_SUBTRACT, GL_FUNC_REVERSE_SUBTRACT, GL_MIN, GL_MAX
+	GL_FUNC_ADD, GL_FUNC_SUBTRACT, GL_FUNC_REVERSE_SUBTRACT, GL_MIN, GL_MAX
 };
 
 GLenum blend_func_data[] =
 {
-  GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA
+	GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA
 };
 
-GLenum raster_mode_data[] = 
+GLenum raster_mode_data[] =
 {
-  GL_POINT, GL_LINE, GL_FILL
+	GL_POINT, GL_LINE, GL_FILL
 };
 
-GLenum raster_face_data[] = 
+GLenum raster_face_data[] =
 {
-  GL_FRONT, GL_BACK, GL_FRONT_AND_BACK
+	GL_FRONT, GL_BACK, GL_FRONT_AND_BACK
 };
 
-GLenum raster_order_data[] = 
+GLenum raster_order_data[] =
 {
-  GL_CW, GL_CCW
+	GL_CW, GL_CCW
 };
 
 //IShaderProgram* GapiGL::createShaderProgram()
@@ -93,22 +94,22 @@ GLenum raster_order_data[] =
 //  return sp;
 //}
 
-IShaderProgram* GapiGL::createShaderProgram(const rShaderProgPaths& data)
+IShaderProgram* GapiGL::createShaderProgram(const rShaderPaths& data)
 {
 	// TODO
 	ShaderProgram* sp = new ShaderProgram();
 	return sp;
 }
 
-IShaderProgram* GapiGL::createShaderProgram(const rShaderProgSources& data)
+IShaderProgram* GapiGL::createShaderProgram(const rShaderSources& data)
 {
 	ShaderProgram* sp = new ShaderProgram();
 	sp->id = glCreateProgram();
-	if(data.vsSrc != 0)				sp->addShader(data.vsSrc,				VERTEX_SHADER);
-	if(data.psSrc != 0)				sp->addShader(data.psSrc,				PIXEL_SHADER);
-	if(data.tessCtrlSrc != 0)		sp->addShader(data.tessCtrlSrc,			TESSELLATION_CONTROL_SHADER);
-	if(data.tessEvaluationSrc != 0)	sp->addShader(data.tessEvaluationSrc,	TESSELLATION_EVALUATION_SHADER);
-	if(data.gsSrc != 0)				sp->addShader(data.gsSrc,				GEOMETRY_SHADER);
+	if (data.vsSrc != 0)				sp->addShader(data.vsSrc, VERTEX_SHADER);
+	if (data.psSrc != 0)				sp->addShader(data.psSrc, PIXEL_SHADER);
+	if (data.tessCtrlSrc != 0)			sp->addShader(data.tessCtrlSrc, TESSELLATION_CONTROL_SHADER);
+	if (data.tessEvaluationSrc != 0)	sp->addShader(data.tessEvaluationSrc, TESSELLATION_EVALUATION_SHADER);
+	if (data.gsSrc != 0)				sp->addShader(data.gsSrc, GEOMETRY_SHADER);
 	sp->link();
 	return sp;
 }
@@ -163,7 +164,7 @@ IVertexBuffer* GapiGL::createVertexBuffer(const IVertexBuffer::rDesc& data)
 
 ITextureView* GapiGL::createTextureView(const ITextureView::rDesc& data)
 {
-	TextureView* tex = new TextureView();
+	TextureViewGL* tex = new TextureViewGL();
 	glGenTextures(1, &tex->id);
 
 	tex->dim = data.dim;
@@ -218,74 +219,105 @@ ITextureView* GapiGL::createTextureView(const ITextureView::rDesc& data)
 	return tex;
 }
 
-ITexture* GapiGL::createTexture(const ITexture::rDesc& data)
+ITexture* GapiGL::createTexture(const rTexture& data)
 {
-  TextureGL* tex = new TextureGL();
-  glGenTextures( 1, &tex->id );
-  tex->target = 0;
-  
-    if( data.height > 1 )
-    {
-      if( data.depth > 1 )
-      {
-        //3D
-        tex->dim = 3;
-        
-        if( data.is_layered )
-        {
-          if( data.is_cubemap )
-          {
-            tex->target = GL_TEXTURE_CUBE_MAP_ARRAY;
-          }
-          else
-          {
-            tex->target = GL_TEXTURE_2D_ARRAY;
-          }
-        }
-        else
-        {
-          tex->target = GL_TEXTURE_3D;
-        }
-        
-        glBindTexture( tex->target, tex->id );
-        glTexStorage3D( tex->target, data.num_levels, texture_internal_formats[data.format], data.width, data.height, data.depth );        
-      }
-      else
-      {
-        //2D
-        tex->dim = 2;
-        
-        if( data.is_layered )
-        {
-          tex->target = GL_TEXTURE_1D_ARRAY;
-        }
-        else if( data.is_cubemap )
-        {
-          tex->target = GL_TEXTURE_CUBE_MAP;
-        }
-        else
-        {
-          tex->target = GL_TEXTURE_2D;
-        }
-        
-        glBindTexture( tex->target, tex->id );
-        glTexStorage2D( tex->target, data.num_levels, texture_internal_formats[data.format], data.width, data.height );
-      }
-    }
-    else
-    {
-      //1D
-      tex->dim = 1;
-      
-      tex->target = GL_TEXTURE_1D;
+	TextureGL* tex = new TextureGL();
+	glGenTextures(1, &tex->id);
+	tex->target = 0;
 
-      glBindTexture( tex->target, tex->id );
-      glTexStorage1D( tex->target, data.num_levels, texture_internal_formats[data.format], data.width );
-    }
-    
-    tex->d = data;
-  
-  return tex;
+	if (data.height > 1)
+	{
+		if (data.depth > 1)
+		{
+			//3D
+			tex->dim = 3;
+
+			if (data.is_layered)
+			{
+				if (data.is_cubemap)
+				{
+					tex->target = GL_TEXTURE_CUBE_MAP_ARRAY;
+				}
+				else
+				{
+					tex->target = GL_TEXTURE_2D_ARRAY;
+				}
+			}
+			else
+			{
+				tex->target = GL_TEXTURE_3D;
+			}
+
+			glBindTexture(tex->target, tex->id);
+			glTexStorage3D(tex->target, data.num_levels, texture_internal_formats[data.format], data.width, data.height, data.depth);
+		}
+		else
+		{
+			//2D
+			tex->dim = 2;
+
+			if (data.is_layered)
+			{
+				tex->target = GL_TEXTURE_1D_ARRAY;
+			}
+			else if (data.is_cubemap)
+			{
+				tex->target = GL_TEXTURE_CUBE_MAP;
+			}
+			else
+			{
+				tex->target = GL_TEXTURE_2D;
+			}
+
+			glBindTexture(tex->target, tex->id);
+			glTexStorage2D(tex->target, data.num_levels, texture_internal_formats[data.format], data.width, data.height);
+		}
+	}
+	else
+	{
+		//1D
+		tex->dim = 1;
+
+		tex->target = GL_TEXTURE_1D;
+
+		glBindTexture(tex->target, tex->id);
+		glTexStorage1D(tex->target, data.num_levels, texture_internal_formats[data.format], data.width);
+	}
+
+	tex->desc = data;
+
+	return tex;
+}
+
+ITexture* GapiGL::createTexture(const std::string& path)
+{
+	sf::Image im;
+	im.loadFromFile(path);
+
+	rTexture texdata;
+	texdata.width = im.getSize().x;
+	texdata.height = im.getSize().y;
+	texdata.depth = 1;
+	texdata.format = RGBA8;
+	texdata.is_cubemap = false;
+	texdata.is_layered = false;
+	texdata.num_levels = 1;
+
+	ITexture* tex = createTexture(texdata);
+
+	rTextureUpdate texupdata;
+	texupdata.data = (char*)im.getPixelsPtr();
+	texupdata.depth = texdata.depth;
+	texupdata.format = texdata.format;
+	texupdata.width = texdata.width;
+	texupdata.height = texdata.height;
+	texupdata.level = 0;
+	texupdata.x_offset = 0;
+	texupdata.y_offset = 0;
+	texupdata.z_offset = 0;
+
+	WriteTexture(tex, texupdata);
+	return tex;
 }
 
 IIndexBuffer* GapiGL::createIndexBuffer(const IIndexBuffer::rDesc& data)
@@ -312,89 +344,112 @@ IIndexBuffer* GapiGL::createIndexBuffer(const IIndexBuffer::rDesc& data)
 	return ibo;
 }
 
+void GapiGL::WriteTexture(ITexture* t, const rTextureUpdate& d)
+{
+	TextureGL* tex = (TextureGL*)t;
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(tex->target, tex->id);
+
+	if (tex->dim == 1)
+	{
+		glTextureSubImage1D(tex->id, d.level, d.x_offset, d.width, texture_formats[d.format], texture_types[d.format], d.data);
+	}
+	else if (tex->dim == 2)
+	{
+		//glTextureSubImage2D( id, data->level, data->x_offset, data->y_offset, data->width, data->height, texture_formats[data->format], texture_types[data->format], data->data );
+		glTexSubImage2D(tex->target, d.level, d.x_offset, d.y_offset, d.width, d.height, texture_formats[d.format], texture_types[d.format], d.data);
+
+	}
+	else //threesome
+	{
+		glTextureSubImage3D(tex->id, d.level, d.x_offset, d.y_offset, d.z_offset, d.width, d.height, d.depth, texture_formats[d.format], texture_types[d.format], d.data);
+	}
+}
+
 void GapiGL::setDepthState(const rDepthState& state)
 {
-    if( state.enable_test )
-    {
-      glEnable( GL_DEPTH_TEST );
-    }
-    else
-    {
-      glDisable( GL_DEPTH_TEST );
-    }
-    
-    glDepthMask( state.enable_write );
-    
-    glDepthRangef( state.near, state.far );
-    
-    glDepthFunc( func_data[(unsigned)state.func] );
+	if (state.enable_test)
+	{
+		glEnable(GL_DEPTH_TEST);
+	}
+	else
+	{
+		glDisable(GL_DEPTH_TEST);
+	}
+
+	glDepthMask(state.enable_write);
+
+	glDepthRangef(state.near, state.far);
+
+	glDepthFunc(func_data[(unsigned)state.func]);
 }
 
 void GapiGL::setStencilState(const rStencilState& state)
 {
-    if( state.enable_test )
-    {
-      glEnable( GL_STENCIL_TEST );
-    }
-    else
-    {
-      glDisable( GL_STENCIL_TEST );
-    }
-    
-    glDepthMask( state.enable_write );
-    
-    glStencilMask( state.mask );
-    
+	if (state.enable_test)
+	{
+		glEnable(GL_STENCIL_TEST);
+	}
+	else
+	{
+		glDisable(GL_STENCIL_TEST);
+	}
+
+	glDepthMask(state.enable_write);
+
+	glStencilMask(state.mask);
+
 	glStencilFunc(func_data[(unsigned)state.func], state.reference, state.func_mask);
-    
+
 	glStencilOp(stencil_op_data[(unsigned)state.on_stencil_fail], stencil_op_data[(unsigned)state.on_stencil_pass_depth_fail], stencil_op_data[(unsigned)state.on_stencil_pass_depth_pass]);
 }
 
 void GapiGL::setBlendState(const rBlendState& state)
-{ 
-    if( state.enable )
-    {
-      glEnable( GL_BLEND );
-    }
-    else
-    {
-      glDisable( GL_BLEND );
-    }
-    
-    glBlendColor( state.blend_color.x, state.blend_color.y, state.blend_color.z, state.blend_color.w );
-    
+{
+	if (state.enable)
+	{
+		glEnable(GL_BLEND);
+	}
+	else
+	{
+		glDisable(GL_BLEND);
+	}
+
+	glBlendColor(state.blend_color.x, state.blend_color.y, state.blend_color.z, state.blend_color.w);
+
 	glBlendEquation(blend_eq_data[(unsigned)state.equation]);
-    
+
 	glBlendFunc(blend_func_data[(unsigned)state.src_func], blend_func_data[(unsigned)state.dst_func]);
 }
 
 void GapiGL::setSRGBWrites(bool val)
 {
-  if( val )
-  {
-    glEnable( GL_FRAMEBUFFER_SRGB );
-  }
-  else
-  {
-    glDisable( GL_FRAMEBUFFER_SRGB );
-  }
+	if (val)
+	{
+		glEnable(GL_FRAMEBUFFER_SRGB);
+	}
+	else
+	{
+		glDisable(GL_FRAMEBUFFER_SRGB);
+	}
 }
 
 void GapiGL::setSeamlessCubeMaps(bool val)
 {
-  if( val )
-  {
-    glEnable( GL_TEXTURE_CUBE_MAP_SEAMLESS );
-  }
-  else
-  {
-    glDisable( GL_TEXTURE_CUBE_MAP_SEAMLESS );
-  }
+	if (val)
+	{
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	}
+	else
+	{
+		glDisable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	}
 }
 
 void GapiGL::setViewport(int x, int y, unsigned w, unsigned h)
 {
-  glViewport( x, y, w, h );
+	glViewport(x, y, w, h);
 }
 
 void GapiGL::setRasterizationState(const rRasterizerState& state)
@@ -402,67 +457,67 @@ void GapiGL::setRasterizationState(const rRasterizerState& state)
 	glPolygonMode(GL_FRONT_AND_BACK, raster_mode_data[(unsigned)state.mode]);
 	glFrontFace(raster_order_data[(unsigned)state.vertex_order]);
 	glCullFace(raster_face_data[(unsigned)state.face]);
-  glColorMask( state.r_mask, state.g_mask, state.b_mask, state.a_mask );
+	glColorMask(state.r_mask, state.g_mask, state.b_mask, state.a_mask);
 }
 
 bool GapiGL::getError() //true if error
 {
-  return glGetError != GL_NO_ERROR;
+	return glGetError != GL_NO_ERROR;
 }
 
 void GapiGL::setDebugOutput(bool val)
 {
-  if( val )
-  {
-    glEnable(GL_DEBUG_OUTPUT);
-  }
-  else
-  {
-    glDisable(GL_DEBUG_OUTPUT);
-  }
+	if (val)
+	{
+		glEnable(GL_DEBUG_OUTPUT);
+	}
+	else
+	{
+		glDisable(GL_DEBUG_OUTPUT);
+	}
 }
 
 void GapiGL::setSyncDebugOutput(bool val)
 {
-  if( val )
-  {
-    glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS );
-  }
-  else
-  {
-    glDisable( GL_DEBUG_OUTPUT_SYNCHRONOUS );
-  }
+	if (val)
+	{
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	}
+	else
+	{
+		glDisable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	}
 }
 
 void GapiGL::setShaderProgram(IShaderProgram* sp)
 {
-  ASSERT(sp);
-  glUseProgram(static_cast<ShaderProgram*>(sp)->id);
+	ASSERT(sp);
+	glUseProgram(static_cast<ShaderProgram*>(sp)->id);
 }
 
 void GapiGL::setTextureView(ITextureView* tex, unsigned index)
 {
-  ASSERT( tex );
-  //glBindTextureUnit( index, static_cast<TextureView*>(tex)->id );
-  glActiveTexture( GL_TEXTURE0 + index );
-  glBindTexture(static_cast<TextureView*>(tex)->target, static_cast<TextureView*>(tex)->id);
+	ASSERT(tex);
+	//glBindTextureUnit( index, static_cast<TextureViewGL*>(tex)->id );
+	glActiveTexture(GL_TEXTURE0 + index);
+	glBindTexture(static_cast<TextureViewGL*>(tex)->target, static_cast<TextureViewGL*>(tex)->id);
 }
 
 void GapiGL::setRenderTargets(const rRenderTargetInfo* render_targets, unsigned size)
 {
-  //TODO
-  glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+	//TODO
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void GapiGL::setUniformBuffer(IUniformBuffer* buf, unsigned index)
 {
-  ASSERT( buf );
-  glBindBufferBase( GL_UNIFORM_BUFFER, index, static_cast<UniformBuffer*>(buf)->id );
+	ASSERT(buf);
+	glBindBufferBase(GL_UNIFORM_BUFFER, index, static_cast<UniformBuffer*>(buf)->id);
 }
 
-GLenum attrib_array[] = 
+GLenum attrib_array[] =
 {
-  GL_FLOAT, GL_INT, GL_UNSIGNED_INT
+	GL_FLOAT, GL_INT, GL_UNSIGNED_INT
 };
 
 void GapiGL::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, unsigned num_buffers)
@@ -472,8 +527,8 @@ void GapiGL::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attr
 	for (int c = 0; c < num_buffers; ++c)
 	{
 		GLuint id = static_cast<VertexBuffer*>(buffers[c])->id;
-		glBindBuffer( GL_ARRAY_BUFFER, id );
-		glEnableVertexAttribArray( attrib_data[c].index );
+		glBindBuffer(GL_ARRAY_BUFFER, id);
+		glEnableVertexAttribArray(attrib_data[c].index);
 		glVertexAttribPointer(attrib_data[c].index, attrib_data[c].data_components, attrib_array[(unsigned)attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset);
 		//glVertexAttribDivisor( attrib_data[c].index, attrib_data[c].divisor ); //instancing stuff
 	}
@@ -481,19 +536,19 @@ void GapiGL::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attr
 
 void GapiGL::setIndexBuffer(IIndexBuffer* ibo)
 {
-  ASSERT( ibo );
-  glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBuffer*>(ibo)->id );
+	ASSERT(ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBuffer*>(ibo)->id);
 }
 
 void GapiGL::draw(unsigned num_indices)
 {
 #ifdef DEBUG_SHADER_ERRORS
-  glValidateProgram( static_cast<ShaderProgram*>(s)->id );
-  GLchar infolog[INFOLOG_SIZE];
-  infolog[0] = '\0';
-  glGetProgramInfoLog( static_cast<ShaderProgram*>(s)->id, INFOLOG_SIZE, 0, infolog );
-  cerr << infolog << endl;
+	glValidateProgram(static_cast<ShaderProgram*>(s)->id);
+	GLchar infolog[INFOLOG_SIZE];
+	infolog[0] = '\0';
+	glGetProgramInfoLog(static_cast<ShaderProgram*>(s)->id, INFOLOG_SIZE, 0, infolog);
+	cerr << infolog << endl;
 #endif
 
-  glDrawElements( GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, 0 );
+	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, 0);
 }

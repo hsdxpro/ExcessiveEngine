@@ -4,7 +4,7 @@
 #include "ITextureView.h"
 #include "IGapi.h"
 
-class TextureView : public ITextureView
+class TextureViewGL : public ITextureView
 {
   public:
     GLuint id;
@@ -13,9 +13,9 @@ class TextureView : public ITextureView
     rDesc d;
     
     void destroy();
-	void setSamplerState(const rTextureSamplerData* data) override;
-	void update(const rTextureUpdateData* data) override;
-	void getSubData(const rTextureUpdateData* data) override;
+	void setSamplerState(const rTextureSampler* data) override;
+	void update(const rTextureUpdate* data) override;
+	void getSubData(const rTextureUpdate* data) override;
 	rDesc getDesc() override;
     void genMipChain() override;
 };

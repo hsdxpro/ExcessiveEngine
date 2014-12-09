@@ -67,11 +67,11 @@ enum class eKey {
 	BACKSPACE,    ///< The Backspace key
 	TAB,          ///< The Tabulation key
 	PAGEUP,       ///< The Page up key
-	PAGEDOWN,     ///< The Page down key
+	PAGEDDOWN,     ///< The Page down key
 	END,          ///< The End key
 	HOME,         ///< The Home key
-	INSERT,       ///< The Insert key
-	DELETE,       ///< The Delete key
+	INS,       ///< The Insert key
+	DEL,       ///< The Delete key
 	ADD,          ///< The + key
 	SUB,     ///< The - key
 	MUL,     ///< The * key
