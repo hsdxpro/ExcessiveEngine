@@ -14,7 +14,7 @@ extern GLenum texture_types[69];
 extern unsigned texture_sizes[69];
 extern GLenum texture_internal_formats[69];
 
-class Texture : public ITexture
+class TextureGL : public ITexture
 {
   public:
     GLuint id;

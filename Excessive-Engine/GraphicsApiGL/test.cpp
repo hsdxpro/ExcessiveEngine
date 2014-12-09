@@ -1,7 +1,10 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
+#include "Factory.h"
+
 #include "GraphicsApi"
+
 
 #include "SFML/System.hpp"
 #include "SFML/Window.hpp"
@@ -63,7 +66,7 @@ int main( int argc, char** args )
   w.setVerticalSyncEnabled( true );
 
   //load GL Graphics Api dll
-  string dll_path = app_path + "Debug/GraphicsApiGL.dll";
+  string dll_path = app_path + "GraphicsApiGL.dll";
 
   fstream f;
   f.open( dll_path.c_str() );
@@ -83,38 +86,38 @@ int main( int argc, char** args )
   }
 
   //set up the GL Gapi
-  IGapi* gapi = createGraphicsApi();
+  // IGapi* gapi = createGraphicsApi();
 
-  gapi->setDebugOutput( true );
-  gapi->setSeamlessCubeMaps( true );
-  gapi->setSyncDebugOutput( true );
+  IGapi* gapi = Factory::createGapiGL();
+  //gapi->setDebugOutput( true );
+  //gapi->setSeamlessCubeMaps( true );
+  //gapi->setSyncDebugOutput( true );
 
   //set up the shader program
-  auto sp = gapi->createShaderProgram();
-  sp->addShader(vshd, VERTEX_SHADER);
-  sp->addShader(pshd, PIXEL_SHADER);
-  sp->link();
-
+  rShaderProgSources s;
+  s.psSrc = pshd;
+  s.vsSrc = vshd;
+  auto sp = gapi->createShaderProgram(s);
   /**/
   //example binary shader store/load
-  char* data;
-  unsigned size;
-  sp->getBinary(&data, &size);
-  
-  f.open("shader.shaderbin", ios::binary | ios::out );
-  f.write( (const char*)&size, sizeof(unsigned) );
-  f.write( data, size );
-  f.close();
-
-  data = 0;
-  size = 0;
-
-  f.open("shader.shaderbin", ios::binary | ios::in );
-  f.read( (char*)&size, sizeof(unsigned) );
-  f.read( data = new char[size], size );
-  f.close();
-
-  sp->loadFromBinary( data );
+  //char* data;
+  //unsigned size;
+  //sp->getBinary(&data, &size);
+  //
+  //f.open("shader.shaderbin", ios::binary | ios::out );
+  //f.write( (const char*)&size, sizeof(unsigned) );
+  //f.write( data, size );
+  //f.close();
+  //
+  //data = 0;
+  //size = 0;
+  //
+  //f.open("shader.shaderbin", ios::binary | ios::in );
+  //f.read( (char*)&size, sizeof(unsigned) );
+  //f.read( data = new char[size], size );
+  //f.close();
+  //
+  //sp->loadFromBinary( data );
   /**/
 
   //set up texture
@@ -403,7 +406,7 @@ std::string get_app_path()
   config::get().app_path = config::get().app_path.substr( 0, config::get().app_path.rfind( "/" ) + 1 );
 #endif
 
-  app_path += "../";
+  //app_path += "../";
 
   char* res = 0;
 

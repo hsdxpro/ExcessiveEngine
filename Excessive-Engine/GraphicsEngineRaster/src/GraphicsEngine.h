@@ -20,7 +20,7 @@ class GraphicsEngineRaster : public ge::IGraphicsEngine
 {
 public:
 	// ctor, dtor, release
-	GraphicsEngineRaster(const rCfg& d);
+	GraphicsEngineRaster(const rGraphicsEngine& d);
 	~GraphicsEngineRaster();
 
 	//void init(const IGraphicsEngine::rDesc& d);
@@ -38,13 +38,16 @@ public:
 	// interact
 	void update() override;
 
-	ge::IGapi* getGapi();
+	IGapi* getGapi();
 
 private:
 	std::unordered_set<Scene*> scenes;
-	std::unordered_set<Mesh*> meshes;
+	std::unordered_set<Mesh*
+	> meshes;
 	std::unordered_set<Material*> materials;
 	std::unordered_set<Texture*> textures;
+
+	IGapi* gapi;
 };
 
 } // namespace ge

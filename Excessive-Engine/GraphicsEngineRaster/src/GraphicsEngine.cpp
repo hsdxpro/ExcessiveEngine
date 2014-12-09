@@ -1,6 +1,7 @@
 #include "GraphicsEngine.h"
 
 #include <iostream> // only for debug
+#include "..\Common\src\Factory.h"
 using std::cout;
 using std::endl;
 
@@ -18,7 +19,7 @@ using std::endl;
 ////////////////////////////////////////////////////////////////////////////////
 
 extern "C"
-EXPORT ge::IGraphicsEngine* CreateGraphicsEngine(const ge::IGraphicsEngine::rCfg& d) {
+EXPORT ge::IGraphicsEngine* CreateGraphicsEngine(const ge::rGraphicsEngine& d) {
 	return new ge::GraphicsEngineRaster(d);
 }
 
@@ -33,12 +34,12 @@ EXPORT ge::IGraphicsEngine* CreateGraphicsEngine(const ge::IGraphicsEngine::rCfg
 ////////////////////////////////////////////////////////////////////////////////
 // ctor, dtor, release
 
-ge::GraphicsEngineRaster::GraphicsEngineRaster(const rCfg& d) {
-	// lóóóófasz rizzsel
+ge::GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngine& d) {
+	gapi = d.gapi;
 }
 
 ge::GraphicsEngineRaster::~GraphicsEngineRaster() {
-	// lófasz rizzsel
+	// TODO
 }
 
 
@@ -72,6 +73,6 @@ void ge::GraphicsEngineRaster::update() {
 	cout << "Updating frame..." << endl;
 }
 
-ge::IGapi* ge::GraphicsEngineRaster::getGapi() {
-	return nullptr;
+IGapi* ge::GraphicsEngineRaster::getGapi() {
+	return gapi;
 }

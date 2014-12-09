@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../GraphicsApi_Interface/interface/IGapi.h"
+
 // namespace
 namespace ge {
 
@@ -7,7 +9,11 @@ class IScene;
 class IMesh;
 class IMaterial;
 class ITexture;
-class IGapi;
+
+struct rGraphicsEngine {
+	IGapi* gapi;
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /// GraphicsEngine manages and displays the graphical world.
@@ -16,10 +22,6 @@ class IGapi;
 
 class IGraphicsEngine
 {
-public:
-	struct rCfg {
-	};
-
 public:
 	// interface
 	virtual void release() = 0;
@@ -38,7 +40,7 @@ public:
 	virtual void update() = 0;
 
 	// getters
-	virtual ge::IGapi* getGapi() = 0;
+	virtual IGapi* getGapi() = 0;
 };
 
 

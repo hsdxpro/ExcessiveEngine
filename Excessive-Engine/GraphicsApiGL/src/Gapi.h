@@ -1,22 +1,24 @@
 #pragma once
 
-#include "IGapi.h"
-
 #include "GL/glew.h"
+#include "../../GraphicsApi_Interface/interface/IGapi.h"
 
 
-class Gapi : public IGapi
+class GapiGL : public IGapi
 {
   public:
     unsigned global_vao;
   
-    IShaderProgram* createShaderProgram() override;
-    ITexture* createTexture(const ITexture::rDesc& data) override;
-	ITextureView* createTextureView(const ITextureView::rDesc& data) override;
-	IVertexBuffer* createVertexBuffer(const IVertexBuffer::rDesc& data) override;
-	IIndexBuffer* createIndexBuffer(const IIndexBuffer::rDesc& data) override;
+	IShaderProgram* createShaderProgram(const rShaderProgPaths& data) override;
+	IShaderProgram* createShaderProgram(const rShaderProgSources& data) override;
+
 	IUniformBuffer* createUniformBuffer(const IUniformBuffer::rDesc& data) override;
-  
+	IVertexBuffer*	createVertexBuffer(const IVertexBuffer::rDesc& data) override;
+	ITextureView*	createTextureView(const ITextureView::rDesc& data) override;
+	ITexture*		createTexture(const ITexture::rDesc& data) override;
+	IIndexBuffer*	createIndexBuffer(const IIndexBuffer::rDesc& data) override;
+    
+	
     void setDepthState(const rDepthState& state) override;
     void setStencilState(const rStencilState& state) override;
     void setBlendState(const rBlendState& state) override;

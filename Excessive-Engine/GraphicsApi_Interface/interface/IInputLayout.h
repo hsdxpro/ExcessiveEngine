@@ -1,7 +1,8 @@
 #pragma once
 
-#include <Common.h>
+
 #include <cstdint>
+#include "Common.h"
 
 
 #pragma message("Marci: ezt a szart kéne implementálnod [InputLayout]")

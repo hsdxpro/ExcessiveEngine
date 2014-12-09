@@ -3,6 +3,9 @@
 #include <cstdint>
 #include <mymath/mymath.h>
 
+// TODO
+#include <string>
+
 class ITextureView;
 
 ////////////////////////////////////////
@@ -129,6 +132,26 @@ struct rVertexAttrib
 	eVertexAttribType type;
 	unsigned offset, size;
 	unsigned divisor;
+};
+
+struct rShaderProgPaths
+{
+	rShaderProgPaths() :vsPath(0), tessCtrlPath(0), tessEvaluationPath(0), gsPath(0), psPath(0){}
+	char const* vsPath;
+	char const* tessCtrlPath;
+	char const* tessEvaluationPath;
+	char const* gsPath;
+	char const* psPath;
+};
+
+struct rShaderProgSources
+{
+	rShaderProgSources():vsSrc(0), tessCtrlSrc(0), tessEvaluationSrc(0), gsSrc(0), psSrc(0){}
+	char const* vsSrc;
+	char const* tessCtrlSrc;
+	char const* tessEvaluationSrc;
+	char const* gsSrc;
+	char const* psSrc;
 };
 
 

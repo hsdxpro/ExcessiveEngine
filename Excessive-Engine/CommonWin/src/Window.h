@@ -8,9 +8,9 @@
 class Window : public IWindow
 {
 public:
-	Window(const IWindow::rDesc& d);
+	Window(const rWindow& d);
 
-	bool popEvent(IWindow::rEvent* evt_out);
+	bool popEvent(rWindowEvent* evt_out);
 
 	void close();
 
