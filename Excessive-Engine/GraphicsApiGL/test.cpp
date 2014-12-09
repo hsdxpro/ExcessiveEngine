@@ -1,6 +1,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-
+#undef DELETE
 #include "Factory.h"
 
 #include "GraphicsApi"
@@ -121,7 +121,7 @@ int main( int argc, char** args )
   /**/
 
   //set up texture
-  string image_path = app_path + "image.png";
+  string image_path = app_path + "../Runtime/image.png";
   sf::Image im;
   im.loadFromFile( image_path );
 
