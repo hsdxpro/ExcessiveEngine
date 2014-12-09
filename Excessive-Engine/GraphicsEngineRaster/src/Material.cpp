@@ -56,35 +56,35 @@ auto Material::addSubMaterial() -> SubMaterial& {
 	return sub_materials[sub_materials.size() - 1];
 }
  
-int Material::getNumSubMaterials() const {
+int32_t Material::getNumSubMaterials() const {
 	return (int)sub_materials.size();
 }
 
-void Material::setNumSubMaterials(int n) {
+void Material::setNumSubMaterials(int32_t n) {
 	reset();
 	sub_materials.resize(n);
 }
 
-void Material::deleteSubMaterial(int index) {
+void Material::deleteSubMaterial(int32_t index) {
 	assert(index < (int)sub_materials.size());
 	sub_materials.erase(sub_materials.begin() + index);
 }
 
 
-auto Material::getSubMaterial(int index) -> SubMaterial& {
+auto Material::getSubMaterial(int32_t index) -> SubMaterial& {
 	assert(index < (int)sub_materials.size());
 	return sub_materials[index];
 }
 
-auto Material::getSubMaterial(int index) const -> const SubMaterial& {
+auto Material::getSubMaterial(int32_t index) const -> const SubMaterial&{
 	assert(index < (int)sub_materials.size());
 	return sub_materials[index];
 }
 
 
-auto Material::operator[](int index) -> SubMaterial& {
+auto Material::operator[](int32_t index) -> SubMaterial& {
 	return getSubMaterial(index);
 }
-auto Material::operator[](int index) const -> const SubMaterial& {
+auto Material::operator[](int32_t index) const -> const SubMaterial&{
 	return getSubMaterial(index);
 }

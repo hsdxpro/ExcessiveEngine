@@ -54,7 +54,7 @@ Scene* ge::GraphicsEngineRaster::createScene() {
 }
 
 Mesh* ge::GraphicsEngineRaster::createMesh() {
-	return new Mesh;
+	return new Mesh(nullptr);
 }
 
 Material* ge::GraphicsEngineRaster::createMaterial() {

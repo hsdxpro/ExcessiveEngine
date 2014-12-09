@@ -33,13 +33,10 @@ int PetiGraphics() {
 	// do stuff :)
 	cout << "Doing stuff... " << endl;
 
-	IGraphicsEngine* engine = CreateGraphicsEngine();
+	// internal testing
+	void(*TestMain)() = (void(*)())GetProcAddress(module, "TestGraphicsEngine");
 
-	//IMesh* myMesh;
-	//IMaterial* myMat;
-
-	
-	engine->release();
+	TestMain();
 
 #else
 	std::cout << "Currently only supports Windows systems." << std::endl;
