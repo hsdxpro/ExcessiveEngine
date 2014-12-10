@@ -3,7 +3,6 @@
 #include "mymath/mymath.h"
 
 #include "Common.h"
-#include "ITextureView.h"
 #include "ITexture.h"
 #include "IBuffer.h"
 #include "IShaderProgram.h"
@@ -15,13 +14,11 @@
 class IGapi
 {
   public:
-    //virtual IShaderProgram* createShaderProgram() = 0;
 	virtual IShaderProgram* createShaderProgram(const rShaderPaths& data) = 0;
 	virtual IShaderProgram* createShaderProgram(const rShaderSources& data) = 0;
 
 	virtual IUniformBuffer* createUniformBuffer(const IUniformBuffer::rDesc& data) = 0;
 	virtual IVertexBuffer*	createVertexBuffer(const IVertexBuffer::rDesc& data) = 0;
-	virtual ITextureView*	createTextureView(const ITextureView::rDesc& data) = 0;
 	virtual IIndexBuffer*	createIndexBuffer(const IIndexBuffer::rDesc& data) = 0;
 	virtual ITexture*		createTexture(const rTexture& data) = 0;
 	virtual ITexture*		createTexture(const std::string& path) = 0;
@@ -32,6 +29,7 @@ class IGapi
     virtual void setStencilState(const rStencilState& state) = 0;
     virtual void setBlendState(const rBlendState& state) = 0;
 	virtual void setRasterizationState(const rRasterizerState& state) = 0;
+	virtual void setSamplerState(const std::string& slotName, const rSamplerState& smpdata, ITexture* t) = 0;
 
     virtual void setSRGBWrites(bool val) = 0;
     virtual void setSeamlessCubeMaps(bool val) = 0;
@@ -44,9 +42,9 @@ class IGapi
 
     //pass input/output to shader
     virtual void setShaderProgram(IShaderProgram* sp) = 0;
-    virtual void setTextureView(ITextureView* tex, unsigned index) = 0;
+    virtual void setTexture(ITexture* t, unsigned idx) = 0;
 	virtual void setRenderTargets(const rRenderTargetInfo* render_targets, unsigned size) = 0;
-    virtual void setUniformBuffer(IUniformBuffer* buf, unsigned index) = 0;
+    virtual void setUniformBuffer(IUniformBuffer* buf, unsigned idx) = 0;
 	virtual void setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, unsigned num_buffers) = 0;
     virtual void setIndexBuffer(IIndexBuffer* ibo) = 0;
     

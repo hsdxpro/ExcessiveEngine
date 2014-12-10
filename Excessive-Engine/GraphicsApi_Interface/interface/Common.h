@@ -128,7 +128,7 @@ enum class eVertexAttribType : uint32_t
 struct rVertexAttrib
 {
 	unsigned index; //vertex stream index
-	unsigned data_components; //4 for vec4
+	unsigned nComponent; //4 for vec4
 	eVertexAttribType type;
 	unsigned offset, size;
 	unsigned divisor;

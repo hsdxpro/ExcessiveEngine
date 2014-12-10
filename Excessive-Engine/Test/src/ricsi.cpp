@@ -63,6 +63,12 @@ int Ricsi() {
 	// Create texture that we draw as FSQ
 	ITexture* tex = gGapi->createTexture(Sys::getWorkDir() + "image.png");
 
+	// Create vertexbuffer Pos texcoord
+
+	// Create indexbuffer
+
+	// Create uniforms (ortographic) camera
+
 
 	rWindowEvent ev;
 	while (gWindow->isOpen()) {

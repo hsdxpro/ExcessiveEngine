@@ -17,7 +17,6 @@ class GapiGL : public IGapi
 
 	IUniformBuffer* createUniformBuffer(const IUniformBuffer::rDesc& data) override;
 	IVertexBuffer*	createVertexBuffer(const IVertexBuffer::rDesc& data) override;
-	ITextureView*	createTextureView(const ITextureView::rDesc& data) override;
 	ITexture*		createTexture(const rTexture& data) override;
 	ITexture*		createTexture(const std::string& path) override;
 	IIndexBuffer*	createIndexBuffer(const IIndexBuffer::rDesc& data) override;
@@ -27,6 +26,7 @@ class GapiGL : public IGapi
     void setDepthState(const rDepthState& state) override;
     void setStencilState(const rStencilState& state) override;
     void setBlendState(const rBlendState& state) override;
+	void setSamplerState(const std::string& slotName, const rSamplerState& smpdata, ITexture* t) override;
 
     void setSRGBWrites(bool val) override;
     void setSeamlessCubeMaps(bool val) override;
@@ -41,12 +41,12 @@ class GapiGL : public IGapi
     
     //pass input/output to shader
     void setShaderProgram(IShaderProgram* sp) override;
-    void setTextureView(ITextureView* tex, unsigned index) override;
 	void setRenderTargets(const rRenderTargetInfo* render_targets, unsigned size) override;
 	void setUniformBuffer(IUniformBuffer* buf, unsigned index) override;
 	void setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, unsigned num_buffers) override;
 	void setIndexBuffer(IIndexBuffer* ibo) override;
-    
+	void setTexture(ITexture* t, unsigned idx) override;
+
     // draw stuff
     void draw(unsigned num_indices);
 

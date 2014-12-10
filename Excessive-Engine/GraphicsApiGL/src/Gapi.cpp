@@ -4,7 +4,6 @@
 
 #include "ShaderProgram.h"
 #include "Texture.h"
-#include "TextureView.h"
 #include "Buffer.h"
 #include "UniformBuffer.h"
 #include "VertexBuffer.h"
@@ -162,67 +161,10 @@ IVertexBuffer* GapiGL::createVertexBuffer(const IVertexBuffer::rDesc& data)
 	return vbo;
 }
 
-ITextureView* GapiGL::createTextureView(const ITextureView::rDesc& data)
-{
-	TextureViewGL* tex = new TextureViewGL();
-	glGenTextures(1, &tex->id);
-
-	tex->dim = data.dim;
-
-	if (data.dim == 1)
-	{
-		tex->target = GL_TEXTURE_1D;
-	}
-	else if (data.dim == 2)
-	{
-		if (data.is_layered)
-		{
-			tex->target = GL_TEXTURE_1D_ARRAY;
-		}
-		else if (data.is_cubemap)
-		{
-			tex->target = GL_TEXTURE_CUBE_MAP;
-		}
-		else
-		{
-			tex->target = GL_TEXTURE_2D;
-		}
-	}
-	else
-	{
-		if (data.is_layered)
-		{
-			if (data.is_cubemap)
-			{
-				tex->target = GL_TEXTURE_CUBE_MAP_ARRAY;
-			}
-			else
-			{
-				tex->target = GL_TEXTURE_2D_ARRAY;
-			}
-		}
-		else
-		{
-			tex->target = GL_TEXTURE_3D;
-		}
-	}
-
-	glTextureView(tex->id,
-		tex->target,
-		static_cast<TextureGL*>(data.base_tex)->id,
-		texture_internal_formats[data.format],
-		data.start_level,
-		data.num_levels,
-		data.start_layer,
-		data.num_layers);
-
-	return tex;
-}
-
 ITexture* GapiGL::createTexture(const rTexture& data)
 {
 	TextureGL* tex = new TextureGL();
-	glGenTextures(1, &tex->id);
+	glGenTextures(1, &tex->ID);
 	tex->target = 0;
 
 	if (data.height > 1)
@@ -248,7 +190,7 @@ ITexture* GapiGL::createTexture(const rTexture& data)
 				tex->target = GL_TEXTURE_3D;
 			}
 
-			glBindTexture(tex->target, tex->id);
+			glBindTexture(tex->target, tex->ID);
 			glTexStorage3D(tex->target, data.num_levels, texture_internal_formats[data.format], data.width, data.height, data.depth);
 		}
 		else
@@ -269,7 +211,7 @@ ITexture* GapiGL::createTexture(const rTexture& data)
 				tex->target = GL_TEXTURE_2D;
 			}
 
-			glBindTexture(tex->target, tex->id);
+			glBindTexture(tex->target, tex->ID);
 			glTexStorage2D(tex->target, data.num_levels, texture_internal_formats[data.format], data.width, data.height);
 		}
 	}
@@ -280,11 +222,23 @@ ITexture* GapiGL::createTexture(const rTexture& data)
 
 		tex->target = GL_TEXTURE_1D;
 
-		glBindTexture(tex->target, tex->id);
+		glBindTexture(tex->target, tex->ID);
 		glTexStorage1D(tex->target, data.num_levels, texture_internal_formats[data.format], data.width);
 	}
 
 	tex->desc = data;
+
+	// Create view for texture
+	glGenTextures(1, &tex->viewID);
+
+	glTextureView(tex->viewID,
+		tex->target,
+		tex->ID,
+		texture_internal_formats[data.format],
+		0,
+		data.num_levels,
+		0,
+		1);
 
 	return tex;
 }
@@ -349,11 +303,11 @@ void GapiGL::WriteTexture(ITexture* t, const rTextureUpdate& d)
 	TextureGL* tex = (TextureGL*)t;
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(tex->target, tex->id);
+	glBindTexture(tex->target, tex->ID);
 
 	if (tex->dim == 1)
 	{
-		glTextureSubImage1D(tex->id, d.level, d.x_offset, d.width, texture_formats[d.format], texture_types[d.format], d.data);
+		glTextureSubImage1D(tex->ID, d.level, d.x_offset, d.width, texture_formats[d.format], texture_types[d.format], d.data);
 	}
 	else if (tex->dim == 2)
 	{
@@ -363,7 +317,7 @@ void GapiGL::WriteTexture(ITexture* t, const rTextureUpdate& d)
 	}
 	else //threesome
 	{
-		glTextureSubImage3D(tex->id, d.level, d.x_offset, d.y_offset, d.z_offset, d.width, d.height, d.depth, texture_formats[d.format], texture_types[d.format], d.data);
+		glTextureSubImage3D(tex->ID, d.level, d.x_offset, d.y_offset, d.z_offset, d.width, d.height, d.depth, texture_formats[d.format], texture_types[d.format], d.data);
 	}
 }
 
@@ -421,6 +375,65 @@ void GapiGL::setBlendState(const rBlendState& state)
 	glBlendEquation(blend_eq_data[(unsigned)state.equation]);
 
 	glBlendFunc(blend_func_data[(unsigned)state.src_func], blend_func_data[(unsigned)state.dst_func]);
+}
+
+void GapiGL::setSamplerState(const std::string& slotName, const rSamplerState& smpdata, ITexture* t)
+{
+	TextureGL* tex = (TextureGL*)t;
+
+	if (smpdata.is_anisotropic)
+	{
+		glTextureParameterf(tex->ID, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_anisotropy);
+	}
+
+	if (smpdata.is_clamped)
+	{
+		// TODO 4.5
+		//glTextureParameteri( id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+		//glTextureParameteri( id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+		//glTextureParameteri( id, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE );
+
+		glTexParameteri(tex->target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(tex->target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(tex->target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	}
+	else
+	{
+		// TODO 4.5
+		//glTextureParameteri( id, GL_TEXTURE_WRAP_S, GL_REPEAT );
+		//glTextureParameteri( id, GL_TEXTURE_WRAP_T, GL_REPEAT );
+		//glTextureParameteri( id, GL_TEXTURE_WRAP_R, GL_REPEAT );
+
+		glTexParameteri(tex->target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(tex->target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(tex->target, GL_TEXTURE_WRAP_R, GL_REPEAT);
+	}
+
+	if (smpdata.is_bilinear)
+	{
+		if (smpdata.is_mipmapped)
+		{
+			// TODO 4.5
+			//glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(tex->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		}
+
+		// TODO 4.5
+		//glTextureParameteri( id, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+		glTexParameteri(tex->target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+	else
+	{
+		if (smpdata.is_mipmapped)
+		{
+			// TODO 4.5
+			//glTextureParameteri( id, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST );
+			glTexParameteri(tex->target, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+		}
+		// TODO 4.5
+		//glTextureParameteri(id, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(tex->target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
 }
 
 void GapiGL::setSRGBWrites(bool val)
@@ -495,12 +508,15 @@ void GapiGL::setShaderProgram(IShaderProgram* sp)
 	glUseProgram(static_cast<ShaderProgram*>(sp)->id);
 }
 
-void GapiGL::setTextureView(ITextureView* tex, unsigned index)
+void GapiGL::setTexture(ITexture* t, unsigned idx)
 {
-	ASSERT(tex);
-	//glBindTextureUnit( index, static_cast<TextureViewGL*>(tex)->id );
-	glActiveTexture(GL_TEXTURE0 + index);
-	glBindTexture(static_cast<TextureViewGL*>(tex)->target, static_cast<TextureViewGL*>(tex)->id);
+	TextureGL* tex = (TextureGL*)t;
+
+	// Activate slot
+	glActiveTexture(GL_TEXTURE0 + idx);
+
+	// Bind texture
+	glBindTexture(tex->target, tex->viewID);
 }
 
 void GapiGL::setRenderTargets(const rRenderTargetInfo* render_targets, unsigned size)
@@ -529,7 +545,7 @@ void GapiGL::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attr
 		GLuint id = static_cast<VertexBuffer*>(buffers[c])->id;
 		glBindBuffer(GL_ARRAY_BUFFER, id);
 		glEnableVertexAttribArray(attrib_data[c].index);
-		glVertexAttribPointer(attrib_data[c].index, attrib_data[c].data_components, attrib_array[(unsigned)attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset);
+		glVertexAttribPointer(attrib_data[c].index, attrib_data[c].nComponent, attrib_array[(unsigned)attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset);
 		//glVertexAttribDivisor( attrib_data[c].index, attrib_data[c].divisor ); //instancing stuff
 	}
 }

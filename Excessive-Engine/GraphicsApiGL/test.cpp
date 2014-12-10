@@ -123,7 +123,7 @@ int main(int argc, char** args)
   /**/
 
   //set up texture
-  string image_path = app_path + "../Runtime/image.png";
+  string image_path = app_path + "image.png";
   sf::Image im;
 	im.loadFromFile(image_path);
 
@@ -151,28 +151,13 @@ int main(int argc, char** args)
 
 	gapi->WriteTexture(tex, texupdata);
 
-	rTextureSampler smpdata;
+  rSamplerState smpdata;
   smpdata.is_anisotropic = false;
   smpdata.is_bilinear = true;
   smpdata.is_clamped = true;
   smpdata.is_mipmapped = false;
+  gapi->setSamplerState("tex", smpdata, tex);
 
-	tex->setSamplerState(&smpdata);
-
-  //set up the texture view
-  ITextureView::rDesc texviewdata;
-  texviewdata.base_tex = tex;
-  texviewdata.dim = 2;// eDimensions::TWO;
-  texviewdata.format = texdata.format;
-  texviewdata.is_cubemap = texdata.is_cubemap;
-  texviewdata.is_layered = texdata.is_layered;
-  texviewdata.num_layers = 1;
-  texviewdata.num_levels = 1;
-  texviewdata.start_layer = 0;
-  texviewdata.start_level = 0;
-
-	auto texview = gapi->createTextureView(texviewdata);
-	texview->setSamplerState(&smpdata);
 
   //set up the mesh
   vector<vec3> vertices;
@@ -267,7 +252,7 @@ int main(int argc, char** args)
     attribs.clear();
 
     rVertexAttrib attr;
-    attr.data_components = 3;
+    attr.nComponent = 3;
     attr.divisor = 0;
 		attr.index = sp->getAttributeIndex("in_vertex");
     attr.offset = 0;
@@ -275,14 +260,15 @@ int main(int argc, char** args)
     attr.type = eVertexAttribType::FLOAT;
     attribs.push_back(attr);
 
-    attr.data_components = 2;
+	attr.nComponent = 2;
 		attr.index = sp->getAttributeIndex("in_texcoord");
     attribs.push_back(attr);
 
 		gapi->setViewport(0, 0, 512, 512);
 		gapi->setShaderProgram(sp);
 		gapi->setRenderTargets(0, 0);
-		gapi->setTextureView(texview, sp->getSamplerIndex("tex"));
+		//gapi->setTextureView(texview, sp->getSamplerIndex("tex"));
+		gapi->setTexture(tex, sp->getSamplerIndex("tex"));
 		gapi->setUniformBuffer(ubo_buf, sp->getUniformBlockIndex("constant_data"));
 		gapi->setVertexBuffers(&vbos[0], attribs.data(), vbos.size());
 		gapi->setIndexBuffer(idx_buf);

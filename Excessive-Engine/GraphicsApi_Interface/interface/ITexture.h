@@ -89,7 +89,7 @@ struct rTextureUpdate
 };
 
 //specifies texture sampler state
-struct rTextureSampler
+struct rSamplerState
 {
   bool is_mipmapped;
   bool is_bilinear;
@@ -113,11 +113,8 @@ class ITexture
 {
 public:
     virtual void destroy() = 0;
-	//virtual void update(const rTextureUpdate* data) = 0;
-
-    virtual void setSamplerState(const rTextureSampler* data) = 0;
 
 	virtual const rTexture& getDesc() = 0;
-    virtual void getSubData(const rTextureUpdate* data) = 0; //the pointer should be updated
+    virtual void getSubData(const rTextureUpdate& data) = 0; //the pointer should be updated
     virtual void genMipChain() = 0;
 };

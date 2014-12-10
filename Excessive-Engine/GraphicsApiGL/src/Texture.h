@@ -17,15 +17,15 @@ extern GLenum texture_internal_formats[69];
 class TextureGL : public ITexture
 {
   public:
-    GLuint id;
+    GLuint ID;
+	GLuint viewID;
     GLenum target;
     unsigned dim;
     rTexture desc;
   
     void destroy() override;
-    void setSamplerState(const rTextureSampler* data) override;
 
 	const rTexture& getDesc() override;
-	void getSubData(const rTextureUpdate* data) override; //the pointer should be updated
+	void getSubData(const rTextureUpdate& d) override; //the pointer should be updated
 	void genMipChain() override;
 };
