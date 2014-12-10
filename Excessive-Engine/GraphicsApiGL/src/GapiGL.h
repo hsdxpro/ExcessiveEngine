@@ -18,7 +18,7 @@ class GapiGL : public IGapi
 	IUniformBuffer* createUniformBuffer(const IUniformBuffer::rDesc& data) override;
 	IVertexBuffer*	createVertexBuffer(const IVertexBuffer::rDesc& data) override;
 	ITexture*		createTexture(const rTexture& data) override;
-	ITexture*		createTexture(const std::string& path) override;
+	ITexture*		createTexture(const char* path) override;
 	IIndexBuffer*	createIndexBuffer(const IIndexBuffer::rDesc& data) override;
     
 	void WriteTexture(ITexture* t, const rTextureUpdate& d);
@@ -26,7 +26,7 @@ class GapiGL : public IGapi
     void setDepthState(const rDepthState& state) override;
     void setStencilState(const rStencilState& state) override;
     void setBlendState(const rBlendState& state) override;
-	void setSamplerState(const std::string& slotName, const rSamplerState& smpdata, ITexture* t) override;
+	void setSamplerState(const char* slotName, const rSamplerState& smpdata, ITexture* t) override;
 
     void setSRGBWrites(bool val) override;
     void setSeamlessCubeMaps(bool val) override;

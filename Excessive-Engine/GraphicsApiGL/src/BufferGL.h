@@ -3,7 +3,7 @@
 #include "IBuffer.h"
 #include "GL/glew.h"
 
-class Buffer : public IBuffer
+class BufferGL : public IBuffer
 {
   public:
     rDesc adata;

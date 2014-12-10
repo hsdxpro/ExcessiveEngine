@@ -2,12 +2,12 @@
 
 #include "IBuffer.h"
 
-class IndexBuffer : public Buffer, public IIndexBuffer
+class IndexBufferGL : public BufferGL, public IIndexBuffer
 {
   public:
 	  void destroy() override
     {
-      Buffer::destroy();
+      BufferGL::destroy();
     }
 
 	void update(char* data, unsigned size, unsigned offset) override
@@ -22,11 +22,11 @@ class IndexBuffer : public Buffer, public IIndexBuffer
 
 	void getSubData(char* data, unsigned size, unsigned offset) override
     {
-      Buffer::getSubData(data, size, offset);
+      BufferGL::getSubData(data, size, offset);
     }
 
     rDesc getDesc() override
     {
-      return Buffer::getDesc();
+      return BufferGL::getDesc();
     }
 };

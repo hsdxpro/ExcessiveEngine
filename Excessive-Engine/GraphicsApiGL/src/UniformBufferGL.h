@@ -2,12 +2,12 @@
 
 #include "IBuffer.h"
 
-class UniformBuffer : public Buffer, public IUniformBuffer
+class UniformBufferGL : public BufferGL, public IUniformBuffer
 {
   public:
 	  void destroy() override
     {
-      Buffer::destroy();
+      BufferGL::destroy();
     }
 
 	void update(char* data, unsigned size, unsigned offset) override
@@ -22,11 +22,11 @@ class UniformBuffer : public Buffer, public IUniformBuffer
 
 	void getSubData(char* data, unsigned size, unsigned offset) override
     {
-      Buffer::getSubData(data, size, offset);
+      BufferGL::getSubData(data, size, offset);
     }
 
     rDesc getDesc() override
     {
-      return Buffer::getDesc();
+      return BufferGL::getDesc();
     }
 };

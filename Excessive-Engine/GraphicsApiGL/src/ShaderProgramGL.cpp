@@ -1,4 +1,4 @@
-#include "ShaderProgram.h"
+#include "ShaderProgramGL.h"
 
 #include <vector>
 #include "custom_assert.h"
@@ -14,13 +14,13 @@ GLenum shader_types[] =
 	GL_GEOMETRY_SHADER, GL_FRAGMENT_SHADER, GL_COMPUTE_SHADER
 };
 
-void ShaderProgram::destroy()
+void ShaderProgramGL::destroy()
 {
 	glDeleteProgram(id);
 	id = 0;
 }
 
-void ShaderProgram::addShader(const char* src, eShaderType type)
+void ShaderProgramGL::addShader(const char* src, eShaderType type)
 {
 	GLuint shader_id = glCreateShader(shader_types[type]);
 	glShaderSource(shader_id, 1, &src, 0);
@@ -37,7 +37,7 @@ void ShaderProgram::addShader(const char* src, eShaderType type)
 	glDeleteShader(shader_id);
 }
 
-void ShaderProgram::link()
+void ShaderProgramGL::link()
 {
 	glLinkProgram(id);
 
@@ -49,7 +49,7 @@ void ShaderProgram::link()
 #endif
 }
 
-void ShaderProgram::getBinary(char** data, unsigned* size)
+void ShaderProgramGL::getBinary(char** data, unsigned* size)
 {
 	//no nullptr, stupid!
 	ASSERT(data && size)
@@ -80,7 +80,7 @@ void ShaderProgram::getBinary(char** data, unsigned* size)
 	}
 }
 
-void ShaderProgram::loadFromBinary(char* data)
+void ShaderProgramGL::loadFromBinary(char* data)
 {
 	ASSERT(data)
 	{
@@ -94,19 +94,19 @@ void ShaderProgram::loadFromBinary(char* data)
 	}
 }
 
-int ShaderProgram::getUniformBlockIndex(const char* str)
+int ShaderProgramGL::getUniformBlockIndex(const char* str)
 {
 	ASSERT(str);
 	return glGetUniformBlockIndex(id, str);
 }
 
-int ShaderProgram::getAttributeIndex(const char* str)
+int ShaderProgramGL::getAttributeIndex(const char* str)
 {
 	ASSERT(str);
 	return glGetAttribLocation(id, str);
 }
 
-int ShaderProgram::getSamplerIndex(const char* str)
+int ShaderProgramGL::getSamplerIndex(const char* str)
 {
 	ASSERT(str);
 	int loc = glGetUniformLocation(id, str);
@@ -115,7 +115,7 @@ int ShaderProgram::getSamplerIndex(const char* str)
 	return idx;
 }
 
-int ShaderProgram::getRenderTargetIndex(const char* str)
+int ShaderProgramGL::getRenderTargetIndex(const char* str)
 {
 	ASSERT(str);
 	return glGetFragDataLocation(id, str);

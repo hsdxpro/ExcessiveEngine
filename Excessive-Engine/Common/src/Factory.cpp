@@ -10,7 +10,7 @@
 
 #ifdef BUILD_STATIC
 	#include "..\GraphicsEngineRaster\src\GraphicsEngine.h"
-	#include "..\GraphicsApiGL\src\Gapi.h"
+	#include "..\GraphicsApiGL\src\GapiGL.h"
 #endif
 
 ge::IGraphicsEngine* Factory::createGraphicsEngineRaster(const ge::rGraphicsEngine& d) {
