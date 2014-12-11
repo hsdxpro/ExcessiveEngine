@@ -6,6 +6,8 @@
 #include "..\GraphicsApi_Interface\interface\IShaderProgram.h"
 #include "..\GraphicsApi_Interface\interface\IGapi.h"
 
+#include <conio.h>
+
 #include <chrono>
 #include <thread>
 
@@ -55,6 +57,12 @@ int Ricsi() {
 	graphics::rGraphicsEngine gDesc;
 		gDesc.gapi = Factory::createGapiGL();
 	gEngine = Factory::createGraphicsEngineRaster(gDesc);
+	if (!gEngine) {
+		cout << "Oops, failed to create graphics engine :(" << endl;
+		cout << "Press any key to exit..." << endl;
+		_getch();
+		return 0;
+	}
 
 	// Get the API belonging to graphics engine
 	gGapi = gEngine->getGapi();
@@ -66,7 +74,7 @@ int Ricsi() {
 	gGapi->createShaderProgram(s);
 
 	// Create texture that we draw as FSQ
-	ITexture* tex = gGapi->createTexture(Sys::getWorkDir() + "image.png");
+	//ITexture* tex = gGapi->createTexture(Sys::getWorkDir() + "image.png");
 
 	// Create vertexbuffer Pos texcoord
 
@@ -78,14 +86,60 @@ int Ricsi() {
 	// Create some graphics engine entities
 	graphics::IScene* scene = gEngine->createScene();
 	graphics::IEntity* entity = scene->createEntity();
+	
+	// Create a simple whatever
+	graphics::IMesh* mesh = gEngine->createMesh();
+	graphics::IMesh::MeshData data;
+	//  [0]---[1]
+	//   |  \  |
+	//  [3]---[2]
+	float vertices[] = {
+		-1, 1, 0,
+		1, 1, 0,
+		1, -1, 0,
+		-1, -1, 0,
+	};
+	uint32_t indices[] = {
+		1,0,2,
+		2,3,0,
+	};
+	graphics::IMesh::ElementDesc elements[] = {
+		graphics::IMesh::POSITION, 3,
+	};
+	data.vertex_data = vertices;
+	data.vertex_bytes = sizeof(vertices);
+	data.vertex_elements = elements;
+	data.vertex_elements_num = 1;
+	data.index_data = indices;
+	data.index_num = sizeof(indices) / sizeof(uint32_t);
+	data.mat_ids = nullptr;
+	data.mat_ids_num = 0;
+
+	bool is_mesh = mesh->update(data);
+
+	if (!is_mesh) {
+		cout << "Could not create a mesh :(" << endl;
+	}
+	else {
+		cout << "Mesh created!" << endl;
+	}
+
+	// Assign mesh to entity
+	entity->setMesh(mesh);
+
+	// So that I can read init messages
+	this_thread::sleep_for(chrono::milliseconds(1000));
 
 
+	// Run the main loop
 	rWindowEvent ev;
 	double elapsed;
 	chrono::time_point<chrono::high_resolution_clock> last_frame;
 
 	while (gWindow->isOpen()) {
+		cout << "----------------------------------------------------" << endl;
 		// keep 60 fps
+		elapsed = chrono::duration_cast<chrono::microseconds>(chrono::high_resolution_clock::now() - last_frame).count() / 1.0e6;
 		last_frame = chrono::high_resolution_clock::now();
 
 		while (gWindow->popEvent(&ev))
@@ -100,9 +154,10 @@ int Ricsi() {
 
 		// keep 60 fps
 		chrono::time_point<chrono::high_resolution_clock> now = chrono::high_resolution_clock::now();
-		chrono::microseconds sleep_time = chrono::microseconds(16667) - chrono::duration_cast<chrono::microseconds>(last_frame - now);
+		chrono::microseconds sleep_time = chrono::microseconds(16667) - chrono::duration_cast<chrono::microseconds>(now - last_frame);
 		this_thread::sleep_for(sleep_time);
 	}
+	cout << endl;
 	
 	return 0;
 }

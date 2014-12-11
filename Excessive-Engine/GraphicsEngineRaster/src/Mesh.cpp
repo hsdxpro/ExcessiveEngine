@@ -200,14 +200,15 @@ bool Mesh::update(MeshData data) {
 
 
 
-	// TODO:
-
 	// split vertex data:
 	// i'll be glad if it works with this hardcoded 1 stream version...
 	// todo: make grouping policies
 
+	////////////////////////////////////
+	// WARNING: 
+	//	vertex buffers are subject to change
+
 	// create and fill vertex arrays
-	/*
 	IVertexBuffer::rDesc vb_desc;
 	vb_desc.is_readable = false;
 	vb_desc.is_writable = false;
@@ -222,12 +223,25 @@ bool Mesh::update(MeshData data) {
 	ib_desc.prefer_cpu_storage = false;
 	ib_desc.size = data.index_num * sizeof(uint32_t);
 
-	gapi->createVertexBuffer(vb_desc);
-	gapi->createIndexBuffer(ib_desc);
-	*/
-	streams[0].vb = (IVertexBuffer*)0x00FF0000;
+	IVertexBuffer* _vb = gapi->createVertexBuffer(vb_desc);
+	IIndexBuffer* _ib = gapi->createIndexBuffer(ib_desc);
+
+	_vb->update((char*)packed_vertex_data, vb_desc.size, 0);
+	_ib->update((char*)data.index_data, ib_desc.size, 0);
+
+	if (!_ib || !_vb) {
+		cout << "Mesh @" << this << ": failed to create buffers" << endl;
+		return false;
+	}
+
+	// END WARNING
+	////////////////////////////////////
+
+	streams[0].vb = _vb;
 	num_streams = 1;
-	ib = (IIndexBuffer*)0x00FF0010;
+	ib = _ib;
+
+
 
 	// set elements (vb and offset, as other params are set)
 	int offset = 0;

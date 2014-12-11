@@ -21,6 +21,7 @@ public:
 	// ctor, dtor, release
 	GraphicsEngineRaster(const graphics::rGraphicsEngine& d);
 	~GraphicsEngineRaster();
+	bool isConstructionSucceeded() const { return isValid; }
 
 	//void init(const IGraphicsEngine::rDesc& d);
 	void release() override;
@@ -34,6 +35,7 @@ public:
 
 	// states
 	// empty
+
 
 	// interact
 	void update() override;
@@ -50,5 +52,11 @@ private:
 	*/
 
 	IGapi* gapi;
+
+	// WARNING: temporary code
+	IShaderProgram* shader;
+
+	// WARNING: pretty crappy solution
+	bool isValid;
 };
 

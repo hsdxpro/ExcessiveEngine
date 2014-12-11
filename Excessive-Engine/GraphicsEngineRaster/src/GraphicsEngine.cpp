@@ -15,6 +15,25 @@ using std::endl;
 #endif
 
 
+static const char vertexShaderCode[] =
+"#version 440 core \n"
+"in vec3 in_vertex; \n"
+"void main() \n"
+"{ \n"
+"  gl_Position = in_vertex; \n"
+"} \n"
+;
+
+static const char pixelShaderCode[] =
+"#version 440 core \n"
+"out vec4 color; \n"
+"void main() \n"
+"{ \n"
+"  color = vec4(0.8f, 0.8f, 0.8f); \n"
+"} \n"
+;
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Export Create function
 //
@@ -22,8 +41,16 @@ using std::endl;
 
 extern "C"
 EXPORT graphics::IGraphicsEngine* CreateGraphicsEngine(const graphics::rGraphicsEngine& d) {
-	return new GraphicsEngineRaster(d);
+	auto myEngine = new GraphicsEngineRaster(d);
+	if (myEngine->isConstructionSucceeded()) {
+		return myEngine;
+	}
+	else {
+		delete myEngine;
+		return nullptr;
+	}
 }
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -31,13 +58,20 @@ EXPORT graphics::IGraphicsEngine* CreateGraphicsEngine(const graphics::rGraphics
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // ctor, dtor, release
 
 GraphicsEngineRaster::GraphicsEngineRaster(const graphics::rGraphicsEngine& d) {
 	gapi = d.gapi;
+
+	// WARNING: temporary testing code
+	// create shaders
+	rShaderSources sources;
+	sources.psSrc = pixelShaderCode;
+	sources.vsSrc = vertexShaderCode;
+	shader = gapi->createShaderProgram(sources);
+
+	isValid = shader != nullptr;
 }
 
 GraphicsEngineRaster::~GraphicsEngineRaster() {
@@ -115,13 +149,14 @@ void GraphicsEngineRaster::update() {
 		Mesh* mesh = entity->getMesh();
 		if (!mesh) {
 			cout << "Entity has no mesh :(" << endl;
+			continue;
 		}
 		uint64_t meshId = mesh->getElementConfigId();
 		rVertexAttrib attrib;
 
 		Mesh::ElementInfo posInfo;
 		bool hasPosition;
-		hasPosition == mesh->getElementBySemantic(posInfo, Mesh::POSITION);
+		hasPosition = mesh->getElementBySemantic(posInfo, Mesh::POSITION);
 
 		auto it = meshFormats.find(meshId);
 		if (it == meshFormats.end()) {
@@ -130,7 +165,7 @@ void GraphicsEngineRaster::update() {
 				continue;
 			}
 
-			attrib.index = 0;
+			attrib.index = shader->getAttributeIndex("in_vertex");
 			attrib.nComponent = posInfo.num_components;
 			attrib.offset = posInfo.offset;
 			attrib.type = eVertexAttribType::FLOAT;
@@ -148,6 +183,9 @@ void GraphicsEngineRaster::update() {
 		gapi->setIndexBuffer(mesh->getIndexBuffer());
 
 		// draw
+		gapi->setViewport(0, 0, 512, 512);
+		gapi->setShaderProgram(shader);
+		gapi->setRenderTargets(0, 0);
 		unsigned num_indices = mesh->getIndexBuffer()->getDesc().size / sizeof(uint32_t);
 		gapi->draw(num_indices);
 		num_drawn++;

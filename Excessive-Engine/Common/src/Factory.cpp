@@ -14,8 +14,17 @@
 #endif
 
 graphics::IGraphicsEngine* Factory::createGraphicsEngineRaster(const graphics::rGraphicsEngine& d) {
-#ifdef BUILD_DLL	
-	return ((graphics::IGraphicsEngine*(*)())Sys::getDllProcAddress(Sys::loadDLL("GraphicsEngineRaster"), "CreateGraphicsEngine"))();
+#ifdef BUILD_DLL
+	using CreateT = graphics::IGraphicsEngine*(*)(const graphics::rGraphicsEngine& d);
+	auto module = Sys::loadDLL("GraphicsEngineRaster");
+	if (!module) {
+		return nullptr;
+	}
+	CreateT CreateGraphicsEngine = (CreateT)Sys::getDllProcAddress(module, "CreateGraphicsEngine");
+	if (!CreateGraphicsEngine) {
+		return nullptr;
+	}
+	return CreateGraphicsEngine(d);
 #elif BUILD_STATIC	
 	return new graphics::GraphicsEngineRaster(d);
 #endif
