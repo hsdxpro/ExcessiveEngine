@@ -17,7 +17,7 @@ using std::endl;
 
 static const char vertexShaderCode[] =
 "#version 440 core \n"
-"in vec3 in_vertex; \n"
+"layout(location = 0) in vec3 in_vertex; \n"
 "void main() \n"
 "{ \n"
 "  gl_Position = in_vertex; \n"
