@@ -101,7 +101,7 @@ int main(int argc, char** args)
 
 
 	/**/
-	//example binary shader store/load
+	/*/example binary shader store/load
 	char* data;
 	unsigned size;
 	sp->getBinary(&data, &size);
@@ -123,7 +123,7 @@ int main(int argc, char** args)
 	/**/
 
 	//set up texture
-	string image_path = app_path + "image.png";
+	string image_path = app_path + "../Runtime/image.png";
 	sf::Image im;
 	im.loadFromFile(image_path);
 

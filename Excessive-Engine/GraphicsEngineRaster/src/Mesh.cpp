@@ -218,15 +218,15 @@ bool Mesh::update(MeshData data) {
 
 	IIndexBuffer::rDesc ib_desc;
 	ib_desc.is_readable = false;
-	ib_desc.is_writable = false;
-	ib_desc.is_persistent = true;
+	ib_desc.is_writable = true;
+	ib_desc.is_persistent = false;
 	ib_desc.prefer_cpu_storage = false;
 	ib_desc.size = data.index_num * sizeof(uint32_t);
 
 	IVertexBuffer* _vb = gapi->createVertexBuffer(vb_desc);
 	IIndexBuffer* _ib = gapi->createIndexBuffer(ib_desc);
 
-	_vb->update((char*)packed_vertex_data, vb_desc.size, 0);
+	_vb->update((char*)data.vertex_data, vb_desc.size, 0);
 	_ib->update((char*)data.index_data, ib_desc.size, 0);
 
 	if (!_ib || !_vb) {

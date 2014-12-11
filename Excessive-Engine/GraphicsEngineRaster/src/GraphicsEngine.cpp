@@ -20,7 +20,7 @@ static const char vertexShaderCode[] =
 "layout(location = 0) in vec3 in_vertex; \n"
 "void main() \n"
 "{ \n"
-"  gl_Position = in_vertex; \n"
+"  gl_Position = vec4(in_vertex * 0.2f, 1.0f); \n"
 "} \n"
 ;
 
@@ -29,7 +29,7 @@ static const char pixelShaderCode[] =
 "out vec4 color; \n"
 "void main() \n"
 "{ \n"
-"  color = vec4(0.8f, 0.8f, 0.8f); \n"
+"  color = vec4(0.8f, 0.8f, 0.8f, 0.2f); \n"
 "} \n"
 ;
 
@@ -70,6 +70,13 @@ GraphicsEngineRaster::GraphicsEngineRaster(const graphics::rGraphicsEngine& d) {
 	sources.psSrc = pixelShaderCode;
 	sources.vsSrc = vertexShaderCode;
 	shader = gapi->createShaderProgram(sources);
+
+	unsigned index = shader->getAttributeIndex("in_vertex");
+	cout << index;
+
+	gapi->setDebugOutput(true);
+	gapi->setSeamlessCubeMaps(true);
+	gapi->setSyncDebugOutput(true);
 
 	isValid = shader != nullptr;
 }
@@ -177,17 +184,26 @@ void GraphicsEngineRaster::update() {
 			attrib = it->second;
 		}
 
+		// set stuff
+		gapi->setViewport(0, 0, 512, 512);
+		gapi->setShaderProgram(shader);
+		gapi->setRenderTargets(0, 0);
+
 		// set vertex buffer
 		gapi->setVertexBuffers(&posInfo.buffer, &attrib, 1);
 		// set index buffer
 		gapi->setIndexBuffer(mesh->getIndexBuffer());
 
 		// draw
-		gapi->setViewport(0, 0, 512, 512);
-		gapi->setShaderProgram(shader);
-		gapi->setRenderTargets(0, 0);
 		unsigned num_indices = mesh->getIndexBuffer()->getDesc().size / sizeof(uint32_t);
 		gapi->draw(num_indices);
+		rDepthState ds;
+		ds.enable_test = false;
+		ds.enable_write = false;
+		ds.far = 1.0f;
+		ds.near = 0.0f;
+		ds.func = eCompareFunc::ALWAYS;
+		gapi->setDepthState(ds);
 		num_drawn++;
 	}
 

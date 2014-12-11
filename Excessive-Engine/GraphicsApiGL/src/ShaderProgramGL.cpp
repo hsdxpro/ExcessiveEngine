@@ -3,6 +3,9 @@
 #include <vector>
 #include "custom_assert.h"
 
+#define DEBUG_SHADER_ERRORS
+#define INFOLOG_SIZE 32768
+
 using namespace std;
 
 //TODO add error checking in debug mode maybe?
