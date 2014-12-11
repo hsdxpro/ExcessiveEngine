@@ -4,7 +4,7 @@
 
 #include <GraphicsEngine>
 
-using namespace ge;
+using namespace graphics;
 
 #ifdef _MSC_VER
 #define _WIN32_LEAN_AND_MEAN

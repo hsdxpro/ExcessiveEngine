@@ -12,10 +12,6 @@ Scene::~Scene() {
 	clear();
 }
 
-void Scene::release() {
-	delete this;
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // scene content add/erase
@@ -33,7 +29,7 @@ Light* Scene::createLight() {
 }
 
 
-void Scene::erase(ge::IEntity* entity) {
+void Scene::erase(graphics::IEntity* entity) {
 	auto it = entities.find((Entity*)entity);
 	if (it != entities.end()) {
 		delete *it;
@@ -41,7 +37,7 @@ void Scene::erase(ge::IEntity* entity) {
 	}
 }
 
-void Scene::erase(ge::ILight* light) {
+void Scene::erase(graphics::ILight* light) {
 	auto it = lights.find((Light*)light);
 	if (it != lights.end()) {
 		delete *it;
@@ -58,4 +54,14 @@ void Scene::clear()
 	for (auto v : lights) {
 		delete v;
 	}
+	entities.clear();
+	lights.clear();
+}
+
+
+const std::unordered_set<Entity*>& Scene::getEntities() {
+	return entities;
+}
+const std::unordered_set<Light*>& Scene::getLights() {
+	return lights;
 }

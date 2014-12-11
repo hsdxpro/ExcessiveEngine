@@ -3,7 +3,7 @@
 #include <mymath/mymath.h>
 
 // namespace
-namespace ge {
+namespace graphics {
 
 class IMesh;
 class IMaterial;

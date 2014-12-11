@@ -1,10 +1,15 @@
 ﻿#include "tests.h"
 #include "Factory.h"
 #include "IWindow.h"
-#include "IGraphicsEngine.h"
+#include "GraphicsEngine"
 #include "..\GraphicsApi_Interface\interface\Common.h"
 #include "..\GraphicsApi_Interface\interface\IShaderProgram.h"
 #include "..\GraphicsApi_Interface\interface\IGapi.h"
+
+#include <chrono>
+#include <thread>
+
+using namespace std;
 
 
 const char* vsSimple =
@@ -33,7 +38,7 @@ const char* psSimple =
 "} \n";
 
 
-ge::IGraphicsEngine*	gEngine;
+graphics::IGraphicsEngine*	gEngine;
 IGapi*					gGapi;
 IWindow*				gWindow;
 
@@ -47,7 +52,7 @@ int Ricsi() {
 	gWindow = Factory::createWindow(d);
 
 	// Init GraphicsEngine
-	ge::rGraphicsEngine gDesc;
+	graphics::rGraphicsEngine gDesc;
 		gDesc.gapi = Factory::createGapiGL();
 	gEngine = Factory::createGraphicsEngineRaster(gDesc);
 
@@ -70,8 +75,19 @@ int Ricsi() {
 	// Create uniforms (ortographic) camera
 
 
+	// Create some graphics engine entities
+	graphics::IScene* scene = gEngine->createScene();
+	graphics::IEntity* entity = scene->createEntity();
+
+
 	rWindowEvent ev;
+	double elapsed;
+	chrono::time_point<chrono::high_resolution_clock> last_frame;
+
 	while (gWindow->isOpen()) {
+		// keep 60 fps
+		last_frame = chrono::high_resolution_clock::now();
+
 		while (gWindow->popEvent(&ev))
 			if (ev.msg == eWindowMsg::KEY_PRESS && ev.key == eKey::ESCAPE)
 				gWindow->close();
@@ -81,7 +97,11 @@ int Ricsi() {
 
 		// Call that after OpenGL "finish" all of it's rendering
 		gWindow->displayClientRect();
-		
+
+		// keep 60 fps
+		chrono::time_point<chrono::high_resolution_clock> now = chrono::high_resolution_clock::now();
+		chrono::microseconds sleep_time = chrono::microseconds(16667) - chrono::duration_cast<chrono::microseconds>(last_frame - now);
+		this_thread::sleep_for(sleep_time);
 	}
 	
 	return 0;

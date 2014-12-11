@@ -7,7 +7,7 @@
 class Factory
 {
 public:
-	static ge::IGraphicsEngine*	createGraphicsEngineRaster(const ge::rGraphicsEngine& d);
+	static graphics::IGraphicsEngine*	createGraphicsEngineRaster(const graphics::rGraphicsEngine& d);
 	static IGapi*				createGapiGL();
 	static class IWindow*		createWindow(const struct rWindow& d);
 };

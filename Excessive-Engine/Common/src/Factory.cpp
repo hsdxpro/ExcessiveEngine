@@ -13,11 +13,11 @@
 	#include "..\GraphicsApiGL\src\Gapi.h"
 #endif
 
-ge::IGraphicsEngine* Factory::createGraphicsEngineRaster(const ge::rGraphicsEngine& d) {
+graphics::IGraphicsEngine* Factory::createGraphicsEngineRaster(const graphics::rGraphicsEngine& d) {
 #ifdef BUILD_DLL	
-	return ((ge::IGraphicsEngine*(*)())Sys::getDllProcAddress(Sys::loadDLL("GraphicsEngineRaster"), "CreateGraphicsEngine"))();
+	return ((graphics::IGraphicsEngine*(*)())Sys::getDllProcAddress(Sys::loadDLL("GraphicsEngineRaster"), "CreateGraphicsEngine"))();
 #elif BUILD_STATIC	
-	return new ge::GraphicsEngineRaster(d);
+	return new graphics::GraphicsEngineRaster(d);
 #endif
 }
 

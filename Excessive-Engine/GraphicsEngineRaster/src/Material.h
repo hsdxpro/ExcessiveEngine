@@ -8,7 +8,7 @@
 class Texture;
 
 
-class Material : public ge::IMaterial
+class Material : public graphics::IMaterial
 {
 public:
 	// ctor, dtor, release

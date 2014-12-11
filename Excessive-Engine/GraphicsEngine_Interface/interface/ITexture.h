@@ -1,7 +1,7 @@
 #pragma once
 
 // namespace
-namespace ge {
+namespace graphics {
 
 ////////////////////////////////////////////////////////////////////////////////
 ///	Texture is a resource representing an image/bitmap.

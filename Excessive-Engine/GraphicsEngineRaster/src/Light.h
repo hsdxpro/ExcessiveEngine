@@ -3,7 +3,7 @@
 #include "../GraphicsEngine_Interface/interface/ILight.h"
 
 
-class Light : public ge::ILight
+class Light : public graphics::ILight
 {
 public:
 	void setColor() override;

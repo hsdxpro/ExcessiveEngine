@@ -1,7 +1,7 @@
 #pragma once
 
 // namespace
-namespace ge {
+namespace graphics {
 
 ////////////////////////////////////////////////////////////////////////////////
 ///	Light is a light in the graphical scene.

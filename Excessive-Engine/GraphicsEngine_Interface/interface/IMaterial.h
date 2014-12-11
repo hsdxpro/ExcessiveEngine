@@ -3,7 +3,7 @@
 #include <cstdint>
 
 // namespace
-namespace ge {
+namespace graphics {
 
 class ITexture;
 

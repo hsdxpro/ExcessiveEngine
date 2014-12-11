@@ -33,11 +33,11 @@ void Entity::setScale(const mm::vec3& s) {
 ////////////////////////////////////////////////////////////////////////////////
 // mesh & mtl properties
 
-void Entity::setMesh(ge::IMesh* mesh) {
+void Entity::setMesh(graphics::IMesh* mesh) {
 	setMesh((Mesh*)mesh);
 }
 
-void Entity::setMaterial(ge::IMaterial* mtl) {
+void Entity::setMaterial(graphics::IMaterial* mtl) {
 	setMaterial((Material*)mtl);
 }
 

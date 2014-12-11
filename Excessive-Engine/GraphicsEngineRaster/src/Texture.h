@@ -4,7 +4,7 @@
 
 class ITexture;
 
-class Texture : public ge::ITexture 
+class Texture : public graphics::ITexture 
 {
 public:
 	Texture();

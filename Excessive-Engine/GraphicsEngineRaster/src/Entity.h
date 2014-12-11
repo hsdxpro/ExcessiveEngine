@@ -11,7 +11,7 @@
 class Scene;
 
 
-class Entity : public ge::IEntity
+class Entity : public graphics::IEntity
 {
 public:
 	Entity();
@@ -21,8 +21,8 @@ public:
 	void setRot(const mm::quat&) override;
 	void setScale(const mm::vec3&) override;
 
-	virtual void setMesh(ge::IMesh* mesh) override;
-	virtual void setMaterial(ge::IMaterial* mtl) override;
+	virtual void setMesh(graphics::IMesh* mesh) override;
+	virtual void setMaterial(graphics::IMaterial* mtl) override;
 	void setMesh(Mesh* mesh);
 	void setMaterial(Material* material);
 	Mesh* getMesh() const override;

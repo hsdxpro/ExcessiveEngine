@@ -3,7 +3,7 @@
 #include "../../GraphicsApi_Interface/interface/IGapi.h"
 
 // namespace
-namespace ge {
+namespace graphics {
 
 class IScene;
 class IMesh;
@@ -28,6 +28,7 @@ public:
 
 	// create stuff
 	virtual IScene* createScene() = 0;
+	virtual void deleteScene(IScene* scene) = 0;
 	virtual IMesh* createMesh() = 0;
 	virtual IMaterial* createMaterial() = 0;
 	virtual ITexture* createTexture() = 0;

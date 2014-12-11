@@ -9,18 +9,17 @@
 #include "Texture.h"
 
 
+
 ////////////////////////////////////////////////////////////////////////////////
 /// GraphicsEngine implementation.
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace ge {
-
-class GraphicsEngineRaster : public ge::IGraphicsEngine
+class GraphicsEngineRaster : public graphics::IGraphicsEngine
 {
 public:
 	// ctor, dtor, release
-	GraphicsEngineRaster(const rGraphicsEngine& d);
+	GraphicsEngineRaster(const graphics::rGraphicsEngine& d);
 	~GraphicsEngineRaster();
 
 	//void init(const IGraphicsEngine::rDesc& d);
@@ -28,6 +27,7 @@ public:
 
 	// create stuff
 	Scene* createScene() override;
+	void deleteScene(graphics::IScene* scene) override;
 	Mesh* createMesh() override;
 	Material* createMaterial() override;
 	Texture* createTexture() override;
@@ -42,12 +42,13 @@ public:
 
 private:
 	std::unordered_set<Scene*> scenes;
-	std::unordered_set<Mesh*
-	> meshes;
+	/*
+	I don't think these are gonna be necessary
+	std::unordered_set<Mesh*> meshes;
 	std::unordered_set<Material*> materials;
 	std::unordered_set<Texture*> textures;
+	*/
 
 	IGapi* gapi;
 };
 
-} // namespace ge

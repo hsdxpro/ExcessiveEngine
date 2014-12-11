@@ -49,7 +49,7 @@ class IGapi;
 ////////////////////////////////////////////////////////////////////////////////
 
 
-class Mesh : public ge::IMesh
+class Mesh : public graphics::IMesh
 {
 // public interface
 public:
@@ -109,7 +109,7 @@ public:
 	const ElementInfo* getElements() const;
 	uint64_t getElementConfigId() const;
 
-	const IIndexBuffer* getIndexBuffer() { return ib; }
+	IIndexBuffer* getIndexBuffer() { return ib; }
 	const std::vector<size_t>& getMaterialIds() { return mat_ids; }
 
 // internal mechanics

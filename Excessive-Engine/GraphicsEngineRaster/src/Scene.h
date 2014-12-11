@@ -7,22 +7,24 @@
 #include "Light.h"
 
 
-class Scene : public ge::IScene
+class Scene : public graphics::IScene
 {
 public:
 	// ctor, dtor, 
 	Scene();
 	~Scene();
-	void release() override;
 
 	// scene content creation
 	Entity* createEntity() override;
 	Light* createLight() override;
-	void erase(ge::IEntity* entity) override;
-	void erase(ge::ILight* light) override;
+	void erase(graphics::IEntity* entity) override;
+	void erase(graphics::ILight* light) override;
 
 	void clear() override;
-	
+
+	// access content
+	const std::unordered_set<Entity*>& getEntities();
+	const std::unordered_set<Light*>& getLights();	
 private:
 	std::unordered_set<Entity*> entities;
 	std::unordered_set<Light*> lights;
