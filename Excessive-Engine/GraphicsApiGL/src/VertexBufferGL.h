@@ -1,14 +1,14 @@
 #pragma once
 
 #include "IBuffer.h"
-#include "Buffer.h"
+#include "BufferGL.h"
 
-class VertexBuffer : public Buffer, public IVertexBuffer
+class VertexBufferGL : public BufferGL, public IVertexBuffer
 {
   public:
     void destroy()
     {
-      Buffer::destroy();
+      BufferGL::destroy();
     }
 
     void update(char* data, unsigned size, unsigned offset)
@@ -23,11 +23,11 @@ class VertexBuffer : public Buffer, public IVertexBuffer
 
     void getSubData(char* data, unsigned size, unsigned offset)
     {
-      Buffer::getSubData(data, size, offset);
+		BufferGL::getSubData(data, size, offset);
     }
 
     rDesc getDesc()
     {
-      return Buffer::getDesc();
+		return BufferGL::getDesc();
     }
 };

@@ -1,4 +1,4 @@
-#include "Texture.h"
+#include "TextureGL.h"
 
 #include "custom_assert.h"
 

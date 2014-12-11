@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "mymath/mymath.h"
 
@@ -21,7 +21,9 @@ class IGapi
 	virtual IVertexBuffer*	createVertexBuffer(const IVertexBuffer::rDesc& data) = 0;
 	virtual IIndexBuffer*	createIndexBuffer(const IIndexBuffer::rDesc& data) = 0;
 	virtual ITexture*		createTexture(const rTexture& data) = 0;
-	virtual ITexture*		createTexture(const std::string& path) = 0;
+
+	// TODO Uram atyám teremtőm ezt minél hamarabb cseréljük le wchar_t* - ra
+	virtual ITexture*		createTexture(const char* path) = 0;
 	
 	virtual void WriteTexture(ITexture* t, const rTextureUpdate& d) = 0;
   
@@ -29,7 +31,7 @@ class IGapi
     virtual void setStencilState(const rStencilState& state) = 0;
     virtual void setBlendState(const rBlendState& state) = 0;
 	virtual void setRasterizationState(const rRasterizerState& state) = 0;
-	virtual void setSamplerState(const std::string& slotName, const rSamplerState& smpdata, ITexture* t) = 0;
+	virtual void setSamplerState(const char* slotName, const rSamplerState& smpdata, ITexture* t) = 0;
 
     virtual void setSRGBWrites(bool val) = 0;
     virtual void setSeamlessCubeMaps(bool val) = 0;
@@ -52,7 +54,7 @@ class IGapi
     virtual void draw(unsigned num_indices) = 0;
 
 	// input layout & vertex streams
-#pragma message("Marci: ezt is implement�lnod k�ne [setVertexBuffer]")
+#pragma message("Marci: ezt is implementálnod kéne [setVertexBuffer]")
 
 	/*
 	@see IInputLayout.h	
@@ -61,9 +63,9 @@ class IGapi
 	virtual void setInputLayout(IInputLayout* layout) = 0;
 
 	/*
-	Egyszer�en bindeli a vertex buffereket a megfelel� 'slot'-ba.
-	Ha t�bb buffert adunk meg, akkor azokat a start_slot, start_slot+1, start_slot+2 helyekre bindeli.
-	A nullptr buffer unbindeli az adott slotb�l a buffert.
+	Egyszerûen bindeli a vertex buffereket a megfelelõ 'slot'-ba.
+	Ha több buffert adunk meg, akkor azokat a start_slot, start_slot+1, start_slot+2 helyekre bindeli.
+	A nullptr buffer unbindeli az adott slotból a buffert.
 	*/
 	virtual void setVertexStreams(
 		IVertexBuffer** buffers, // buffers to bind

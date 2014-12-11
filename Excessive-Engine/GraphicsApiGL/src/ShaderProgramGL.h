@@ -10,7 +10,7 @@
 #define INFOLOG_SIZE 4096
 #endif
 
-class ShaderProgram : public IShaderProgram
+class ShaderProgramGL : public IShaderProgram
 {
 public:
 	GLuint id;

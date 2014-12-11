@@ -1,15 +1,15 @@
-#include "Buffer.h"
+#include "BufferGL.h"
 
 #include "custom_assert.h"
 #include <string>
 
-void Buffer::destroy()
+void BufferGL::destroy()
 {
   glDeleteBuffers( 1, &id );
   id = 0;
 }
 
-void Buffer::update(char* data, unsigned size, unsigned offset)
+void BufferGL::update(char* data, unsigned size, unsigned offset)
 {
   //TODO
   /*ASSERT( data )
@@ -20,7 +20,7 @@ void Buffer::update(char* data, unsigned size, unsigned offset)
   }*/
 }
 
-void Buffer::getSubData(char* data, unsigned size, unsigned offset)
+void BufferGL::getSubData(char* data, unsigned size, unsigned offset)
 {
   //TODO
   /*ASSERT( data )
@@ -29,7 +29,7 @@ void Buffer::getSubData(char* data, unsigned size, unsigned offset)
   }*/
 }
 
-auto Buffer::getDesc() -> rDesc
+auto BufferGL::getDesc() -> rDesc
 {
   return adata;
 }

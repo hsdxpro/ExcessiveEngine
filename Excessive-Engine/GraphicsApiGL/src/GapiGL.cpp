@@ -1,13 +1,13 @@
-#include "Gapi.h"
+#include "GapiGL.h"
 
 #include "custom_assert.h"
 
-#include "ShaderProgram.h"
-#include "Texture.h"
-#include "Buffer.h"
-#include "UniformBuffer.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
+#include "ShaderProgramGL.h"
+#include "TextureGL.h"
+#include "BufferGL.h"
+#include "UniformBufferGL.h"
+#include "VertexBufferGL.h"
+#include "IndexBufferGL.h"
 
 #include <iostream>
 #include "SFML\Graphics\Image.hpp"
@@ -86,23 +86,16 @@ GLenum raster_order_data[] =
 	GL_CW, GL_CCW
 };
 
-//IShaderProgram* GapiGL::createShaderProgram()
-//{
-//  ShaderProgram* sp = new ShaderProgram();
-//  sp->id = glCreateProgram();
-//  return sp;
-//}
-
 IShaderProgram* GapiGL::createShaderProgram(const rShaderPaths& data)
 {
 	// TODO
-	ShaderProgram* sp = new ShaderProgram();
+	ShaderProgramGL* sp = new ShaderProgramGL();
 	return sp;
 }
 
 IShaderProgram* GapiGL::createShaderProgram(const rShaderSources& data)
 {
-	ShaderProgram* sp = new ShaderProgram();
+	ShaderProgramGL* sp = new ShaderProgramGL();
 	sp->id = glCreateProgram();
 	if (data.vsSrc != 0)				sp->addShader(data.vsSrc, VERTEX_SHADER);
 	if (data.psSrc != 0)				sp->addShader(data.psSrc, PIXEL_SHADER);
@@ -115,7 +108,7 @@ IShaderProgram* GapiGL::createShaderProgram(const rShaderSources& data)
 
 IUniformBuffer* GapiGL::createUniformBuffer(const IUniformBuffer::rDesc& data)
 {
-	UniformBuffer* ubo = new UniformBuffer();
+	UniformBufferGL* ubo = new UniformBufferGL();
 	glGenBuffers(1, &ubo->id);
 
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo->id);
@@ -139,7 +132,7 @@ IUniformBuffer* GapiGL::createUniformBuffer(const IUniformBuffer::rDesc& data)
 
 IVertexBuffer* GapiGL::createVertexBuffer(const IVertexBuffer::rDesc& data)
 {
-	VertexBuffer* vbo = new VertexBuffer();
+	VertexBufferGL* vbo = new VertexBufferGL();
 	glGenBuffers(1, &vbo->id);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo->id); //TODO not sure if we need this
@@ -243,7 +236,7 @@ ITexture* GapiGL::createTexture(const rTexture& data)
 	return tex;
 }
 
-ITexture* GapiGL::createTexture(const std::string& path)
+ITexture* GapiGL::createTexture(const char* path)
 {
 	sf::Image im;
 	im.loadFromFile(path);
@@ -276,7 +269,7 @@ ITexture* GapiGL::createTexture(const std::string& path)
 
 IIndexBuffer* GapiGL::createIndexBuffer(const IIndexBuffer::rDesc& data)
 {
-	IndexBuffer* ibo = new IndexBuffer();
+	IndexBufferGL* ibo = new IndexBufferGL();
 	glGenBuffers(1, &ibo->id);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo->id);
@@ -377,7 +370,7 @@ void GapiGL::setBlendState(const rBlendState& state)
 	glBlendFunc(blend_func_data[(unsigned)state.src_func], blend_func_data[(unsigned)state.dst_func]);
 }
 
-void GapiGL::setSamplerState(const std::string& slotName, const rSamplerState& smpdata, ITexture* t)
+void GapiGL::setSamplerState(const char* slotName, const rSamplerState& smpdata, ITexture* t)
 {
 	TextureGL* tex = (TextureGL*)t;
 
@@ -505,7 +498,7 @@ void GapiGL::setSyncDebugOutput(bool val)
 void GapiGL::setShaderProgram(IShaderProgram* sp)
 {
 	ASSERT(sp);
-	glUseProgram(static_cast<ShaderProgram*>(sp)->id);
+	glUseProgram(static_cast<ShaderProgramGL*>(sp)->id);
 }
 
 void GapiGL::setTexture(ITexture* t, unsigned idx)
@@ -528,7 +521,7 @@ void GapiGL::setRenderTargets(const rRenderTargetInfo* render_targets, unsigned 
 void GapiGL::setUniformBuffer(IUniformBuffer* buf, unsigned index)
 {
 	ASSERT(buf);
-	glBindBufferBase(GL_UNIFORM_BUFFER, index, static_cast<UniformBuffer*>(buf)->id);
+	glBindBufferBase(GL_UNIFORM_BUFFER, index, static_cast<UniformBufferGL*>(buf)->id);
 }
 
 GLenum attrib_array[] =
@@ -542,7 +535,7 @@ void GapiGL::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attr
 
 	for (int c = 0; c < num_buffers; ++c)
 	{
-		GLuint id = static_cast<VertexBuffer*>(buffers[c])->id;
+		GLuint id = static_cast<VertexBufferGL*>(buffers[c])->id;
 		glBindBuffer(GL_ARRAY_BUFFER, id);
 		glEnableVertexAttribArray(attrib_data[c].index);
 		glVertexAttribPointer(attrib_data[c].index, attrib_data[c].nComponent, attrib_array[(unsigned)attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset);
@@ -553,7 +546,7 @@ void GapiGL::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attr
 void GapiGL::setIndexBuffer(IIndexBuffer* ibo)
 {
 	ASSERT(ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBuffer*>(ibo)->id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBufferGL*>(ibo)->id);
 }
 
 void GapiGL::draw(unsigned num_indices)

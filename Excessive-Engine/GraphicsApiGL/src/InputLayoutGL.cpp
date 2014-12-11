@@ -1,4 +1,4 @@
-#include "InputLayout.h"
+#include "InputLayoutGL.h"
 
 
 size_t InputLayout::getNumComponents() {
