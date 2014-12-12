@@ -8,7 +8,7 @@ class BasicRandom
   public:
     static void init()
     {
-      srand( ( unsigned )time( 0 ) );
+      srand( ( u32 )time( 0 ) );
     }
 
     static float get()

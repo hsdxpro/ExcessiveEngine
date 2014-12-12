@@ -99,7 +99,7 @@ public:
 	// defines a stream
 	struct VertexStream {
 		IVertexBuffer* vb;
-		unsigned elements;
+		u32 elements;
 	};
 
 	// getters

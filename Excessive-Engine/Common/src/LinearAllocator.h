@@ -17,7 +17,7 @@ class LinearAllocator
   public:
     LinearAllocator(char* b, int s) : buffer(b), size(s), offset(0)
     {
-      ASSERT( (unsigned)b % 4 == 0 ); //only allocated memory!
+      ASSERT( (u32)b % 4 == 0 ); //only allocated memory!
     }
 
     void* alloc( int s )

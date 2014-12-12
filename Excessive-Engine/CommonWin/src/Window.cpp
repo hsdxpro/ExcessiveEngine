@@ -15,7 +15,7 @@ bool Window::popEvent(rWindowEvent* evt_out) {
 	if (evt.type == sf::Event::EventType::KeyPressed || evt.type == sf::Event::EventType::KeyReleased)
 		evt_out->key = (eKey)((int)evt.key.code);
 	
-	evt_out->msg = (eWindowMsg)((unsigned)evt.type);
+	evt_out->msg = (eWindowMsg)((u32)evt.type);
 
 	if (evt_out->msg == eWindowMsg::CLOSE)
 		close();

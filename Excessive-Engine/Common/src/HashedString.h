@@ -4,7 +4,7 @@
 #include "crc32.h"
 #include <map>
 
-typedef unsigned stringID;
+typedef u32 stringID;
 
 class HashedString
 {

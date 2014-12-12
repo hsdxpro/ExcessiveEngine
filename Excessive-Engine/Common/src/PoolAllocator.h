@@ -2,7 +2,7 @@
 #define PoolAllocator_h
 
 //TODO
-template< unsigned block_size >
+template< u32 block_size >
 class PoolAllocator
 {
   public:

@@ -44,6 +44,6 @@ bool loadTexture(graphics::ITexture* texture, const char* filePath) {
 bool loadTexture(graphics::ITexture* texture, const wchar_t* filePath) {
 	return false;
 }
-bool genTexture_Checker(graphics::ITexture* texture, int div_x, int div_y, unsigned color1, unsigned color2) {
+bool genTexture_Checker(graphics::ITexture* texture, int div_x, int div_y, u32 color1, u32 color2) {
 	return false;
 }

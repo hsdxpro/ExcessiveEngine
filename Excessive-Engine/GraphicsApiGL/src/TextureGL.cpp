@@ -150,7 +150,7 @@ GLenum texture_types[] =
   GL_UNSIGNED_INT
 };
 
-unsigned texture_sizes[] = 
+u32 texture_sizes[] = 
 {
   8,
   8,

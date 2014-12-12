@@ -15,8 +15,8 @@ class IBuffer
 {
 public:
 	virtual void destroy() = 0;
-	virtual void update(void* data, unsigned size, unsigned offset) = 0;
-	virtual void getSubData(void* data, unsigned size, unsigned offset) = 0;
+	virtual void update(void* data, u32 size, u32 offset) = 0;
+	virtual void getSubData(void* data, u32 size, u32 offset) = 0;
 	virtual rBuffer getDesc() = 0;
 };
 

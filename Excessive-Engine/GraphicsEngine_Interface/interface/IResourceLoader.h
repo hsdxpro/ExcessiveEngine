@@ -1,4 +1,5 @@
 #pragma once
+#include "../Common/src/BasicTypes.h"
 
 
 namespace graphics {
@@ -72,7 +73,7 @@ public:
 
 	/// Generate a checker pattern.
 	/// \return Indicates success.
-	virtual bool genTexture_Checker(ITexture* texture, int div_x, int div_y, unsigned color1, unsigned color2) = 0;
+	virtual bool genTexture_Checker(ITexture* texture, int div_x, int div_y, u32 color1, u32 color2) = 0;
 
 };
 

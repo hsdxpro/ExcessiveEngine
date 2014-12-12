@@ -80,7 +80,7 @@ GraphicsEngineRaster::GraphicsEngineRaster(const graphics::rGraphicsEngine& d) {
 	sources.vsSrc = vertexShaderCode;
 	shader = gapi->createShaderProgram(sources);
 
-	unsigned index = shader->getAttributeIndex("in_vertex");
+	u32 index = shader->getAttributeIndex("in_vertex");
 	cout << index;
 
 	gapi->setDebugOutput(true);
@@ -205,7 +205,7 @@ void GraphicsEngineRaster::update() {
 		gapi->setIndexBuffer(mesh->getIndexBuffer());
 
 		// draw
-		unsigned num_indices = mesh->getIndexBuffer()->getDesc().size / sizeof(u32);
+		u32 num_indices = mesh->getIndexBuffer()->getDesc().size / sizeof(u32);
 		gapi->draw(num_indices);
 		rDepthState ds;
 		ds.enable_test = false;

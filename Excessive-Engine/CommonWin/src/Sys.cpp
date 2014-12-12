@@ -21,7 +21,7 @@ std::string	Sys::getWorkDir() {
 	//path.reserve(128); // TODO make define or constant somewhere
 	char path[128];
 	GetModuleFileName(0, path, 128);
-	//unsigned pos = path.find(":");
+	//u32 pos = path.find(":");
 
 	for (int i = 127; i > 0; i--)
 		if (path[i] == '\\' && i < 127)

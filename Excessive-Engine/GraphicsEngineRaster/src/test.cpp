@@ -79,7 +79,7 @@ __declspec(dllexport) void TestGraphicsEngine() {
 	}
 
 	u64 id = m.getElementConfigId();
-	unsigned composition = id & 0x7FFFF; // lower 19 bits
+	u32 composition = id & 0x7FFFF; // lower 19 bits
 	u64 components = id >> 19;
 	
 	cout << "id = " << bitset<64>(id) << endl;

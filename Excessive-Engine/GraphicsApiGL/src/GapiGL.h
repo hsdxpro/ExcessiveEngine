@@ -7,7 +7,7 @@
 class GapiGL : public IGapi
 {
   public:
-    unsigned global_vao;
+    u32 global_vao;
   
 	GapiGL();
 
@@ -31,7 +31,7 @@ class GapiGL : public IGapi
     void setSRGBWrites(bool val) override;
     void setSeamlessCubeMaps(bool val) override;
     
-    void setViewport(int x, int y, unsigned w, unsigned h) override;
+    void setViewport(int x, int y, u32 w, u32 h) override;
 
     void setRasterizationState(const rRasterizerState& state) override;
 
@@ -41,14 +41,14 @@ class GapiGL : public IGapi
     
     //pass input/output to shader
     void setShaderProgram(IShaderProgram* sp) override;
-	void setRenderTargets(const rRenderTargetInfo* render_targets, unsigned size) override;
-	void setUniformBuffer(IUniformBuffer* buf, unsigned index) override;
-	void setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, unsigned num_buffers) override;
+	void setRenderTargets(const rRenderTargetInfo* render_targets, u32 size) override;
+	void setUniformBuffer(IUniformBuffer* buf, u32 index) override;
+	void setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers) override;
 	void setIndexBuffer(IIndexBuffer* ibo) override;
-	void setTexture(ITexture* t, unsigned idx) override;
+	void setTexture(ITexture* t, u32 idx) override;
 
     // draw stuff
-    void draw(unsigned num_indices);
+    void draw(u32 num_indices);
 
 	// input layout & vertex streams
 	IInputLayout* createInputLayout(InputElement* elements, size_t num_elements) override { return nullptr; }
@@ -56,8 +56,8 @@ class GapiGL : public IGapi
 
 	void setVertexStreams(
 		IVertexBuffer** buffers,
-		unsigned* strides,
-		unsigned* offsets,
-		unsigned start_slot,
-		unsigned num_buffers) override {}
+		u32* strides,
+		u32* offsets,
+		u32 start_slot,
+		u32 num_buffers) override {}
 };

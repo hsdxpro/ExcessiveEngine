@@ -77,13 +77,13 @@ enum eFormatType
 //specifies how you'd like to update the texture
 struct rTextureUpdate
 {
-  unsigned level;
-  unsigned x_offset;
-  unsigned y_offset;
-  unsigned z_offset;
-  unsigned width;
-  unsigned height;
-  unsigned depth;
+  u32 level;
+  u32 x_offset;
+  u32 y_offset;
+  u32 z_offset;
+  u32 width;
+  u32 height;
+  u32 depth;
   eFormatType format;
   char* data; //w, h, d, the offsets and format determines the size!
 };
@@ -100,10 +100,10 @@ struct rSamplerState
 //specifices what type of texture you'd like to allocate
 struct rTexture
 {
-	unsigned num_levels; //mipmap levels
-	unsigned width;
-	unsigned height;
-	unsigned depth;
+	u32 num_levels; //mipmap levels
+	u32 width;
+	u32 height;
+	u32 depth;
 	eFormatType format; //texture format
 	bool is_layered;
 	bool is_cubemap;

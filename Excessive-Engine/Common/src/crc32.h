@@ -2,17 +2,18 @@
 #define crc32_h
 
 #include <string>
+#include "BasicTypes.h"
 
-const unsigned polynomial = 0xedb88320;
-unsigned crc32lookup[256];
+const u32 polynomial = 0xedb88320;
+u32 crc32lookup[256];
 
 void crc32Init()
 {
-  for( unsigned i = 0; i <= 0xff; ++i )
+  for( u32 i = 0; i <= 0xff; ++i )
   {
-    unsigned crc = i;
+    u32 crc = i;
 
-    for( unsigned j = 0; j < 8; ++j )
+    for( u32 j = 0; j < 8; ++j )
     {
       crc = ( crc >> 1 ) ^ ( -int( crc & 1 ) & polynomial );
     }
@@ -21,9 +22,9 @@ void crc32Init()
   }
 }
 
-inline unsigned crc32( const void* data, unsigned length, unsigned prev_crc32 = 0 )
+inline u32 crc32( const void* data, u32 length, u32 prev_crc32 = 0 )
 {
-  unsigned crc = ~prev_crc32;
+  u32 crc = ~prev_crc32;
   char* current = (char*)data;
 
   while( length-- )
@@ -34,7 +35,7 @@ inline unsigned crc32( const void* data, unsigned length, unsigned prev_crc32 = 
   return ~crc;
 }
 
-inline unsigned crc32( const std::string& str )
+inline u32 crc32( const std::string& str )
 {
   return crc32( str.data(), str.size() );
 }
