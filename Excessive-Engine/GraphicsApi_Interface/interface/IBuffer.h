@@ -13,8 +13,6 @@ struct rBuffer {
 class IBuffer
 {
 public:
-	
-public:
 	virtual void destroy() = 0;
 	virtual void update(char* data, unsigned size, unsigned offset) = 0; 
 	virtual void getSubData(char* data, unsigned size, unsigned offset) = 0;
