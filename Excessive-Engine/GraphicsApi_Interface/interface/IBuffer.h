@@ -17,7 +17,7 @@ public:
 	virtual void destroy() = 0;
 	virtual void update(void* data, unsigned size, unsigned offset) = 0;
 	virtual void getSubData(void* data, unsigned size, unsigned offset) = 0;
-	virtual rDesc getDesc() = 0;
+	virtual rBuffer getDesc() = 0;
 };
 
 //Implement the ones below
