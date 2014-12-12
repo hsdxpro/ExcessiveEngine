@@ -9,7 +9,7 @@ void BufferGL::destroy()
 	id = 0;
 }
 
-void BufferGL::update(void* data, unsigned size, unsigned offset)
+void BufferGL::update(void* data, u32 size, u32 offset)
 {
 	//TODO
 	/*ASSERT( data )
@@ -20,7 +20,7 @@ void BufferGL::update(void* data, unsigned size, unsigned offset)
 	}*/
 }
 
-void BufferGL::getSubData(void* data, unsigned size, unsigned offset)
+void BufferGL::getSubData(void* data, u32 size, u32 offset)
 {
 	//TODO
 	/*ASSERT( data )

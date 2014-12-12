@@ -12,7 +12,6 @@ public:
 	////////////////////////////////////
 	// Mesh functions
 
-	bool loadMesh(graphics::IMesh* mesh, const char* filePath) override;
 	bool loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) override;
 	bool genMesh_Teapot(graphics::IMesh* mesh, float radius, int tesselation) override;
 	bool getMesh_Box(graphics::IMesh* mesh, float length, float width, float heigh) override;
@@ -32,6 +31,6 @@ public:
 
 	bool loadTexture(graphics::ITexture* texture, const char* filePath) override;
 	bool loadTexture(graphics::ITexture* texture, const wchar_t* filePath) override;
-	bool genTexture_Checker(graphics::ITexture* texture, int div_x, int div_y, unsigned color1, unsigned color2) override;
+	bool genTexture_Checker(graphics::ITexture* texture, int div_x, int div_y, u32 color1, u32 color2) override;
 
 };

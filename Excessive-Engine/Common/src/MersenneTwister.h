@@ -11,7 +11,7 @@ class MersenneTwister
   public:
     static void init()
     {
-      unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+      u32 seed = std::chrono::system_clock::now().time_since_epoch().count();
       generator = std::mt19937(seed);
       dist = std::uniform_int_distribution<int>( 0, RAND_MAX );
     }

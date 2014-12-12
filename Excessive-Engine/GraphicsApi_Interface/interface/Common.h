@@ -46,9 +46,9 @@ struct rStencilState
 {
 	bool enable_test;
 	bool enable_write;
-	unsigned reference;
-	unsigned mask;
-	unsigned func_mask;
+	u32 reference;
+	u32 mask;
+	u32 func_mask;
 	eCompareFunc func;
 	eStencilAction on_stencil_fail, on_stencil_pass_depth_fail, on_stencil_pass_depth_pass;
 };
@@ -115,9 +115,9 @@ struct rRasterizerState
 struct rRenderTargetInfo
 {
 	ITextureView* target_texture;
-	unsigned target_index;
-	unsigned target_level;
-	unsigned target_layer;
+	u32 target_index;
+	u32 target_level;
+	u32 target_layer;
 };
 
 enum class eVertexAttribType : u32
@@ -127,11 +127,11 @@ enum class eVertexAttribType : u32
 
 struct rVertexAttrib
 {
-	unsigned index; //vertex stream index
-	unsigned nComponent; //4 for vec4
+	u32 index; //vertex stream index
+	u32 nComponent; //4 for vec4
 	eVertexAttribType type;
-	unsigned offset, size;
-	unsigned divisor;
+	u32 offset, size;
+	u32 divisor;
 };
 
 struct rShaderPaths

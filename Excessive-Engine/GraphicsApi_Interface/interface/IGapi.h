@@ -47,15 +47,23 @@ public:
 	virtual void setRasterizationState(const rRasterizerState& state) = 0;
 	virtual void setSamplerState(const char* slotName, const rSamplerState& smpdata, ITexture* t) = 0;
 
+<<<<<<< HEAD
 	virtual void setSRGBWrites(bool val) = 0;
 	virtual void setSeamlessCubeMaps(bool val) = 0;
 
 	virtual void setViewport(int x, int y, unsigned w, unsigned h) = 0;
+=======
+    virtual void setSRGBWrites(bool val) = 0;
+    virtual void setSeamlessCubeMaps(bool val) = 0;
+    
+    virtual void setViewport(int x, int y, u32 w, u32 h) = 0;    
+>>>>>>> f540037fba196c87f3a417bf4f2d3444cb58de42
 
 	virtual bool getError() = 0;
 	virtual void setDebugOutput(bool val) = 0;
 	virtual void setSyncDebugOutput(bool val) = 0;
 
+<<<<<<< HEAD
 	//pass input/output to shader
 	virtual void setShaderProgram(IShaderProgram* sp) = 0;
 	virtual void setTexture(ITexture* t, unsigned idx) = 0;
@@ -66,6 +74,18 @@ public:
 
 	//draw stuff
 	virtual void draw(unsigned num_indices) = 0;
+=======
+    //pass input/output to shader
+    virtual void setShaderProgram(IShaderProgram* sp) = 0;
+    virtual void setTexture(ITexture* t, u32 idx) = 0;
+	virtual void setRenderTargets(const rRenderTargetInfo* render_targets, u32 size) = 0;
+    virtual void setUniformBuffer(IUniformBuffer* buf, u32 idx) = 0;
+	virtual void setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers) = 0;
+    virtual void setIndexBuffer(IIndexBuffer* ibo) = 0;
+    
+    //draw stuff
+    virtual void draw(u32 num_indices) = 0;
+>>>>>>> f540037fba196c87f3a417bf4f2d3444cb58de42
 
 	// input layout & vertex streams
 #pragma message("Marci: ezt is implementálnod kéne [setVertexBuffer]")
@@ -83,8 +103,15 @@ public:
 	*/
 	virtual void setVertexStreams(
 		IVertexBuffer** buffers, // buffers to bind
+<<<<<<< HEAD
 		unsigned* strides, // size of one vertex in bytes; for each buffer
 		unsigned* offsets, // how many bytes the 0th vertex is offseted from start of buffer
 		unsigned start_slot, // bind 1st buffer here
 		unsigned num_buffers) = 0;
+=======
+		u32* strides, // size of one vertex in bytes; for each buffer
+		u32* offsets, // how many bytes the 0th vertex is offseted from start of buffer
+		u32 start_slot, // bind 1st buffer here
+		u32 num_buffers) = 0; 
+>>>>>>> f540037fba196c87f3a417bf4f2d3444cb58de42
 };

@@ -12,7 +12,7 @@ using namespace mymath;
 using namespace std;
 
 
-inline static int fast_log2(unsigned n) {
+inline static int fast_log2(u32 n) {
 	int i = -1;
 	while (n != 0) {
 		n >>= 1;
@@ -102,7 +102,7 @@ bool Mesh::update(MeshData data) {
 
 
 	// validate input elements, calculate internal elements
-	unsigned element_flag = 0;
+	u32 element_flag = 0;
 	bool is_position = false;
 	bool is_tangent = false;
 	bool is_normal = false;
@@ -111,7 +111,7 @@ bool Mesh::update(MeshData data) {
 
 	for (int i = 0; i < data.vertex_elements_num; i++) {
 		// check duplicate semantics
-		if ((element_flag & (unsigned)data.vertex_elements[i].semantic) != 0) {
+		if ((element_flag & (u32)data.vertex_elements[i].semantic) != 0) {
 			return false; // error: duplicate semantic
 		}
 		element_flag |= data.vertex_elements[i].semantic;

@@ -4,6 +4,7 @@
 #include <random>
 #include <vector>
 #include <chrono>
+#include "BasicTypes.h"
 
 using namespace std;
 
@@ -12,7 +13,7 @@ int PetiTestGeneric() {
 	vector<string> v;
 
 	mt19937 rne;
-	uniform_int_distribution<unsigned> rng('a', 'z');
+	uniform_int_distribution<u32> rng('a', 'z');
 	for (int i = 0; i < 40; i++) {
 		char name[9] = "--------";
 		for (int i = 0; i < 8; i++) {

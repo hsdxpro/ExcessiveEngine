@@ -11,7 +11,7 @@ class VertexBufferGL : public BufferGL, public IVertexBuffer
       BufferGL::destroy();
     }
 
-	void update(void* data, unsigned size, unsigned offset) override
+	void update(void* data, u32 size, u32 offset) override
     {
       /*void* ptr = glMapBufferRange( GL_ARRAY_BUFFER, offset, size, GL_MAP_WRITE_BIT );
       memcpy( ptr, data, size );
@@ -21,7 +21,7 @@ class VertexBufferGL : public BufferGL, public IVertexBuffer
 		glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
     }
 
-	void getSubData(void* data, unsigned size, unsigned offset) override
+	void getSubData(void* data, u32 size, u32 offset) override
     {
 		BufferGL::getSubData(data, size, offset);
     }

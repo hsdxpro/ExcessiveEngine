@@ -102,13 +102,13 @@ int CommonTest()
   my::log << my::lock << random_type::get( 0.1, 0.9 ) << my::endl << my::unlock;
 
   AlignedAllocator<char, 16> aa;
-  unsigned base_size = 512 * 1024 * 1024;
+  u32 base_size = 512 * 1024 * 1024;
   auto base_ptr = aa.allocate( base_size );
   char* ptr = (char*)base_ptr;
-  unsigned mod = (unsigned)ptr % 4;
+  u32 mod = (u32)ptr % 4;
 
   LinearAllocator linall( (char*)base_ptr, base_size );
-  unsigned stack_size = 256 * 1024 * 1024;
+  u32 stack_size = 256 * 1024 * 1024;
   void* stack_mem = linall.alloc( stack_size ); //allocate 256 mb of memory for the stack
 
   StackAllocator<16> stack( (char*)stack_mem, stack_size );

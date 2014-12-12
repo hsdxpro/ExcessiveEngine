@@ -10,7 +10,7 @@ class BufferGL : public IBuffer
     GLuint id;
 
     void destroy() override;
-    void update(void* data, unsigned size, unsigned offset) override; 
-    void getSubData(void* data, unsigned size, unsigned offset) override;
+    void update(void* data, u32 size, u32 offset) override; 
+    void getSubData(void* data, u32 size, u32 offset) override;
     rBuffer getDesc() override;
 };

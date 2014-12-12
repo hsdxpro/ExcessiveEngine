@@ -1,4 +1,5 @@
 #pragma once
+#include "../Common/src/BasicTypes.h"
 
 
 namespace graphics {
@@ -15,11 +16,6 @@ class IResourceLoader {
 public:
 	////////////////////////////////////
 	// Mesh functions
-
-	/// Load a mesh from file.
-	/// Supported formats are the following: none.
-	/// \return Indicates success.
-	virtual bool loadMesh(IMesh* mesh, const char* filePath) = 0;
 
 	/// Load a mesh from file
 	/// Supported formats are the following: none.
@@ -72,7 +68,7 @@ public:
 
 	/// Generate a checker pattern.
 	/// \return Indicates success.
-	virtual bool genTexture_Checker(ITexture* texture, int div_x, int div_y, unsigned color1, unsigned color2) = 0;
+	virtual bool genTexture_Checker(ITexture* texture, int div_x, int div_y, u32 color1, u32 color2) = 0;
 
 };
 

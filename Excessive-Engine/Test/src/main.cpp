@@ -17,6 +17,7 @@ To change choice press SPACE while waiting for launch.
 #include <thread>
 
 #include "tests.h"
+#include "BasicTypes.h"
 
 #ifdef _MSC_VER
 #define _WIN32_LEAN_AND_MEAN
@@ -24,6 +25,7 @@ To change choice press SPACE while waiting for launch.
 #include <windows.h>
 #include <conio.h>
 #endif
+
 
 using namespace std;
 using TestFunctionT = int(*)(void);
@@ -104,7 +106,7 @@ int main() {
 				this_thread::sleep_for(chrono::milliseconds(1000));
 			}
 			cout << endl;
-			bool isKey = (unsigned(GetAsyncKeyState(VK_SPACE))) > 0;
+			bool isKey = (u32(GetAsyncKeyState(VK_SPACE))) > 0;
 			if (isKey) {
 				test_name = GetTestName();
 			}

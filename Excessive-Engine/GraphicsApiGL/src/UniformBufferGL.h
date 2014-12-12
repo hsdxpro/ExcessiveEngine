@@ -10,7 +10,7 @@ class UniformBufferGL : public BufferGL, public IUniformBuffer
       BufferGL::destroy();
     }
 
-	void update(void* data, unsigned size, unsigned offset) override
+	void update(void* data, u32 size, u32 offset) override
     {
 	    /*void* ptr = glMapBufferRange( GL_UNIFORM_BUFFER, offset, size, GL_MAP_WRITE_BIT );
       memcpy( ptr, data, size );
@@ -20,7 +20,7 @@ class UniformBufferGL : public BufferGL, public IUniformBuffer
 		glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
     }
 
-	void getSubData(void* data, unsigned size, unsigned offset) override
+	void getSubData(void* data, u32 size, u32 offset) override
     {
       BufferGL::getSubData(data, size, offset);
     }

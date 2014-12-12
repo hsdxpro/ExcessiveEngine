@@ -3,29 +3,29 @@
 
 #include "custom_assert.h"
 
-typedef unsigned marker;
+typedef u32 marker;
 
-template< unsigned alignment >
+template< u32 alignment >
 class StackAllocator
 {
     char* stack; //we assume this address is aligned
-    unsigned size;
-    unsigned top;
+    u32 size;
+    u32 top;
     
     static_assert( alignment > 1, "Alignment must be >1" );
 
-    unsigned getAligned( unsigned s )
+    u32 getAligned( u32 s )
     {
 		return s + (alignment - s % alignment);
     }
 
   public:
-    StackAllocator( char* b, unsigned s ) : stack( b ), size( s ), top( 0 ) {}
+    StackAllocator( char* b, u32 s ) : stack( b ), size( s ), top( 0 ) {}
 
-    void* alloc( unsigned s )
+    void* alloc( u32 s )
     {
       ASSERT( top + s < size );
-      unsigned aligned_size = getAligned( s );
+      u32 aligned_size = getAligned( s );
       char* mem = stack + top;
       top += aligned_size;
       return mem;

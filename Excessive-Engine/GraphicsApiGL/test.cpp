@@ -103,11 +103,11 @@ int main(int argc, char** args)
 	/**/
 	/*/example binary shader store/load
 	char* data;
-	unsigned size;
+	u32 size;
 	sp->getBinary(&data, &size);
 
 	f.open("shader.shaderbin", ios::binary | ios::out);
-	f.write((const char*)&size, sizeof(unsigned));
+	f.write((const char*)&size, sizeof(u32));
 	f.write(data, size);
 	f.close();
 
@@ -115,7 +115,7 @@ int main(int argc, char** args)
 	size = 0;
 
 	f.open("shader.shaderbin", ios::binary | ios::in);
-	f.read((char*)&size, sizeof(unsigned));
+	f.read((char*)&size, sizeof(u32));
 	f.read(data = new char[size], size);
 	f.close();
 
@@ -162,7 +162,7 @@ int main(int argc, char** args)
 	//set up the mesh
 	vector<vec3> vertices;
 	vector<vec2> texcoords;
-	vector<unsigned> indices;
+	vector<u32> indices;
 
 	indices.push_back(0);
 	indices.push_back(1);
@@ -201,7 +201,7 @@ int main(int argc, char** args)
 	idx_alloc_data.is_readable = false;
 	idx_alloc_data.is_writable = true;
 	idx_alloc_data.prefer_cpu_storage = false;
-	idx_alloc_data.size = indices.size() * sizeof(unsigned);
+	idx_alloc_data.size = indices.size() * sizeof(u32);
 
 	auto vtx_buf = gapi->createVertexBuffer(vtx_alloc_data);
 	auto tex_buf = gapi->createVertexBuffer(tex_alloc_data);
@@ -211,7 +211,7 @@ int main(int argc, char** args)
 	vtx_buf->update((char*)vertices.data(), vertices.size() * sizeof(vec3), 0);
 	tex_buf->update((char*)texcoords.data(), texcoords.size() * sizeof(vec2), 0);
 
-	idx_buf->update((char*)indices.data(), indices.size() * sizeof(unsigned), 0);
+	idx_buf->update((char*)indices.data(), indices.size() * sizeof(u32), 0);
 
 	//set up the uniform buffer
 	rBuffer ubo_alloc_data;
@@ -299,7 +299,7 @@ char* realpath(const char* path, char** ret)
 		}
 		else
 		{
-			unsigned long s = strlen(*ret);
+			size_t s = strlen(*ret);
 
 			if (s < MAX_PATH)
 			{
@@ -312,7 +312,7 @@ char* realpath(const char* path, char** ret)
 		}
 	}
 
-	unsigned long size = GetFullPathNameA(path, MAX_PATH, the_ret, 0);
+	size_t size = GetFullPathNameA(path, MAX_PATH, the_ret, 0);
 
 	if (size > MAX_PATH)
 	{

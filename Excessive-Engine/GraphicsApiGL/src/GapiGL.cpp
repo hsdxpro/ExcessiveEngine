@@ -331,7 +331,7 @@ void GapiGL::setDepthState(const rDepthState& state)
 
 	glDepthRangef(state.near, state.far);
 
-	glDepthFunc(func_data[(unsigned)state.func]);
+	glDepthFunc(func_data[(u32)state.func]);
 }
 
 void GapiGL::setStencilState(const rStencilState& state)
@@ -349,9 +349,9 @@ void GapiGL::setStencilState(const rStencilState& state)
 
 	glStencilMask(state.mask);
 
-	glStencilFunc(func_data[(unsigned)state.func], state.reference, state.func_mask);
+	glStencilFunc(func_data[(u32)state.func], state.reference, state.func_mask);
 
-	glStencilOp(stencil_op_data[(unsigned)state.on_stencil_fail], stencil_op_data[(unsigned)state.on_stencil_pass_depth_fail], stencil_op_data[(unsigned)state.on_stencil_pass_depth_pass]);
+	glStencilOp(stencil_op_data[(u32)state.on_stencil_fail], stencil_op_data[(u32)state.on_stencil_pass_depth_fail], stencil_op_data[(u32)state.on_stencil_pass_depth_pass]);
 }
 
 void GapiGL::setBlendState(const rBlendState& state)
@@ -367,9 +367,9 @@ void GapiGL::setBlendState(const rBlendState& state)
 
 	glBlendColor(state.blend_color.x, state.blend_color.y, state.blend_color.z, state.blend_color.w);
 
-	glBlendEquation(blend_eq_data[(unsigned)state.equation]);
+	glBlendEquation(blend_eq_data[(u32)state.equation]);
 
-	glBlendFunc(blend_func_data[(unsigned)state.src_func], blend_func_data[(unsigned)state.dst_func]);
+	glBlendFunc(blend_func_data[(u32)state.src_func], blend_func_data[(u32)state.dst_func]);
 }
 
 void GapiGL::setSamplerState(const char* slotName, const rSamplerState& smpdata, ITexture* t)
@@ -455,16 +455,16 @@ void GapiGL::setSeamlessCubeMaps(bool val)
 	}
 }
 
-void GapiGL::setViewport(int x, int y, unsigned w, unsigned h)
+void GapiGL::setViewport(int x, int y, u32 w, u32 h)
 {
 	glViewport(x, y, w, h);
 }
 
 void GapiGL::setRasterizationState(const rRasterizerState& state)
 {
-	glPolygonMode(GL_FRONT_AND_BACK, raster_mode_data[(unsigned)state.mode]);
-	glFrontFace(raster_order_data[(unsigned)state.vertex_order]);
-	glCullFace(raster_face_data[(unsigned)state.face]);
+	glPolygonMode(GL_FRONT_AND_BACK, raster_mode_data[(u32)state.mode]);
+	glFrontFace(raster_order_data[(u32)state.vertex_order]);
+	glCullFace(raster_face_data[(u32)state.face]);
 	glColorMask(state.r_mask, state.g_mask, state.b_mask, state.a_mask);
 }
 
@@ -503,7 +503,7 @@ void GapiGL::setShaderProgram(IShaderProgram* sp)
 	glUseProgram(static_cast<ShaderProgramGL*>(sp)->id);
 }
 
-void GapiGL::setTexture(ITexture* t, unsigned idx)
+void GapiGL::setTexture(ITexture* t, u32 idx)
 {
 	TextureGL* tex = (TextureGL*)t;
 
@@ -514,13 +514,13 @@ void GapiGL::setTexture(ITexture* t, unsigned idx)
 	glBindTexture(tex->target, tex->viewID);
 }
 
-void GapiGL::setRenderTargets(const rRenderTargetInfo* render_targets, unsigned size)
+void GapiGL::setRenderTargets(const rRenderTargetInfo* render_targets, u32 size)
 {
 	//TODO
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void GapiGL::setUniformBuffer(IUniformBuffer* buf, unsigned index)
+void GapiGL::setUniformBuffer(IUniformBuffer* buf, u32 index)
 {
 	ASSERT(buf);
 	glBindBufferBase(GL_UNIFORM_BUFFER, index, static_cast<UniformBufferGL*>(buf)->id);
@@ -531,7 +531,7 @@ GLenum attrib_array[] =
 	GL_FLOAT, GL_INT, GL_UNSIGNED_INT
 };
 
-void GapiGL::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, unsigned num_buffers)
+void GapiGL::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers)
 {
 	ASSERT(buffers && attrib_data);
 
@@ -540,7 +540,7 @@ void GapiGL::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attr
 		GLuint id = static_cast<VertexBufferGL*>(buffers[c])->id;
 		glBindBuffer(GL_ARRAY_BUFFER, id);
 		glEnableVertexAttribArray(attrib_data[c].index);
-		glVertexAttribPointer(attrib_data[c].index, attrib_data[c].nComponent, attrib_array[(unsigned)attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset);
+		glVertexAttribPointer(attrib_data[c].index, attrib_data[c].nComponent, attrib_array[(u32)attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset);
 		//glVertexAttribDivisor( attrib_data[c].index, attrib_data[c].divisor ); //instancing stuff
 	}
 }
@@ -551,7 +551,7 @@ void GapiGL::setIndexBuffer(IIndexBuffer* ibo)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBufferGL*>(ibo)->id);
 }
 
-void GapiGL::draw(unsigned num_indices)
+void GapiGL::draw(u32 num_indices)
 {
 #ifdef DEBUG_SHADER_ERRORS
 	glValidateProgram(static_cast<ShaderProgram*>(s)->id);
