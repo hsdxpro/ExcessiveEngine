@@ -52,39 +52,45 @@ void ShaderProgramGL::link()
 #endif
 }
 
-void ShaderProgramGL::getBinary(char** data, unsigned* size)
+size_t ShaderProgramGL::getBinary(void* data, size_t max_size)
 {
-	//no nullptr, stupid!
-	ASSERT(data && size)
-	{
-		vector<char> buf;
-		GLenum format = 0;
+	// well, it ain't gonna work out that way 
+	/*
+	vector<char> buf;
+	GLenum format = 0;
 
-		GLint bufsize = 0;
-		glGetProgramiv(id, GL_PROGRAM_BINARY_LENGTH, &bufsize);
+	GLint bufsize = 0;
+	glGetProgramiv(id, GL_PROGRAM_BINARY_LENGTH, &bufsize);
 
-		if (bufsize)
-		{
-			buf.resize(bufsize);
-
-			glGetProgramBinary(id, bufsize, 0, &format, (void*)buf.data());
-
-			//add space for the enum and the size
-			*size = bufsize + sizeof(GLint)+sizeof(GLenum);
-			*data = new char[*size];
-
-			char* ptr = *data;
-			reinterpret_cast<GLint*>(ptr)[0] = bufsize;
-			ptr += sizeof(GLint);
-			reinterpret_cast<GLenum*>(ptr)[0] = format;
-			ptr += sizeof(GLenum);
-			memcpy(ptr, buf.data(), bufsize);
-		}
+	if (data == nullptr) {
+		return bufsize;
 	}
+
+	if (bufsize)
+	{
+		buf.resize(bufsize);
+
+		glGetProgramBinary(id, bufsize, 0, &format, (void*)buf.data());
+
+		//add space for the enum and the size
+		size_t size = bufsize + sizeof(GLint) + sizeof(GLenum);
+		data = new char[size];
+
+		char* ptr = *data;
+		reinterpret_cast<GLint*>(ptr)[0] = bufsize;
+		ptr += sizeof(GLint);
+		reinterpret_cast<GLenum*>(ptr)[0] = format;
+		ptr += sizeof(GLenum);
+		memcpy(ptr, buf.data(), bufsize);
+	}
+	*/
+	return 0;
 }
 
-void ShaderProgramGL::loadFromBinary(char* data)
+void ShaderProgramGL::loadFromBinary(void* data, size_t size)
 {
+	// neither will this
+	/*
 	ASSERT(data)
 	{
 		char* ptr = data;
@@ -95,6 +101,7 @@ void ShaderProgramGL::loadFromBinary(char* data)
 
 		glProgramBinary(id, format, ptr, size);
 	}
+	*/
 }
 
 int ShaderProgramGL::getUniformBlockIndex(const char* str)

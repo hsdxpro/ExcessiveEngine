@@ -35,6 +35,8 @@ src/Material.h
 src/Material.cpp
 src/ResourceManager.h
 src/ResourceManager.cpp
+src/ResourceLoader.h
+src/ResourceLoader.cpp
 )
 
 #Scene management files filter

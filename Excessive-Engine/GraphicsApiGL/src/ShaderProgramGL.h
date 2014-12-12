@@ -15,11 +15,11 @@ class ShaderProgramGL : public IShaderProgram
 public:
 	GLuint id;
 
-	void destroy();
+	void destroy() override;
 	void addShader(const char* src, eShaderType type);
 	void link();
-	void getBinary(char** data, unsigned* size);
-	void loadFromBinary(char* data);
+	size_t getBinary(void* data, size_t max_size) override;
+	void loadFromBinary(void* data, size_t size) override;
 
 	int getUniformBlockIndex(const char* str);
 	int getAttributeIndex(const char* str);

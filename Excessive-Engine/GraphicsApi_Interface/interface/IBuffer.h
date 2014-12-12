@@ -11,11 +11,12 @@ public:
 		bool is_writable;
 		bool is_persistent;
 		bool prefer_cpu_storage;
+		void* initial_data;
 	};
 public:
 	virtual void destroy() = 0;
-	virtual void update(char* data, unsigned size, unsigned offset) = 0; 
-	virtual void getSubData(char* data, unsigned size, unsigned offset) = 0;
+	virtual void update(void* data, unsigned size, unsigned offset) = 0;
+	virtual void getSubData(void* data, unsigned size, unsigned offset) = 0;
 	virtual rDesc getDesc() = 0;
 };
 
@@ -23,18 +24,18 @@ public:
 
 class IVertexBuffer : public IBuffer
 {
-  public:
-    
+public:
+
 };
 
 class IIndexBuffer : public IBuffer
 {
-  public:
-    
+public:
+
 };
 
 class IUniformBuffer : public IBuffer
 {
-  public:
-    
+public:
+
 };

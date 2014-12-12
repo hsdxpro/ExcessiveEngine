@@ -16,14 +16,14 @@ extern GLenum texture_internal_formats[69];
 
 class TextureGL : public ITexture
 {
-  public:
-    GLuint ID;
+public:
+	GLuint ID;
 	GLuint viewID;
-    GLenum target;
-    unsigned dim;
-    rTexture desc;
-  
-    void destroy() override;
+	GLenum target;
+	unsigned dim;
+	rTexture desc;
+
+	void destroy() override;
 
 	const rTexture& getDesc() override;
 	void getSubData(const rTextureUpdate& d) override; //the pointer should be updated

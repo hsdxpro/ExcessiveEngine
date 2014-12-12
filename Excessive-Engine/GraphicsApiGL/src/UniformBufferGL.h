@@ -4,29 +4,29 @@
 
 class UniformBufferGL : public BufferGL, public IUniformBuffer
 {
-  public:
-	  void destroy() override
-    {
-      BufferGL::destroy();
-    }
+public:
+	void destroy() override
+	{
+		BufferGL::destroy();
+	}
 
-	void update(char* data, unsigned size, unsigned offset) override
-    {
-	    /*void* ptr = glMapBufferRange( GL_UNIFORM_BUFFER, offset, size, GL_MAP_WRITE_BIT );
-      memcpy( ptr, data, size );
-      glUnmapBuffer( GL_UNIFORM_BUFFER );*/
+	void update(void* data, unsigned size, unsigned offset) override
+	{
+		/*void* ptr = glMapBufferRange( GL_UNIFORM_BUFFER, offset, size, GL_MAP_WRITE_BIT );
+	  memcpy( ptr, data, size );
+	  glUnmapBuffer( GL_UNIFORM_BUFFER );*/
 
-      glBindBuffer( GL_UNIFORM_BUFFER, id );
-      glBufferSubData( GL_UNIFORM_BUFFER, offset, size, data );
-    }
+		glBindBuffer(GL_UNIFORM_BUFFER, id);
+		glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
+	}
 
-	void getSubData(char* data, unsigned size, unsigned offset) override
-    {
-      BufferGL::getSubData(data, size, offset);
-    }
+	void getSubData(void* data, unsigned size, unsigned offset) override
+	{
+		BufferGL::getSubData(data, size, offset);
+	}
 
-    rDesc getDesc() override
-    {
-      return BufferGL::getDesc();
-    }
+	rDesc getDesc() override
+	{
+		return BufferGL::getDesc();
+	}
 };
