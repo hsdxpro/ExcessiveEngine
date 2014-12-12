@@ -90,18 +90,36 @@ int Ricsi() {
 	// Create a simple whatever
 	graphics::IMesh* mesh = gEngine->createMesh();
 	graphics::IMesh::MeshData data;
-	//  [0]---[1]
-	//   |  \  |
+	//   [0]---[1]
+	//   /  \  /
 	//  [3]---[2]
+	//
+	//   [4]---[5]
+	//   /  \  /
+	//  [7]---[6]
 	float vertices[] = {
-		-1, 1, 0.5,
-		1, 1, 0.5,
-		1, -1, 0.5,
-		-1, -1, 0.5,
+		-1, 1, 1,
+		1, 1, 1,
+		1, -1, 1,
+		-1, -1, 1,
+		-1, 1, -1,
+		1, 1, -1,
+		1, -1, -1,
+		-1, -1, -1,
 	};
 	uint32_t indices[] = {
-		1,0,2,
+		1,0,2, // top
 		2,3,0,
+		4,5,6, // bottom
+		7,4,6,
+		2,3,6, // front
+		3,7,6,
+		0,1,5, // back
+		5,4,0,
+		1,2,6, //right
+		1,6,5,
+		7,3,0, // left
+		4,7,0,
 	};
 	graphics::IMesh::ElementDesc elements[] = {
 		graphics::IMesh::POSITION, 3,

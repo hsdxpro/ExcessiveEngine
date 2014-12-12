@@ -226,7 +226,7 @@ bool Mesh::update(MeshData data) {
 	IVertexBuffer* _vb = gapi->createVertexBuffer(vb_desc);
 	IIndexBuffer* _ib = gapi->createIndexBuffer(ib_desc);
 
-	_vb->update((char*)data.vertex_data, vb_desc.size, 0);
+	_vb->update((char*)packed_vertex_data, vb_desc.size, 0);
 	_ib->update((char*)data.index_data, ib_desc.size, 0);
 
 	if (!_ib || !_vb) {
@@ -346,9 +346,9 @@ bool Mesh::validate(size_t num_verts,
 void PackPosition(void* input, void* output) {
 	float* in = (float*)input;
 	float* out = (float*)output;
-	in[0] = out[0];
-	in[1] = out[1];
-	in[2] = out[2];
+	out[0] = in[0];
+	out[1] = in[1];
+	out[2] = in[2];
 }
 
 void PackNormal(void* input, void* output) {

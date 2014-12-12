@@ -20,7 +20,16 @@ static const char vertexShaderCode[] =
 "layout(location = 0) in vec3 in_vertex; \n"
 "void main() \n"
 "{ \n"
-"  gl_Position = vec4(in_vertex * 0.2f, 1.0f); \n"
+"  mat3 mz = mat3("
+"  cos(0.78f), -sin(0.78f), 0,"
+"  sin(0.78f), cos(0.78f), 0,"
+"  0, 0, 1);"
+"  mat3 mx = mat3("
+"  1, 0, 0,"
+"  0, cos(0.78f), -sin(0.78f),"
+"  0, sin(0.78f), cos(0.78f));"
+"  vec3 pos = mx * mz * (in_vertex * 0.2f); \n"
+"  gl_Position = vec4(pos, pos.z+1);\n"
 "} \n"
 ;
 
@@ -192,6 +201,7 @@ void GraphicsEngineRaster::update() {
 		// set vertex buffer
 		gapi->setVertexBuffers(&posInfo.buffer, &attrib, 1);
 		// set index buffer
+		auto ib = mesh->getIndexBuffer();
 		gapi->setIndexBuffer(mesh->getIndexBuffer());
 
 		// draw
