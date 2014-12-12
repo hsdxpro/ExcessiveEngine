@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstdint>
 #include <mymath/mymath.h>
+#include "../../Common/src/BasicTypes.h"
 
 // TODO
 #include <string>
@@ -10,7 +10,7 @@ class ITextureView;
 
 ////////////////////////////////////////
 // depth stencil
-enum class eCompareFunc : uint32_t
+enum class eCompareFunc : u32
 {
 	SHALL_NOT_PASS = 0,
 	EQUAL,
@@ -30,7 +30,7 @@ struct rDepthState
 	eCompareFunc func;
 };
 
-enum class eStencilAction : uint32_t
+enum class eStencilAction : u32
 {
 	KEEP = 0,
 	ZERO_OUT,
@@ -56,14 +56,14 @@ struct rStencilState
 
 ////////////////////////////////////////
 // blending
-enum class eBlendEquation : uint32_t
+enum class eBlendEquation : u32
 {
 	SRC_PLUS_DEST = 0,
 	SRC_MINUS_DEST,
 	B_MINUS_A, MIN, MAX
 };
 
-enum class eBlendFunc : uint32_t
+enum class eBlendFunc : u32
 {
 	ZERO_OUT = 0, ONE_OUT, SRC_COLOR, ONE_MIN_SRC_COLOR, DST_COLOR, ONE_MIN_DST_COLOR,
 	SRC_ALPHA, ONE_MINUS_SRC_ALPHA, DST_ALPHA, ONE_MINUS_DST_ALPHA, CONSTANT_COLOR,
@@ -82,17 +82,17 @@ struct rBlendState
 
 ////////////////////////////////////////
 // rasterization
-enum class eRasterizationMode : uint32_t
+enum class eRasterizationMode : u32
 {
 	POINT = 0, WIREFRAME, SOLID
 };
 
-enum class eWhichFace : uint32_t//!! redundancy *
+enum class eWhichFace : u32//!! redundancy *
 {
 	FRONT = 0, BACK, FRONT_AND_BACK
 };
 
-enum class eVertexOrder : uint32_t //!! redundancy *
+enum class eVertexOrder : u32 //!! redundancy *
 {
 	CLOCKWISE = 0, COUNTER_CLOCKWISE
 };
@@ -120,7 +120,7 @@ struct rRenderTargetInfo
 	unsigned target_layer;
 };
 
-enum class eVertexAttribType : uint32_t
+enum class eVertexAttribType : u32
 {
 	FLOAT = 0, SINT, UINT, SNORM, UNORM, 
 };

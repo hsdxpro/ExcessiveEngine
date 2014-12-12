@@ -221,7 +221,7 @@ bool Mesh::update(MeshData data) {
 	ib_desc.is_writable = true;
 	ib_desc.is_persistent = false;
 	ib_desc.prefer_cpu_storage = false;
-	ib_desc.size = data.index_num * sizeof(uint32_t);
+	ib_desc.size = data.index_num * sizeof(u32);
 
 	IVertexBuffer* _vb = gapi->createVertexBuffer(vb_desc);
 	IIndexBuffer* _ib = gapi->createIndexBuffer(ib_desc);
@@ -297,7 +297,7 @@ void Mesh::reset() {
 
 // optimize data for gpu drawing
 void Mesh::optimize(void* vertex_data, size_t num_verts, int vertex_stride,
-	uint32_t* index_data, size_t num_indices,
+	u32* index_data, size_t num_indices,
 	size_t* mat_ids, size_t num_mat_ids)
 {
 	// TODO: implement
@@ -307,7 +307,7 @@ void Mesh::optimize(void* vertex_data, size_t num_verts, int vertex_stride,
 
 // validate data for out-of-bound cases
 bool Mesh::validate(size_t num_verts,
-	uint32_t* index_data, size_t num_indices,
+	u32* index_data, size_t num_indices,
 	size_t* mat_ids, size_t num_mat_ids)
 {
 	// criteria:
@@ -355,7 +355,7 @@ void PackNormal(void* input, void* output) {
 	float x = ((float*)input)[0],
 		y = ((float*)input)[1],
 		z = ((float*)input)[2];
-	uint16_t* out = (uint16_t*)output;
+	u16* out = (u16*)output;
 	out[0] = 65535.f*(0.5f + 0.5f*x);
 	out[1] = 32767.5f*(0.5f + 0.5f*y) + (z > 0.0f) * 32767.5;
 }
@@ -498,15 +498,15 @@ const Mesh::ElementInfo* Mesh::getElements() const {
 
 
 // don't even try to understand it... http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
-static inline int NumBitsSet(uint32_t v) {
+static inline int NumBitsSet(u32 v) {
 	v = v - ((v >> 1) & 0x55555555);
 	v = (v & 0x33333333) + ((v >> 2) & 0x33333333);
 	return ((v + (v >> 4) & 0xF0F0F0F) * 0x1010101) >> 24;
 }
 
-uint64_t Mesh::getElementConfigId() const {
-	uint64_t id = 0;
-	uint32_t comp = 0;
+u64 Mesh::getElementConfigId() const {
+	u64 id = 0;
+	u32 comp = 0;
 
 	// calculate composition
 	// see http://en.wikipedia.org/wiki/Composition_(combinatorics) for nice drawing about binary representation

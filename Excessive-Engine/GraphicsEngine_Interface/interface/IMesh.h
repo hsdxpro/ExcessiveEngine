@@ -22,7 +22,7 @@ public:
 	virtual void load(const wchar_t* file_path) = 0;
 
 	// vertex format
-	enum ElementSemantic : uint32_t {
+	enum ElementSemantic : u32 {
 		POSITION	= 1 << 0,
 		NORMAL		= 1 << 1,
 		TEX0		= 1 << 2,
@@ -47,7 +47,7 @@ public:
 
 	struct ElementDesc {
 		ElementSemantic semantic;
-		uint32_t num_components;
+		u32 num_components;
 	};
 
 	// new modify
@@ -55,8 +55,8 @@ public:
 		void* vertex_data; // tightly packed, in increasing order by type value, all 32 bit float
 		size_t vertex_bytes; // size of the whole vertex_data
 		ElementDesc* vertex_elements; // elements of a vertex
-		uint32_t vertex_elements_num; // how many elements are there in a vertex
-		uint32_t* index_data; // 32 bit, tightly packed
+		u32 vertex_elements_num; // how many elements are there in a vertex
+		u32* index_data; // 32 bit, tightly packed
 		size_t index_num; // 3 per face
 		size_t* mat_ids;
 		size_t mat_ids_num; // only beginning of each group, ending calculated, in order

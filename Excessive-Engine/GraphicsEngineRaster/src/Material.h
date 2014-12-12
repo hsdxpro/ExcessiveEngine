@@ -26,15 +26,15 @@ public:
 
 	// modify
 	SubMaterial& addSubMaterial() override;
-	int32_t getNumSubMaterials() const override;
-	void setNumSubMaterials(int32_t n) override;
-	void deleteSubMaterial(int32_t index) override;
+	i32 getNumSubMaterials() const override;
+	void setNumSubMaterials(i32 n) override;
+	void deleteSubMaterial(i32 index) override;
 
-	SubMaterial& getSubMaterial(int32_t index) override;
-	const SubMaterial& getSubMaterial(int32_t index) const override;
+	SubMaterial& getSubMaterial(i32 index) override;
+	const SubMaterial& getSubMaterial(i32 index) const override;
 
-	SubMaterial& operator[](int32_t index);
-	const SubMaterial& operator[](int32_t index) const;
+	SubMaterial& operator[](i32 index);
+	const SubMaterial& operator[](i32 index) const;
 private:
 	size_t refcount;
 	std::vector<SubMaterial> sub_materials;

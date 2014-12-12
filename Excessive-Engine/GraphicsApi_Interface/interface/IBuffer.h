@@ -1,12 +1,13 @@
 #pragma once
 
-#include <cstdint>
+#include "../../Common/src/BasicTypes.h"
+
 
 class IBuffer
 {
 public:
 	struct rDesc {
-		uint32_t size;
+		u32 size;
 		bool is_readable;
 		bool is_writable;
 		bool is_persistent;

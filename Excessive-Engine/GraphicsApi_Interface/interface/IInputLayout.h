@@ -28,9 +28,9 @@ struct InputElement
 {
 	char name[65]; // variable name (or semantic) in shader
 	eVertexAttribType type; // @see eVertexAttribType
-	uint32_t num_components; // vector's dimension
-	uint32_t offset; // this element begins $ bytes offseted from start of vertex
-	uint32_t stream_index; // in which vertex stream
+	u32 num_components; // vector's dimension
+	u32 offset; // this element begins $ bytes offseted from start of vertex
+	u32 stream_index; // in which vertex stream
 
 	void setName(const char* str) { // just to make life easier
 		int i = 0;

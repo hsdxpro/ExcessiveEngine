@@ -107,7 +107,7 @@ int Ricsi() {
 		1, -1, -1,
 		-1, -1, -1,
 	};
-	uint32_t indices[] = {
+	u32 indices[] = {
 		1,0,2, // top
 		2,3,0,
 		4,5,6, // bottom
@@ -129,7 +129,7 @@ int Ricsi() {
 	data.vertex_elements = elements;
 	data.vertex_elements_num = 1;
 	data.index_data = indices;
-	data.index_num = sizeof(indices) / sizeof(uint32_t);
+	data.index_num = sizeof(indices) / sizeof(u32);
 	data.mat_ids = nullptr;
 	data.mat_ids_num = 0;
 

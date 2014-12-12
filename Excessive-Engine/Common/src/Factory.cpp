@@ -26,7 +26,7 @@ graphics::IGraphicsEngine* Factory::createGraphicsEngineRaster(const graphics::r
 	}
 	return CreateGraphicsEngine(d);
 #elif BUILD_STATIC	
-	return new graphics::GraphicsEngineRaster(d);
+	return new GraphicsEngineRaster(d);
 #endif
 }
 

@@ -156,7 +156,7 @@ void GraphicsEngineRaster::update() {
 	cout << entities.size() << " entities to be drawn..." << endl;
 
 	// mesh type store
-	static std::unordered_map<uint64_t, rVertexAttrib> meshFormats;
+	static std::unordered_map<u64, rVertexAttrib> meshFormats;
 
 	// for each entity
 	int num_drawn = 0;
@@ -167,7 +167,7 @@ void GraphicsEngineRaster::update() {
 			cout << "Entity has no mesh :(" << endl;
 			continue;
 		}
-		uint64_t meshId = mesh->getElementConfigId();
+		u64 meshId = mesh->getElementConfigId();
 		rVertexAttrib attrib;
 
 		Mesh::ElementInfo posInfo;
@@ -187,7 +187,7 @@ void GraphicsEngineRaster::update() {
 			attrib.type = eVertexAttribType::FLOAT;
 			attrib.size = attrib.divisor = 0;
 
-			meshFormats.insert(std::pair<uint64_t, rVertexAttrib>(meshId, attrib));
+			meshFormats.insert(std::pair<u64, rVertexAttrib>(meshId, attrib));
 		}
 		else {
 			attrib = it->second;
@@ -205,7 +205,7 @@ void GraphicsEngineRaster::update() {
 		gapi->setIndexBuffer(mesh->getIndexBuffer());
 
 		// draw
-		unsigned num_indices = mesh->getIndexBuffer()->getDesc().size / sizeof(uint32_t);
+		unsigned num_indices = mesh->getIndexBuffer()->getDesc().size / sizeof(u32);
 		gapi->draw(num_indices);
 		rDepthState ds;
 		ds.enable_test = false;

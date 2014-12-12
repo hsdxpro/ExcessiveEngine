@@ -79,7 +79,7 @@ public:
 
 	// format of the data stored
 
-	enum ElementType : uint32_t {
+	enum ElementType : u32 {
 		FLOAT = 1,
 		SINT,
 		UINT,
@@ -93,8 +93,8 @@ public:
 		size_t offset; // offset from beginning of vertex
 		ElementSemantic semantic;
 		ElementType type;
-		uint32_t width;
-		uint32_t num_components;
+		u32 width;
+		u32 num_components;
 	};
 
 	// defines a stream
@@ -107,7 +107,7 @@ public:
 	bool getElementBySemantic(ElementInfo& info, ElementSemantic semantic) const;
 	int getElementsNum() const;
 	const ElementInfo* getElements() const;
-	uint64_t getElementConfigId() const;
+	u64 getElementConfigId() const;
 
 	IIndexBuffer* getIndexBuffer() { return ib; }
 	const std::vector<size_t>& getMaterialIds() { return mat_ids; }
@@ -116,12 +116,12 @@ public:
 protected:
 	// optimize data for gpu drawing
 	void optimize(void* vertex_data, size_t num_verts, int vertex_stride,
-		uint32_t* index_data, size_t num_indices,
+		u32* index_data, size_t num_indices,
 		size_t* mat_ids, size_t num_mat_ids);
 
 	// validate data for out-of-bound cases
 	bool validate(size_t num_verts,
-		uint32_t* index_data, size_t num_indices,
+		u32* index_data, size_t num_indices,
 		size_t* mat_ids, size_t num_mat_ids);
 
 
