@@ -59,3 +59,5 @@ if(BUILD_EXCESSIVE_WITH_DLL)
 elseif( NOT BUILD_EXCESSIVE_WITH_DLL)
 	add_library( GraphicsEngineRaster STATIC ${sources} ${headers} ${interfaces} )
 endif()
+
+target_link_libraries( GraphicsEngineRaster assimp)

@@ -12,7 +12,6 @@ public:
 	////////////////////////////////////
 	// Mesh functions
 
-	bool loadMesh(graphics::IMesh* mesh, const char* filePath) override;
 	bool loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) override;
 	bool genMesh_Teapot(graphics::IMesh* mesh, float radius, int tesselation) override;
 	bool getMesh_Box(graphics::IMesh* mesh, float length, float width, float heigh) override;

@@ -17,11 +17,6 @@ public:
 	////////////////////////////////////
 	// Mesh functions
 
-	/// Load a mesh from file.
-	/// Supported formats are the following: none.
-	/// \return Indicates success.
-	virtual bool loadMesh(IMesh* mesh, const char* filePath) = 0;
-
 	/// Load a mesh from file
 	/// Supported formats are the following: none.
 	/// \return Indicates success.

@@ -7,7 +7,7 @@
 #include "..\GraphicsApi_Interface\interface\IGapi.h"
 
 #include <conio.h>
-
+#include <string>
 #include <chrono>
 #include <thread>
 
@@ -141,6 +141,10 @@ int Ricsi() {
 	else {
 		cout << "Mesh created!" << endl;
 	}
+
+
+	
+	Factory::createResourceLoader()->loadMesh(mesh, (Sys::getWorkDir() + std::wstring(L"demo_ground.dae")).c_str());
 
 	// Assign mesh to entity
 	entity->setMesh(mesh);

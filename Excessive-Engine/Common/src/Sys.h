@@ -119,5 +119,5 @@ public:
 	static bool			unloadDLL(DLLHandle h);
 
 	static void*		getDllProcAddress(DLLHandle h, const std::string& procName);
-	static std::string	getWorkDir();
+	static std::wstring	getWorkDir();
 };

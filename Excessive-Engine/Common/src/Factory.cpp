@@ -13,6 +13,8 @@
 	#include "..\GraphicsApiGL\src\GapiGL.h"
 #endif
 
+#include "..\GraphicsEngineRaster\src\ResourceLoader.h"
+
 graphics::IGraphicsEngine* Factory::createGraphicsEngineRaster(const graphics::rGraphicsEngine& d) {
 #ifdef BUILD_DLL
 	using CreateT = graphics::IGraphicsEngine*(*)(const graphics::rGraphicsEngine& d);
@@ -30,6 +32,9 @@ graphics::IGraphicsEngine* Factory::createGraphicsEngineRaster(const graphics::r
 #endif
 }
 
+graphics::IResourceLoader* Factory::createResourceLoader() {
+	return (graphics::IResourceLoader*)new ResourceLoader;
+}
 IGapi* Factory::createGapiGL() {
 #ifdef BUILD_DLL	
 	return ((IGapi*(*)())Sys::getDllProcAddress(Sys::loadDLL(Sys::getWorkDir() + "GraphicsApiGL"), "createGraphicsApi"))();
