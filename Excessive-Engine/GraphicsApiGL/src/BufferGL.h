@@ -6,7 +6,7 @@
 class BufferGL : public IBuffer
 {
   public:
-    rDesc adata;
+	rBuffer adata;
     GLuint id;
 
     void destroy() override;

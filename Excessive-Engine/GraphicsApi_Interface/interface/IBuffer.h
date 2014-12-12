@@ -1,18 +1,18 @@
 #pragma once
 
-#include <cstdint>
+#include "../../Common/src/BasicTypes.h"
 
-class IBuffer
-{
-public:
-	struct rDesc {
-		uint32_t size;
+struct rBuffer {
+	u32 size;
 		bool is_readable;
 		bool is_writable;
 		bool is_persistent;
 		bool prefer_cpu_storage;
 		void* initial_data;
 	};
+
+class IBuffer
+{
 public:
 	virtual void destroy() = 0;
 	virtual void update(void* data, unsigned size, unsigned offset) = 0;
@@ -24,18 +24,18 @@ public:
 
 class IVertexBuffer : public IBuffer
 {
-public:
-
+  public:
+    
 };
 
 class IIndexBuffer : public IBuffer
 {
-public:
-
+  public:
+    
 };
 
 class IUniformBuffer : public IBuffer
 {
-public:
-
+  public:
+    
 };

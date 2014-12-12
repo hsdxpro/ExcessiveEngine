@@ -29,7 +29,7 @@ void BufferGL::getSubData(void* data, unsigned size, unsigned offset)
 	}*/
 }
 
-auto BufferGL::getDesc() -> rDesc
+auto BufferGL::getDesc() -> rBuffer
 {
 	return adata;
 }

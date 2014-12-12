@@ -15,11 +15,11 @@ class GapiGL : public IGapi
 	IShaderProgram* createShaderProgram(const rShaderPaths& data) override;
 	IShaderProgram* createShaderProgram(const rShaderSources& data) override;
 
-	IUniformBuffer* createUniformBuffer(const IUniformBuffer::rDesc& data) override;
-	IVertexBuffer*	createVertexBuffer(const IVertexBuffer::rDesc& data) override;
+	IUniformBuffer* createUniformBuffer(const rBuffer& data) override;
+	IVertexBuffer*	createVertexBuffer(const rBuffer& data) override;
 	ITexture*		createTexture(const rTexture& data) override;
 	ITexture*		createTexture(const char* path) override;
-	IIndexBuffer*	createIndexBuffer(const IIndexBuffer::rDesc& data) override;
+	IIndexBuffer*	createIndexBuffer(const rBuffer& data) override;
     
 	void WriteTexture(ITexture* t, const rTextureUpdate& d);
 	

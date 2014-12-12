@@ -1,6 +1,5 @@
 #include "Mesh.h"
 #include <mymath/mymath.h>
-#include <cstdint>
 #include <iostream>
 #include <bitset>
 
@@ -46,7 +45,7 @@ __declspec(dllexport) void TestGraphicsEngine() {
 	};
 
 	// indices
-	uint32_t indices[30];
+	u32 indices[30];
 	for (int i = 0; i < 30; i++) {
 		indices[i] = i;
 	}
@@ -79,9 +78,9 @@ __declspec(dllexport) void TestGraphicsEngine() {
 		cout << "Normal found!" << endl;
 	}
 
-	uint64_t id = m.getElementConfigId();
+	u64 id = m.getElementConfigId();
 	unsigned composition = id & 0x7FFFF; // lower 19 bits
-	uint64_t components = id >> 19;
+	u64 components = id >> 19;
 	
 	cout << "id = " << bitset<64>(id) << endl;
 	cout << "composition = " << bitset<19>(composition) << endl;

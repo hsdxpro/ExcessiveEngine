@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdint>
+#include "..\Common\src\BasicTypes.h"
 
 // namespace
 namespace graphics {
@@ -37,11 +37,11 @@ public:
 
 	// manage contents
 	virtual SubMaterial& addSubMaterial() = 0; // returns ref
-	virtual int32_t getNumSubMaterials() const = 0;
-	virtual void setNumSubMaterials(int32_t n) = 0; // warning! stuff is deleted
-	virtual void deleteSubMaterial(int32_t index) = 0;
-	virtual SubMaterial& getSubMaterial(int32_t index) = 0;
-	virtual const SubMaterial& getSubMaterial(int32_t index) const = 0;
+	virtual i32 getNumSubMaterials() const = 0;
+	virtual void setNumSubMaterials(i32 n) = 0; // warning! stuff is deleted
+	virtual void deleteSubMaterial(i32 index) = 0;
+	virtual SubMaterial& getSubMaterial(i32 index) = 0;
+	virtual const SubMaterial& getSubMaterial(i32 index) const = 0;
 };
 
 } // namespace

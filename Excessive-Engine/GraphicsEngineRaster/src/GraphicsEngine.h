@@ -23,7 +23,6 @@ public:
 	~GraphicsEngineRaster();
 	bool isConstructionSucceeded() const { return isValid; }
 
-	//void init(const IGraphicsEngine::rDesc& d);
 	void release() override;
 
 	// create stuff

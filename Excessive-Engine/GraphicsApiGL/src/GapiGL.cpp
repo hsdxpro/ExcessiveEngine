@@ -106,7 +106,7 @@ IShaderProgram* GapiGL::createShaderProgram(const rShaderSources& data)
 	return sp;
 }
 
-IUniformBuffer* GapiGL::createUniformBuffer(const IUniformBuffer::rDesc& data)
+IUniformBuffer* GapiGL::createUniformBuffer(const rBuffer& data)
 {
 	UniformBufferGL* ubo = new UniformBufferGL();
 	glGenBuffers(1, &ubo->id);
@@ -130,7 +130,7 @@ IUniformBuffer* GapiGL::createUniformBuffer(const IUniformBuffer::rDesc& data)
 	return ubo;
 }
 
-IVertexBuffer* GapiGL::createVertexBuffer(const IVertexBuffer::rDesc& data)
+IVertexBuffer* GapiGL::createVertexBuffer(const rBuffer& data)
 {
 	VertexBufferGL* vbo = new VertexBufferGL();
 	glGenBuffers(1, &vbo->id);
@@ -267,7 +267,7 @@ ITexture* GapiGL::createTexture(const char* path)
 	return tex;
 }
 
-IIndexBuffer* GapiGL::createIndexBuffer(const IIndexBuffer::rDesc& data)
+IIndexBuffer* GapiGL::createIndexBuffer(const rBuffer& data)
 {
 	IndexBufferGL* ibo = new IndexBufferGL();
 	glGenBuffers(1, &ibo->id);
