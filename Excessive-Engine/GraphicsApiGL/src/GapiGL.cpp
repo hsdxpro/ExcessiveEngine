@@ -86,6 +86,7 @@ GLenum raster_order_data[] =
 	GL_CW, GL_CCW
 };
 
+/*
 IShaderProgram* GapiGL::createShaderProgram(const rShaderPaths& data)
 {
 	// TODO
@@ -105,6 +106,7 @@ IShaderProgram* GapiGL::createShaderProgram(const rShaderSources& data)
 	sp->link();
 	return sp;
 }
+*/
 
 IUniformBuffer* GapiGL::createUniformBuffer(const rBuffer& data)
 {

@@ -3,13 +3,10 @@
 #include <vector>
 #include "custom_assert.h"
 
-#define DEBUG_SHADER_ERRORS
-#define INFOLOG_SIZE 32768
-
 using namespace std;
 
-//TODO add error checking in debug mode maybe?
 
+// Remove this unless necessary.
 //should be indexed by an eShaderType enum
 GLenum shader_types[] =
 {
@@ -17,41 +14,28 @@ GLenum shader_types[] =
 	GL_GEOMETRY_SHADER, GL_FRAGMENT_SHADER, GL_COMPUTE_SHADER
 };
 
+
 void ShaderProgramGL::destroy()
 {
-	glDeleteProgram(id);
-	id = 0;
+	glDeleteProgram(program);
+	program = 0;
 }
 
-void ShaderProgramGL::addShader(const char* src, eShaderType type)
+
+bool ShaderProgramGL::compile(
+	const char* vertex_shader,
+	const char* pixel_shader,
+	const char* geometry_shader = nullptr,
+	const char* tesselation_control_shader = nullptr,
+	const char* tesselation_evaluation_shader = nullptr)
 {
-	GLuint shader_id = glCreateShader(shader_types[type]);
-	glShaderSource(shader_id, 1, &src, 0);
-	glCompileShader(shader_id);
 
-#ifdef DEBUG_SHADER_ERRORS
-	GLchar infolog[INFOLOG_SIZE];
-	infolog[0] = '\0';
-	glGetShaderInfoLog(shader_id, INFOLOG_SIZE, 0, infolog);
-	cerr << infolog << endl;
-#endif
 
-	glAttachShader(id, shader_id);
-	glDeleteShader(shader_id);
 }
 
-void ShaderProgramGL::link()
-{
-	glLinkProgram(id);
 
-#ifdef DEBUG_SHADER_ERRORS
-	GLchar infolog[INFOLOG_SIZE];
-	infolog[0] = '\0';
-	glGetProgramInfoLog(id, INFOLOG_SIZE, 0, infolog);
-	cerr << infolog << endl;
-#endif
-}
 
+// TODO: I could not get it working with the new signature (Peti)
 size_t ShaderProgramGL::getBinary(void* data, size_t max_size)
 {
 	// well, it ain't gonna work out that way 
@@ -87,7 +71,8 @@ size_t ShaderProgramGL::getBinary(void* data, size_t max_size)
 	return 0;
 }
 
-void ShaderProgramGL::loadFromBinary(void* data, size_t size)
+// TODO: I could not get it working with the new signature (Peti)
+bool ShaderProgramGL::loadBinary(void* data, size_t size)
 {
 	// neither will this
 	/*
@@ -104,6 +89,13 @@ void ShaderProgramGL::loadFromBinary(void* data, size_t size)
 	*/
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+// REVIEW CODE BELOW
+
+
+// May only be kept for internal stuff.
+// Depracated API
 int ShaderProgramGL::getUniformBlockIndex(const char* str)
 {
 	ASSERT(str);
@@ -130,3 +122,40 @@ int ShaderProgramGL::getRenderTargetIndex(const char* str)
 	ASSERT(str);
 	return glGetFragDataLocation(id, str);
 }
+
+
+// Deprecated API
+/*
+void ShaderProgramGL::addShader(const char* src, eShaderType type)
+{
+GLuint shader_id = glCreateShader(shader_types[type]);
+glShaderSource(shader_id, 1, &src, 0);
+glCompileShader(shader_id);
+
+#ifdef DEBUG_SHADER_ERRORS
+GLchar infolog[INFOLOG_SIZE];
+infolog[0] = '\0';
+glGetShaderInfoLog(shader_id, INFOLOG_SIZE, 0, infolog);
+cerr << infolog << endl;
+#endif
+
+glAttachShader(id, shader_id);
+glDeleteShader(shader_id);
+}
+*/
+
+
+// Deprecated API
+/*
+void ShaderProgramGL::link()
+{
+glLinkProgram(id);
+
+#ifdef DEBUG_SHADER_ERRORS
+GLchar infolog[INFOLOG_SIZE];
+infolog[0] = '\0';
+glGetProgramInfoLog(id, INFOLOG_SIZE, 0, infolog);
+cerr << infolog << endl;
+#endif
+}
+*/
