@@ -8,8 +8,6 @@
 #include "IShaderProgram.h"
 #include "IInputLayout.h"
 
-#include <cstdint>
-
 
 class IGapi
 {

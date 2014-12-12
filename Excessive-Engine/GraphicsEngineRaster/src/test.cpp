@@ -1,6 +1,5 @@
 #include "Mesh.h"
 #include <mymath/mymath.h>
-#include <cstdint>
 #include <iostream>
 #include <bitset>
 

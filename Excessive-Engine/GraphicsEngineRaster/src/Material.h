@@ -2,7 +2,6 @@
 
 #include <mymath/mymath.h>
 #include <vector>
-#include <cstdint>
 #include "../GraphicsEngine_Interface/interface/IMaterial.h"
 
 class Texture;
