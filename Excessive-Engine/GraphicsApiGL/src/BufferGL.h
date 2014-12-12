@@ -6,11 +6,11 @@
 class BufferGL : public IBuffer
 {
   public:
-    rDesc adata;
+	rBuffer adata;
     GLuint id;
 
     void destroy() override;
     void update(char* data, unsigned size, unsigned offset) override; 
     void getSubData(char* data, unsigned size, unsigned offset) override;
-    rDesc getDesc() override;
+	rBuffer getDesc() override;
 };

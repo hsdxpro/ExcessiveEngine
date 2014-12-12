@@ -209,14 +209,14 @@ bool Mesh::update(MeshData data) {
 	//	vertex buffers are subject to change
 
 	// create and fill vertex arrays
-	IVertexBuffer::rDesc vb_desc;
+	rBuffer vb_desc;
 	vb_desc.is_readable = false;
 	vb_desc.is_writable = false;
 	vb_desc.is_persistent = true;
 	vb_desc.prefer_cpu_storage = false;
 	vb_desc.size = internal_stride * num_vertices;
 
-	IIndexBuffer::rDesc ib_desc;
+	rBuffer ib_desc;
 	ib_desc.is_readable = false;
 	ib_desc.is_writable = true;
 	ib_desc.is_persistent = false;

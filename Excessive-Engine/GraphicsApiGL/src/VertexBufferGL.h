@@ -26,7 +26,7 @@ class VertexBufferGL : public BufferGL, public IVertexBuffer
 		BufferGL::getSubData(data, size, offset);
     }
 
-    rDesc getDesc()
+	rBuffer getDesc()
     {
 		return BufferGL::getDesc();
     }

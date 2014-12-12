@@ -182,21 +182,21 @@ int main(int argc, char** args)
 	texcoords.push_back(vec2(1, 1));
 	texcoords.push_back(vec2(0, 1));
 
-	IBuffer::rDesc tex_alloc_data;
+	rBuffer tex_alloc_data;
 	tex_alloc_data.is_persistent = false;
 	tex_alloc_data.is_readable = false;
 	tex_alloc_data.is_writable = true;
 	tex_alloc_data.prefer_cpu_storage = false;
 	tex_alloc_data.size = texcoords.size() * sizeof(vec2);
 
-	IBuffer::rDesc vtx_alloc_data;
+	rBuffer vtx_alloc_data;
 	vtx_alloc_data.is_persistent = false;
 	vtx_alloc_data.is_readable = false;
 	vtx_alloc_data.is_writable = true;
 	vtx_alloc_data.prefer_cpu_storage = false;
 	vtx_alloc_data.size = vertices.size() * sizeof(vec3);
 
-	IBuffer::rDesc idx_alloc_data;
+	rBuffer idx_alloc_data;
 	idx_alloc_data.is_persistent = false;
 	idx_alloc_data.is_readable = false;
 	idx_alloc_data.is_writable = true;
@@ -214,7 +214,7 @@ int main(int argc, char** args)
 	idx_buf->update((char*)indices.data(), indices.size() * sizeof(unsigned), 0);
 
 	//set up the uniform buffer
-	IBuffer::rDesc ubo_alloc_data;
+	rBuffer ubo_alloc_data;
 	ubo_alloc_data.is_persistent = false;
 	ubo_alloc_data.is_readable = true;
 	ubo_alloc_data.is_writable = true;

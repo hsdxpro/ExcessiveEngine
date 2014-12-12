@@ -25,7 +25,7 @@ class IndexBufferGL : public BufferGL, public IIndexBuffer
       BufferGL::getSubData(data, size, offset);
     }
 
-    rDesc getDesc() override
+	rBuffer getDesc() override
     {
       return BufferGL::getDesc();
     }

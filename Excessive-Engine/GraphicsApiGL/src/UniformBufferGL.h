@@ -25,7 +25,7 @@ class UniformBufferGL : public BufferGL, public IUniformBuffer
       BufferGL::getSubData(data, size, offset);
     }
 
-    rDesc getDesc() override
+	rBuffer getDesc() override
     {
       return BufferGL::getDesc();
     }

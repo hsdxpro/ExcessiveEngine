@@ -15,9 +15,9 @@ class IGapi
 	virtual IShaderProgram* createShaderProgram(const rShaderPaths& data) = 0;
 	virtual IShaderProgram* createShaderProgram(const rShaderSources& data) = 0;
 
-	virtual IUniformBuffer* createUniformBuffer(const IUniformBuffer::rDesc& data) = 0;
-	virtual IVertexBuffer*	createVertexBuffer(const IVertexBuffer::rDesc& data) = 0;
-	virtual IIndexBuffer*	createIndexBuffer(const IIndexBuffer::rDesc& data) = 0;
+	virtual IUniformBuffer* createUniformBuffer(const rBuffer& data) = 0;
+	virtual IVertexBuffer*	createVertexBuffer(const rBuffer& data) = 0;
+	virtual IIndexBuffer*	createIndexBuffer(const rBuffer& data) = 0;
 	virtual ITexture*		createTexture(const rTexture& data) = 0;
 
 	// TODO Uram atyám teremtőm ezt minél hamarabb cseréljük le wchar_t* - ra
