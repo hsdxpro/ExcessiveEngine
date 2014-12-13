@@ -2,6 +2,11 @@
 
 #include "GL/glew.h"
 #include "../../GraphicsApi_Interface/interface/IGapi.h"
+#include "UniformBufferGL.h"
+#include "VertexBufferGL.h"
+#include "IndexBufferGL.h"
+#include "ShaderProgramGL.h"
+#include "TextureGL.h"
 
 
 class GapiGL : public IGapi
@@ -12,14 +17,28 @@ class GapiGL : public IGapi
 	GapiGL();
 
 	//IShaderProgram* createShaderProgram() override;
-	IShaderProgram* createShaderProgram(const rShaderPaths& data) override;
-	IShaderProgram* createShaderProgram(const rShaderSources& data) override;
+	//IShaderProgram* createShaderProgram(const rShaderPaths& data) override;
+	//IShaderProgram* createShaderProgram(const rShaderSources& data) override;
 
-	IUniformBuffer* createUniformBuffer(const rBuffer& data) override;
-	IVertexBuffer*	createVertexBuffer(const rBuffer& data) override;
-	ITexture*		createTexture(const rTexture& data) override;
-	ITexture*		createTexture(const char* path) override;
-	IIndexBuffer*	createIndexBuffer(const rBuffer& data) override;
+	ShaderProgramGL* createShaderSource(
+		const char* vertex_shader_source,
+		const char* pixel_shader_source,
+		const char* geometry_shader_source = nullptr,
+		const char* tess_control_shader_source = nullptr,
+		const char* tess_eval_shader_source = nullptr) override;
+	ShaderProgramGL* createShaderFile(
+		const wchar_t* vertex_shader_path,
+		const wchar_t* pixel_shader_path,
+		const wchar_t* geometry_shader_path = nullptr,
+		const wchar_t* tess_control_shader_path = nullptr,
+		const wchar_t* tess_eval_shader_path = nullptr) override;
+	ShaderProgramGL* createShaderBinary(void* data, size_t size) override;
+
+	UniformBufferGL* createUniformBuffer(const rBuffer& data) override;
+	VertexBufferGL*	createVertexBuffer(const rBuffer& data) override;
+	TextureGL*		createTexture(const rTexture& data) override;
+	TextureGL*		createTexture(const char* path) override;
+	IndexBufferGL*	createIndexBuffer(const rBuffer& data) override;
     
 	void WriteTexture(ITexture* t, const rTextureUpdate& d);
 	

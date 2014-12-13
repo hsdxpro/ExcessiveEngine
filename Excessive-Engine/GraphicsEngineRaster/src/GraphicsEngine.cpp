@@ -75,10 +75,7 @@ GraphicsEngineRaster::GraphicsEngineRaster(const graphics::rGraphicsEngine& d) {
 
 	// WARNING: temporary testing code
 	// create shaders
-	rShaderSources sources;
-	sources.psSrc = pixelShaderCode;
-	sources.vsSrc = vertexShaderCode;
-	shader = gapi->createShaderProgram(sources);
+	shader = gapi->createShaderSource(vertexShaderCode, pixelShaderCode);
 
 	u32 index = shader->getAttributeIndex("in_vertex");
 	cout << index;

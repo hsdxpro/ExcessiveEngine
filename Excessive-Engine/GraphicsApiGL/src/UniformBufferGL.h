@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IBuffer.h"
+#include "BufferGL.h"
 
 class UniformBufferGL : public BufferGL, public IUniformBuffer
 {

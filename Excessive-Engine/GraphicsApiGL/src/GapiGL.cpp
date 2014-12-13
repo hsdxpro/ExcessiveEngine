@@ -10,6 +10,7 @@
 #include "IndexBufferGL.h"
 
 #include <iostream>
+#include <functional>
 #include "SFML\Graphics\Image.hpp"
 using namespace std;
 
@@ -86,7 +87,7 @@ GLenum raster_order_data[] =
 	GL_CW, GL_CCW
 };
 
-/*
+/* DEPRECATED
 IShaderProgram* GapiGL::createShaderProgram(const rShaderPaths& data)
 {
 	// TODO
@@ -108,7 +109,154 @@ IShaderProgram* GapiGL::createShaderProgram(const rShaderSources& data)
 }
 */
 
-IUniformBuffer* GapiGL::createUniformBuffer(const rBuffer& data)
+
+
+ShaderProgramGL* GapiGL::createShaderSource(
+	const char* vertex_shader_source,
+	const char* pixel_shader_source,
+	const char* geometry_shader_source,
+	const char* tess_control_shader_source,
+	const char* tess_eval_shader_source)
+{
+	GLuint program_id;
+	GLuint vs=0, ps=0, tcs=0, tes=0, gs=0;
+	bool success = false;
+
+	// if success if set to false, frees everything when function returns
+	struct CleanupT {
+		std::function<void()> func;
+		~CleanupT() {
+			func();
+		};
+	} cleanup{[&]{if (!success) { glDeleteProgram(program_id); }}};
+
+	// create program
+	program_id = glCreateProgram();
+	if (program_id == 0) {
+		return nullptr;
+	}
+
+	// create, compile, and add shaders one-by-one
+
+	// vertex shader
+	if (vertex_shader_source) {
+		GLuint id = glCreateShader(GL_VERTEX_SHADER);
+		glShaderSource(id, 1, &vertex_shader_source, 0);
+		glCompileShader(id);
+		GLint result;
+		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+		if (result == GL_FALSE) {
+			// obtain error message and display it
+			/* ... */
+			
+			return nullptr;
+		}
+		glAttachShader(program_id, id);
+		glDeleteShader(id);
+	}
+
+	// pixel shader
+	if (pixel_shader_source) {
+		GLuint id = glCreateShader(GL_FRAGMENT_SHADER);
+		glShaderSource(id, 1, &pixel_shader_source, 0);
+		glCompileShader(id);
+		GLint result;
+		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+		if (result == GL_FALSE) {
+			// obtain error message and display it
+			/* ... */
+
+			return nullptr;
+		}
+		glAttachShader(program_id, id);
+		glDeleteShader(id);
+	}
+
+	// geometry shader
+	if (geometry_shader_source) {
+		GLuint id = glCreateShader(GL_GEOMETRY_SHADER);
+		glShaderSource(id, 1, &geometry_shader_source, 0);
+		glCompileShader(id);
+		GLint result;
+		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+		if (result == GL_FALSE) {
+			// obtain error message and display it
+			/* ... */
+
+			return nullptr;
+		}
+		glAttachShader(program_id, id);
+		glDeleteShader(id);
+	}
+
+	// tesselation control shader
+	if (tess_control_shader_source) {
+		GLuint id = glCreateShader(GL_TESS_CONTROL_SHADER);
+		glShaderSource(id, 1, &tess_control_shader_source, 0);
+		glCompileShader(id);
+		GLint result;
+		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+		if (result == GL_FALSE) {
+			// obtain error message and display it
+			/* ... */
+
+			return nullptr;
+		}
+		glAttachShader(program_id, id);
+		glDeleteShader(id);
+	}
+
+	// tesselation evaluation shader
+	if (tess_eval_shader_source) {
+		GLuint id = glCreateShader(GL_TESS_EVALUATION_SHADER);
+		glShaderSource(id, 1, &tess_eval_shader_source, 0);
+		glCompileShader(id);
+		GLint result;
+		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+		if (result == GL_FALSE) {
+			// obtain error message and display it
+			/* ... */
+
+			return nullptr;
+		}
+		glAttachShader(program_id, id);
+		glDeleteShader(id);
+	}
+
+	// check if the program is linked successfully
+	glLinkProgram(program_id);
+	GLint is_linked = 0;
+	glGetProgramiv(program_id, GL_LINK_STATUS, &is_linked);
+	if (!is_linked) {
+		glDeleteProgram(program_id);
+		return nullptr;
+	}
+
+	// finally, create the shader program
+	// hope that fucker can allocate...
+	success = true;
+	ShaderProgramGL* shader_program = new ShaderProgramGL(program_id);
+	return shader_program;
+}
+
+ShaderProgramGL* GapiGL::createShaderFile(
+	const wchar_t* vertex_shader_path,
+	const wchar_t* pixel_shader_path,
+	const wchar_t* geometry_shader_path,
+	const wchar_t* tess_control_shader_path,
+	const wchar_t* tess_eval_shader_path)
+{
+	return nullptr;
+}
+
+ShaderProgramGL* GapiGL::createShaderBinary(void* data, size_t size)
+{
+	return nullptr;
+}
+
+
+
+UniformBufferGL* GapiGL::createUniformBuffer(const rBuffer& data)
 {
 	UniformBufferGL* ubo = new UniformBufferGL();
 	glGenBuffers(1, &ubo->id);
@@ -132,7 +280,7 @@ IUniformBuffer* GapiGL::createUniformBuffer(const rBuffer& data)
 	return ubo;
 }
 
-IVertexBuffer* GapiGL::createVertexBuffer(const rBuffer& data)
+VertexBufferGL* GapiGL::createVertexBuffer(const rBuffer& data)
 {
 	VertexBufferGL* vbo = new VertexBufferGL();
 	glGenBuffers(1, &vbo->id);
@@ -156,7 +304,7 @@ IVertexBuffer* GapiGL::createVertexBuffer(const rBuffer& data)
 	return vbo;
 }
 
-ITexture* GapiGL::createTexture(const rTexture& data)
+TextureGL* GapiGL::createTexture(const rTexture& data)
 {
 	TextureGL* tex = new TextureGL();
 	glGenTextures(1, &tex->ID);
@@ -238,7 +386,7 @@ ITexture* GapiGL::createTexture(const rTexture& data)
 	return tex;
 }
 
-ITexture* GapiGL::createTexture(const char* path)
+TextureGL* GapiGL::createTexture(const char* path)
 {
 	sf::Image im;
 	im.loadFromFile(path);
@@ -252,7 +400,7 @@ ITexture* GapiGL::createTexture(const char* path)
 	texdata.is_layered = false;
 	texdata.num_levels = 1;
 
-	ITexture* tex = createTexture(texdata);
+	TextureGL* tex = createTexture(texdata);
 
 	rTextureUpdate texupdata;
 	texupdata.data = (char*)im.getPixelsPtr();
@@ -269,7 +417,7 @@ ITexture* GapiGL::createTexture(const char* path)
 	return tex;
 }
 
-IIndexBuffer* GapiGL::createIndexBuffer(const rBuffer& data)
+IndexBufferGL* GapiGL::createIndexBuffer(const rBuffer& data)
 {
 	IndexBufferGL* ibo = new IndexBufferGL();
 	glGenBuffers(1, &ibo->id);
@@ -500,7 +648,7 @@ void GapiGL::setSyncDebugOutput(bool val)
 void GapiGL::setShaderProgram(IShaderProgram* sp)
 {
 	ASSERT(sp);
-	glUseProgram(static_cast<ShaderProgramGL*>(sp)->id);
+	glUseProgram(static_cast<ShaderProgramGL*>(sp)->getProgramId());
 }
 
 void GapiGL::setTexture(ITexture* t, u32 idx)

@@ -94,10 +94,9 @@ int main(int argc, char** args)
 	gapi->setSyncDebugOutput(true);
 
 	//set up the shader program
-	rShaderSources r;
-	r.vsSrc = vshd;
-	r.psSrc = pshd;
-	auto sp = gapi->createShaderProgram(r);
+	auto sp = gapi->createShaderSource(vshd, pshd);
+	if (!sp)
+		return 0;
 
 
 	/**/

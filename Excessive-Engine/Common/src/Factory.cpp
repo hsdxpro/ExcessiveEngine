@@ -1,4 +1,6 @@
 #include "Factory.h"
+#include <locale>
+#include <codecvt>
 
 #ifdef	WIN
 	#include "..\CommonWin\src\Window.h"
@@ -36,9 +38,10 @@ graphics::IResourceLoader* Factory::createResourceLoader() {
 	return (graphics::IResourceLoader*)new ResourceLoader;
 }
 IGapi* Factory::createGapiGL() {
-#ifdef BUILD_DLL	
-	return ((IGapi*(*)())Sys::getDllProcAddress(Sys::loadDLL(Sys::getWorkDir() + "GraphicsApiGL"), "createGraphicsApi"))();
-#elif BUILD_STATIC	
+#ifdef BUILD_DLL
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> converter;
+	return ((IGapi*(*)())Sys::getDllProcAddress(Sys::loadDLL(converter.to_bytes(Sys::getWorkDir()) + "GraphicsApiGL"), "createGraphicsApi"))();
+#elif BUILD_STATIC
 	return (IGapi*)new GapiGL();
 #endif
 }

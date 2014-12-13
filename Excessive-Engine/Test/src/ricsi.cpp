@@ -68,10 +68,7 @@ int Ricsi() {
 	gGapi = gEngine->getGapi();
 
 	// Create simple shaderProgram
-	rShaderSources s;
-		s.vsSrc = vsSimple;
-		s.psSrc = psSimple;
-	gGapi->createShaderProgram(s);
+	auto shader = gGapi->createShaderSource(vsSimple, psSimple);
 
 	// Create texture that we draw as FSQ
 	//ITexture* tex = gGapi->createTexture(Sys::getWorkDir() + "image.png");

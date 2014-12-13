@@ -18,26 +18,16 @@ class IShaderProgram
 public:
 	virtual void destroy() = 0;
 
-	/// Compile shader from sources.
-	/// \return Indicates success.
-	virtual bool compile(
-		const char* vertex_shader,
-		const char* pixel_shader,
-		const char* geometry_shader = nullptr,
-		const char* tesselation_control_shader = nullptr,
-		const char* tesselation_evaluation_shader = nullptr) = 0;
-
-
 	/// Get compiled binary shader code.
 	/// \param max_size Write no more bytes to data.
 	/// \return Number of bytes written. If data is null, then the binary's size.
-	virtual size_t getBinary(void* data, size_t max_size) = 0;
+	//virtual size_t getBinary(void* data, size_t max_size) = 0;
 
 	/// Load this shader from binary code.
 	/// \param data The shader's binary code.
 	/// \param size Number of bytes in data.
 	/// \return Indicates success.
-	virtual bool loadBinary(void* data, size_t size) = 0;
+	//virtual bool loadBinary(void* data, size_t size) = 0;
 
 
 	// Remove this unless really necessary.

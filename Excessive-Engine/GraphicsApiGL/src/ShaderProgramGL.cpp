@@ -17,24 +17,10 @@ GLenum shader_types[] =
 
 void ShaderProgramGL::destroy()
 {
-	glDeleteProgram(program);
-	program = 0;
+	delete this;
 }
 
-
-bool ShaderProgramGL::compile(
-	const char* vertex_shader,
-	const char* pixel_shader,
-	const char* geometry_shader = nullptr,
-	const char* tesselation_control_shader = nullptr,
-	const char* tesselation_evaluation_shader = nullptr)
-{
-
-
-}
-
-
-
+/*
 // TODO: I could not get it working with the new signature (Peti)
 size_t ShaderProgramGL::getBinary(void* data, size_t max_size)
 {
@@ -67,10 +53,12 @@ size_t ShaderProgramGL::getBinary(void* data, size_t max_size)
 		ptr += sizeof(GLenum);
 		memcpy(ptr, buf.data(), bufsize);
 	}
-	*/
+	//* /
 	return 0;
 }
+//*/
 
+/*
 // TODO: I could not get it working with the new signature (Peti)
 bool ShaderProgramGL::loadBinary(void* data, size_t size)
 {
@@ -86,8 +74,9 @@ bool ShaderProgramGL::loadBinary(void* data, size_t size)
 
 		glProgramBinary(id, format, ptr, size);
 	}
-	*/
+	//* /
 }
+//*/
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -99,28 +88,28 @@ bool ShaderProgramGL::loadBinary(void* data, size_t size)
 int ShaderProgramGL::getUniformBlockIndex(const char* str)
 {
 	ASSERT(str);
-	return glGetUniformBlockIndex(id, str);
+	return glGetUniformBlockIndex(program, str);
 }
 
 int ShaderProgramGL::getAttributeIndex(const char* str)
 {
 	ASSERT(str);
-	return glGetAttribLocation(id, str);
+	return glGetAttribLocation(program, str);
 }
 
 int ShaderProgramGL::getSamplerIndex(const char* str)
 {
 	ASSERT(str);
-	int loc = glGetUniformLocation(id, str);
+	int loc = glGetUniformLocation(program, str);
 	int idx;
-	glGetUniformiv(id, loc, &idx);
+	glGetUniformiv(program, loc, &idx);
 	return idx;
 }
 
 int ShaderProgramGL::getRenderTargetIndex(const char* str)
 {
 	ASSERT(str);
-	return glGetFragDataLocation(id, str);
+	return glGetFragDataLocation(program, str);
 }
 
 
