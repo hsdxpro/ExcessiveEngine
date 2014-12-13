@@ -47,6 +47,8 @@ src/Light.h
 src/Light.cpp
 src/Entity.h
 src/Entity.cpp
+src/Camera.h
+src/Camera.cpp
 )
 
 #########################################################################
