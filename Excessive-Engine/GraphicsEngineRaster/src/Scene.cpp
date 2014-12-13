@@ -58,6 +58,13 @@ void Scene::clear()
 	lights.clear();
 }
 
+void Scene::setCam(const Camera& c) {
+	cam = c;
+}
+
+Camera& Scene::getCam() {
+	return cam;
+}
 
 const std::unordered_set<Entity*>& Scene::getEntities() {
 	return entities;

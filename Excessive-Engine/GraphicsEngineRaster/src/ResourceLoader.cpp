@@ -8,8 +8,7 @@
 #include "mymath/mymath.h"
 #include "../GraphicsEngine_Interface/interface/IMesh.h"
 #include "../../GraphicsEngine_Interface/interface/IMesh.h"
-//#include "mymath/mm_common.h"
-//#include "mymath/mymath.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 // Mesh functions
 
@@ -20,6 +19,7 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 	std::ifstream is(filePath, std::ios::ate);
 	if ( ! is.is_open()) {
 		// TODO
+		return false;
 	}
 	
 	// Read file into memory
@@ -172,17 +172,21 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 		data.mat_ids_num = 0;
 	mesh->update(data);
 	
-	return false;
+	return true;
 }
+
 bool ResourceLoader::genMesh_Teapot(graphics::IMesh* mesh, float radius, int tesselation) {
 	return false;
 }
+
 bool ResourceLoader::getMesh_Box(graphics::IMesh* mesh, float length, float width, float heigh) {
 	return false;
 }
+
 bool ResourceLoader::genMesh_Sphere(graphics::IMesh*, float radius, int tesselation) {
 	return false;
 }
+
 bool ResourceLoader::genMesh_Cylinder(graphics::IMesh* mesh, float radius, float height, int num_sides) {
 	return false;
 }

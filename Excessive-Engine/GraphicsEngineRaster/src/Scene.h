@@ -5,6 +5,7 @@
 
 #include "Entity.h"
 #include "Light.h"
+#include "../Common/src/Camera.h"
 
 
 class Scene : public graphics::IScene
@@ -22,10 +23,16 @@ public:
 
 	void clear() override;
 
+	void setCam(const Camera& c) override;
+
+	Camera& getCam() override;
+
 	// access content
 	const std::unordered_set<Entity*>& getEntities();
 	const std::unordered_set<Light*>& getLights();	
 private:
 	std::unordered_set<Entity*> entities;
 	std::unordered_set<Light*> lights;
+
+	Camera cam;
 };

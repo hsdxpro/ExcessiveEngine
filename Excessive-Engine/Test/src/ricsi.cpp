@@ -10,9 +10,12 @@
 #include <string>
 #include <chrono>
 #include <thread>
+#include "Camera.h"
 
 using namespace std;
 
+#define CAM_MOVE_SPEED 200
+float gCamSpeedMultiplier = 1;
 
 const char* vsSimple =
 "#version 440 core \n"
@@ -43,6 +46,7 @@ const char* psSimple =
 graphics::IGraphicsEngine*	gEngine;
 IGapi*					gGapi;
 IWindow*				gWindow;
+Camera*					gCam;
 
 int Ricsi() {
 
@@ -82,6 +86,12 @@ int Ricsi() {
 
 	// Create some graphics engine entities
 	graphics::IScene* scene = gEngine->createScene();
+	// Tápoljunk valami kamerát a scene - hez
+
+	Camera cam(rProjPersp(3.14 / 2, (float)gWindow->getClientW() / gWindow->getClientH()) ,  0.05, 3000);
+	scene->setCam(cam);
+	gCam = &scene->getCam();
+
 	graphics::IEntity* entity = scene->createEntity();
 	
 	// Create a simple whatever
@@ -141,7 +151,7 @@ int Ricsi() {
 
 
 	
-	Factory::createResourceLoader()->loadMesh(mesh, (Sys::getWorkDir() + std::wstring(L"demo_ground.dae")).c_str());
+	Factory::createResourceLoader()->loadMesh(mesh, (Sys::getWorkDir() + std::wstring(L"teapot.dae")).c_str());
 
 	// Assign mesh to entity
 	entity->setMesh(mesh);
@@ -155,15 +165,34 @@ int Ricsi() {
 	double elapsed;
 	chrono::time_point<chrono::high_resolution_clock> last_frame;
 
+	// Timer for dT frame calc
+	//ITimer* t = Factory::createTimer();
+
 	while (gWindow->isOpen()) {
+		//t->reset();
+
 		cout << "----------------------------------------------------" << endl;
 		// keep 60 fps
 		elapsed = chrono::duration_cast<chrono::microseconds>(chrono::high_resolution_clock::now() - last_frame).count() / 1.0e6;
 		last_frame = chrono::high_resolution_clock::now();
 
 		while (gWindow->popEvent(&ev))
-			if (ev.msg == eWindowMsg::KEY_PRESS && ev.key == eKey::ESCAPE)
-				gWindow->close();
+			if (ev.msg == eWindowMsg::KEY_PRESS)
+			{
+				switch (ev.key)
+				{
+					case eKey::ESCAPE: gWindow->close(); break;
+					case eKey::W: gCam->setPos(gCam->getPos() + gCam->getDirFront() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
+					case eKey::S: gCam->setPos(gCam->getPos() + gCam->getDirBack()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
+					case eKey::A: gCam->setPos(gCam->getPos() + gCam->getDirLeft()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
+					case eKey::D: gCam->setPos(gCam->getPos() + gCam->getDirRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
+					case eKey::LSHIFT: gCamSpeedMultiplier = 4; break;
+				}
+			}
+
+		// Update everything
+		
+		//float deltaT = t->getElapsedSinceReset();
 
 		// Update graphics engine
 		gEngine->update();

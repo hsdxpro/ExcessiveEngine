@@ -31,6 +31,14 @@ void Window::displayClientRect() {
 	w.display();
 }
 
-bool Window::isOpen() {
+bool Window::isOpen() const {
 	return w.isOpen();
+}
+
+u16 Window::getClientW() const {
+	return w.getSize().x;
+}
+
+u16 Window::getClientH() const {
+	return w.getSize().y;
 }
