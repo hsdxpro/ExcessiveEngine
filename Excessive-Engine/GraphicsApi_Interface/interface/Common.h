@@ -154,5 +154,14 @@ struct rShaderSources
 	char const* psSrc;
 };
 
+enum class eClearFlag : u32 {
+	COLOR				= 1,
+	DEPTH				= 2,
+	STENCIL				= 4,
 
+	COLOR_DEPTH_STENCIL	= COLOR | DEPTH | STENCIL,
+	COLOR_DEPTH			= COLOR | DEPTH,
+	COLOR_STENCIL		= COLOR | STENCIL,
+	DEPTH_STENCIL		= DEPTH | STENCIL,
+};
 

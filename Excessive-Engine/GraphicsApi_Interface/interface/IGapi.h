@@ -66,6 +66,9 @@ public:
     //draw stuff
     virtual void draw(size_t num_indices) = 0;
 
+	// Clear actual frame buffer which is blitted to window client region
+	virtual void clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth = 0, i32 stencil = 0) = 0;
+
 	// input layout & vertex streams
 #pragma message("Marci: ezt is implementálnod kéne [setVertexBuffer]")
 

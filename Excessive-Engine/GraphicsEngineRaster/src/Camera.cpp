@@ -6,17 +6,17 @@
 using namespace mymath;
 
 Camera::Camera(graphics::rProjOrtho proj, float nearPlane, float farPlane)
-:nearPlane(nearPlane), farPlane(farPlane), target(0, 1, 0), pos(0, 0, 0), projOrtho(proj), projType(graphics::eProjType::ORTHO) {
+:nearPlane(nearPlane), farPlane(farPlane), target(0, 0, 1), pos(0, 0, 0), projOrtho(proj), projType(graphics::eProjType::ORTHO) {
 	calcProjMatrix();
 }
 
 Camera::Camera(graphics::rProjPersp proj, float nearPlane, float farPlane)
-: nearPlane(nearPlane), farPlane(farPlane), target(0, 1, 0), pos(0, 0, 0), projPersp(proj), projType(graphics::eProjType::PERSP) {
+: nearPlane(nearPlane), farPlane(farPlane), target(0, 0, 1), pos(0, 0, 0), projPersp(proj), projType(graphics::eProjType::PERSP) {
 	calcProjMatrix();
 }
 
 Camera::Camera()
-: nearPlane(0), farPlane(0), target(0, 1, 0), pos(0, 0, 0), projType(graphics::eProjType::PERSP) {
+: nearPlane(0), farPlane(0), target(0, 0, 1), pos(0, 0, 0), projType(graphics::eProjType::PERSP) {
 }
 
 void Camera::setFOV(float rad) {
@@ -99,7 +99,7 @@ mm::mat4 Matrix44ViewRH(const mm::vec3& eye, const mm::vec3& target, const mm::v
 }
 
 mm::mat4 Camera::getViewMatrix() const {
-	const mm::vec3 up(0.0f, 0.0f, 1.0f);
+	const mm::vec3 up(0.0f, 1.0f, 0.0f);
 	return Matrix44ViewRH(pos, target, up);
 }
 

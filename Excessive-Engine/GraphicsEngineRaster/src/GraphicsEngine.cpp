@@ -16,6 +16,7 @@ using std::endl;
 
 
 static const char vertexShaderCode[] =
+/**
 "#version 440 core \n"
 "layout(std140) uniform constant_data \n"
 "{ \n"
@@ -26,7 +27,27 @@ static const char vertexShaderCode[] =
 "{ \n"
 "  gl_Position = cd.mvp * vec4(in_vertex, 1); \n"
 "} \n";
+*/
 
+"#version 440 core \n"
+"layout(std140) uniform constant_data \n"
+"{ \n"
+"  mat4 mvp; \n"
+"} cd; \n"
+"layout(location = 0) in vec3 in_vertex; \n"
+"void main() \n"
+"{ \n"
+"  mat3 mz = mat3("
+"  cos(0.78f), -sin(0.78f), 0,"
+"  sin(0.78f), cos(0.78f), 0,"
+"  0, 0, 1);"
+"  mat3 mx = mat3("
+"  1, 0, 0,"
+"  0, cos(0.78f), -sin(0.78f),"
+"  0, sin(0.78f), cos(0.78f));"
+"  vec3 pos = mx * mz * (in_vertex * 4.6f); \n"
+"  gl_Position = cd.mvp * vec4(pos, 1);\n"
+"} \n";
 
 static const char pixelShaderCode[] =
 "#version 440 core \n"
@@ -189,11 +210,12 @@ void GraphicsEngineRaster::update() {
 		}
 
 		// set stuff
-		gapi->setViewport(0, 0, 512, 512);
+		gapi->setViewport(0, 0, 800, 600);
 		gapi->setShaderProgram(shader);
 		gapi->setRenderTargets(0, 0);
 
 		mm::mat4 wvp = scene.getCam()->getProjMatrix() * scene.getCam()->getViewMatrix();
+		//mm::mat4 wvp = scene.getCam()->getViewMatrix();
 
 		rBuffer ubo_alloc_data;
 			ubo_alloc_data.is_persistent = false;
