@@ -95,6 +95,7 @@ int Ricsi() {
 		gCam->setAspectRatio(gWindow->getClientAspectRatio());
 		gCam->setNearPlane(0.05);
 		gCam->setFarPlane(3000);
+		gCam->setPos(mm::vec3(0, 0, 10));
 	scene->setCam(gCam);
 
 	graphics::IEntity* entity = scene->createEntity();
@@ -191,8 +192,8 @@ int Ricsi() {
 					//case eKey::S: gCam->setPos(gCam->getPos() + gCam->getDirBack()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
 					//case eKey::A: gCam->setPos(gCam->getPos() + gCam->getDirLeft()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
 					//case eKey::D: gCam->setPos(gCam->getPos() + gCam->getDirRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
-					case eKey::W: gCam->setPos(gCam->getPos() + mm::vec3(0, 1, 0)); break;
-					case eKey::S: gCam->setPos(gCam->getPos() + mm::vec3(0,-1,0)); break;
+					case eKey::W: gCam->setPos(gCam->getPos() + mm::vec3(0, 0.05, 0)); break;
+					case eKey::S: gCam->setPos(gCam->getPos() + mm::vec3(0, -0.05,0)); break;
 					case eKey::A: gCam->setPos(gCam->getPos() + gCam->getDirLeft()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
 					case eKey::D: gCam->setPos(gCam->getPos() + gCam->getDirRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
 					case eKey::LSHIFT: gCamSpeedMultiplier = 4; break;

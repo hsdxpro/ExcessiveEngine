@@ -214,8 +214,7 @@ void GraphicsEngineRaster::update() {
 		gapi->setShaderProgram(shader);
 		gapi->setRenderTargets(0, 0);
 
-		mm::mat4 wvp = scene.getCam()->getProjMatrix() * scene.getCam()->getViewMatrix();
-		//mm::mat4 wvp = scene.getCam()->getViewMatrix();
+		mm::mat4 wvp = scene.getCam()->getViewMatrix() * scene.getCam()->getProjMatrix();
 
 		rBuffer ubo_alloc_data;
 			ubo_alloc_data.is_persistent = false;

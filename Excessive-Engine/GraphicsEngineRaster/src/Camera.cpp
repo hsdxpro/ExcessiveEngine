@@ -76,7 +76,7 @@ float Camera::getFarPlane() const {
 
 // TODO REMOVE IT OR I KILL MYSELF
 mm::mat4 Matrix44ViewRH(const mm::vec3& eye, const mm::vec3& target, const mm::vec3& up) {
-	mm::vec3 baseFront = normalize(target - eye);		// The "look-at" vector.
+	mm::vec3 baseFront = normalize(target - eye);			// The "look-at" vector.
 	mm::vec3 baseRight = normalize(cross(baseFront, up));	// The "right" vector.
 	mm::vec3 baseUp = cross(baseRight, baseFront);			// The "up" vector.
 	
@@ -94,8 +94,7 @@ mm::mat4 Matrix44ViewRH(const mm::vec3& eye, const mm::vec3& target, const mm::v
 		0, 0, 1, 0,
 		-eye.x, -eye.y, -eye.z, 1);
 
-	// Combine the orientation and translation to compute the view matrix
-	return translation * orientation;
+	return transpose(translation * orientation);	
 }
 
 mm::mat4 Camera::getViewMatrix() const {
