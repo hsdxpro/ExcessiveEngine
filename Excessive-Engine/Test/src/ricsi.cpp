@@ -187,11 +187,11 @@ int Ricsi() {
 				switch (ev.key)
 				{
 					case eKey::ESCAPE: gWindow->close(); break;
-					//case eKey::W: gCam->setPos(gCam->getPos() + gCam->getDirFront() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
-					//case eKey::S: gCam->setPos(gCam->getPos() + gCam->getDirBack()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
-					//case eKey::A: gCam->setPos(gCam->getPos() + gCam->getDirLeft()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
-					//case eKey::D: gCam->setPos(gCam->getPos() + gCam->getDirRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
-					//case eKey::LSHIFT: gCamSpeedMultiplier = 4; break;
+					case eKey::W: gCam->setPos(gCam->getPos() + gCam->getDirFront() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
+					case eKey::S: gCam->setPos(gCam->getPos() + gCam->getDirBack()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
+					case eKey::A: gCam->setPos(gCam->getPos() + gCam->getDirLeft()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
+					case eKey::D: gCam->setPos(gCam->getPos() + gCam->getDirRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
+					case eKey::LSHIFT: gCamSpeedMultiplier = 4; break;
 				}
 			}
 

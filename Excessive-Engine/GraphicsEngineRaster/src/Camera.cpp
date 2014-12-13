@@ -15,7 +15,7 @@ Camera::Camera(graphics::rProjPersp proj, float nearPlane, float farPlane)
 	calcProjMatrix();
 }
 
-Camera::Camera() 
+Camera::Camera()
 : nearPlane(0), farPlane(0), target(0, 1, 0), pos(0, 0, 0), projType(graphics::eProjType::PERSP) {
 }
 
