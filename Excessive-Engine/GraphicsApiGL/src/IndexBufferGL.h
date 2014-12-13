@@ -1,7 +1,5 @@
 #pragma once
 
-#include "IBuffer.h"
-
 class IndexBufferGL : public BufferGL, public IIndexBuffer
 {
   public:

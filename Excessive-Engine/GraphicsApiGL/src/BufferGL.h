@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IBuffer.h"
+#include "../../GraphicsApi_Interface/interface/IBuffer.h"
 #include "GL/glew.h"
 
 class BufferGL : public IBuffer

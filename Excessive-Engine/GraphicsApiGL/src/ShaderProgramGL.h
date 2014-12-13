@@ -2,7 +2,7 @@
 
 #include "GL/glew.h"
 
-#include "IShaderProgram.h"
+#include "../../GraphicsApi_Interface/interface/IShaderProgram.h"
 
 //#define DEBUG_SHADER_ERRORS
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IBuffer.h"
+#include "../../GraphicsApi_Interface/interface/IBuffer.h"
 #include "BufferGL.h"
 
 class VertexBufferGL : public BufferGL, public IVertexBuffer

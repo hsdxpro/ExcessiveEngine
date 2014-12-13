@@ -1,4 +1,5 @@
 #pragma once
+#include "../../Common/src/BasicTypes.h"
 
 //http://www.opengl.org/wiki/Image_Format
 enum eFormatType
