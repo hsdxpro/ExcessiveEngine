@@ -83,9 +83,11 @@ void Mesh::load(const wchar_t* file_path) {
 ////////////////////////////////////////////////////////////////////////////////
 // new modify
 
-
 // update whole mesh
 bool Mesh::update(MeshData data) {
+	auto Deleter = [](void* ptr) {operator delete(ptr); };
+	using RawUniquePtr = std::unique_ptr < void, decltype(Deleter) > ;
+
 	reset();
 
 	// a little utility for cleaning up half-baked mesh if an error occurs
@@ -181,8 +183,8 @@ bool Mesh::update(MeshData data) {
 
 
 	// pack components
-	void* packed_vertex_data = operator new(internal_stride * num_vertices);
-	packVertices(data.vertex_elements, elements, data.vertex_elements_num,  num_elements, data.vertex_data, packed_vertex_data, num_vertices);
+	RawUniquePtr packed_vertex_data(operator new(internal_stride * num_vertices));
+	packVertices(data.vertex_elements, elements, data.vertex_elements_num,  num_elements, data.vertex_data, packed_vertex_data.get(), num_vertices);
 
 
 
@@ -196,26 +198,19 @@ bool Mesh::update(MeshData data) {
 
 
 	// optimize mesh
-	optimize(packed_vertex_data, num_vertices, internal_stride, data.index_data, data.index_num, data.mat_ids, data.mat_ids_num);
+	optimize(packed_vertex_data.get(), num_vertices, internal_stride, data.index_data, data.index_num, data.mat_ids, data.mat_ids_num);
 
 
 
 	// split vertex data:
-	// i'll be glad if it works with this hardcoded 1 stream version...
+	// non-interleaved buffers now
 	// todo: make grouping policies
 
 	////////////////////////////////////
 	// WARNING: 
 	//	vertex buffers are subject to change
 
-	// create and fill vertex arrays
-	rBuffer vb_desc;
-	vb_desc.is_readable = false;
-	vb_desc.is_writable = false;
-	vb_desc.is_persistent = true;
-	vb_desc.prefer_cpu_storage = false;
-	vb_desc.size = internal_stride * num_vertices;
-
+	// index buffers
 	rBuffer ib_desc;
 	ib_desc.is_readable = false;
 	ib_desc.is_writable = true;
@@ -223,22 +218,48 @@ bool Mesh::update(MeshData data) {
 	ib_desc.prefer_cpu_storage = false;
 	ib_desc.size = data.index_num * sizeof(u32);
 
-	IVertexBuffer* _vb = gapi->createVertexBuffer(vb_desc);
 	IIndexBuffer* _ib = gapi->createIndexBuffer(ib_desc);
-
-	_vb->update((char*)packed_vertex_data, vb_desc.size, 0);
 	_ib->update((char*)data.index_data, ib_desc.size, 0);
 
-	if (!_ib || !_vb) {
-		cout << "Mesh @" << this << ": failed to create buffers" << endl;
+	if (!_ib) {
 		return false;
+	}
+
+	// vertex buffer(s)
+	rBuffer vb_desc;
+	vb_desc.is_readable = false;
+	vb_desc.is_writable = false;
+	vb_desc.is_persistent = true;
+	vb_desc.prefer_cpu_storage = false;
+	vb_desc.size = internal_stride * num_vertices;
+
+	IVertexBuffer* _vb = nullptr;
+	RawUniquePtr vb_data(operator new(4 * sizeof(float) * num_vertices));
+
+	for (int i = 0; i < num_elements; i++) {
+		// copy relevant stuff from packed_vertex_data
+		size_t input_ptr = (size_t)packed_vertex_data.get();
+		size_t output_ptr = (size_t)vb_data.get();
+		size_t chunk_size = elements[i].num_components * elements[i].width / 8;
+		for (size_t i = 0; i < num_vertices; i++) {
+			memcpy((void*)output_ptr, (void*)input_ptr, chunk_size);
+			input_ptr += internal_stride;
+			output_ptr += chunk_size;
+		}
+		// create and fill vertex buffer
+		vb_desc.size = chunk_size * num_vertices;
+		_vb = gapi->createVertexBuffer(vb_desc);
+		if (!_vb) {
+			return false;
+		}
+		_vb->update(vb_data.get(), vb_desc.size, 0);
+		streams[i].vb = _vb;
 	}
 
 	// END WARNING
 	////////////////////////////////////
 
-	streams[0].vb = _vb;
-	num_streams = 1;
+	num_streams = num_elements;
 	ib = _ib;
 
 
@@ -251,9 +272,6 @@ bool Mesh::update(MeshData data) {
 		elements[i].offset = offset;
 		offset += elements[i].num_components*elements[i].width / 8;
 	}
-
-	// cleanup
-	operator delete(packed_vertex_data);
 
 	scope_guard.perform_cleanup = false;
 	return true;

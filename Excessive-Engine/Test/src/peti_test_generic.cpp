@@ -6,9 +6,35 @@
 #include <chrono>
 #include "BasicTypes.h"
 
+#include <mymath/mymath.h>
+
 using namespace std;
 
-int PetiTestGeneric() {	
+int PetiTestGeneric() {
+	mm::mat4 m1(
+		1, 2, 3, 4,
+		1.1, 2.2, 3.3, 4.4,
+		3.1415, 2.718, 6.626, 1.38,
+		6.672, 6.0221, 9.81, 1.414
+		);
+	mm::mat4 m2(
+		299, 792, 458, 0.1,
+		1.732, 2.236, 2.449, 2.646,
+		1.602, 9.109, 5940, 12756,
+		8.314, 101.325, 9, 8
+		);
+	m1 = mm::transpose(m1);
+	m2 = mm::transpose(m2);
+	mm::mat4 r = m1*m2;
+	cout << m1 << endl;
+	cout << m2 << endl;
+	cout << r[0][3] << endl;
+	cout << r << endl;
+
+
+	return 0;
+
+
 	unordered_map<string, int> m;
 	vector<string> v;
 
