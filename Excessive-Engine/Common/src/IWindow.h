@@ -46,12 +46,21 @@ struct rWindowEvent {
 class IWindow
 {
 public:
+	// Simply closes the window so you will not need it
 	virtual void close() = 0;
 
+	// This will give you the next event in the queue that Operating System transmitted to the window, and remove it from the queue
 	virtual bool popEvent(rWindowEvent* evt_out) = 0;
 
+	// U need to call that function after some DrawingAPI finishe s draw on window client region, this will BLIT the content to your monitor where client region is defined
 	virtual void displayClientRect() = 0;
 
-	// getters
-	virtual bool isOpen() = 0;
+	// Window client surface width
+	virtual u16 getClientW() const = 0;
+
+	// Window client surface height
+	virtual u16 getClientH() const = 0;
+
+	// Returns true if the window is currently opened, else (false) closed
+	virtual bool isOpen() const = 0;
 };

@@ -1,5 +1,7 @@
 #pragma once
 
+class Camera;
+
 // namespace
 namespace graphics {
 
@@ -7,10 +9,9 @@ class IEntity;
 class ILight;
 
 ////////////////////////////////////////////////////////////////////////////////
-/// Represents a single graphical scene.
+/// Represents a si ngle graphical scene.
 ///
 ////////////////////////////////////////////////////////////////////////////////
-
 
 class IScene
 {
@@ -21,6 +22,10 @@ public:
 	virtual void erase(ILight* light) = 0;
 
 	virtual void clear() = 0;	
+
+	virtual void setCam(const Camera& c) = 0;
+
+	virtual Camera& getCam() = 0;
 };
 
 

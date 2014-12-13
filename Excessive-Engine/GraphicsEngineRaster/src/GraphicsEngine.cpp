@@ -17,21 +17,16 @@ using std::endl;
 
 static const char vertexShaderCode[] =
 "#version 440 core \n"
+"layout(std140) uniform constant_data \n"
+"{ \n"
+"  mat4 mvp; \n"
+"} cd; \n"
 "layout(location = 0) in vec3 in_vertex; \n"
 "void main() \n"
 "{ \n"
-"  mat3 mz = mat3("
-"  cos(0.78f), -sin(0.78f), 0,"
-"  sin(0.78f), cos(0.78f), 0,"
-"  0, 0, 1);"
-"  mat3 mx = mat3("
-"  1, 0, 0,"
-"  0, cos(0.78f), -sin(0.78f),"
-"  0, sin(0.78f), cos(0.78f));"
-"  vec3 pos = mx * mz * (in_vertex * 0.2f); \n"
-"  gl_Position = vec4(pos, pos.z+1);\n"
-"} \n"
-;
+"  gl_Position = cd.mvp * vec4(in_vertex, 1); \n"
+"} \n";
+
 
 static const char pixelShaderCode[] =
 "#version 440 core \n"
@@ -198,8 +193,21 @@ void GraphicsEngineRaster::update() {
 		gapi->setShaderProgram(shader);
 		gapi->setRenderTargets(0, 0);
 
+		mm::mat4 wvp = scene.getCam().getProjMatrix() * scene.getCam().getViewMatrix();
+
+		rBuffer ubo_alloc_data;
+			ubo_alloc_data.is_persistent = false;
+			ubo_alloc_data.is_readable = true;
+			ubo_alloc_data.is_writable = true;
+			ubo_alloc_data.prefer_cpu_storage = false;
+			ubo_alloc_data.size = 1 * sizeof(mm::mat4);
+		auto ubo_buf = gapi->createUniformBuffer(ubo_alloc_data);
+		ubo_buf->update((char*)&wvp[0][0], sizeof(mm::mat4), 0);
+		gapi->setUniformBuffer(ubo_buf, shader->getUniformBlockIndex("constant_data"));
+
 		// set vertex buffer
 		gapi->setVertexBuffers(&posInfo.buffer, &attrib, 1);
+
 		// set index buffer
 		auto ib = mesh->getIndexBuffer();
 		gapi->setIndexBuffer(mesh->getIndexBuffer());

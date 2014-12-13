@@ -17,7 +17,10 @@ public:
 	void displayClientRect();
 
 	// getters
-	bool isOpen();
+	bool isOpen() const;
+
+	u16 getClientW() const;
+	u16 getClientH() const;
 
 protected:
 	sf::Window w;
