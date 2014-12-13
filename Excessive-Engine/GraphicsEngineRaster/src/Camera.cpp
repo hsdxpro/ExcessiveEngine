@@ -5,36 +5,42 @@
 
 using namespace mymath;
 
-Camera::Camera(rProjOrtho proj, float nearPlane, float farPlane)
-:nearPlane(nearPlane), farPlane(farPlane), target(0, 1, 0), pos(0, 0, 0), projOrtho(proj), projType(eProjType::ORTHO) {
+Camera::Camera(graphics::rProjOrtho proj, float nearPlane, float farPlane)
+:nearPlane(nearPlane), farPlane(farPlane), target(0, 1, 0), pos(0, 0, 0), projOrtho(proj), projType(graphics::eProjType::ORTHO) {
 	calcProjMatrix();
 }
 
-Camera::Camera(rProjPersp proj, float nearPlane, float farPlane)
-: nearPlane(nearPlane), farPlane(farPlane), target(0, 1, 0), pos(0, 0, 0), projPersp(proj), projType(eProjType::PERSP) {
+Camera::Camera(graphics::rProjPersp proj, float nearPlane, float farPlane)
+: nearPlane(nearPlane), farPlane(farPlane), target(0, 1, 0), pos(0, 0, 0), projPersp(proj), projType(graphics::eProjType::PERSP) {
 	calcProjMatrix();
 }
 
 Camera::Camera() 
-: nearPlane(0), farPlane(0), target(0, 0, 0), pos(0, 0, 0), projType(eProjType::PERSP) {
+: nearPlane(0), farPlane(0), target(0, 1, 0), pos(0, 0, 0), projType(graphics::eProjType::PERSP) {
 }
 
 void Camera::setFOV(float rad) {
+	assert(projType == graphics::eProjType::PERSP);
+
 	projPersp.fovRad = rad;
 	calcProjMatrix();
 }
 
 void Camera::setAspectRatio(float r) {
+	assert(projType == graphics::eProjType::PERSP);
+
 	projPersp.aspectRatio = r;
 	calcProjMatrix();
 }
 
 void Camera::setNearPlane(float nP) {
 	nearPlane = nP;
+	calcProjMatrix();
 }
 
 void Camera::setFarPlane(float fP) {
 	farPlane = fP;
+	calcProjMatrix();
 }
 
 void Camera::setPos(const mm::vec3& p) {
@@ -100,10 +106,10 @@ mm::mat4 Camera::getViewMatrix() const {
 void Camera::calcProjMatrix() {
 	switch (projType)
 	{
-	case eProjType::ORTHO:
+	case graphics::eProjType::ORTHO:
 		proj = ortographic(projOrtho.left, projOrtho.right, projOrtho.bottom, projOrtho.top, nearPlane, farPlane);
 		break;
-	case eProjType::PERSP:
+	case graphics::eProjType::PERSP:
 		proj = perspective(projPersp.fovRad, projPersp.aspectRatio, nearPlane, farPlane);
 		break;
 	default:

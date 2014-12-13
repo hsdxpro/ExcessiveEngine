@@ -125,6 +125,9 @@ Texture* GraphicsEngineRaster::createTexture() {
 	return new Texture;
 }
 
+Camera* GraphicsEngineRaster::createCam() {
+	return new Camera();
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // update
@@ -190,7 +193,7 @@ void GraphicsEngineRaster::update() {
 		gapi->setShaderProgram(shader);
 		gapi->setRenderTargets(0, 0);
 
-		mm::mat4 wvp = scene.getCam().getProjMatrix() * scene.getCam().getViewMatrix();
+		mm::mat4 wvp = scene.getCam()->getProjMatrix() * scene.getCam()->getViewMatrix();
 
 		rBuffer ubo_alloc_data;
 			ubo_alloc_data.is_persistent = false;

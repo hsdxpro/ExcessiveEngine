@@ -17,3 +17,5 @@ if(NOT BUILD_EXCESSIVE_WITH_DLL)
 	target_link_libraries( Common GraphicsEngineRaster )
 	target_link_libraries( Common GraphicsApiGL )
 endif()
+
+target_link_libraries( Common assimp)

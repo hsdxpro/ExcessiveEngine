@@ -7,7 +7,7 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "Texture.h"
-
+#include "Camera.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -32,6 +32,7 @@ public:
 	Material* createMaterial() override;
 	Texture* createTexture() override;
 
+	Camera* createCam() override;
 	// states
 	// empty
 

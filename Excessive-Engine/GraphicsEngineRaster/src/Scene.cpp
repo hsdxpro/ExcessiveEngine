@@ -4,7 +4,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // ctor, dtor, release
 
-Scene::Scene() {
+Scene::Scene() 
+:cam(nullptr) {
 	return;
 }
 
@@ -58,11 +59,11 @@ void Scene::clear()
 	lights.clear();
 }
 
-void Scene::setCam(const Camera& c) {
+void Scene::setCam(graphics::ICamera* c) {
 	cam = c;
 }
 
-Camera& Scene::getCam() {
+graphics::ICamera* Scene::getCam() {
 	return cam;
 }
 

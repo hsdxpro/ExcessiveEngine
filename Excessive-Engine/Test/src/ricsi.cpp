@@ -10,7 +10,8 @@
 #include <string>
 #include <chrono>
 #include <thread>
-#include "Camera.h"
+#include "ICamera.h"
+#include "ICamera.h"
 
 using namespace std;
 
@@ -44,9 +45,10 @@ const char* psSimple =
 
 
 graphics::IGraphicsEngine*	gEngine;
-IGapi*					gGapi;
-IWindow*				gWindow;
-Camera*					gCam;
+graphics::ICamera*			gCam;
+IGapi*						gGapi;
+IWindow*					gWindow;
+
 
 int Ricsi() {
 
@@ -88,9 +90,12 @@ int Ricsi() {
 	graphics::IScene* scene = gEngine->createScene();
 	// Tápoljunk valami kamerát a scene - hez
 
-	Camera cam(rProjPersp(3.14 / 2, (float)gWindow->getClientW() / gWindow->getClientH()) ,  0.05, 3000);
-	scene->setCam(cam);
-	gCam = &scene->getCam();
+	gCam = gEngine->createCam();
+		gCam->setFOV(3.14 / 2);
+		gCam->setAspectRatio(gWindow->getClientAspectRatio());
+		gCam->setNearPlane(0.05);
+		gCam->setFarPlane(3000);
+	scene->setCam(gCam);
 
 	graphics::IEntity* entity = scene->createEntity();
 	
@@ -182,11 +187,11 @@ int Ricsi() {
 				switch (ev.key)
 				{
 					case eKey::ESCAPE: gWindow->close(); break;
-					case eKey::W: gCam->setPos(gCam->getPos() + gCam->getDirFront() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
-					case eKey::S: gCam->setPos(gCam->getPos() + gCam->getDirBack()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
-					case eKey::A: gCam->setPos(gCam->getPos() + gCam->getDirLeft()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
-					case eKey::D: gCam->setPos(gCam->getPos() + gCam->getDirRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
-					case eKey::LSHIFT: gCamSpeedMultiplier = 4; break;
+					//case eKey::W: gCam->setPos(gCam->getPos() + gCam->getDirFront() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
+					//case eKey::S: gCam->setPos(gCam->getPos() + gCam->getDirBack()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
+					//case eKey::A: gCam->setPos(gCam->getPos() + gCam->getDirLeft()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
+					//case eKey::D: gCam->setPos(gCam->getPos() + gCam->getDirRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
+					//case eKey::LSHIFT: gCamSpeedMultiplier = 4; break;
 				}
 			}
 

@@ -42,3 +42,8 @@ u16 Window::getClientW() const {
 u16 Window::getClientH() const {
 	return w.getSize().y;
 }
+
+float Window::getClientAspectRatio() const {
+	const sf::Vector2u size = w.getSize();
+	return (float)size.x / size.y;
+}

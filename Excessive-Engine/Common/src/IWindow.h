@@ -61,6 +61,9 @@ public:
 	// Window client surface height
 	virtual u16 getClientH() const = 0;
 
+	// (client surface width / client surface height)
+	virtual float getClientAspectRatio() const = 0;
+
 	// Returns true if the window is currently opened, else (false) closed
 	virtual bool isOpen() const = 0;
 };

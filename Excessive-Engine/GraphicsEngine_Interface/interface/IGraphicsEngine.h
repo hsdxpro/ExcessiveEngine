@@ -9,6 +9,7 @@ class IScene;
 class IMesh;
 class IMaterial;
 class ITexture;
+class ICamera;
 
 struct rGraphicsEngine {
 	IGapi* gapi;
@@ -32,6 +33,7 @@ public:
 	virtual IMesh* createMesh() = 0;
 	virtual IMaterial* createMaterial() = 0;
 	virtual ITexture* createTexture() = 0;
+	virtual ICamera* createCam() = 0;
 
 	// states | just as examples, not stable yet
 		// virtual void setTargetWindow();

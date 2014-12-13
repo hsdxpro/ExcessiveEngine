@@ -15,7 +15,7 @@
 	#include "..\GraphicsApiGL\src\GapiGL.h"
 #endif
 
-#include "..\GraphicsEngineRaster\src\ResourceLoader.h"
+#include "ResourceLoader.h"
 
 graphics::IGraphicsEngine* Factory::createGraphicsEngineRaster(const graphics::rGraphicsEngine& d) {
 #ifdef BUILD_DLL
@@ -37,6 +37,7 @@ graphics::IGraphicsEngine* Factory::createGraphicsEngineRaster(const graphics::r
 graphics::IResourceLoader* Factory::createResourceLoader() {
 	return (graphics::IResourceLoader*)new ResourceLoader;
 }
+
 IGapi* Factory::createGapiGL() {
 #ifdef BUILD_DLL
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> converter;

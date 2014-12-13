@@ -10,17 +10,19 @@ class Window : public IWindow
 public:
 	Window(const rWindow& d);
 
-	bool popEvent(rWindowEvent* evt_out);
+	bool popEvent(rWindowEvent* evt_out) override;
 
-	void close();
+	void close() override;
 
-	void displayClientRect();
+	void displayClientRect() override;
 
 	// getters
-	bool isOpen() const;
+	bool isOpen() const override;
 
-	u16 getClientW() const;
-	u16 getClientH() const;
+	u16 getClientW() const override;
+	u16 getClientH() const override;
+
+	float getClientAspectRatio() const override;
 
 protected:
 	sf::Window w;

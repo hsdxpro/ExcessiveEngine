@@ -2,8 +2,6 @@
 
 #include "../GraphicsEngine_Interface/interface/ITexture.h"
 
-class ITexture;
-
 class Texture : public graphics::ITexture 
 {
 public:
