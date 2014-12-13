@@ -15,7 +15,7 @@
 
 using namespace std;
 
-#define CAM_MOVE_SPEED 200
+#define CAM_MOVE_SPEED 20
 float gCamSpeedMultiplier = 1;
 
 const char* vsSimple =
@@ -187,8 +187,12 @@ int Ricsi() {
 				switch (ev.key)
 				{
 					case eKey::ESCAPE: gWindow->close(); break;
-					case eKey::W: gCam->setPos(gCam->getPos() + gCam->getDirFront() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
-					case eKey::S: gCam->setPos(gCam->getPos() + gCam->getDirBack()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
+					//case eKey::W: gCam->setPos(gCam->getPos() + gCam->getDirFront() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
+					//case eKey::S: gCam->setPos(gCam->getPos() + gCam->getDirBack()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
+					//case eKey::A: gCam->setPos(gCam->getPos() + gCam->getDirLeft()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
+					//case eKey::D: gCam->setPos(gCam->getPos() + gCam->getDirRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
+					case eKey::W: gCam->setPos(gCam->getPos() + mm::vec3(0, 1, 0)); break;
+					case eKey::S: gCam->setPos(gCam->getPos() + mm::vec3(0,-1,0)); break;
 					case eKey::A: gCam->setPos(gCam->getPos() + gCam->getDirLeft()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
 					case eKey::D: gCam->setPos(gCam->getPos() + gCam->getDirRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
 					case eKey::LSHIFT: gCamSpeedMultiplier = 4; break;
@@ -198,6 +202,9 @@ int Ricsi() {
 		// Update everything
 		
 		//float deltaT = t->getElapsedSinceReset();
+
+		// CLear frame buffer
+		gGapi->clearFrameBuffer(eClearFlag::COLOR_DEPTH, mm::vec4(0, 0, 0, 0), 0, 0);
 
 		// Update graphics engine
 		gEngine->update();

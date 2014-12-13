@@ -69,6 +69,8 @@ class GapiGL : public IGapi
     // draw stuff
     void draw(u32 num_indices);
 
+	void clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth = 0, i32 stencil = 0);
+
 	// input layout & vertex streams
 	IInputLayout* createInputLayout(InputElement* elements, size_t num_elements) override { return nullptr; }
 	void setInputLayout(IInputLayout* layout) override {}

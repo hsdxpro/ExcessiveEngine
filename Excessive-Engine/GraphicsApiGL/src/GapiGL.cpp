@@ -1,4 +1,4 @@
-#include "GapiGL.h"
+﻿#include "GapiGL.h"
 
 #include "custom_assert.h"
 
@@ -12,6 +12,8 @@
 #include <iostream>
 #include <functional>
 #include "SFML\Graphics\Image.hpp"
+#include "GL\glew.h"
+
 using namespace std;
 
 #ifdef _MSC_VER
@@ -710,4 +712,31 @@ void GapiGL::draw(u32 num_indices)
 #endif
 
 	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, 0);
+}
+
+void GapiGL::clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth /*= 0*/, i32 stencil /*= 0*/)
+{
+	
+	unsigned int clearFlag = 0;
+	u32 bits = (u32)f;
+
+	if ((bits & (u32)eClearFlag::COLOR) != 0)
+	{
+		clearFlag |= GL_COLOR_BUFFER_BIT;
+		glClearColor(color.r, color.g, color.b, color.a);
+	}
+	
+	if ((bits & (u32)eClearFlag::DEPTH) != 0)
+	{
+		clearFlag |= GL_DEPTH_BUFFER_BIT;
+		glClearDepth(depth);
+	}
+
+	if ((bits & (u32)eClearFlag::DEPTH) != 0)
+	{
+		clearFlag |= GL_STENCIL_BUFFER_BIT;
+		glClearStencil(stencil);
+	}
+
+	glClear(clearFlag);
 }
