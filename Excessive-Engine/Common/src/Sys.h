@@ -4,7 +4,7 @@
 #include <string>
 
 enum class eKey {
-	Unknown = -1, ///< Unhandled key
+	INVALID = -1, ///< Unhandled key
 	A = 0,        ///< The A key
 	B,            ///< The B key
 	C,            ///< The C key
@@ -108,6 +108,16 @@ enum class eKey {
 	PAUSE,        ///< The Pause key
 
 	COUNT,      ///< Keep last -- the total number of keyboard keys
+};
+
+enum class eMouseBtn {
+	INVALID,
+	LEFT,       ///< The left mouse button
+	RIGHT,      ///< The right mouse button
+	MIDDLE,     ///< The middle (wheel) mouse button
+	EXTRA_1ST,   ///< The first extra mouse button
+	EXTRA_2ST,   ///< The second extra mouse button
+	COUNT
 };
 
 class Sys

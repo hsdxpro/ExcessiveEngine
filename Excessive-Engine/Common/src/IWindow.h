@@ -9,6 +9,8 @@
 
 // Descriptor of window
 struct rWindow {
+		rWindow():clientW(0), clientH(0){}
+
 	u16 clientW;
 	u16 clientH;
 	std::string capText;
@@ -27,7 +29,7 @@ enum class eWindowMsg {
 	MOUSE_RELEASE,				///< A mouse button was released (data in event.mouseButton)
 	MOUSE_MOVE,					///< The mouse cursor moved (data in event.mouseMove)
 	MOUSE_ENTER,				///< The mouse cursor entered the area of the window (no data)
-	Mouse_LEAVE,				///< The mouse cursor left the area of the window (no data)
+	MOUSE_LEAVE,				///< The mouse cursor left the area of the window (no data)
 	JOYSTICK_BUTTON_PRESS,		///< A joystick button was pressed (data in event.joystickButton)
 	JOYSTICK_BUTTON_RELEASE,	///< A joystick button was released (data in event.joystickButton)
 	JOYSTICK_MOVE,				///< The joystick moved along an axis (data in event.joystickMove)
@@ -37,10 +39,13 @@ enum class eWindowMsg {
 };
 
 struct rWindowEvent {
+		rWindowEvent():msg((eWindowMsg)0), key((eKey)0), mouseDx(0), mouseDy(0){}
 
-	rWindowEvent() :msg((eWindowMsg)0), key((eKey)0){}
 	eWindowMsg msg;
 	eKey key;
+	eMouseBtn mouseBtn;
+	u16 mouseDx;
+	u16 mouseDy;
 };
 
 class IWindow

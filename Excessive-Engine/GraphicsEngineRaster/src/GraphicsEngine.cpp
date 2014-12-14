@@ -145,7 +145,7 @@ Camera* GraphicsEngineRaster::createCam() {
 ////////////////////////////////////////////////////////////////////////////////
 // update
 void GraphicsEngineRaster::update() {
-	cout << "Updating frame..." << endl;
+	//cout << "Updating frame..." << endl;
 
 	// ok, this function is only for testing purposes, it's not a real renderer xD	
 	// just render the first scene, entity by entity
@@ -161,7 +161,7 @@ void GraphicsEngineRaster::update() {
 	auto entities = scene.getEntities();
 	auto lights = scene.getLights();
 
-	cout << entities.size() << " entities to be drawn..." << endl;
+	//cout << entities.size() << " entities to be drawn..." << endl;
 
 	// mesh type store
 	static std::unordered_map<u64, rVertexAttrib> meshFormats;
@@ -207,8 +207,8 @@ void GraphicsEngineRaster::update() {
 		gapi->setRenderTargets(0, 0);
 
 		mm::mat4 wvp = scene.getCam()->getProjMatrix() * scene.getCam()->getViewMatrix();
-		cout << wvp << endl;
-		cout.flush();
+		//cout << wvp << endl;
+		//cout.flush();
 		/*wvp = mm::transpose(mm::mat4(
 			0.1, 0, 0, 0,
 			0, 0.1, 0, 0,
@@ -247,7 +247,7 @@ void GraphicsEngineRaster::update() {
 		num_drawn++;
 	}
 
-	cout << num_drawn << " entities actually drawn." << endl;
+	//cout << num_drawn << " entities actually drawn." << endl;
 }
 
 IGapi* GraphicsEngineRaster::getGapi() {

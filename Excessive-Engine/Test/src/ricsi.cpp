@@ -15,7 +15,7 @@
 
 using namespace std;
 
-#define CAM_MOVE_SPEED 20
+#define CAM_MOVE_SPEED 10
 float gCamSpeedMultiplier = 1;
 
 const char* vsSimple =
@@ -95,7 +95,7 @@ int Ricsi() {
 		gCam->setAspectRatio(gWindow->getClientAspectRatio());
 		gCam->setNearPlane(0.05);
 		gCam->setFarPlane(3000);
-		gCam->setPos(mm::vec3(0, 0, 10));
+		gCam->setPos(mm::vec3(0, -3, 1));
 	scene->setCam(gCam);
 
 	graphics::IEntity* entity = scene->createEntity();
@@ -174,32 +174,84 @@ int Ricsi() {
 	// Timer for dT frame calc
 	//ITimer* t = Factory::createTimer();
 
-	while (gWindow->isOpen()) {
-		//t->reset();
+	bool bWDown = false;
+	bool bSDown = false;
+	bool bADown = false;
+	bool bDDown = false;
+	
+	bool isOpen = true;
+	bool bRMBDown = false;
 
-		cout << "----------------------------------------------------" << endl;
+	while (isOpen) {
+		//t->reset();
+		isOpen = gWindow->isOpen();
+		//cout << "----------------------------------------------------" << endl;
 		// keep 60 fps
 		elapsed = chrono::duration_cast<chrono::microseconds>(chrono::high_resolution_clock::now() - last_frame).count() / 1.0e6;
 		last_frame = chrono::high_resolution_clock::now();
 
 		while (gWindow->popEvent(&ev))
-			if (ev.msg == eWindowMsg::KEY_PRESS)
+			switch (ev.msg)
 			{
+			case eWindowMsg::MOUSE_PRESS:
+				if (ev.mouseBtn == eMouseBtn::RIGHT)
+					bRMBDown = true;
+				break;
+			case eWindowMsg::MOUSE_RELEASE:
+				if (ev.mouseBtn == eMouseBtn::RIGHT)
+					bRMBDown = false;
+				break;
+			case eWindowMsg::MOUSE_MOVE: {
+				 if (bRMBDown)
+				 {
+					 // Valamiert nem jo az mm::quat
+					 mm::vec3 v1 = (0, 1, 0);
+					 mm::quat rot(mm::vec3(0, 0, 1), 3.1415 / 2);
+
+					 v1 *= rot;
+
+					 //mm::vec3 rotedVec = gCam->getDirFront();
+
+					 //mm::quat rotAroundZ(mymath::normalize(gCam->getDirUp()), (float)ev.mouseDx / 1000);
+					 //mm::quat rotAroundX(mm::vec3(1, 0, 0), (float)ev.mouseDy / 1000);
+
+					 //rotedVec *= rotAroundZ * rotAroundX;
+
+					 //gCam->setTarget(gCam->getPos() + mymath::normalize(rotedVec));
+				 }
+			} break;
+
+			case eWindowMsg::KEY_PRESS:
 				switch (ev.key)
 				{
-					case eKey::ESCAPE: gWindow->close(); break;
-					//case eKey::W: gCam->setPos(gCam->getPos() + gCam->getDirFront() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
-					//case eKey::S: gCam->setPos(gCam->getPos() + gCam->getDirBack()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
-					//case eKey::A: gCam->setPos(gCam->getPos() + gCam->getDirLeft()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
-					//case eKey::D: gCam->setPos(gCam->getPos() + gCam->getDirRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
-					case eKey::W: gCam->setPos(gCam->getPos() + mm::vec3(0, 0.05, 0)); break;
-					case eKey::S: gCam->setPos(gCam->getPos() + mm::vec3(0, -0.05,0)); break;
-					case eKey::A: gCam->setPos(gCam->getPos() + gCam->getDirLeft()	* CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
-					case eKey::D: gCam->setPos(gCam->getPos() + gCam->getDirRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier); break;
-					case eKey::LSHIFT: gCamSpeedMultiplier = 4; break;
-				}
+				case eKey::ESCAPE: gWindow->close(); break;
+				case eKey::W: bWDown = true; break;
+				case eKey::S: bSDown = true; break;
+				case eKey::A: bADown = true; break;
+				case eKey::D: bDDown = true; break;
+				case eKey::LSHIFT: gCamSpeedMultiplier = 5; break;
+				} break;
+			case eWindowMsg::KEY_RELEASE:
+				switch (ev.key)
+				{
+				case eKey::W: bWDown = false; break;
+				case eKey::S: bSDown = false; break;
+				case eKey::A: bADown = false; break;
+				case eKey::D: bDDown = false; break;
+				case eKey::LSHIFT: gCamSpeedMultiplier = 1; break;
+				} break;
 			}
 
+		// Camera move
+		if (bWDown) // W
+			gCam->setPos(gCam->getPos() + gCam->getDirFront() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+		if (bSDown) // S
+			gCam->setPos(gCam->getPos() + gCam->getDirBack()  *	CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+		if (bADown) // A
+			gCam->setPos(gCam->getPos() + gCam->getDirLeft()  *	CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+		if (bDDown) // D
+			gCam->setPos(gCam->getPos() + gCam->getDirRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+			
 		// Update everything
 		
 		//float deltaT = t->getElapsedSinceReset();
