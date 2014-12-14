@@ -170,9 +170,7 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 		data.vertex_elements_num = 1;
 		data.mat_ids = nullptr;
 		data.mat_ids_num = 0;
-	mesh->update(data);
-	
-	return true;
+		return mesh->update(data);
 }
 
 bool ResourceLoader::genMesh_Teapot(graphics::IMesh* mesh, float radius, int tesselation) {

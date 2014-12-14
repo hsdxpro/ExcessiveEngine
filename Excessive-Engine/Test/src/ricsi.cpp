@@ -157,8 +157,11 @@ int Ricsi() {
 	}
 
 
-
-	Factory::createResourceLoader()->loadMesh(mesh, (Sys::getWorkDir() + std::wstring(L"teapot.dae")).c_str());
+	graphics::IResourceLoader* rcld = Factory::createResourceLoader();
+	is_mesh = rcld->loadMesh(mesh, (Sys::getWorkDir() + std::wstring(L"../Assets/teapot.dae")).c_str());
+	if (!is_mesh) {
+		cout << "Could not load teapot :(" << endl;
+	}
 
 	// Assign mesh to entity
 	entity->setMesh(mesh);
