@@ -2,9 +2,9 @@
 #include "SFML\Window\Event.hpp"
 
 #include <cassert>
-#include <iostream>
 
 Window::Window(const rWindow& d) {
+
 	w.create(sf::VideoMode(d.clientW, d.clientH), d.capText.c_str());
 	w.setVerticalSyncEnabled(true);
 }
@@ -26,10 +26,9 @@ bool Window::popEvent(rWindowEvent* evt_out) {
 		evt_out->key == eKey::INVALID;
 		evt_out->mouseBtn = eMouseBtn::INVALID;
 
-
-		int x = evt.mouseMove.x, y = evt.mouseMove.y;
-		evt_out->mouseDx = x;
-		evt_out->mouseDy = y;
+		evt_out->mouseDx = evt.mouseMove.x;
+		evt_out->mouseDy = evt.mouseMove.y;
+		
 	} else
 	if (evt.type == sf::Event::EventType::MouseButtonPressed || evt.type == sf::Event::EventType::MouseButtonReleased)
 	{

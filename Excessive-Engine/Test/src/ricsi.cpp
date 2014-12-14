@@ -192,7 +192,7 @@ int Ricsi() {
 		wstringstream title_ss;
 		static float camAngleX = 0; // upwards/downwards looking
 		static float camAngleZ = 0; // orientation
-		title_ss << L"Excessive-Engine - Ricsi teszt | FPS=" << fps << L" | Pitch=" << camAngleX * 180/3.14159 << L"° Facing=" << camAngleZ * 180/3.14159 << L"°";
+		title_ss << L"Excessive-Engine - Ricsi teszt | FPS=" << fps << L" | Pitch=" << camAngleX * 180 / 3.14159 << L"° Facing=" << camAngleZ * 180 / 3.14159 << L"°";
 		gWindow->setText(title_ss.str().c_str());
 		last_frame = chrono::high_resolution_clock::now();
 
@@ -250,7 +250,7 @@ int Ricsi() {
 						newViewDir *= rotAroundZ;
 						*/
 
-						
+
 						mm::mat3 rotAroundX(
 							1, 0, 0,
 							0, cos(angleX), -sin(angleX),
@@ -326,9 +326,4 @@ int Ricsi() {
 	cout << endl;
 
 	return 0;
-}
-
-
-int a(int b) {
-	return b;
 }
