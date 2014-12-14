@@ -44,8 +44,8 @@ struct rWindowEvent {
 	eWindowMsg msg;
 	eKey key;
 	eMouseBtn mouseBtn;
-	u16 mouseDx;
-	u16 mouseDy;
+	i16 mouseDx;
+	i16 mouseDy;
 };
 
 class IWindow

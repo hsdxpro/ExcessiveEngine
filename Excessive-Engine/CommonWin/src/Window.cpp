@@ -4,6 +4,7 @@
 #include <cassert>
 
 Window::Window(const rWindow& d) {
+
 	w.create(sf::VideoMode(d.clientW, d.clientH), d.capText.c_str());
 	w.setVerticalSyncEnabled(true);
 }
@@ -27,6 +28,7 @@ bool Window::popEvent(rWindowEvent* evt_out) {
 
 		evt_out->mouseDx = evt.mouseMove.x;
 		evt_out->mouseDy = evt.mouseMove.y;
+		
 	} else
 	if (evt.type == sf::Event::EventType::MouseButtonPressed || evt.type == sf::Event::EventType::MouseButtonReleased)
 	{

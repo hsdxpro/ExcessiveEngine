@@ -204,20 +204,22 @@ int Ricsi() {
 			case eWindowMsg::MOUSE_MOVE: {
 				 if (bRMBDown)
 				 {
-					 // Valamiert nem jo az mm::quat
-					 mm::vec3 v1 = (0, 1, 0);
-					 mm::quat rot(mm::vec3(0, 0, 1), 3.1415 / 2);
+					// TODO *= ne ezt csinalja mar
+					/*
+					mm::vec3 v1 = (0, 1, 0);
+					mm::quat rot(3.1415 / 2, mm::vec3(0, 0, 1));
+					v1 *= rot;
+					*/
 
-					 v1 *= rot;
-
-					 //mm::vec3 rotedVec = gCam->getDirFront();
-
-					 //mm::quat rotAroundZ(mymath::normalize(gCam->getDirUp()), (float)ev.mouseDx / 1000);
-					 //mm::quat rotAroundX(mm::vec3(1, 0, 0), (float)ev.mouseDy / 1000);
-
-					 //rotedVec *= rotAroundZ * rotAroundX;
-
-					 //gCam->setTarget(gCam->getPos() + mymath::normalize(rotedVec));
+					//mm::vec3 rotedVec = gCam->getDirFront();
+					//
+					//mm::quat rotAroundZ((float)ev.mouseDx / 1000, mm::vec3(0,0,1));
+					////mm::quat rotAroundX((float)ev.mouseDy / 1000, mm::vec3(1, 0, 0));
+					//
+					//rotedVec = mm::rotate_vector(rotAroundZ, rotedVec);
+					////rotedVec = mm::rotate_vector(rotAroundX, rotedVec);
+					//
+					//gCam->setTarget(gCam->getPos() + rotedVec);
 				 }
 			} break;
 

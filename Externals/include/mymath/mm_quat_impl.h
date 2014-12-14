@@ -39,7 +39,6 @@ namespace mymath
 	  quati():value(0, 0, 0, 1){} //no rotation
 	  quati(const type_vec4& vec):value(vec){}
 	  quati(const type_vec3& vec):value(vec, 0){}
-	  quati(const type_vec3& vector, const ty& scalar):value(vector, scalar){}
 	  quati(const mat3i<ty>& m)
 	  {
 		value = quat_cast(m).value;
