@@ -37,15 +37,7 @@ static const char vertexShaderCode[] =
 "layout(location = 0) in vec3 in_vertex; \n"
 "void main() \n"
 "{ \n"
-"  mat3 mz = mat3("
-"  cos(0.78f), -sin(0.78f), 0,"
-"  sin(0.78f), cos(0.78f), 0,"
-"  0, 0, 1);"
-"  mat3 mx = mat3("
-"  1, 0, 0,"
-"  0, cos(0.78f), -sin(0.78f),"
-"  0, sin(0.78f), cos(0.78f));"
-"  vec3 pos = mx * mz * (in_vertex * 4.6f); \n"
+"  vec3 pos = vec3(in_vertex.x, in_vertex.y, in_vertex.z); \n"
 "  gl_Position = cd.mvp * vec4(pos, 1);\n"
 "} \n";
 
@@ -214,7 +206,16 @@ void GraphicsEngineRaster::update() {
 		gapi->setShaderProgram(shader);
 		gapi->setRenderTargets(0, 0);
 
-		mm::mat4 wvp = scene.getCam()->getViewMatrix() * scene.getCam()->getProjMatrix();
+		mm::mat4 wvp = scene.getCam()->getProjMatrix() * scene.getCam()->getViewMatrix();
+		cout << wvp << endl;
+		cout.flush();
+		/*wvp = mm::transpose(mm::mat4(
+			0.1, 0, 0, 0,
+			0, 0.1, 0, 0,
+			0, 0, 0.1, 0,
+			0, 0, 0, 1
+			));
+		*/
 
 		rBuffer ubo_alloc_data;
 			ubo_alloc_data.is_persistent = false;

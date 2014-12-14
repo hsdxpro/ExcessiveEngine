@@ -89,12 +89,13 @@ mm::mat4 Matrix44ViewRH(const mm::vec3& eye, const mm::vec3& target, const mm::v
 
 	// Create a 4x4 translation matrix by negating the eye position.
 	// NEGATE POS
-	mm::mat4 translation(1, 0, 0, 0,
+	mm::mat4 translation(
+		1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 0, 1, 0,
 		-eye.x, -eye.y, -eye.z, 1);
 
-	return transpose(translation * orientation);	
+	return translation;	
 }
 
 mm::mat4 Camera::getViewMatrix() const {
