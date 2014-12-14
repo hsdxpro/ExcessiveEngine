@@ -44,8 +44,8 @@ struct rWindowEvent {
 	eWindowMsg msg;
 	eKey key;
 	eMouseBtn mouseBtn;
-	u16 mouseDx;
-	u16 mouseDy;
+	i32 mouseDx;
+	i32 mouseDy;
 };
 
 class IWindow
@@ -71,4 +71,7 @@ public:
 
 	// Returns true if the window is currently opened, else (false) closed
 	virtual bool isOpen() const = 0;
+
+	/// Set window title
+	virtual void setText(const wchar_t* text) = 0;
 };

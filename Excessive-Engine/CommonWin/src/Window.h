@@ -24,6 +24,8 @@ public:
 
 	float getClientAspectRatio() const override;
 
+	void setText(const wchar_t* text) override;
+
 protected:
 	sf::Window w;
 	sf::Event evt;

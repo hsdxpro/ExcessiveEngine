@@ -112,6 +112,13 @@ void Camera::calcProjMatrix() {
 		break;
 	case graphics::eProjType::PERSP:
 		proj = perspective(projPersp.fovRad, projPersp.aspectRatio, nearPlane, farPlane);
+		// to remap z from [-1,1] to [0,1]
+		proj *= mm::mat4(
+			1,0,0,0,
+			0,1,0,0,
+			0,0,0.5,0,
+			0,0,0.5,1
+			);
 		break;
 	default:
 		assert(0);

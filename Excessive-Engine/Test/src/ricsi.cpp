@@ -10,7 +10,8 @@
 #include <string>
 #include <chrono>
 #include <thread>
-#include "ICamera.h"
+#include <sstream>
+#include <mymath/mymath.h>
 #include "ICamera.h"
 
 using namespace std;
@@ -61,7 +62,7 @@ int Ricsi() {
 
 	// Init GraphicsEngine
 	graphics::rGraphicsEngine gDesc;
-		gDesc.gapi = Factory::createGapiGL();
+	gDesc.gapi = Factory::createGapiGL();
 	gEngine = Factory::createGraphicsEngineRaster(gDesc);
 	if (!gEngine) {
 		cout << "Oops, failed to create graphics engine :(" << endl;
@@ -91,15 +92,15 @@ int Ricsi() {
 	// Tápoljunk valami kamerát a scene - hez
 
 	gCam = gEngine->createCam();
-		gCam->setFOV(3.14 / 2);
-		gCam->setAspectRatio(gWindow->getClientAspectRatio());
-		gCam->setNearPlane(0.05);
-		gCam->setFarPlane(3000);
-		gCam->setPos(mm::vec3(0, -3, 1));
+	gCam->setFOV(3.14 / 2);
+	gCam->setAspectRatio(gWindow->getClientAspectRatio());
+	gCam->setNearPlane(0.05);
+	gCam->setFarPlane(3000);
+	gCam->setPos(mm::vec3(0, -3, 1));
 	scene->setCam(gCam);
 
 	graphics::IEntity* entity = scene->createEntity();
-	
+
 	// Create a simple whatever
 	graphics::IMesh* mesh = gEngine->createMesh();
 	graphics::IMesh::MeshData data;
@@ -121,18 +122,18 @@ int Ricsi() {
 		-1, -1, -1,
 	};
 	u32 indices[] = {
-		1,0,2, // top
-		2,3,0,
-		4,5,6, // bottom
-		7,4,6,
-		2,3,6, // front
-		3,7,6,
-		0,1,5, // back
-		5,4,0,
-		1,2,6, //right
-		1,6,5,
-		7,3,0, // left
-		4,7,0,
+		1, 0, 2, // top
+		2, 3, 0,
+		4, 5, 6, // bottom
+		7, 4, 6,
+		2, 3, 6, // front
+		3, 7, 6,
+		0, 1, 5, // back
+		5, 4, 0,
+		1, 2, 6, //right
+		1, 6, 5,
+		7, 3, 0, // left
+		4, 7, 0,
 	};
 	graphics::IMesh::ElementDesc elements[] = {
 		graphics::IMesh::POSITION, 3,
@@ -156,7 +157,7 @@ int Ricsi() {
 	}
 
 
-	
+
 	Factory::createResourceLoader()->loadMesh(mesh, (Sys::getWorkDir() + std::wstring(L"teapot.dae")).c_str());
 
 	// Assign mesh to entity
@@ -178,69 +179,121 @@ int Ricsi() {
 	bool bSDown = false;
 	bool bADown = false;
 	bool bDDown = false;
-	
+
 	bool isOpen = true;
 	bool bRMBDown = false;
 
 	while (isOpen) {
 		//t->reset();
 		isOpen = gWindow->isOpen();
-		//cout << "----------------------------------------------------" << endl;
 		// keep 60 fps
 		elapsed = chrono::duration_cast<chrono::microseconds>(chrono::high_resolution_clock::now() - last_frame).count() / 1.0e6;
+		int fps = 1 / elapsed + 0.5;
+		wstringstream title_ss;
+		static float camAngleX = 0; // upwards/downwards looking
+		static float camAngleZ = 0; // orientation
+		title_ss << L"Excessive-Engine - Ricsi teszt | FPS=" << fps << L" | Pitch=" << camAngleX * 180/3.14159 << L"° Facing=" << camAngleZ * 180/3.14159 << L"°";
+		gWindow->setText(title_ss.str().c_str());
 		last_frame = chrono::high_resolution_clock::now();
 
 		while (gWindow->popEvent(&ev))
 			switch (ev.msg)
-			{
-			case eWindowMsg::MOUSE_PRESS:
-				if (ev.mouseBtn == eMouseBtn::RIGHT)
-					bRMBDown = true;
-				break;
-			case eWindowMsg::MOUSE_RELEASE:
-				if (ev.mouseBtn == eMouseBtn::RIGHT)
-					bRMBDown = false;
-				break;
-			case eWindowMsg::MOUSE_MOVE: {
-				 if (bRMBDown)
-				 {
-					 // Valamiert nem jo az mm::quat
-					 mm::vec3 v1 = (0, 1, 0);
-					 mm::quat rot(mm::vec3(0, 0, 1), 3.1415 / 2);
+		{
+				case eWindowMsg::MOUSE_PRESS:
+					if (ev.mouseBtn == eMouseBtn::RIGHT)
+						bRMBDown = true;
+					break;
+				case eWindowMsg::MOUSE_RELEASE:
+					if (ev.mouseBtn == eMouseBtn::RIGHT)
+						bRMBDown = false;
+					break;
+				case eWindowMsg::MOUSE_MOVE: {
+					static int lastMouseX = ev.mouseDx;
+					static int lastMouseY = ev.mouseDy;
+					if (bRMBDown)
+					{
+						/*
+						// Valamiert nem jo az mm::quat
+						mm::vec3 v1 = (0, 1, 0);
+						mm::quat rot(mm::vec3(0, 0, 1), 3.1415 / 2);
 
-					 v1 *= rot;
+						v1 *= rot;
 
-					 //mm::vec3 rotedVec = gCam->getDirFront();
+						mm::vec3 rotedVec = gCam->getDirFront();
 
-					 //mm::quat rotAroundZ(mymath::normalize(gCam->getDirUp()), (float)ev.mouseDx / 1000);
-					 //mm::quat rotAroundX(mm::vec3(1, 0, 0), (float)ev.mouseDy / 1000);
+						mm::quat rotAroundZ(mymath::normalize(gCam->getDirUp()), (float)ev.mouseDx / 1000);
+						mm::quat rotAroundX(mm::vec3(1, 0, 0), (float)ev.mouseDy / 1000);
 
-					 //rotedVec *= rotAroundZ * rotAroundX;
+						rotedVec *= rotAroundZ * rotAroundX;
 
-					 //gCam->setTarget(gCam->getPos() + mymath::normalize(rotedVec));
-				 }
-			} break;
+						gCam->setTarget(gCam->getPos() + mymath::normalize(rotedVec));
+						*/
 
-			case eWindowMsg::KEY_PRESS:
-				switch (ev.key)
-				{
-				case eKey::ESCAPE: gWindow->close(); break;
-				case eKey::W: bWDown = true; break;
-				case eKey::S: bSDown = true; break;
-				case eKey::A: bADown = true; break;
-				case eKey::D: bDDown = true; break;
-				case eKey::LSHIFT: gCamSpeedMultiplier = 5; break;
+						float angleChangeZ = (float)(ev.mouseDx - lastMouseX) * 0.003;
+						float angleChangeX = (float)(lastMouseY - ev.mouseDy) * 0.003;
+
+						mm::vec3 viewDir = mm::normalize(gCam->getTarget() - gCam->getPos());
+						float lenXY = mm::length(viewDir.xy);
+						static float angleX = 0; // acos(lenXY * (viewDir.z > 0 ? 1 : -1));
+						angleX += angleChangeX;
+						angleX = std::max(-85.f / 180 * 3.14159f, std::min(angleX, 85.f / 180 * 3.14159f));
+						static float angleZ = 0;// = atan2(viewDir.y / lenXY, viewDir.z / lenXY);
+						angleZ += angleChangeZ;
+
+						mm::vec3 newViewDir(0, 1, 0);
+
+						/*
+						mm::quat rotAroundX(mm::vec3(1, 0, 0), angleX);
+						mm::quat rotAroundZ(mm::vec3(0, 0, 1), angleZ);
+
+						newViewDir *= rotAroundX;
+						newViewDir *= rotAroundZ;
+						*/
+
+						
+						mm::mat3 rotAroundX(
+							1, 0, 0,
+							0, cos(angleX), -sin(angleX),
+							0, sin(angleX), cos(angleX)
+							);
+						mm::mat3 rotAroundZ(
+							cos(angleZ), -sin(angleZ), 0,
+							sin(angleZ), cos(angleZ), 0,
+							0, 0, 1
+							);
+
+						newViewDir *= rotAroundX;
+						newViewDir *= rotAroundZ;
+
+						camAngleX = angleX;
+						camAngleZ = angleZ;
+
+						gCam->setTarget(gCam->getPos() + newViewDir);
+					}
+					lastMouseX = ev.mouseDx;
+					lastMouseY = ev.mouseDy;
 				} break;
-			case eWindowMsg::KEY_RELEASE:
-				switch (ev.key)
-				{
-				case eKey::W: bWDown = false; break;
-				case eKey::S: bSDown = false; break;
-				case eKey::A: bADown = false; break;
-				case eKey::D: bDDown = false; break;
-				case eKey::LSHIFT: gCamSpeedMultiplier = 1; break;
-				} break;
-			}
+
+				case eWindowMsg::KEY_PRESS:
+					switch (ev.key)
+					{
+						case eKey::ESCAPE: gWindow->close(); break;
+						case eKey::W: bWDown = true; break;
+						case eKey::S: bSDown = true; break;
+						case eKey::A: bADown = true; break;
+						case eKey::D: bDDown = true; break;
+						case eKey::LSHIFT: gCamSpeedMultiplier = 5; break;
+					} break;
+				case eWindowMsg::KEY_RELEASE:
+					switch (ev.key)
+					{
+						case eKey::W: bWDown = false; break;
+						case eKey::S: bSDown = false; break;
+						case eKey::A: bADown = false; break;
+						case eKey::D: bDDown = false; break;
+						case eKey::LSHIFT: gCamSpeedMultiplier = 1; break;
+					} break;
+		}
 
 		// Camera move
 		if (bWDown) // W
@@ -251,9 +304,9 @@ int Ricsi() {
 			gCam->setPos(gCam->getPos() + gCam->getDirLeft()  *	CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 		if (bDDown) // D
 			gCam->setPos(gCam->getPos() + gCam->getDirRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
-			
+
 		// Update everything
-		
+
 		//float deltaT = t->getElapsedSinceReset();
 
 		// CLear frame buffer
@@ -268,9 +321,14 @@ int Ricsi() {
 		// keep 60 fps
 		chrono::time_point<chrono::high_resolution_clock> now = chrono::high_resolution_clock::now();
 		chrono::microseconds sleep_time = chrono::microseconds(16667) - chrono::duration_cast<chrono::microseconds>(now - last_frame);
-		this_thread::sleep_for(sleep_time);
+		//this_thread::sleep_for(sleep_time);
 	}
 	cout << endl;
-	
+
 	return 0;
+}
+
+
+int a(int b) {
+	return b;
 }

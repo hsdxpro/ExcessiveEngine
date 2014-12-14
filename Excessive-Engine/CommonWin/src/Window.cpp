@@ -2,6 +2,7 @@
 #include "SFML\Window\Event.hpp"
 
 #include <cassert>
+#include <iostream>
 
 Window::Window(const rWindow& d) {
 	w.create(sf::VideoMode(d.clientW, d.clientH), d.capText.c_str());
@@ -25,8 +26,10 @@ bool Window::popEvent(rWindowEvent* evt_out) {
 		evt_out->key == eKey::INVALID;
 		evt_out->mouseBtn = eMouseBtn::INVALID;
 
-		evt_out->mouseDx = evt.mouseMove.x;
-		evt_out->mouseDy = evt.mouseMove.y;
+
+		int x = evt.mouseMove.x, y = evt.mouseMove.y;
+		evt_out->mouseDx = x;
+		evt_out->mouseDy = y;
 	} else
 	if (evt.type == sf::Event::EventType::MouseButtonPressed || evt.type == sf::Event::EventType::MouseButtonReleased)
 	{
@@ -67,4 +70,8 @@ u16 Window::getClientH() const {
 float Window::getClientAspectRatio() const {
 	const sf::Vector2u size = w.getSize();
 	return (float)size.x / size.y;
+}
+
+void Window::setText(const wchar_t* text) {
+	w.setTitle(text);
 }

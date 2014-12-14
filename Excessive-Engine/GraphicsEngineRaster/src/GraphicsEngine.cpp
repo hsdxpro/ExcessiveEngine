@@ -172,7 +172,7 @@ void GraphicsEngineRaster::update() {
 		// get mesh
 		Mesh* mesh = entity->getMesh();
 		if (!mesh) {
-			cout << "Entity has no mesh :(" << endl;
+			//cout << "Entity has no mesh :(" << endl;
 			continue;
 		}
 		u64 meshId = mesh->getElementConfigId();
@@ -185,7 +185,7 @@ void GraphicsEngineRaster::update() {
 		auto it = meshFormats.find(meshId);
 		if (it == meshFormats.end()) {
 			if (!hasPosition) {
-				cout << "This mesh does not have position... KILL IT WITH FIRE!" << endl;
+				//cout << "This mesh does not have position... KILL IT WITH FIRE!" << endl;
 				continue;
 			}
 
@@ -207,15 +207,6 @@ void GraphicsEngineRaster::update() {
 		gapi->setRenderTargets(0, 0);
 
 		mm::mat4 wvp = scene.getCam()->getProjMatrix() * scene.getCam()->getViewMatrix();
-		//cout << wvp << endl;
-		//cout.flush();
-		/*wvp = mm::transpose(mm::mat4(
-			0.1, 0, 0, 0,
-			0, 0.1, 0, 0,
-			0, 0, 0.1, 0,
-			0, 0, 0, 1
-			));
-		*/
 
 		rBuffer ubo_alloc_data;
 			ubo_alloc_data.is_persistent = false;
