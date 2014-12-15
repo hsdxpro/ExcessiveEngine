@@ -15,19 +15,24 @@ public:
 	//virtual IShaderProgram* createShaderProgram(const rShaderPaths& data) = 0;
 	//virtual IShaderProgram* createShaderProgram(const rShaderSources& data) = 0;
 
-
+	/// Create shader program from source.
+	/// \return nullptr is returned on failure.
 	virtual IShaderProgram* createShaderSource(
 		const char* vertex_shader_source,
 		const char* pixel_shader_source,
 		const char* geometry_shader_source = nullptr,
 		const char* tess_control_shader_source = nullptr,
 		const char* tess_eval_shader_source = nullptr) = 0;
+	/// Create shader program from files on disk.
+	/// \return nullptr is returned on failure.
 	virtual IShaderProgram* createShaderFile(
 		const wchar_t* vertex_shader_path,
 		const wchar_t* pixel_shader_path,
 		const wchar_t* geometry_shader_path = nullptr,
 		const wchar_t* tess_control_shader_path = nullptr,
 		const wchar_t* tess_eval_shader_path = nullptr) = 0;
+	/// Create shader program from pre-compiled binary code.
+	/// \return nullptr is returned on failure.
 	virtual IShaderProgram* createShaderBinary(void* data, size_t size) = 0;
 
 
