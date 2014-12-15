@@ -217,10 +217,10 @@ int Ricsi() {
 
 						mm::vec3 viewDir = mm::normalize(gCam->getTarget() - gCam->getPos());
 						float lenXY = mm::length(viewDir.xy);
-						static float angleX = 0; // acos(lenXY * (viewDir.z > 0 ? 1 : -1));
+						static float angleX = acos(lenXY)*(viewDir.z > 0 ? 1 : -1);
 						angleX += angleChangeX;
 						angleX = std::max(-85.f / 180 * 3.141592653f, std::min(angleX, 85.f / 180 * 3.141592653f));
-						static float angleZ = 0;// = atan2(viewDir.y / lenXY, viewDir.z / lenXY);
+						static float angleZ = atan2(viewDir.y / lenXY, viewDir.z / lenXY) - 3.141592653f/2;
 						angleZ += angleChangeZ;
 						if (angleZ > 3.141592653f) {
 							angleZ -= floor(angleZ / 3.141592653f) * 2*3.141592653f;
