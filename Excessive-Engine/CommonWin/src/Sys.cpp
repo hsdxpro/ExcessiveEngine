@@ -31,7 +31,7 @@ std::wstring Sys::getWorkDir() {
 	return path;
 }
 
-const mm::uvec2& Sys::getMousePos() {
+const mm::ivec2& Sys::getMousePos() {
 	POINT p; GetCursorPos(&p);
-	return mm::uvec2(p.x, p.y);
+	return mm::ivec2(p.x, p.y);
 }

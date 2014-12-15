@@ -28,8 +28,12 @@ public:
 
 protected:
 	sf::Window w;
-	sf::Event evt;
 
-	u32 lastMouseX;
-	u32 lastMouseY;
+	// ahh what the fuck is this?
+	// sfml is bugged, and overwrites the next 4 bytes after the sf::Event, so we must pad it
+	sf::Event& evt;
+	char eventSpace[sizeof(sf::Event)+4];
+
+	i32 lastMouseY;
+	i32 lastMouseX;
 };

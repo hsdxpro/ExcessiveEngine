@@ -131,5 +131,5 @@ public:
 
 	static void*			getDllProcAddress(DLLHandle h, const std::string& procName);
 	static std::wstring		getWorkDir();
-	static const mm::uvec2& getMousePos();
+	static const mm::ivec2& getMousePos();
 };

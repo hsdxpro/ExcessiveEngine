@@ -194,7 +194,7 @@ int Ricsi() {
 		wstringstream title_ss;
 		static float camAngleX = 0; // upwards/downwards looking
 		static float camAngleZ = 0; // orientation
-		title_ss << L"Excessive-Engine - Ricsi teszt | FPS=" << fps << L" | Pitch=" << camAngleX * 180 / 3.14159 << L"° Facing=" << camAngleZ * 180 / 3.14159 << L"°";
+		title_ss << L"Excessive-Engine - Ricsi teszt | FPS=" << fps << L" | Pitch=" << camAngleX * 180 / 3.141592653f << L"° Facing=" << camAngleZ * 180 / 3.141592653f << L"°";
 		gWindow->setText(title_ss.str().c_str());
 		last_frame = chrono::high_resolution_clock::now();
 
@@ -210,21 +210,24 @@ int Ricsi() {
 						bRMBDown = false;
 					break;
 				case eWindowMsg::MOUSE_MOVE: {
-					//static int lastMouseX = ev.mouseDx;
-					//static int lastMouseY = ev.mouseDy;
 					if (bRMBDown)
 					{
-
-						float angleChangeZ = (float)(ev.mouseDx) * 0.003;
-						float angleChangeX = (float)(-ev.mouseDy) * 0.003;
+						float angleChangeZ = (float)(ev.mouseDeltaX) * 0.003;
+						float angleChangeX = (float)(-ev.mouseDeltaY) * 0.003;
 
 						mm::vec3 viewDir = mm::normalize(gCam->getTarget() - gCam->getPos());
 						float lenXY = mm::length(viewDir.xy);
 						static float angleX = 0; // acos(lenXY * (viewDir.z > 0 ? 1 : -1));
 						angleX += angleChangeX;
-						angleX = std::max(-85.f / 180 * 3.14159f, std::min(angleX, 85.f / 180 * 3.14159f));
+						angleX = std::max(-85.f / 180 * 3.141592653f, std::min(angleX, 85.f / 180 * 3.141592653f));
 						static float angleZ = 0;// = atan2(viewDir.y / lenXY, viewDir.z / lenXY);
 						angleZ += angleChangeZ;
+						if (angleZ > 3.141592653f) {
+							angleZ -= floor(angleZ / 3.141592653f) * 2*3.141592653f;
+						}
+						else if (angleZ < -3.141592653f) {
+							angleZ -= ceil(angleZ / 3.141592653f) * 2 * 3.141592653f;
+						}
 
 						mm::vec3 newViewDir(0, 1, 0);
 

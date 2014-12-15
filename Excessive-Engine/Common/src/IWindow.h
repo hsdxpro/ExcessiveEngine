@@ -9,7 +9,7 @@
 
 // Descriptor of window
 struct rWindow {
-		rWindow():clientW(0), clientH(0){}
+	rWindow() : clientW(0), clientH(0){}
 
 	u16 clientW;
 	u16 clientH;
@@ -39,13 +39,15 @@ enum class eWindowMsg {
 };
 
 struct rWindowEvent {
-		rWindowEvent():msg((eWindowMsg)0), key((eKey)0), mouseDx(0), mouseDy(0){}
+	rWindowEvent() : msg(eWindowMsg::COUNT), key(eKey::COUNT), mouseDeltaX(0), mouseDeltaY(0), mouseX(0), mouseY(0) {}
 
 	eWindowMsg msg;
 	eKey key;
 	eMouseBtn mouseBtn;
-	i32 mouseDx;
-	i32 mouseDy;
+	i32 mouseDeltaX;
+	i32 mouseDeltaY;
+	i32 mouseX;
+	i32 mouseY;
 };
 
 class IWindow
