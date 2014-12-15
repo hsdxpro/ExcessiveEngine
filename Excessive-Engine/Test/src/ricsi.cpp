@@ -183,12 +183,11 @@ int Ricsi() {
 	bool bADown = false;
 	bool bDDown = false;
 
-	bool isOpen = true;
 	bool bRMBDown = false;
 
-	while (isOpen) {
+	while (gWindow->isOpen()) {
 		//t->reset();
-		isOpen = gWindow->isOpen();
+
 		// keep 60 fps
 		elapsed = chrono::duration_cast<chrono::microseconds>(chrono::high_resolution_clock::now() - last_frame).count() / 1.0e6;
 		int fps = 1 / elapsed + 0.5;
@@ -211,29 +210,13 @@ int Ricsi() {
 						bRMBDown = false;
 					break;
 				case eWindowMsg::MOUSE_MOVE: {
-					static int lastMouseX = ev.mouseDx;
-					static int lastMouseY = ev.mouseDy;
+					//static int lastMouseX = ev.mouseDx;
+					//static int lastMouseY = ev.mouseDy;
 					if (bRMBDown)
 					{
-						/*
-						// Valamiert nem jo az mm::quat
-						mm::vec3 v1 = (0, 1, 0);
-						mm::quat rot(mm::vec3(0, 0, 1), 3.1415 / 2);
 
-						v1 *= rot;
-
-						mm::vec3 rotedVec = gCam->getDirFront();
-
-						mm::quat rotAroundZ(mymath::normalize(gCam->getDirUp()), (float)ev.mouseDx / 1000);
-						mm::quat rotAroundX(mm::vec3(1, 0, 0), (float)ev.mouseDy / 1000);
-
-						rotedVec *= rotAroundZ * rotAroundX;
-
-						gCam->setTarget(gCam->getPos() + mymath::normalize(rotedVec));
-						*/
-
-						float angleChangeZ = (float)(ev.mouseDx - lastMouseX) * 0.003;
-						float angleChangeX = (float)(lastMouseY - ev.mouseDy) * 0.003;
+						float angleChangeZ = (float)(ev.mouseDx) * 0.003;
+						float angleChangeX = (float)(-ev.mouseDy) * 0.003;
 
 						mm::vec3 viewDir = mm::normalize(gCam->getTarget() - gCam->getPos());
 						float lenXY = mm::length(viewDir.xy);
@@ -244,14 +227,6 @@ int Ricsi() {
 						angleZ += angleChangeZ;
 
 						mm::vec3 newViewDir(0, 1, 0);
-
-						/*
-						mm::quat rotAroundX(mm::vec3(1, 0, 0), angleX);
-						mm::quat rotAroundZ(mm::vec3(0, 0, 1), angleZ);
-
-						newViewDir *= rotAroundX;
-						newViewDir *= rotAroundZ;
-						*/
 
 
 						mm::mat3 rotAroundX(
@@ -273,8 +248,6 @@ int Ricsi() {
 
 						gCam->setTarget(gCam->getPos() + newViewDir);
 					}
-					lastMouseX = ev.mouseDx;
-					lastMouseY = ev.mouseDy;
 				} break;
 
 				case eWindowMsg::KEY_PRESS:

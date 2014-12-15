@@ -2,6 +2,7 @@
 #pragma once
 
 #include <string>
+#include "mymath\mymath.h"
 
 enum class eKey {
 	INVALID = -1, ///< Unhandled key
@@ -128,6 +129,7 @@ public:
 	static DLLHandle	loadDLL(const std::string& filePath);
 	static bool			unloadDLL(DLLHandle h);
 
-	static void*		getDllProcAddress(DLLHandle h, const std::string& procName);
-	static std::wstring	getWorkDir();
+	static void*			getDllProcAddress(DLLHandle h, const std::string& procName);
+	static std::wstring		getWorkDir();
+	static const mm::uvec2& getMousePos();
 };

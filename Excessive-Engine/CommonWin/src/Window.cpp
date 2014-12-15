@@ -3,8 +3,11 @@
 
 #include <cassert>
 
-Window::Window(const rWindow& d) {
+// TMP
+#include <iostream>
 
+Window::Window(const rWindow& d) 
+:lastMouseX(0), lastMouseY(0) {
 	w.create(sf::VideoMode(d.clientW, d.clientH), d.capText.c_str());
 	w.setVerticalSyncEnabled(true);
 }
@@ -26,10 +29,23 @@ bool Window::popEvent(rWindowEvent* evt_out) {
 		evt_out->key == eKey::INVALID;
 		evt_out->mouseBtn = eMouseBtn::INVALID;
 
-		evt_out->mouseDx = evt.mouseMove.x;
-		evt_out->mouseDy = evt.mouseMove.y;
+		evt_out->mouseDx = evt.mouseMove.x - lastMouseX;
+		evt_out->mouseDy = evt.mouseMove.y - lastMouseY;
+
+		lastMouseX = evt.mouseMove.x;
+		lastMouseY = evt.mouseMove.y;
 		
 	} else
+	if (evt.type == sf::Event::EventType::MouseEntered)
+	{
+		mm::uvec2 mousePos = Sys::getMousePos();
+
+		sf::Vector2i windowPos = w.getPosition();
+
+		lastMouseX = mousePos.x - (u32)windowPos.x;
+		lastMouseY = mousePos.y - (u32)windowPos.y;
+	}
+	else
 	if (evt.type == sf::Event::EventType::MouseButtonPressed || evt.type == sf::Event::EventType::MouseButtonReleased)
 	{
 		evt_out->key == eKey::INVALID;

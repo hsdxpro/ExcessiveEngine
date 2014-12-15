@@ -17,11 +17,9 @@ void* Sys::getDllProcAddress(DLLHandle h, const std::string& procName) {
 }
 
 std::wstring Sys::getWorkDir() {
-	//std::string path;
-	//path.reserve(128); // TODO make define or constant somewhere
+	// TODO make define or constant somewhere (128)
 	wchar_t path[128];
 	GetModuleFileNameW(0, path, 128);
-	//u32 pos = path.find(":");
 
 	for (int i = 127; i > 0; i--)
 		if (path[i] == '\\' && i < 127)
@@ -31,4 +29,9 @@ std::wstring Sys::getWorkDir() {
 		}	
 
 	return path;
+}
+
+const mm::uvec2& Sys::getMousePos() {
+	POINT p; GetCursorPos(&p);
+	return mm::uvec2(p.x, p.y);
 }

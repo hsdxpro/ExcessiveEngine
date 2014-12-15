@@ -29,4 +29,7 @@ public:
 protected:
 	sf::Window w;
 	sf::Event evt;
+
+	u32 lastMouseX;
+	u32 lastMouseY;
 };
