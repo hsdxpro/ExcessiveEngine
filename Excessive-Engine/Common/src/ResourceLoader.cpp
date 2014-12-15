@@ -27,6 +27,7 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 	void* mem = malloc(fileSize);
 	is.seekg(0, std::ios::beg);
 	is.read((char*)mem, fileSize);
+	is.close();
 
 	// Assimp will parse memory
 	const aiScene* scene = importer.ReadFileFromMemory(mem, fileSize, aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph | aiProcess_OptimizeMeshes | aiProcess_FlipWindingOrder);
