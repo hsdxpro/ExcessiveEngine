@@ -34,6 +34,5 @@ protected:
 	sf::Event& evt;
 	char eventSpace[sizeof(sf::Event)+4];
 
-	i32 lastMouseY;
-	i32 lastMouseX;
+	mm::ivec2 lastMousePos;
 };

@@ -212,8 +212,8 @@ int Ricsi() {
 				case eWindowMsg::MOUSE_MOVE: {
 					if (bRMBDown)
 					{
-						float angleChangeZ = (float)(ev.mouseDeltaX) * 0.003;
-						float angleChangeX = (float)(-ev.mouseDeltaY) * 0.003;
+						float angleChangeZ = (float)(ev.mouseDeltaX) * 0.009;
+						float angleChangeX = (float)(-ev.mouseDeltaY) * 0.009;
 
 						mm::vec3 viewDir = mm::normalize(gCam->getTarget() - gCam->getPos());
 						float lenXY = mm::length(viewDir.xy);

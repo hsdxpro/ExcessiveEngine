@@ -35,18 +35,21 @@ static const char vertexShaderCode[] =
 "  mat4 mvp; \n"
 "} cd; \n"
 "layout(location = 0) in vec3 in_vertex; \n"
+"out vec3 posL; \n"
 "void main() \n"
 "{ \n"
 "  vec3 pos = vec3(in_vertex.x, in_vertex.y, in_vertex.z); \n"
+"	posL = pos.xyz; \n"
 "  gl_Position = cd.mvp * vec4(pos, 1);\n"
 "} \n";
 
 static const char pixelShaderCode[] =
 "#version 440 core \n"
+"in vec3 posL; \n"
 "out vec4 color; \n"
 "void main() \n"
 "{ \n"
-"  color = vec4(0.8f, 0.8f, 0.8f, 0.2f); \n"
+"  color = vec4(posL.x * 1, posL.y * 1, posL.z * 1, 0.2f); \n"
 "} \n"
 ;
 
@@ -229,11 +232,11 @@ void GraphicsEngineRaster::update() {
 		u32 num_indices = mesh->getIndexBuffer()->getDesc().size / sizeof(u32);
 		gapi->draw(num_indices);
 		rDepthState ds;
-		ds.enable_test = false;
-		ds.enable_write = false;
+		ds.enable_test = true;
+		ds.enable_write = true;
 		ds.far = 1.0f;
 		ds.near = 0.0f;
-		ds.func = eCompareFunc::ALWAYS;
+		ds.func = eCompareFunc::LESSER_OR_EQUAL;
 		gapi->setDepthState(ds);
 		num_drawn++;
 	}
