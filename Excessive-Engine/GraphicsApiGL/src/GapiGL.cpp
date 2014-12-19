@@ -8,6 +8,7 @@
 #include "UniformBufferGL.h"
 #include "VertexBufferGL.h"
 #include "IndexBufferGL.h"
+#include "InputLayoutGL.h"
 
 #include <iostream>
 #include <functional>
@@ -739,4 +740,82 @@ void GapiGL::clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth /
 	}
 
 	glClear(clearFlag);
+}
+
+
+
+static inline GLenum NativeAttribType(eVertexAttribType type) {
+	// GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT, GL_INT, and GL_UNSIGNED_INT
+	// GL_HALF_FLOAT, GL_FLOAT, GL_DOUBLE, GL_FIXED, GL_INT_2_10_10_10_REV, GL_UNSIGNED_INT_2_10_10_10_REV and GL_UNSIGNED_INT_10F_11F_11F_REV
+	/*
+		// floating point types
+	FLOAT = 0,
+	HALF,
+	// integer types
+	SINT_32,
+	UINT_32,
+	SINT_16,
+	UINT_16,
+	SINT_8,
+	UINT_8,
+	// normalized integer types
+	// signed: [-1.0f, 1.0f]
+	// unsigned: [0.0f, 1.0f]
+	SNORM_32,
+	UNORM_32,
+	SNORM_16,
+	UNORM_16,
+	SNORM_8,
+	UNORM_8,	
+	*/
+
+	static const GLenum lut[] = {
+		GL_FLOAT,
+		GL_HALF_FLOAT,
+		GL_INT,
+		GL_UNSIGNED_INT,
+		GL_SHORT,
+		GL_UNSIGNED_SHORT,
+		GL_BYTE,
+		GL_UNSIGNED_BYTE,
+		GL_INT,
+		GL_UNSIGNED_INT,
+		GL_SHORT,
+		GL_UNSIGNED_SHORT,
+		GL_BYTE,
+		GL_UNSIGNED_BYTE,
+	};
+	assert((unsigned)type < sizeof(lut)/sizeof(lut[0]));
+	return lut[(unsigned)type];
+}
+
+
+InputLayoutGL* GapiGL::createInputLayout(rInputElement* elements, size_t num_elements) {
+	// validate here
+	for (size_t i = 0; i < num_elements; i++) {
+		if (elements[i].num_components == 0 || elements[i].num_components > 4) {
+			return nullptr;
+		}
+	}
+
+
+	InputLayoutGL* layout = new InputLayoutGL(elements, num_elements);
+	return layout;
+}
+
+void GapiGL::setInputLayout(IInputLayout* layout) {
+	for (size_t i = 0; i < layout->getNumElements(); i++) {
+		// now some opengl magic
+
+	}
+}
+
+void GapiGL::setVertexStreams(
+	IVertexBuffer** buffers,
+	u32* strides,
+	u32* offsets,
+	u32 start_slot,
+	u32 num_buffers)
+{
+	// magic here
 }

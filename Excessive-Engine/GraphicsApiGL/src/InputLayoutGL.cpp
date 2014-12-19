@@ -1,21 +1,28 @@
 #include "InputLayoutGL.h"
+#include <cassert>
 
 
-size_t InputLayout::getNumComponents() {
-	// TODO: imnplement
-	return 0;
+InputLayoutGL::InputLayoutGL(rInputElement* elements, size_t num_elements)
+	: elements(elements, elements+num_elements)
+{
+
 }
 
-InputElement InputLayout::getElement(size_t index) {
-	// TODO: imnplement
-	return InputElement();
+InputLayoutGL::~InputLayoutGL() {
+	/* empty */
 }
 
-void InputLayout::release() {
+
+size_t InputLayoutGL::getNumElements() {
+	return elements.size();
+}
+
+const rInputElement& InputLayoutGL::getElement(size_t index) {
+	assert(index < elements.size());
+	return elements[index];
+}
+
+void InputLayoutGL::release() {
 	delete this;
 }
 
-
-InputLayout::~InputLayout() {
-	// TODO: implement
-}

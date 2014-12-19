@@ -2,17 +2,19 @@
 
 #include "../GraphicsApi_Interface/interface/IInputLayout.h"
 
+#include <vector>
 
 
 
-class InputLayout : public IInputLayout
+class InputLayoutGL : public IInputLayout
 {
 public:
-	size_t getNumComponents();
-	InputElement getElement(size_t index);
+	InputLayoutGL(rInputElement* elements, size_t num_elements);
+	~InputLayoutGL();
+
+	size_t getNumElements() override;
+	const rInputElement& getElement(size_t index) override;
 	void release();
-
-	~InputLayout();
 private:
-
+	std::vector<rInputElement> elements;
 };

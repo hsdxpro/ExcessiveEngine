@@ -4,8 +4,6 @@
 #include "Common.h"
 
 
-#pragma message("Marci: ezt a szart kéne implementálnod [InputLayout]")
-
 /*
 Na ezt sikerült összehozni vertex format név alatt.
 
@@ -23,14 +21,15 @@ Leszarjuk, nem rajzolunnk, majd rájön a programozó, hogy faszsággal eteti a Gapi
 */
 
 
-struct InputElement 
+struct rInputElement 
 {
-	char name[65]; // variable name (or semantic) in shader
-	eVertexAttribType type; // @see eVertexAttribType
-	u32 num_components; // vector's dimension
-	u32 offset; // this element begins $ bytes offseted from start of vertex
-	u32 stream_index; // in which vertex stream
+	char name[65]; ///< variable name (or semantic) in shader
+	eVertexAttribType type; ///< \see eVertexAttribType
+	u32 num_components; ///< vector's dimension
+	u32 offset; ///< this element begins $ bytes offseted from start of vertex
+	u32 stream_index; ///< in which vertex stream
 
+	/// Helper for setting name.
 	void setName(const char* str) { // just to make life easier
 		int i = 0;
 		while (str[i] != '\0' && i<65) {
@@ -45,7 +44,10 @@ struct InputElement
 class IInputLayout 
 {
 public:
-	virtual size_t getNumComponents() = 0;
-	virtual InputElement getElement(size_t index) = 0;
+	/// Get the number of vertex elements.
+	virtual size_t getNumElements() = 0;
+	/// Get the indexth vertex element.
+	virtual const rInputElement& getElement(size_t index) = 0;
+
 	virtual void release() = 0;
 };

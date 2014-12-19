@@ -74,13 +74,13 @@ public:
 	// Clear actual frame buffer which is blitted to window client region
 	virtual void clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth = 0, i32 stencil = 0) = 0;
 
-	// input layout & vertex streams
-#pragma message("Marci: ezt is implementálnod kéne [setVertexBuffer]")
 
-	/*
-	@see IInputLayout.h
-	*/
-	virtual IInputLayout* createInputLayout(InputElement* elements, size_t num_elements) = 0;
+	// input layout & vertex streams
+
+	/// Create an input layout.
+	/// \return nullptr is returned on failure.
+	virtual IInputLayout* createInputLayout(rInputElement* elements, size_t num_elements) = 0;
+	/// Set input layout.
 	virtual void setInputLayout(IInputLayout* layout) = 0;
 
 	/*
@@ -88,10 +88,11 @@ public:
 	Ha több buffert adunk meg, akkor azokat a start_slot, start_slot+1, start_slot+2 helyekre bindeli.
 	A nullptr buffer unbindeli az adott slotból a buffert.
 	*/
+	/// Set vertex buffers.
 	virtual void setVertexStreams(
-		IVertexBuffer** buffers, // buffers to bind
-		u32* strides, // size of one vertex in bytes; for each buffer
-		u32* offsets, // how many bytes the 0th vertex is offseted from start of buffer
-		u32 start_slot, // bind 1st buffer here
+		IVertexBuffer** buffers, ///< buffers to bind
+		u32* strides, ///< size of one vertex in bytes; for each buffer
+		u32* offsets, ///< how many bytes the 0th vertex is offseted from start of buffer
+		u32 start_slot, ///< bind 1st buffer here
 		u32 num_buffers) = 0;
 };

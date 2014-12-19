@@ -7,12 +7,13 @@
 #include "IndexBufferGL.h"
 #include "ShaderProgramGL.h"
 #include "TextureGL.h"
+#include "InputLayoutGL.h"
 
 
 class GapiGL : public IGapi
 {
   public:
-    u32 global_vao;
+    GLuint global_vao;
   
 	GapiGL();
 
@@ -72,13 +73,13 @@ class GapiGL : public IGapi
 	void clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth = 0, i32 stencil = 0);
 
 	// input layout & vertex streams
-	IInputLayout* createInputLayout(InputElement* elements, size_t num_elements) override { return nullptr; }
-	void setInputLayout(IInputLayout* layout) override {}
+	InputLayoutGL* createInputLayout(rInputElement* elements, size_t num_elements) override;
+	void setInputLayout(IInputLayout* layout) override;
 
 	void setVertexStreams(
 		IVertexBuffer** buffers,
 		u32* strides,
 		u32* offsets,
 		u32 start_slot,
-		u32 num_buffers) override {}
+		u32 num_buffers) override;
 };
