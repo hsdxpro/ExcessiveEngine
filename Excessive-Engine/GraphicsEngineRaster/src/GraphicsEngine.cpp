@@ -49,7 +49,7 @@ static const char pixelShaderCode[] =
 "out vec4 color; \n"
 "void main() \n"
 "{ \n"
-"  color = vec4(posL.x * 1, posL.y * 1, posL.z * 1, 0.2f); \n"
+"   color = vec4(posL.x * 1, posL.y * 1, posL.z * 1, 0.2f); \n"
 "} \n"
 ;
 
@@ -87,6 +87,8 @@ GraphicsEngineRaster::GraphicsEngineRaster(const graphics::rGraphicsEngine& d) {
 	// WARNING: temporary testing code
 	// create shaders
 	shader = gapi->createShaderSource(vertexShaderCode, pixelShaderCode);
+	isValid = shader != nullptr;
+	return;
 
 	u32 index = shader->getAttributeIndex("in_vertex");
 	cout << index;
@@ -95,7 +97,6 @@ GraphicsEngineRaster::GraphicsEngineRaster(const graphics::rGraphicsEngine& d) {
 	gapi->setSeamlessCubeMaps(true);
 	gapi->setSyncDebugOutput(true);
 
-	isValid = shader != nullptr;
 }
 
 GraphicsEngineRaster::~GraphicsEngineRaster() {
@@ -239,6 +240,8 @@ void GraphicsEngineRaster::update() {
 		ds.func = eCompareFunc::LESSER_OR_EQUAL;
 		gapi->setDepthState(ds);
 		num_drawn++;
+
+		ubo_buf->destroy();
 	}
 
 	//cout << num_drawn << " entities actually drawn." << endl;

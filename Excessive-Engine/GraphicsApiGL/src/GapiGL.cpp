@@ -150,7 +150,13 @@ ShaderProgramGL* GapiGL::createShaderSource(
 		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
 		if (result == GL_FALSE) {
 			// obtain error message and display it
-			/* ... */
+			GLint maxLength = 0;
+			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &maxLength);
+
+			//The maxLength includes the NULL character
+			std::vector<GLchar> infoLog(maxLength);
+			glGetShaderInfoLog(id, maxLength, &maxLength, infoLog.data());
+			cerr << infoLog.data();
 			
 			return nullptr;
 		}
@@ -167,7 +173,13 @@ ShaderProgramGL* GapiGL::createShaderSource(
 		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
 		if (result == GL_FALSE) {
 			// obtain error message and display it
-			/* ... */
+			GLint maxLength = 0;
+			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &maxLength);
+
+			//The maxLength includes the NULL character
+			std::vector<GLchar> infoLog(maxLength);
+			glGetShaderInfoLog(id, maxLength, &maxLength, infoLog.data());
+			cerr << infoLog.data();
 
 			return nullptr;
 		}
@@ -184,7 +196,13 @@ ShaderProgramGL* GapiGL::createShaderSource(
 		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
 		if (result == GL_FALSE) {
 			// obtain error message and display it
-			/* ... */
+			GLint maxLength = 0;
+			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &maxLength);
+
+			//The maxLength includes the NULL character
+			std::vector<GLchar> infoLog(maxLength);
+			glGetShaderInfoLog(id, maxLength, &maxLength, infoLog.data());
+			cerr << infoLog.data();
 
 			return nullptr;
 		}
@@ -201,7 +219,13 @@ ShaderProgramGL* GapiGL::createShaderSource(
 		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
 		if (result == GL_FALSE) {
 			// obtain error message and display it
-			/* ... */
+			GLint maxLength = 0;
+			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &maxLength);
+
+			//The maxLength includes the NULL character
+			std::vector<GLchar> infoLog(maxLength);
+			glGetShaderInfoLog(id, maxLength, &maxLength, infoLog.data());
+			cerr << infoLog.data();
 
 			return nullptr;
 		}
@@ -218,7 +242,13 @@ ShaderProgramGL* GapiGL::createShaderSource(
 		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
 		if (result == GL_FALSE) {
 			// obtain error message and display it
-			/* ... */
+			GLint maxLength = 0;
+			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &maxLength);
+
+			//The maxLength includes the NULL character
+			std::vector<GLchar> infoLog(maxLength);
+			glGetShaderInfoLog(id, maxLength, &maxLength, infoLog.data());
+			cerr << infoLog.data();
 
 			return nullptr;
 		}
