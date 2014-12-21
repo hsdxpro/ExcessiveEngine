@@ -64,6 +64,8 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 	// DEFINE VERTEX STRUCTURE HERE.... @TODO REMOVE IT OR I KILL MYSELF
 	struct baseVertex {
 		mm::vec3 pos;
+		mm::vec3 normal;
+		mm::vec2 tex0;
 		//bool operator == (const baseVertex& v) { return pos == v.pos; }
 	};
 
@@ -137,10 +139,10 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 					((baseVertex*)vertices)[localVertIdx + globalVertexIdx].pos = mm::vec3(supTmpVec->x, supTmpVec->y, supTmpVec->z);
 				}
 
-				//if (mesh->HasNormals()) {
-				//	supTmpVec = &mesh->mNormals[localVertIdx];
-				//	((baseVertex*)vertices)[localVertIdx + globalVertexIdx].normal = mm::vec3(supTmpVec->x, supTmpVec->y, supTmpVec->z);
-				//}
+				if (mesh->HasNormals()) {
+					supTmpVec = &mesh->mNormals[localVertIdx];
+					((baseVertex*)vertices)[localVertIdx + globalVertexIdx].normal = mm::vec3(supTmpVec->x, supTmpVec->y, supTmpVec->z);
+				}
 
 				//if (mesh->HasTangentsAndBitangents()) {
 				//	supTmpVec = &mesh->mTangents[localVertIdx];
@@ -148,12 +150,12 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 				//}
 
 				// @TODO not general algorithm, wee need to handle more UV channels
-				//auto vecPtr = mesh->mTextureCoords[0];
-				//if (vecPtr)
-				//{
-				//	supTmpVec = &vecPtr[localVertIdx];
-				//	((baseVertex*)vertices)[localVertIdx + globalVertexIdx].tex = Vec2(supTmpVec->x, -supTmpVec->y); // UV flip y
-				//}
+				auto vecPtr = mesh->mTextureCoords[0];
+				if (vecPtr)
+				{
+					supTmpVec = &vecPtr[localVertIdx];
+					((baseVertex*)vertices)[localVertIdx + globalVertexIdx].tex0 = mm::vec2(supTmpVec->x, -supTmpVec->y); // UV flip y
+				}
 			}
 		}
 		globalVertexIdx += mesh->mNumVertices;
@@ -166,9 +168,11 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 		data.vertex_data = vertices;
 		graphics::IMesh::ElementDesc elements[] = {
 			graphics::IMesh::POSITION, 3,
+			graphics::IMesh::NORMAL, 3,
+			graphics::IMesh::TEX0, 2,
 		};
 		data.vertex_elements = elements;
-		data.vertex_elements_num = 1;
+		data.vertex_elements_num = sizeof(elements) / sizeof(elements[0]);
 		data.mat_ids = nullptr;
 		data.mat_ids_num = 0;
 		return mesh->update(data);
