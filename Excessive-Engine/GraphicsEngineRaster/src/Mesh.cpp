@@ -265,12 +265,12 @@ bool Mesh::update(MeshData data) {
 
 
 	// set elements (vb and offset, as other params are set)
-	int offset = 0;
+	// int offset = 0;
 	for (int i = 0; i < num_elements; i++) {
-		streams[0].elements |= elements[i].semantic;
-		elements[i].buffer = streams[0].vb;
-		elements[i].offset = offset;
-		offset += elements[i].num_components*elements[i].width / 8;
+		streams[i].elements = elements[i].semantic;
+		elements[i].buffer = streams[i].vb;
+		elements[i].offset = 0;
+		//offset += elements[i].num_components*elements[i].width / 8;
 	}
 
 	scope_guard.perform_cleanup = false;
@@ -529,13 +529,13 @@ u64 Mesh::getElementConfigId() const {
 	// calculate composition
 	// see http://en.wikipedia.org/wiki/Composition_(combinatorics) for nice drawing about binary representation
 	for (int i = 0, j = 0; i < num_streams; i++) {
-		assert(j < num_elements); // indicates the streams' elements are not set correctly
 		int weight = NumBitsSet(streams[i].elements); // how many elements does that stream have?
 		for (int k = 1; k < weight; k++) {
 			comp |= (1u << j);
 			j++;
 		}
 		j++;
+		assert(j <= num_elements); // indicates the streams' elements are not set correctly
 	}
 
 	// calculate num_components
