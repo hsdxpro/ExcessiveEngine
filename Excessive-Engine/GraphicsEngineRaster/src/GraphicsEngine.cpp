@@ -167,8 +167,6 @@ void GraphicsEngineRaster::update() {
 
 	//cout << entities.size() << " entities to be drawn..." << endl;
 
-	// mesh type store
-	static std::unordered_map<u64, rVertexAttrib> meshFormats;
 
 	// for each entity
 	int num_drawn = 0;
@@ -179,31 +177,20 @@ void GraphicsEngineRaster::update() {
 			//cout << "Entity has no mesh :(" << endl;
 			continue;
 		}
-		u64 meshId = mesh->getElementConfigId();
 		rVertexAttrib attrib;
-
 		Mesh::ElementInfo posInfo;
 		bool hasPosition;
 		hasPosition = mesh->getElementBySemantic(posInfo, Mesh::POSITION);
-
-		auto it = meshFormats.find(meshId);
-		if (it == meshFormats.end()) {
-			if (!hasPosition) {
-				//cout << "This mesh does not have position... KILL IT WITH FIRE!" << endl;
-				continue;
-			}
-
-			attrib.index = shader->getAttributeIndex("in_vertex");
-			attrib.nComponent = posInfo.num_components;
-			attrib.offset = posInfo.offset;
-			attrib.type = eVertexAttribType::FLOAT;
-			attrib.size = attrib.divisor = 0;
-
-			meshFormats.insert(std::pair<u64, rVertexAttrib>(meshId, attrib));
+		if (!hasPosition) {
+			//cout << "This mesh does not have position... KILL IT WITH FIRE!" << endl;
+			continue;
 		}
-		else {
-			attrib = it->second;
-		}
+
+		attrib.index = shader->getAttributeIndex("in_vertex");
+		attrib.nComponent = posInfo.num_components;
+		attrib.offset = posInfo.offset;
+		attrib.type = eVertexAttribType::FLOAT;
+		attrib.size = attrib.divisor = 0;
 
 		// set stuff
 		gapi->setViewport(0, 0, 800, 600);
