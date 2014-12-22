@@ -716,12 +716,28 @@ void GapiGL::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attr
 {
 	ASSERT(buffers && attrib_data);
 
+
 	for (int c = 0; c < num_buffers; ++c)
 	{
+		u32 type;
+		bool normalize = false;
+		if (attrib_data[c].type == eVertexAttribType::FLOAT) {
+			type = GL_FLOAT;
+		}
+		else if (attrib_data[c].type == eVertexAttribType::UNORM_16) {
+			type = GL_UNSIGNED_SHORT;
+			normalize = true;
+		}
+		else {
+			cout << "Type cannot be used..." << endl;
+			continue;
+		}
+
+
 		GLuint id = static_cast<VertexBufferGL*>(buffers[c])->id;
 		glBindBuffer(GL_ARRAY_BUFFER, id);
 		glEnableVertexAttribArray(attrib_data[c].index);
-		glVertexAttribPointer(attrib_data[c].index, attrib_data[c].nComponent, attrib_array[(u32)attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset);
+		glVertexAttribPointer(attrib_data[c].index, attrib_data[c].nComponent, type, normalize, attrib_data[c].size, (const void*)attrib_data[c].offset);
 		//glVertexAttribDivisor( attrib_data[c].index, attrib_data[c].divisor ); //instancing stuff
 	}
 }

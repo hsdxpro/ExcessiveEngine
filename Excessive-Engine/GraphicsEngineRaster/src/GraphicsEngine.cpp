@@ -35,15 +35,20 @@ static const char vertexShaderCode[] =
 "  mat4 mvp; \n"
 "} cd; \n"
 "in vec3 in_vertex; \n"
-"in vec3 in_normal; \n"
+"in vec2 in_normal; \n"
 "out vec3 pos; \n"
 "out vec3 normal; \n"
 "void main() \n"
 "{ \n"
-"  pos = vec3(in_vertex.x, in_vertex.y, in_vertex.z); \n"
-"  normal = in_normal;\n"
-"  gl_Position = cd.mvp * vec4(pos, 1);\n"
+"	pos = vec3(in_vertex.x, in_vertex.y, in_vertex.z); \n"
+"	normal.x = in_normal.x*2.0f + 1.0f; \n"
+"	normal.y = in_normal.y*4.0f - 2.0f; \n"
+"	normal.z = float(normal.y < 0.0f)*2.0f - 0.5f; \n"
+"	normal.y += normal.z * 1.0f; \n"
+"	normal.z *= sqrt(1 - normal.x*normal.x - normal.y*normal.y); \n"
+"	gl_Position = cd.mvp * vec4(pos, 1);\n"
 "} \n";
+
 
 static const char pixelShaderCode[] =
 "#version 440 core \n"
@@ -193,14 +198,18 @@ void GraphicsEngineRaster::update() {
 		//}
 
 		attribs[0].index = shader->getAttributeIndex("in_vertex");
-		attribs[0].nComponent = 3;
-		attribs[0].offset = 0;
+		attribs[0].nComponent = attribInfos[0].num_components;
+		attribs[0].offset = attribInfos[0].offset;;
 		attribs[0].type = eVertexAttribType::FLOAT;
 		attribs[0].size = 0;
 		attribs[0].divisor = 0;
 
-		attribs[1] = attribs[0];
 		attribs[1].index = shader->getAttributeIndex("in_normal");
+		attribs[1].nComponent = attribInfos[1].num_components;
+		attribs[1].offset = attribInfos[1].offset;
+		attribs[1].type = eVertexAttribType::UNORM_16;
+		attribs[1].size = 0;
+		attribs[1].divisor = 0;
 
 		// set stuff
 		gapi->setViewport(0, 0, 800, 600);
