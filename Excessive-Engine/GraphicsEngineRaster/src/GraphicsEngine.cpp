@@ -34,22 +34,27 @@ static const char vertexShaderCode[] =
 "{ \n"
 "  mat4 mvp; \n"
 "} cd; \n"
-"layout(location = 0) in vec3 in_vertex; \n"
-"out vec3 posL; \n"
+"in vec3 in_vertex; \n"
+"in vec3 in_normal; \n"
+"out vec3 pos; \n"
+"out vec3 normal; \n"
 "void main() \n"
 "{ \n"
-"  vec3 pos = vec3(in_vertex.x, in_vertex.y, in_vertex.z); \n"
-"	posL = pos.xyz; \n"
+"  pos = vec3(in_vertex.x, in_vertex.y, in_vertex.z); \n"
+"  normal = in_normal;\n"
 "  gl_Position = cd.mvp * vec4(pos, 1);\n"
 "} \n";
 
 static const char pixelShaderCode[] =
 "#version 440 core \n"
-"in vec3 posL; \n"
+"in vec3 pos; \n"
+"in vec3 normal; \n"
 "out vec4 color; \n"
 "void main() \n"
 "{ \n"
-"   color = vec4(posL.x * 1, posL.y * 1, posL.z * 1, 0.2f); \n"
+//"	float intensity = dot(normal, vec3(0, 0, 1)); \n"
+"   color = 1 * vec4(normal.x * 1, normal.y * 1, normal.z * 1, 0.2f); \n"
+//"   color = intensity * vec4(1,1,1,1); \n"
 "} \n"
 ;
 
@@ -177,20 +182,25 @@ void GraphicsEngineRaster::update() {
 			//cout << "Entity has no mesh :(" << endl;
 			continue;
 		}
-		rVertexAttrib attrib;
-		Mesh::ElementInfo posInfo;
-		bool hasPosition;
-		hasPosition = mesh->getElementBySemantic(posInfo, Mesh::POSITION);
-		if (!hasPosition) {
-			//cout << "This mesh does not have position... KILL IT WITH FIRE!" << endl;
-			continue;
-		}
+		rVertexAttrib attribs[3];
+		Mesh::ElementInfo attribInfos[3];
+		//bool hasPosition;
+		mesh->getElementBySemantic(attribInfos[0], Mesh::POSITION);
+		mesh->getElementBySemantic(attribInfos[1], Mesh::NORMAL);
+		//if (!hasPosition) {
+		//	//cout << "This mesh does not have position... KILL IT WITH FIRE!" << endl;
+		//	continue;
+		//}
 
-		attrib.index = shader->getAttributeIndex("in_vertex");
-		attrib.nComponent = posInfo.num_components;
-		attrib.offset = posInfo.offset;
-		attrib.type = eVertexAttribType::FLOAT;
-		attrib.size = attrib.divisor = 0;
+		attribs[0].index = shader->getAttributeIndex("in_vertex");
+		attribs[0].nComponent = 3;
+		attribs[0].offset = 0;
+		attribs[0].type = eVertexAttribType::FLOAT;
+		attribs[0].size = 0;
+		attribs[0].divisor = 0;
+
+		attribs[1] = attribs[0];
+		attribs[1].index = shader->getAttributeIndex("in_normal");
 
 		// set stuff
 		gapi->setViewport(0, 0, 800, 600);
@@ -210,7 +220,8 @@ void GraphicsEngineRaster::update() {
 		gapi->setUniformBuffer(ubo_buf, shader->getUniformBlockIndex("constant_data"));
 
 		// set vertex buffer
-		gapi->setVertexBuffers(&posInfo.buffer, &attrib, 1);
+		IVertexBuffer* tmp[2] = { attribInfos[0].buffer, attribInfos[1].buffer };
+		gapi->setVertexBuffers(tmp, attribs, 2);
 
 		// set index buffer
 		auto ib = mesh->getIndexBuffer();

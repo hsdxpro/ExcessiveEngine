@@ -158,7 +158,7 @@ int Ricsi() {
 
 
 	graphics::IResourceLoader* rcld = Factory::createResourceLoader();
-	is_mesh = rcld->loadMesh(mesh, (Sys::getWorkDir() + std::wstring(L"../Assets/terminal/terminal_blender.dae")).c_str());
+	is_mesh = rcld->loadMesh(mesh, (Sys::getWorkDir() + std::wstring(L"../Assets/teapot.dae")).c_str());
 	if (!is_mesh) {
 		cout << "Could not load teapot :(" << endl;
 	}

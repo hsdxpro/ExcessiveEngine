@@ -151,8 +151,7 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 
 				// @TODO not general algorithm, wee need to handle more UV channels
 				auto vecPtr = mesh->mTextureCoords[0];
-				if (vecPtr)
-				{
+				if (vecPtr) {
 					supTmpVec = &vecPtr[localVertIdx];
 					((baseVertex*)vertices)[localVertIdx + globalVertexIdx].tex0 = mm::vec2(supTmpVec->x, -supTmpVec->y); // UV flip y
 				}
