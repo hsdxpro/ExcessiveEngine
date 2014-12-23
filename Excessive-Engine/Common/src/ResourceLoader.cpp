@@ -140,7 +140,7 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 				}
 
 				if (mesh->HasNormals()) {
-					supTmpVec = &mesh->mNormals[localVertIdx];
+					supTmpVec = &mesh->mNormals[localVertIdx]; 
 					((baseVertex*)vertices)[localVertIdx + globalVertexIdx].normal = mm::vec3(supTmpVec->x, supTmpVec->y, supTmpVec->z);
 				}
 
@@ -153,7 +153,7 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 				auto vecPtr = mesh->mTextureCoords[0];
 				if (vecPtr) {
 					supTmpVec = &vecPtr[localVertIdx];
-					((baseVertex*)vertices)[localVertIdx + globalVertexIdx].tex0 = mm::vec2(supTmpVec->x, -supTmpVec->y); // UV flip y
+					((baseVertex*)vertices)[localVertIdx + globalVertexIdx].tex0 = mm::vec2(supTmpVec->x, supTmpVec->y); // UV flip y
 				}
 			}
 		}

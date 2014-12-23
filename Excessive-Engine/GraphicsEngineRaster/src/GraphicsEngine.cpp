@@ -14,6 +14,8 @@ using std::endl;
 #define EXPORT
 #endif
 
+//
+ITexture* gTmpTex;
 
 static const char vertexShaderCode[] =
 /**
@@ -35,31 +37,37 @@ static const char vertexShaderCode[] =
 "  mat4 mvp; \n"
 "} cd; \n"
 "in vec3 in_vertex; \n"
-"in vec2 in_normal; \n"
+"in vec3 in_normal; \n"
+"in vec2 in_tex0; \n"
 "out vec3 pos; \n"
 "out vec3 normal; \n"
+"out vec2 tex0; \n"
 "void main() \n"
 "{ \n"
 "	pos = vec3(in_vertex.x, in_vertex.y, in_vertex.z); \n"
-"	normal.x = in_normal.x*2.0f + 1.0f; \n"
-"	normal.y = in_normal.y*4.0f - 2.0f; \n"
-"	normal.z = float(normal.y < 0.0f)*2.0f - 0.5f; \n"
-"	normal.y += normal.z * 1.0f; \n"
-"	normal.z *= sqrt(1 - normal.x*normal.x - normal.y*normal.y); \n"
+"	normal = in_normal; \n"
+"	tex0 = in_tex0; \n"
+//"	normal.x = in_normal.x*2.0f + 1.0f; \n"
+//"	normal.y = in_normal.y*4.0f - 2.0f; \n"
+//"	normal.z = float(normal.y < 0.0f)*2.0f - 0.5f; \n"
+//"	normal.y += normal.z * 1.0f; \n"
+//"	normal.z *= sqrt(1 - normal.x*normal.x - normal.y*normal.y); \n"
 "	gl_Position = cd.mvp * vec4(pos, 1);\n"
 "} \n";
 
 
 static const char pixelShaderCode[] =
 "#version 440 core \n"
+"uniform sampler2D tex; \n"
+
 "in vec3 pos; \n"
 "in vec3 normal; \n"
+"in vec2 tex0; \n"
 "out vec4 color; \n"
 "void main() \n"
 "{ \n"
-//"	float intensity = dot(normal, vec3(0, 0, 1)); \n"
-"   color = 1 * vec4(normal.x * 1, normal.y * 1, normal.z * 1, 0.2f); \n"
-//"   color = intensity * vec4(1,1,1,1); \n"
+"	float intensity = dot(normalize(normal), normalize(vec3(1, 1, 1))); \n"
+"   color = texture(tex, tex0); \n"
 "} \n"
 ;
 
@@ -98,6 +106,9 @@ GraphicsEngineRaster::GraphicsEngineRaster(const graphics::rGraphicsEngine& d) {
 	// create shaders
 	shader = gapi->createShaderSource(vertexShaderCode, pixelShaderCode);
 	isValid = shader != nullptr;
+
+
+	gTmpTex = gapi->createTexture("D:/D_32/image.png");
 	return;
 
 	u32 index = shader->getAttributeIndex("in_vertex");
@@ -106,7 +117,6 @@ GraphicsEngineRaster::GraphicsEngineRaster(const graphics::rGraphicsEngine& d) {
 	gapi->setDebugOutput(true);
 	gapi->setSeamlessCubeMaps(true);
 	gapi->setSyncDebugOutput(true);
-
 }
 
 GraphicsEngineRaster::~GraphicsEngineRaster() {
@@ -192,6 +202,7 @@ void GraphicsEngineRaster::update() {
 		//bool hasPosition;
 		mesh->getElementBySemantic(attribInfos[0], Mesh::POSITION);
 		mesh->getElementBySemantic(attribInfos[1], Mesh::NORMAL);
+		mesh->getElementBySemantic(attribInfos[2], Mesh::TEX0);
 		//if (!hasPosition) {
 		//	//cout << "This mesh does not have position... KILL IT WITH FIRE!" << endl;
 		//	continue;
@@ -207,14 +218,24 @@ void GraphicsEngineRaster::update() {
 		attribs[1].index = shader->getAttributeIndex("in_normal");
 		attribs[1].nComponent = attribInfos[1].num_components;
 		attribs[1].offset = attribInfos[1].offset;
-		attribs[1].type = eVertexAttribType::UNORM_16;
+		attribs[1].type = eVertexAttribType::FLOAT;
 		attribs[1].size = 0;
 		attribs[1].divisor = 0;
+
+		attribs[2].index = shader->getAttributeIndex("in_tex0");
+		attribs[2].nComponent = attribInfos[2].num_components;
+		attribs[2].offset = attribInfos[2].offset;
+		attribs[2].type = eVertexAttribType::FLOAT;
+		attribs[2].size = 0;
+		attribs[2].divisor = 0;
+
 
 		// set stuff
 		gapi->setViewport(0, 0, 800, 600);
 		gapi->setShaderProgram(shader);
 		gapi->setRenderTargets(0, 0);
+
+		gapi->setTexture(gTmpTex, shader->getSamplerIndex("tex"));
 
 		mm::mat4 wvp = scene.getCam()->getProjMatrix() * scene.getCam()->getViewMatrix();
 
@@ -229,8 +250,8 @@ void GraphicsEngineRaster::update() {
 		gapi->setUniformBuffer(ubo_buf, shader->getUniformBlockIndex("constant_data"));
 
 		// set vertex buffer
-		IVertexBuffer* tmp[2] = { attribInfos[0].buffer, attribInfos[1].buffer };
-		gapi->setVertexBuffers(tmp, attribs, 2);
+		IVertexBuffer* tmp[3] = { attribInfos[0].buffer, attribInfos[1].buffer, attribInfos[2].buffer };
+		gapi->setVertexBuffers(tmp, attribs, 3);
 
 		// set index buffer
 		auto ib = mesh->getIndexBuffer();

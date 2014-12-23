@@ -186,7 +186,7 @@ bool Mesh::update(MeshData data) {
 	RawUniquePtr packed_vertex_data(operator new(internal_stride * num_vertices));
 	packVertices(data.vertex_elements, elements, data.vertex_elements_num,  num_elements, data.vertex_data, packed_vertex_data.get(), num_vertices);
 
-
+	//memcpy(packed_vertex_data.get(), data.vertex_data, data.vertex_bytes);
 
 	// compute mat ids
 	mat_ids.resize(data.mat_ids_num + 1);
@@ -236,12 +236,17 @@ bool Mesh::update(MeshData data) {
 	IVertexBuffer* _vb = nullptr;
 	RawUniquePtr vb_data(operator new(4 * sizeof(float) * num_vertices));
 
+	u32 offset = 0;
 	for (int i = 0; i < num_elements; i++) {
+
+		elements[i].offset = offset;
+
 		// copy relevant stuff from packed_vertex_data
-		size_t input_ptr = (size_t)packed_vertex_data.get();
+		size_t input_ptr = (size_t)packed_vertex_data.get() + offset;
 		size_t output_ptr = (size_t)vb_data.get();
 		size_t chunk_size = elements[i].num_components * elements[i].width / 8;
-		for (size_t i = 0; i < num_vertices; i++) {
+		offset += chunk_size;
+		for (size_t j = 0; j < num_vertices; j++) {
 			memcpy((void*)output_ptr, (void*)input_ptr, chunk_size);
 			input_ptr += internal_stride;
 			output_ptr += chunk_size;
@@ -370,12 +375,14 @@ void PackPosition(void* input, void* output) {
 }
 
 void PackNormal(void* input, void* output) {
-	float x = ((float*)input)[0],
-		y = ((float*)input)[1],
-		z = ((float*)input)[2];
-	u16* out = (u16*)output;
-	out[0] = 65535.f*(0.5f + 0.5f*x);
-	out[1] = 32767.5f*(0.5f + 0.5f*y) + (z > 0.0f) * 32767.5;
+	memcpy(output, input, sizeof(float) * 3); // do nothing
+
+	//float x = ((float*)input)[0],
+	//	y = ((float*)input)[1],
+	//	z = ((float*)input)[2];
+	//u16* out = (u16*)output;
+	//out[0] = 65535.f*(0.5f + 0.5f*x);
+	//out[1] = 32767.5f*(0.5f + 0.5f*y) + (z > 0.0f) * 32767.5;
 }
 
 void PackTangent(void* input, void* output) {
@@ -456,8 +463,9 @@ void Mesh::packVertices(ElementDesc* input_format, ElementInfo* output_format, i
 			else if (COLOR0 <= semantic && semantic <= COLOR7) {
 
 			}
-			else if (TEX0 < semantic && semantic <= TEX7) {
-
+			else if (TEX0 <= semantic && semantic <= TEX7) {
+				// TODO, Please correct that
+				memcpy(off_out, off_in, sizeof(float) * 2);
 			}
 		}
 

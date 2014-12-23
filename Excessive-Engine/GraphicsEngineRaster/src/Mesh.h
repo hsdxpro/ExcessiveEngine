@@ -157,10 +157,10 @@ protected:
 			info.width = 32;
 		}
 		else if (semantic == NORMAL || semantic == TANGENT || semantic == BITANGENT) {
-			info.num_components = 2;
+			info.num_components = 3;
 			info.semantic = desc.semantic;
-			info.type = UNORM;
-			info.width = 16;
+			info.type = FLOAT;
+			info.width = 32;
 		}
 		else if (COLOR0 <= semantic && semantic <= COLOR7) {
 			info.num_components = desc.num_components;
@@ -171,8 +171,8 @@ protected:
 		else if (TEX0 <= semantic && semantic <= TEX7) {
 			info.num_components = desc.num_components;
 			info.semantic = desc.semantic;
-			info.type = UNORM;
-			info.width = 16;
+			info.type = FLOAT;
+			info.width = 32;
 		}
 		else {
 			info.num_components = 0;

@@ -103,62 +103,62 @@ int Ricsi() {
 
 	// Create a simple whatever
 	graphics::IMesh* mesh = gEngine->createMesh();
-	graphics::IMesh::MeshData data;
-	//   [0]---[1]
-	//   /  \  /
-	//  [3]---[2]
+	//graphics::IMesh::MeshData data;
+	////   [0]---[1]
+	////   /  \  /
+	////  [3]---[2]
+	////
+	////   [4]---[5]
+	////   /  \  /
+	////  [7]---[6]
+	//float vertices[] = {
+	//	-1, 1, 1,
+	//	1, 1, 1,
+	//	1, -1, 1,
+	//	-1, -1, 1,
+	//	-1, 1, -1,
+	//	1, 1, -1,
+	//	1, -1, -1,
+	//	-1, -1, -1,
+	//};
+	//u32 indices[] = {
+	//	1, 0, 2, // top
+	//	2, 3, 0,
+	//	4, 5, 6, // bottom
+	//	7, 4, 6,
+	//	2, 3, 6, // front
+	//	3, 7, 6,
+	//	0, 1, 5, // back
+	//	5, 4, 0,
+	//	1, 2, 6, //right
+	//	1, 6, 5,
+	//	7, 3, 0, // left
+	//	4, 7, 0,
+	//};
+	//graphics::IMesh::ElementDesc elements[] = {
+	//	graphics::IMesh::POSITION, 3,
+	//};
+	//data.vertex_data = vertices;
+	//data.vertex_bytes = sizeof(vertices);
+	//data.vertex_elements = elements;
+	//data.vertex_elements_num = 1;
+	//data.index_data = indices;
+	//data.index_num = sizeof(indices) / sizeof(u32);
+	//data.mat_ids = nullptr;
+	//data.mat_ids_num = 0;
 	//
-	//   [4]---[5]
-	//   /  \  /
-	//  [7]---[6]
-	float vertices[] = {
-		-1, 1, 1,
-		1, 1, 1,
-		1, -1, 1,
-		-1, -1, 1,
-		-1, 1, -1,
-		1, 1, -1,
-		1, -1, -1,
-		-1, -1, -1,
-	};
-	u32 indices[] = {
-		1, 0, 2, // top
-		2, 3, 0,
-		4, 5, 6, // bottom
-		7, 4, 6,
-		2, 3, 6, // front
-		3, 7, 6,
-		0, 1, 5, // back
-		5, 4, 0,
-		1, 2, 6, //right
-		1, 6, 5,
-		7, 3, 0, // left
-		4, 7, 0,
-	};
-	graphics::IMesh::ElementDesc elements[] = {
-		graphics::IMesh::POSITION, 3,
-	};
-	data.vertex_data = vertices;
-	data.vertex_bytes = sizeof(vertices);
-	data.vertex_elements = elements;
-	data.vertex_elements_num = 1;
-	data.index_data = indices;
-	data.index_num = sizeof(indices) / sizeof(u32);
-	data.mat_ids = nullptr;
-	data.mat_ids_num = 0;
-
-	bool is_mesh = mesh->update(data);
-
-	if (!is_mesh) {
-		cout << "Could not create a mesh :(" << endl;
-	}
-	else {
-		cout << "Mesh created!" << endl;
-	}
-
-
+	//bool is_mesh = mesh->update(data);
+	//
+	//if (!is_mesh) {
+	//	cout << "Could not create a mesh :(" << endl;
+	//}
+	//else {
+	//	cout << "Mesh created!" << endl;
+	//}
+	//
+	//
 	graphics::IResourceLoader* rcld = Factory::createResourceLoader();
-	is_mesh = rcld->loadMesh(mesh, (Sys::getWorkDir() + std::wstring(L"../Assets/teapot.dae")).c_str());
+	bool is_mesh = rcld->loadMesh(mesh, (Sys::getWorkDir() + std::wstring(L"../Assets/teapot.dae")).c_str());
 	if (!is_mesh) {
 		cout << "Could not load teapot :(" << endl;
 	}
