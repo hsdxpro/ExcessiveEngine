@@ -3,9 +3,11 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <xlocbuf>
+#include <codecvt>
 
-Sys::DLLHandle Sys::loadDLL(const std::string& filePath) {
-	return LoadLibrary(filePath.c_str());
+Sys::DLLHandle Sys::loadDLL(const wchar_t* path) {
+	return LoadLibraryW(path);
 }
 
 bool Sys::unloadDLL(DLLHandle h) {

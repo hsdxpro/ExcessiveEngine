@@ -78,7 +78,7 @@ static const char pixelShaderCode[] =
 ////////////////////////////////////////////////////////////////////////////////
 
 extern "C"
-EXPORT graphics::IGraphicsEngine* CreateGraphicsEngine(const graphics::rGraphicsEngine& d) {
+EXPORT graphics::IGraphicsEngine* CreateGraphicsEngineRaster(const rGraphicsEngineRaster& d) {
 	auto myEngine = new GraphicsEngineRaster(d);
 	if (myEngine->isConstructionSucceeded()) {
 		return myEngine;
@@ -99,8 +99,8 @@ EXPORT graphics::IGraphicsEngine* CreateGraphicsEngine(const graphics::rGraphics
 ////////////////////////////////////////////////////////////////////////////////
 // ctor, dtor, release
 
-GraphicsEngineRaster::GraphicsEngineRaster(const graphics::rGraphicsEngine& d) {
-	gapi = d.gapi;
+GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRaster& d) {
+	gapi = Factory::createGapiGL();
 
 	// WARNING: temporary testing code
 	// create shaders
@@ -108,7 +108,7 @@ GraphicsEngineRaster::GraphicsEngineRaster(const graphics::rGraphicsEngine& d) {
 	isValid = shader != nullptr;
 
 
-	gTmpTex = gapi->createTexture("D:/D_32/image.png");
+	gTmpTex = gapi->createTexture((Sys::getWorkDir() + L"image.png").c_str());
 	return;
 
 	u32 index = shader->getAttributeIndex("in_vertex");
@@ -170,6 +170,8 @@ Camera* GraphicsEngineRaster::createCam() {
 // update
 void GraphicsEngineRaster::update() {
 	//cout << "Updating frame..." << endl;
+
+	gapi->clearFrameBuffer(eClearFlag::COLOR_DEPTH, mm::vec4(0, 0, 0, 0), 0, 0);
 
 	// ok, this function is only for testing purposes, it's not a real renderer xD	
 	// just render the first scene, entity by entity

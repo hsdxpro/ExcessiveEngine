@@ -126,7 +126,7 @@ class Sys
 public:
 	typedef void* DLLHandle;
 
-	static DLLHandle	loadDLL(const std::string& filePath);
+	static DLLHandle	loadDLL(const wchar_t* path);
 	static bool			unloadDLL(DLLHandle h);
 
 	static void*			getDllProcAddress(DLLHandle h, const std::string& procName);

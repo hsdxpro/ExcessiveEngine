@@ -1,3 +1,4 @@
+#pragma once
 #include "../GraphicsEngine_Interface/interface/IGraphicsEngine.h"
 
 #include <unordered_set>
@@ -15,11 +16,19 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
+enum class eGapiType {
+	OPENGL_4_5,
+};
+
+struct rGraphicsEngineRaster {
+	eGapiType type;
+};
+
 class GraphicsEngineRaster : public graphics::IGraphicsEngine
 {
 public:
 	// ctor, dtor, release
-	GraphicsEngineRaster(const graphics::rGraphicsEngine& d);
+	GraphicsEngineRaster(const rGraphicsEngineRaster& d);
 	~GraphicsEngineRaster();
 	bool isConstructionSucceeded() const { return isValid; }
 

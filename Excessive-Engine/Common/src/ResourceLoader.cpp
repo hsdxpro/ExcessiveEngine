@@ -35,6 +35,7 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 	// Free memory
 	free(mem);
 
+	
 	// Parsed "scene" have meshes
 	size_t nMeshes = scene->mNumMeshes;
 	aiMesh** meshes = scene->mMeshes;
@@ -121,6 +122,10 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 	for (size_t i = 0; i < nMeshes; i++) {
 		aiMesh* mesh = meshes[i];
 
+		// Get mesh textures
+		aiString diffusePath, normalPath;
+		scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &diffusePath);
+
 		// Each face
 		for (size_t j = 0; j < mesh->mNumFaces; globalIndicesIdx += 3, j++) {
 			aiFace& face = mesh->mFaces[j];
@@ -197,9 +202,6 @@ bool ResourceLoader::genMesh_Cylinder(graphics::IMesh* mesh, float radius, float
 ////////////////////////////////////////////////////////////////////////////////
 // Material functions
 
-bool ResourceLoader::loadMaterial(graphics::IMaterial* material, const char* filePath) {
-	return false;
-}
 bool ResourceLoader::loadMaterial(graphics::IMaterial* material, const wchar_t* filePath) {
 	return false;
 }
@@ -208,9 +210,6 @@ bool ResourceLoader::loadMaterial(graphics::IMaterial* material, const wchar_t* 
 ////////////////////////////////////////////////////////////////////////////////
 // Texture functions
 
-bool ResourceLoader::loadTexture(graphics::ITexture* texture, const char* filePath) {
-	return false;
-}
 bool ResourceLoader::loadTexture(graphics::ITexture* texture, const wchar_t* filePath) {
 	return false;
 }

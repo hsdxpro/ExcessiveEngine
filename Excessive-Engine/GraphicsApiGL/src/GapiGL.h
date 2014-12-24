@@ -38,7 +38,7 @@ class GapiGL : public IGapi
 	UniformBufferGL* createUniformBuffer(const rBuffer& data) override;
 	VertexBufferGL*	createVertexBuffer(const rBuffer& data) override;
 	TextureGL*		createTexture(const rTexture& data) override;
-	TextureGL*		createTexture(const char* path) override;
+	TextureGL*		createTexture(const wchar_t* path) override;
 	IndexBufferGL*	createIndexBuffer(const rBuffer& data) override;
     
 	void WriteTexture(ITexture* t, const rTextureUpdate& d);

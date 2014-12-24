@@ -11,9 +11,9 @@ class IMaterial;
 class ITexture;
 class ICamera;
 
-struct rGraphicsEngine {
-	IGapi* gapi;
-};
+//struct rGraphicsEngine {
+//	IGapi* gapi;
+//};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,9 +41,6 @@ public:
 
 	// interact
 	virtual void update() = 0;
-
-	// getters
-	virtual IGapi* getGapi() = 0;
 };
 
 

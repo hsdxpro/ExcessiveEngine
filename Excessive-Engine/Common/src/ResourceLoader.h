@@ -22,14 +22,12 @@ public:
 	////////////////////////////////////
 	// Material functions
 
-	bool loadMaterial(graphics::IMaterial* material, const char* filePath) override;
 	bool loadMaterial(graphics::IMaterial* material, const wchar_t* filePath) override;
 
 
 	////////////////////////////////////
 	// Texture functions
 
-	bool loadTexture(graphics::ITexture* texture, const char* filePath) override;
 	bool loadTexture(graphics::ITexture* texture, const wchar_t* filePath) override;
 	bool genTexture_Checker(graphics::ITexture* texture, int div_x, int div_y, u32 color1, u32 color2) override;
 

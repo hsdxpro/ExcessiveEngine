@@ -14,6 +14,7 @@ add_subdirectory( PIL )
 add_subdirectory( Core )
 add_subdirectory( GraphicsApiGL )
 add_subdirectory( GraphicsEngineRaster )
+add_subdirectory( GraphicsEngineRT )
 
 add_subdirectory( Test )
 

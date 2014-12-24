@@ -45,21 +45,11 @@ public:
 	/// Load a material file.
 	/// Supported formats are: none.
 	/// \return Indicates success.
-	virtual bool loadMaterial(IMaterial* material, const char* filePath) = 0;
-
-	/// Load a material file.
-	/// Supported formats are: none.
-	/// \return Indicates success.
 	virtual bool loadMaterial(IMaterial* material, const wchar_t* filePath) = 0;
 
 
 	////////////////////////////////////
 	// Texture functions
-
-	/// Load an image file into a texture.
-	/// Supported format are: none.
-	/// \return Indicates success.
-	virtual bool loadTexture(ITexture* texture, const char* filePath) = 0;
 
 	/// Load an image file into a texture.
 	/// Supported format are: none.

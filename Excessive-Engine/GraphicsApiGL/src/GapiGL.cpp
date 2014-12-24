@@ -419,10 +419,13 @@ TextureGL* GapiGL::createTexture(const rTexture& data)
 	return tex;
 }
 
-TextureGL* GapiGL::createTexture(const char* path)
+TextureGL* GapiGL::createTexture(const wchar_t* path)
 {
+	char ansiPath[256];
+	wcstombs_s(nullptr, ansiPath, path, 256);
+
 	sf::Image im;
-	im.loadFromFile(path);
+	im.loadFromFile(ansiPath);
 
 	rTexture texdata;
 	texdata.width = im.getSize().x;

@@ -58,6 +58,7 @@ include_directories("../GraphicsApi_Interface/interface/")
 
 if(BUILD_EXCESSIVE_WITH_DLL)
 	add_library( GraphicsEngineRaster SHARED ${sources} ${headers} ${interfaces} )
+	target_link_libraries( GraphicsEngineRaster "-Wl,--whole-archive" Common  "-Wl,--no-whole-archive")
 elseif( NOT BUILD_EXCESSIVE_WITH_DLL)
 	add_library( GraphicsEngineRaster STATIC ${sources} ${headers} ${interfaces} )
 endif()
