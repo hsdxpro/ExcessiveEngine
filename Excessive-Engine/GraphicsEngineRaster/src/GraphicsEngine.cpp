@@ -66,8 +66,11 @@ static const char pixelShaderCode[] =
 "out vec4 color; \n"
 "void main() \n"
 "{ \n"
-"	float intensity = dot(normalize(normal), normalize(vec3(1, 1, 1))); \n"
-"   color = texture(tex, tex0); \n"
+"	float intensity = clamp(dot(normalize(normal), normalize(vec3(1, 1, 1))), 0, 1); \n"
+"	const float t = 0.7;"
+"	const vec4 sun_color = vec4(1.0, 0.92, 0.72, 1);"
+"	const vec4 sky_color = vec4(0.6, 0.8, 1.0, 1);"
+"   color = texture(tex, tex0)*t*intensity*sun_color + (1-t)*sky_color;\n"
 "} \n"
 ;
 
@@ -108,7 +111,7 @@ GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRaster& d) {
 	isValid = shader != nullptr;
 
 
-	gTmpTex = gapi->createTexture((Sys::getWorkDir() + L"image.png").c_str());
+	gTmpTex = gapi->createTexture((Sys::getWorkDir() + L"../Runtime/image.png").c_str());
 	return;
 
 	u32 index = shader->getAttributeIndex("in_vertex");
@@ -212,21 +215,21 @@ void GraphicsEngineRaster::update() {
 
 		attribs[0].index = shader->getAttributeIndex("in_vertex");
 		attribs[0].nComponent = attribInfos[0].num_components;
-		attribs[0].offset = 0;
+		attribs[0].offset = attribInfos[2].offset;
 		attribs[0].type = eVertexAttribType::FLOAT;
 		attribs[0].size = 0;
 		attribs[0].divisor = 0;
 
 		attribs[1].index = shader->getAttributeIndex("in_normal");
 		attribs[1].nComponent = attribInfos[1].num_components;
-		attribs[1].offset = 12;
+		attribs[1].offset = attribInfos[2].offset;
 		attribs[1].type = eVertexAttribType::FLOAT;
 		attribs[1].size = 0;
 		attribs[1].divisor = 0;
 
 		attribs[2].index = shader->getAttributeIndex("in_tex0");
 		attribs[2].nComponent = attribInfos[2].num_components;
-		attribs[2].offset = 24;
+		attribs[2].offset = attribInfos[2].offset;
 		attribs[2].type = eVertexAttribType::FLOAT;
 		attribs[2].size = 0;
 		attribs[2].divisor = 0;

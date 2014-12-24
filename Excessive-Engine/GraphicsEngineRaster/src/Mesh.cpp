@@ -186,7 +186,7 @@ bool Mesh::update(MeshData data) {
 	RawUniquePtr packed_vertex_data(operator new(internal_stride * num_vertices));
 	packVertices(data.vertex_elements, elements, data.vertex_elements_num,  num_elements, data.vertex_data, packed_vertex_data.get(), num_vertices);
 
-	//memcpy(packed_vertex_data.get(), data.vertex_data, data.vertex_bytes);
+
 
 	// compute mat ids
 	mat_ids.resize(data.mat_ids_num + 1);
@@ -273,7 +273,6 @@ bool Mesh::update(MeshData data) {
 		streams[i].elements = elements[i].semantic;
 		elements[i].buffer = streams[i].vb;
 		elements[i].offset = 0;
-		//offset += elements[i].num_components*elements[i].width / 8;
 	}
 
 	scope_guard.perform_cleanup = false;
@@ -390,26 +389,31 @@ void PackBitangent(void* input, void* output) {
 	PackNormal(input, output);
 }
 
-void PackCopy(void* input, void* output, size_t bytes) { // copies 4x floats!
-	memcpy(output, input, bytes);
+void PackTexcoord(void* input, void* output, int num_components) {
+	memcpy(output, input, num_components * sizeof(float));
+}
+
+void PackColor(void* input, void* output, int num_components) { // copies n bytes!
+	memcpy(output, input, num_components * sizeof(float));
 }
 
 void Mesh::packVertices(ElementDesc* input_format, ElementInfo* output_format, int input_count, int output_count, void* input, void* output, size_t num_verts) {
 	// create a function that can pack 1 vertex
 
 	// compute offsets by semantics, that is, where a semantic is found
-	int offset_input[20]; // semantic's index is log2(semantic)
-	int size_input[20];
+	// semantic's index is log2(semantic)
+	int offset_input[20];
+	int num_components_input[20];
 	int offset_output[20];
 	for (int i = 0; i < 20; i++) {
 		offset_input[i] = -1;
-		size_input[i] = 0;
+		num_components_input[i] = 0;
 		offset_output[i] = -1;
 	}
 	for (int i = 0, offset = 0; i < input_count; i++) {
 		int size = input_format[i].num_components * sizeof(float);
 		offset_input[fast_log2(input_format[i].semantic)] = offset;
-		size_input[fast_log2(input_format[i].semantic)] = size;
+		num_components_input[fast_log2(input_format[i].semantic)] = input_format[i].num_components;
 		offset += size;
 	}
 	for (int i = 0, offset = 0; i < output_count; i++) {
@@ -424,15 +428,17 @@ void Mesh::packVertices(ElementDesc* input_format, ElementInfo* output_format, i
 		semantics.push_back(output_format[i].semantic);
 	}
 
-	// define a pack function
-	auto PackVertex = [&offset_input, &offset_output, semantics](void* input, void* output) {
+	// define a pack function that pack a single vertex
+	auto PackVertex = [&offset_input, &offset_output, &num_components_input, semantics](void* input, void* output) {
 		vec3 normal, tangent;
 		bool is_bitangent = false;
 
 		// pack each semantic
 		for (auto semantic : semantics) {
-			int offseti = offset_input[fast_log2(semantic)];
+			// get attribute's offset in vertex from LUT
+			int offseti = offset_input[fast_log2(semantic)]; 
 			int offseto = offset_output[fast_log2(semantic)];
+			// calc attribute's absolute address
 			void* off_in = (void*)(size_t(input) + offseti);
 			void* off_out = (void*)(size_t(output) + offseto);
 
@@ -459,11 +465,12 @@ void Mesh::packVertices(ElementDesc* input_format, ElementInfo* output_format, i
 				is_bitangent = true;
 			}
 			else if (COLOR0 <= semantic && semantic <= COLOR7) {
-
+				int comp = num_components_input[fast_log2(semantic)];
+				PackColor(off_in, off_out, comp);
 			}
 			else if (TEX0 <= semantic && semantic <= TEX7) {
-				// TODO, Please correct that
-				memcpy(off_out, off_in, sizeof(float) * 2);
+				int comp = num_components_input[fast_log2(semantic)];
+				PackTexcoord(off_in, off_out, comp);
 			}
 		}
 
