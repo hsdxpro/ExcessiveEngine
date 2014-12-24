@@ -4,10 +4,13 @@
 #include "../../Externals/include/assimp/Scene.h"
 #include "../../Externals/include/assimp/PostProcess.h"
 
-#include <fstream>
-#include "mymath/mymath.h"
 #include "../GraphicsEngine_Interface/interface/IMesh.h"
-#include "../../GraphicsEngine_Interface/interface/IMesh.h"
+
+#include "mymath/mymath.h"
+
+#include <fstream>
+#include <vector>
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Mesh functions
@@ -47,6 +50,7 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 
 	// Get indexCount, vertexCount, Gather matGroups from meshes
 	//matGroups = new tMatGroup[nMatGroups];
+	std::vector<u64> matIDs = { 0 };
 	for (size_t i = 0; i < nMeshes; i++) {
 		aiMesh *mesh = meshes[i];
 
@@ -60,6 +64,8 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 		// VB, IB
 		nVertices += mesh->mNumVertices;
 		nIndices += nMeshIndices;
+
+		matIDs.push_back(nIndices / 3);
 	}
 
 	// DEFINE VERTEX STRUCTURE HERE.... @TODO REMOVE IT OR I KILL MYSELF
@@ -106,7 +112,7 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 
 
 	// Copy indices, vertices from meshes
-	void* vertices = new baseVertex[nVertices];;
+	void* vertices = new baseVertex[nVertices];
 	u32* indices = new u32[nIndices];
 
 	// Super TMP Vec3 for usage :D
@@ -145,7 +151,7 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 				}
 
 				if (mesh->HasNormals()) {
-					supTmpVec = &mesh->mNormals[localVertIdx]; 
+					supTmpVec = &mesh->mNormals[localVertIdx];
 					((baseVertex*)vertices)[localVertIdx + globalVertexIdx].normal = mm::vec3(supTmpVec->x, supTmpVec->y, supTmpVec->z);
 				}
 
@@ -158,7 +164,7 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 				auto vecPtr = mesh->mTextureCoords[0];
 				if (vecPtr) {
 					supTmpVec = &vecPtr[localVertIdx];
-					((baseVertex*)vertices)[localVertIdx + globalVertexIdx].tex0 = mm::vec2(supTmpVec->x, supTmpVec->y); // UV flip y
+					((baseVertex*)vertices)[localVertIdx + globalVertexIdx].tex0 = mm::vec2(supTmpVec->x, -supTmpVec->y); // UV flip y
 				}
 			}
 		}
@@ -177,9 +183,9 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 		};
 		data.vertex_elements = elements;
 		data.vertex_elements_num = sizeof(elements) / sizeof(elements[0]);
-		data.mat_ids = nullptr;
-		data.mat_ids_num = 0;
-		return mesh->update(data);
+		data.mat_ids = matIDs.data();
+		data.mat_ids_num = matIDs.size();
+	return mesh->update(data);
 }
 
 bool ResourceLoader::genMesh_Teapot(graphics::IMesh* mesh, float radius, int tesselation) {
