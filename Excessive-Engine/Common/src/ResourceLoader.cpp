@@ -50,22 +50,14 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 
 	// Get indexCount, vertexCount, Gather matGroups from meshes
 	//matGroups = new tMatGroup[nMatGroups];
-	std::vector<u32> matIDs = { 0 };
+	std::vector<u32> matIDs;
+	matIDs.resize(nMeshes);
 	for (size_t i = 0; i < nMeshes; i++) {
-		aiMesh *mesh = meshes[i];
-
-		size_t nMeshIndices = mesh->mNumFaces * 3;
-
-		// MatGroup
-		//matGroups[i].id = mesh->mMaterialIndex;
-		//matGroups[i].indexOffset = nIndices;
-		//matGroups[i].indexCount = nMeshIndices;
+		matIDs[i] = nIndices / 3;
 
 		// VB, IB
-		nVertices += mesh->mNumVertices;
-		nIndices += nMeshIndices;
-
-		matIDs.push_back(nIndices / 3);
+		nVertices += meshes[i]->mNumVertices;
+		nIndices += meshes[i]->mNumFaces * 3;
 	}
 
 	// DEFINE VERTEX STRUCTURE HERE.... @TODO REMOVE IT OR I KILL MYSELF
