@@ -52,17 +52,17 @@ public:
 	// new modify
 	struct MeshData {
 		void* vertex_data; // tightly packed, in increasing order by type value, all 32 bit float
-		size_t vertex_bytes; // size of the whole vertex_data
+		u32 vertex_bytes; // size of the whole vertex_data
 		ElementDesc* vertex_elements; // elements of a vertex
 		u32 vertex_elements_num; // how many elements are there in a vertex
 		u32* index_data; // 32 bit, tightly packed
-		size_t index_num; // 3 per face
-		size_t* mat_ids;
-		size_t mat_ids_num; // only beginning of each group, ending calculated, in order
+		u32 index_num; // 3 per face
+		u32* mat_ids;
+		u32 mat_ids_num; // only beginning of each group, ending calculated, in order
 	};
 
 	virtual bool update(MeshData data) = 0;
-	virtual bool updateVertexData(const void* data, size_t offset, size_t size) = 0; // both params in bytes, format and total size considered the same
+	virtual bool updateVertexData(const void* data, u32 offset, u32 size) = 0; // both params in bytes, format and total size considered the same
 	virtual void reset() = 0;
 };
 

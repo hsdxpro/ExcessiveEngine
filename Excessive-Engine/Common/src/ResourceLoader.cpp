@@ -50,7 +50,7 @@ bool ResourceLoader::loadMesh(graphics::IMesh* mesh, const wchar_t* filePath) {
 
 	// Get indexCount, vertexCount, Gather matGroups from meshes
 	//matGroups = new tMatGroup[nMatGroups];
-	std::vector<u64> matIDs = { 0 };
+	std::vector<u32> matIDs = { 0 };
 	for (size_t i = 0; i < nMeshes; i++) {
 		aiMesh *mesh = meshes[i];
 

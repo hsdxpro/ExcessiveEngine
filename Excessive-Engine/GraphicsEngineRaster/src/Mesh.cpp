@@ -164,12 +164,12 @@ bool Mesh::update(MeshData data) {
 	// calculate input stride, internal stride, vertex count
 	int input_stride = getFormatStrideInput(data.vertex_elements, data.vertex_elements_num);
 	int internal_stride = getFormatStrideInternal(elements, num_elements);
-	size_t num_vertices = data.vertex_bytes / (size_t)input_stride;
+	u32 num_vertices = data.vertex_bytes / (u32)input_stride;
 
 
 
 	// validate data
-	static size_t null_mat_id = 0;
+	static u32 null_mat_id = 0;
 	if (!data.mat_ids) {
 		data.mat_ids = &null_mat_id;
 		data.mat_ids_num = 1;
@@ -280,7 +280,7 @@ bool Mesh::update(MeshData data) {
 }
 
 // update vertex data
-bool Mesh::updateVertexData(const void* data, size_t offset, size_t size) {
+bool Mesh::updateVertexData(const void* data, u32 offset, u32 size) {
 	std::cout << "[WARNING] updating vertex data does not work at the moment" << std::endl;
 	return false;
 }
@@ -316,9 +316,9 @@ void Mesh::reset() {
 // helper
 
 // optimize data for gpu drawing
-void Mesh::optimize(void* vertex_data, size_t num_verts, int vertex_stride,
-	u32* index_data, size_t num_indices,
-	size_t* mat_ids, size_t num_mat_ids)
+void Mesh::optimize(void* vertex_data, u32 num_verts, int vertex_stride,
+	u32* index_data, u32 num_indices,
+	u32* mat_ids, u32 num_mat_ids)
 {
 	// TODO: implement
 	return;
@@ -326,9 +326,9 @@ void Mesh::optimize(void* vertex_data, size_t num_verts, int vertex_stride,
 
 
 // validate data for out-of-bound cases
-bool Mesh::validate(size_t num_verts,
-	u32* index_data, size_t num_indices,
-	size_t* mat_ids, size_t num_mat_ids)
+bool Mesh::validate(u32 num_verts,
+	u32* index_data, u32 num_indices,
+	u32* mat_ids, u32 num_mat_ids)
 {
 	// criteria:
 	// - indices num must be divisible by 3
@@ -345,7 +345,7 @@ bool Mesh::validate(size_t num_verts,
 
 	// - mat ids must not over-index indices
 	// - mat ids must be in order, equality allowed for empty groups
-	size_t prev = 0;
+	u32 prev = 0;
 	for (size_t i = 0; i < num_mat_ids; i++) {
 		// mtl ids not in order (equality allowed, empty groups)
 		if (mat_ids[i] < prev) {
@@ -397,7 +397,7 @@ void PackColor(void* input, void* output, int num_components) { // copies n byte
 	memcpy(output, input, num_components * sizeof(float));
 }
 
-void Mesh::packVertices(ElementDesc* input_format, ElementInfo* output_format, int input_count, int output_count, void* input, void* output, size_t num_verts) {
+void Mesh::packVertices(ElementDesc* input_format, ElementInfo* output_format, int input_count, int output_count, void* input, void* output, u32 num_verts) {
 	// create a function that can pack 1 vertex
 
 	// compute offsets by semantics, that is, where a semantic is found

@@ -69,7 +69,7 @@ public:
 
 	// new modify
 	bool update(MeshData data) override;
-	bool updateVertexData(const void* data, size_t offset, size_t size) override; // both params in bytes, format and total size considered the same
+	bool updateVertexData(const void* data, u32 offset, u32 size) override; // both params in bytes, format and total size considered the same
 
 	void reset() override;
 
@@ -89,7 +89,7 @@ public:
 	// helps lookup of vb by element semantic
 	struct ElementInfo {
 		IVertexBuffer* buffer;
-		size_t offset; // offset from beginning of vertex
+		u32 offset; // offset from beginning of vertex
 		ElementSemantic semantic;
 		ElementType type;
 		u32 width;
@@ -109,25 +109,25 @@ public:
 	u64 getElementConfigId() const;
 
 	IIndexBuffer* getIndexBuffer() { return ib; }
-	const std::vector<size_t>& getMaterialIds() { return mat_ids; }
+	const std::vector<u32>& getMaterialIds() { return mat_ids; }
 
 // internal mechanics
 protected:
 	// optimize data for gpu drawing
-	void optimize(void* vertex_data, size_t num_verts, int vertex_stride,
-		u32* index_data, size_t num_indices,
-		size_t* mat_ids, size_t num_mat_ids);
+	void optimize(void* vertex_data, u32 num_verts, int vertex_stride,
+		u32* index_data, u32 num_indices,
+		u32* mat_ids, u32 num_mat_ids);
 
 	// validate data for out-of-bound cases
-	bool validate(size_t num_verts,
-		u32* index_data, size_t num_indices,
-		size_t* mat_ids, size_t num_mat_ids);
+	bool validate(u32 num_verts,
+		u32* index_data, u32 num_indices,
+		u32* mat_ids, u32 num_mat_ids);
 
 
 
 
 	// vertex packing
-	void packVertices(ElementDesc* input_format, ElementInfo* output_format, int input_count, int output_count, void* input, void* output, size_t num_verts); // required size assumed
+	void packVertices(ElementDesc* input_format, ElementInfo* output_format, int input_count, int output_count, void* input, void* output, u32 num_verts); // required size assumed
 
 	// helpers with the format
 	inline int getFormatStrideInput(ElementDesc* elements, int num_elements) {
@@ -188,7 +188,7 @@ protected:
 	int num_streams;
 	int num_elements;
 	IIndexBuffer* ib;
-	std::vector<size_t> mat_ids;
+	std::vector<u32> mat_ids;
 
 // private vars
 private:
