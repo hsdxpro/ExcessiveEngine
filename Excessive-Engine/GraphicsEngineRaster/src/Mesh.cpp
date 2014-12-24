@@ -239,8 +239,6 @@ bool Mesh::update(MeshData data) {
 	u32 offset = 0;
 	for (int i = 0; i < num_elements; i++) {
 
-		elements[i].offset = offset;
-
 		// copy relevant stuff from packed_vertex_data
 		size_t input_ptr = (size_t)packed_vertex_data.get() + offset;
 		size_t output_ptr = (size_t)vb_data.get();

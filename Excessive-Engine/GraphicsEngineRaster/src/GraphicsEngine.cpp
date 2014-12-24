@@ -212,21 +212,21 @@ void GraphicsEngineRaster::update() {
 
 		attribs[0].index = shader->getAttributeIndex("in_vertex");
 		attribs[0].nComponent = attribInfos[0].num_components;
-		attribs[0].offset = attribInfos[0].offset;;
+		attribs[0].offset = 0;
 		attribs[0].type = eVertexAttribType::FLOAT;
 		attribs[0].size = 0;
 		attribs[0].divisor = 0;
 
 		attribs[1].index = shader->getAttributeIndex("in_normal");
 		attribs[1].nComponent = attribInfos[1].num_components;
-		attribs[1].offset = attribInfos[1].offset;
+		attribs[1].offset = 12;
 		attribs[1].type = eVertexAttribType::FLOAT;
 		attribs[1].size = 0;
 		attribs[1].divisor = 0;
 
 		attribs[2].index = shader->getAttributeIndex("in_tex0");
 		attribs[2].nComponent = attribInfos[2].num_components;
-		attribs[2].offset = attribInfos[2].offset;
+		attribs[2].offset = 24;
 		attribs[2].type = eVertexAttribType::FLOAT;
 		attribs[2].size = 0;
 		attribs[2].divisor = 0;
