@@ -42,17 +42,8 @@ int Ricsi() {
 		cam->setPos(mm::vec3(0, -3, 1));
 	scene->setCam(cam);
 
-	// Create simple test mesh that we will assign to graphics entity
-	graphics::IMesh* mesh = gEngine->createMesh();
-	graphics::IResourceLoader* l = Factory::createResourceLoader();
-	bool b = l->loadMesh(mesh, (Sys::getWorkDir() + L"../Assets/teapot.dae").c_str());
-	if (!b)
-		std::cout << "Could not load teapot :(" << std::endl;
 
-	// Assign mesh to entity
-	graphics::IEntity* entity = scene->createEntity();
-	entity->setMesh(mesh);
-	
+	Entity* simpleEntity = core.createEntity(scene, Sys::getWorkDir() + L"../Assets/teapot.dae");
 
 	// So that I can read init messages
 	//std::this_thread::sleep_for(std::chrono::milliseconds(1000));
