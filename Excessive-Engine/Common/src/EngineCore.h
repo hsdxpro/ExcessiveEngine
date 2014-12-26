@@ -20,7 +20,10 @@ public:
 	// Init graphics engine, if one already exists will be destroyed, then instantiate it
 	graphics::IGraphicsEngine* initGraphicsEngineRT(const rGraphicsEngineRT& desc);
 
-	Entity* createEntity(graphics::IScene* gScene, const std::wstring& geomPath);
+
+	// Create high level Entity, that encapsulates (graphics, phyiscs, ....) entities
+	// The input paths are files like .dae, .fbx etc
+	Entity* createEntity(graphics::IScene* gScene, const std::wstring& modelPath);
 
 	// Init physics engine, if one already exists will be destroyed, then instantiate it
 	//bool initPhysicsEngineBullet(const physics::rEngine& graphics);

@@ -43,7 +43,7 @@ int Ricsi() {
 	scene->setCam(cam);
 
 
-	Entity* simpleEntity = core.createEntity(scene, Sys::getWorkDir() + L"../Assets/teapot.dae");
+	Entity* simpleEntity = core.createEntity(scene, Sys::getWorkDir() + L"../Assets/terminal/terminal_blender.dae");
 
 	// So that I can read init messages
 	//std::this_thread::sleep_for(std::chrono::milliseconds(1000));
