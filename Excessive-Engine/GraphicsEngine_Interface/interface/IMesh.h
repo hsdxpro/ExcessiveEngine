@@ -48,6 +48,16 @@ public:
 		u32 num_components;
 	};
 
+
+	/// Describes a material group.
+	/// Declares a range of faces to have a given ID.
+	/// A face consists of 3 indices, that is, it's a triangle.
+	struct MaterialGroup {
+		u32 beginFace; ///< index of the first face (not index) having this id
+		u32 endFace; ///< index of the face (not included in range)
+		i32 id; ///< identifier of the group
+	};
+
 	// new modify
 	struct MeshData {
 		void* vertex_data; // tightly packed, in increasing order by type value, all 32 bit float
@@ -56,7 +66,7 @@ public:
 		u32 vertex_elements_num; // how many elements are there in a vertex
 		u32* index_data; // 32 bit, tightly packed
 		u32 index_num; // 3 per face
-		u32* mat_ids;
+		MaterialGroup* mat_ids;
 		u32 mat_ids_num; // only beginning of each group, ending calculated, in order
 	};
 

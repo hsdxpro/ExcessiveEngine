@@ -672,7 +672,8 @@ void GapiGL::setRenderTargets(const rRenderTargetInfo* render_targets, u32 size)
 void GapiGL::setUniformBuffer(IUniformBuffer* buf, u32 index)
 {
 	ASSERT(buf);
-	glBindBufferBase(GL_UNIFORM_BUFFER, index, static_cast<UniformBufferGL*>(buf)->id);
+	auto buffer_id = static_cast<UniformBufferGL*>(buf)->id;
+	glBindBufferBase(GL_UNIFORM_BUFFER, index, buffer_id);
 }
 
 GLenum attrib_array[] =

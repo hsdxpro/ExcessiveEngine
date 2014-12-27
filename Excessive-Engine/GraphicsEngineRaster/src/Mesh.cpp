@@ -162,9 +162,11 @@ bool Mesh::update(MeshData data) {
 
 
 	// validate data
-	static u32 null_mat_id = 0;
+	MaterialGroup default_mat_id;
+	default_mat_id.beginFace = 0;
+	default_mat_id.endFace = data.index_num / 3;
 	if (!data.mat_ids) {
-		data.mat_ids = &null_mat_id;
+		data.mat_ids = &default_mat_id;
 		data.mat_ids_num = 1;
 	}
 
@@ -186,9 +188,6 @@ bool Mesh::update(MeshData data) {
 	for (size_t i = 0; i < data.mat_ids_num; i++) {
 		mat_ids[i] = data.mat_ids[i];
 	}
-	mat_ids[mat_ids.size() - 1] = data.index_num / 3;
-
-
 
 	// optimize mesh
 	optimize(packed_vertex_data.get(), num_vertices, internal_stride, data.index_data, data.index_num, data.mat_ids, data.mat_ids_num);
@@ -311,7 +310,7 @@ void Mesh::reset() {
 // optimize data for gpu drawing
 void Mesh::optimize(void* vertex_data, u32 num_verts, int vertex_stride,
 	u32* index_data, u32 num_indices,
-	u32* mat_ids, u32 num_mat_ids)
+	MaterialGroup* mat_ids, u32 num_mat_ids)
 {
 	// TODO: implement
 	return;
@@ -321,7 +320,7 @@ void Mesh::optimize(void* vertex_data, u32 num_verts, int vertex_stride,
 // validate data for out-of-bound cases
 bool Mesh::validate(u32 num_verts,
 	u32* index_data, u32 num_indices,
-	u32* mat_ids, u32 num_mat_ids)
+	MaterialGroup* mat_ids, u32 num_mat_ids)
 {
 	// criteria:
 	// - indices num must be divisible by 3
@@ -337,18 +336,13 @@ bool Mesh::validate(u32 num_verts,
 	}
 
 	// - mat ids must not over-index indices
-	// - mat ids must be in order, equality allowed for empty groups
-	u32 prev = 0;
 	for (size_t i = 0; i < num_mat_ids; i++) {
-		// mtl ids not in order (equality allowed, empty groups)
-		if (mat_ids[i] < prev) {
+		if (mat_ids[i].beginFace >= mat_ids[i].endFace ||
+			mat_ids[i].endFace > num_indices / 3
+			)
+		{
 			return false;
 		}
-		// overindex indices/faces
-		if (mat_ids[i] >= num_indices / 3) {
-			return false;
-		}
-		prev = mat_ids[i];
 	}
 
 	return true;

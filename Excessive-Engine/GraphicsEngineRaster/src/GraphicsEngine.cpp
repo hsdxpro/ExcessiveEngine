@@ -76,7 +76,7 @@ static const char pixelShaderCode[] =
 "	const vec4 sky_color = vec4(0.6, 0.8, 1.0, 1);"
 
 "if (pscd.hasTex != 0) { \n"
-"	color = pscd.diffuse;//*texture(tex, tex0); \n"
+"	color = pscd.diffuse*texture(tex, tex0); \n"
 "} \n"
 "else { \n"
 "	color = pscd.diffuse; \n"

@@ -6,6 +6,8 @@
 #include "../GraphicsApi_Interface/interface/IGapi.h"
 #include <SFML/Graphics/Image.hpp>
 
+#include <fstream>
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructor & destructor
@@ -54,11 +56,14 @@ bool Texture::load(const wchar_t* file_path) {
 	// load image with sfml
 	size_t len = wcslen(file_path);
 	char* ansiPath = new char[len+1];
-	wcstombs(ansiPath, file_path, len);
+	wcstombs(ansiPath, file_path, len+1);
 
 	sf::Image im;
-	im.loadFromFile(ansiPath);
+	bool isLoaded = im.loadFromFile(ansiPath);
 	delete[] ansiPath;
+	if (!isLoaded) {
+		return false;
+	}
 
 	rTexture texdata;
 	texdata.width = im.getSize().x;
@@ -75,7 +80,7 @@ bool Texture::load(const wchar_t* file_path) {
 	}
 
 	rTextureUpdate texupdata;
-	texupdata.data = (char*)im.getPixelsPtr();
+	texupdata.data = (void*)im.getPixelsPtr();
 	texupdata.depth = texdata.depth;
 	texupdata.format = texdata.format;
 	texupdata.width = texdata.width;

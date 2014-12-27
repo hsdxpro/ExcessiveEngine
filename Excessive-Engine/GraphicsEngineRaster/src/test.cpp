@@ -50,11 +50,6 @@ __declspec(dllexport) void TestGraphicsEngine() {
 		indices[i] = i;
 	}
 
-	// mat ids
-	size_t mat_ids[] = {0, 2, 2, 9};
-	size_t mat_ids_num = sizeof(mat_ids)/sizeof(mat_ids[0]);
-
-
 	// setup
 	data.vertex_data = vertices;
 	data.vertex_bytes = sizeof(vertices);
@@ -64,8 +59,8 @@ __declspec(dllexport) void TestGraphicsEngine() {
 	data.index_data = indices;
 	data.index_num = sizeof(indices) / sizeof(indices[0]);
 
-	data.mat_ids = mat_ids;
-	data.mat_ids_num = mat_ids_num;
+	data.mat_ids = nullptr;
+	data.mat_ids_num = 0;
 
 	bool result = m.update(data);
  	cout << (result ? "success" : "invalid data") << endl;

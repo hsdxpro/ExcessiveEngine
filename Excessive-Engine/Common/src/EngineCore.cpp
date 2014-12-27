@@ -2,6 +2,33 @@
 #include "Factory.h"
 #include "Importer3D.h"
 
+//////////////////////////////////////////////////
+//                                              //
+//           +----------+                       //
+//           |   CORE   |                       //
+//           +----------+                       //
+//                                              //
+//                 ##                           //
+//                  ##                          //
+//                   #                          //
+//                  ___                         //
+//                /  |   \                      //
+//                |      |                      //
+//                |------|                      //
+//                |      |                      //
+//                |      |                      //
+//                |      |                      //
+//                |      |                      //
+//                |      |                      //
+//                |      |                      //
+//              ---     ---                     //
+//            /     \ /     \                   //
+//            \     / \     /                   //
+//              ---     ---                     //
+//                                              //
+//////////////////////////////////////////////////
+
+
 EngineCore::EngineCore() 
 :graphicsEngine(0) {
 }
@@ -54,8 +81,11 @@ Entity* EngineCore::createEntity(graphics::IScene* gScene, const std::wstring& m
 		gEntity->setMesh(graphicsMesh);
 
 		for (auto& importedMaterial : importedMesh.materials) {
-			auto subMat = material->addSubMaterial();
-			//subMat.t_diffuse = graphicsEngine->createTexture(importedMaterial.texPathDiffuse);
+			auto& subMat = material->addSubMaterial();
+			subMat.base = mm::vec4(1, 1, 1, 1);
+			subMat.t_diffuse = graphicsEngine->createTexture();
+			//subMat.t_diffuse->load(importedMaterial.texPathDiffuse.c_str());
+			subMat.t_diffuse->load((Sys::getWorkDir() + L"image.png").c_str());
 		}
 		std::vector<u32> matIDs;
 		matIDs.reserve(importedMesh.materials.size());
@@ -65,8 +95,8 @@ Entity* EngineCore::createEntity(graphics::IScene* gScene, const std::wstring& m
 		graphics::IMesh::MeshData meshData;
 			meshData.index_data		= importedMesh.indices.data();
 			meshData.index_num		= importedMesh.indices.size();
-			meshData.mat_ids		= matIDs.data();
-			meshData.mat_ids_num	= matIDs.size();
+			meshData.mat_ids		= nullptr;// matIDs.data();
+			meshData.mat_ids_num	= 0;// matIDs.size();
 			meshData.vertex_bytes	= importedMesh.nVertices * importedMesh.vertexSize;
 			meshData.vertex_data	= importedMesh.vertexBuffers[0];
 

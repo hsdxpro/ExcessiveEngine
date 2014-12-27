@@ -88,7 +88,11 @@ bool ShaderProgramGL::loadBinary(void* data, size_t size)
 int ShaderProgramGL::getUniformBlockIndex(const char* str)
 {
 	ASSERT(str);
-	return glGetUniformBlockIndex(program, str);
+	auto index = glGetUniformBlockIndex(program, str);
+	// ugly hack to get uniform blocks working...
+	// delete this as soon as you can
+	glUniformBlockBinding(program, index, index);
+	return index;
 }
 
 int ShaderProgramGL::getAttributeIndex(const char* str)

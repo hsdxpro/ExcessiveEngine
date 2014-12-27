@@ -35,10 +35,10 @@ int Ricsi() {
 	// Create scene and camera
 	graphics::IScene* scene = gEngine->createScene();
 		graphics::ICamera* cam = gEngine->createCam();
-		cam->setFOV(3.14f / 2);
+		cam->setFOV(70 / 180.f*3.1415926f);
 		cam->setAspectRatio(window->getClientAspectRatio());
-		cam->setNearPlane(0.05f);
-		cam->setFarPlane(3000);
+		cam->setNearPlane(0.2f);
+		cam->setFarPlane(2000);
 		cam->setPos(mm::vec3(0, -3, 1));
 	scene->setCam(cam);
 
@@ -69,13 +69,14 @@ int Ricsi() {
 
 		// keep 60 fps
 		elapsed = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - last_frame).count() / 1.0e6;
+		last_frame = std::chrono::high_resolution_clock::now();
 		int fps = 1 / elapsed + 0.5;
 		std::wstringstream title_ss;
 		static float camAngleX = 0; // upwards/downwards looking
 		static float camAngleZ = 0; // orientation
 		title_ss << L"Excessive-Engine - Ricsi teszt | FPS=" << fps << L" | Pitch=" << camAngleX * 180 / 3.141592653f << L"° Facing=" << camAngleZ * 180 / 3.141592653f << L"°";
 		window->setText(title_ss.str().c_str());
-		last_frame = std::chrono::high_resolution_clock::now();
+
 
 		while (window->popEvent(&ev))
 			switch (ev.msg)

@@ -108,19 +108,19 @@ public:
 	u64 getElementConfigId() const;
 
 	IIndexBuffer* getIndexBuffer() { return ib; }
-	const std::vector<u32>& getMaterialIds() { return mat_ids; }
+	const std::vector<MaterialGroup>& getMaterialIds() { return mat_ids; }
 
 // internal mechanics
 protected:
 	// optimize data for gpu drawing
 	void optimize(void* vertex_data, u32 num_verts, int vertex_stride,
 		u32* index_data, u32 num_indices,
-		u32* mat_ids, u32 num_mat_ids);
+		MaterialGroup* mat_ids, u32 num_mat_ids);
 
 	// validate data for out-of-bound cases
 	bool validate(u32 num_verts,
 		u32* index_data, u32 num_indices,
-		u32* mat_ids, u32 num_mat_ids);
+		MaterialGroup* mat_ids, u32 num_mat_ids);
 
 
 
@@ -187,7 +187,7 @@ protected:
 	int num_streams;
 	int num_elements;
 	IIndexBuffer* ib;
-	std::vector<u32> mat_ids;
+	std::vector<MaterialGroup> mat_ids;
 
 // private vars
 private:

@@ -86,7 +86,7 @@ struct rTextureUpdate
   u32 height;
   u32 depth;
   eFormatType format;
-  char* data; //w, h, d, the offsets and format determines the size!
+  void* data; //w, h, d, the offsets and format determines the size!
 };
 
 //specifies texture sampler state
