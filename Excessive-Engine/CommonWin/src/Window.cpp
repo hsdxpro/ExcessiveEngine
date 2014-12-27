@@ -5,6 +5,7 @@
 
 // TMP
 #include <iostream>
+#include <limits>
 
 Window::Window(const rWindow& d) 
 :lastMousePos(0,0), evt(*new (eventSpace)sf::Event) {
@@ -33,8 +34,14 @@ bool Window::popEvent(rWindowEvent* evt_out) {
 		evt_out->key = eKey::INVALID;
 		evt_out->mouseBtn = eMouseBtn::INVALID;
 
-		evt_out->mouseDeltaX = evt.mouseMove.x - lastMousePos.x;
-		evt_out->mouseDeltaY = evt.mouseMove.y - lastMousePos.y;
+		// TODO: worst idea ever
+		if (lastMousePos.x == std::numeric_limits<int>::min()) {
+			evt_out->mouseDeltaX = 0;
+			evt_out->mouseDeltaY = 0;
+		} else {
+			evt_out->mouseDeltaX = evt.mouseMove.x - lastMousePos.x;
+			evt_out->mouseDeltaY = evt.mouseMove.y - lastMousePos.y;
+		}
 		evt_out->mouseX = evt.mouseMove.x;
 		evt_out->mouseY = evt.mouseMove.y;
 
@@ -43,7 +50,10 @@ bool Window::popEvent(rWindowEvent* evt_out) {
 	} else
 	if (evt.type == sf::Event::EventType::MouseEntered)
 	{
-		lastMousePos = Sys::getMousePos();
+		// TODO: This sign was used, to ensure 0 dx, dy delta mouse move when gain focus
+		// BAD IDEA
+		lastMousePos.x = std::numeric_limits<int>::min();
+		//lastMousePos.y = std::numeric_limits<int>.min();
 	}
 	else
 	if (evt.type == sf::Event::EventType::MouseButtonPressed || evt.type == sf::Event::EventType::MouseButtonReleased)

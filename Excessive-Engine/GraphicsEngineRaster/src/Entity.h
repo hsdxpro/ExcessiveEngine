@@ -10,13 +10,15 @@
 
 class Scene;
 
+namespace graphics
+{
 
 class Entity : public graphics::IEntity
 {
 public:
 	Entity();
 	~Entity();
-	
+
 	void setPos(const mm::vec3&) override;
 	void setRot(const mm::quat&) override;
 	void setScale(const mm::vec3&) override;
@@ -37,3 +39,5 @@ private:
 	mm::quat rot;
 	mm::vec3 scale;
 };
+
+} // graphics namespace end

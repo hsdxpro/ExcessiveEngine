@@ -67,13 +67,6 @@ void Mesh::release() {
 ////////////////////////////////////////////////////////////////////////////////
 // load
 
-// GOOD
-void Mesh::load(const char* file_path) {
-	size_t s = strlen(file_path);
-	auto wstr = std::make_unique<wchar_t>(s);
-	return load(wstr.get());
-}
-
 void Mesh::load(const wchar_t* file_path) {
 	// TODO: implement this
 }
@@ -250,7 +243,7 @@ bool Mesh::update(MeshData data) {
 			output_ptr += chunk_size;
 		}
 		// create and fill vertex buffer
-		vb_desc.size = chunk_size * num_vertices;
+		vb_desc.size = chunk_size * num_vertices;  
 		_vb = gapi->createVertexBuffer(vb_desc);
 		if (!_vb) {
 			return false;

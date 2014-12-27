@@ -64,8 +64,7 @@ public:
 	void release() override;
 
 	// load
-	void load(const char* file_path) override; // it is supposed to return an error code
-	void load(const wchar_t* file_path) override;
+	void load(const wchar_t* file_path) override; // it is supposed to return an error code
 
 	// new modify
 	bool update(MeshData data) override;
