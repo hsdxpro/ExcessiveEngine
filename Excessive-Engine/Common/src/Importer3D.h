@@ -96,8 +96,8 @@ struct rImporter3DMesh {
 		u32 faceStartIdx;
 		u32 faceEndIdx;
 
-		std::wstring diffuseTexPath;
-		std::wstring normalTexPath;
+		std::wstring texPathDiffuse;
+		std::wstring texPathNormal;
 	};
 
 	// Vertices

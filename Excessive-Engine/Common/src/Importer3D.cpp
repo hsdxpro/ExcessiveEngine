@@ -97,7 +97,9 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 			wchar_t unicodePath[256];
 			size_t nConvertedChar;
 			mbstowcs_s(&nConvertedChar, unicodePath, diffusePath.C_Str(), 256);
-			mesh_out.materials[i].diffuseTexPath = unicodePath;
+
+			// Really fucking absolute path
+			mesh_out.materials[i].texPathDiffuse = path + unicodePath;
 		}
 
 		// Get Normal texture path
@@ -106,7 +108,7 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 			wchar_t unicodePath[256];
 			size_t nConvertedChar;
 			mbstowcs_s(&nConvertedChar, unicodePath, normalPath.C_Str(), 256);
-			mesh_out.materials[i].normalTexPath = unicodePath;
+			mesh_out.materials[i].texPathNormal = path + unicodePath;
 		}
 
 		// Each face

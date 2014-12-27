@@ -35,12 +35,6 @@ void Material::release() {
 ////////////////////////////////////////////////////////////////////////////////
 // load
 
-void Material::load(const char* file_path) {
-	size_t s = strlen(file_path);
-	auto wstr = std::make_unique<wchar_t>(s);
-	return load(wstr.get());
-}
-
 void Material::load(const wchar_t* file_path) {
 	std::cout << "ha kirakod a faszod akkor sincs load" << std::endl;
 }

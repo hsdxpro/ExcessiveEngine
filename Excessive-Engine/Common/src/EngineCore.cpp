@@ -36,26 +36,39 @@ Entity* EngineCore::createEntity(graphics::IScene* gScene, const std::wstring& m
 	rImporter3DData desc;
 	Importer3D::loadFile(modelPath, cfg, desc);
 
+
+	// TODO: need add not set for entity, or subMeshes needed, like material -> subMaterial
+	assert(desc.meshes.size() <= 1);
+
+// Creating graphics entity
 	// We will feed meshes to that graphics entity
 	graphics::IEntity* gEntity = gScene->createEntity();
 
+	// Material for entity
+	graphics::IMaterial* material = graphicsEngine->createMaterial();
+	gEntity->setMaterial(material);
+	
 	// For each mesh imported, create graphics mesh
-	for (auto& a : desc.meshes) {
-		graphics::IMesh* mesh = graphicsEngine->createMesh();
+	for (auto& importedMesh : desc.meshes) {
+		graphics::IMesh* graphicsMesh = graphicsEngine->createMesh();
+		gEntity->setMesh(graphicsMesh);
 
-		std::vector<u32> matIDs = { 0 };
-		matIDs.reserve(a.materials.size());
-		for(auto& m : a.materials) {
-			matIDs.push_back(m.faceStartIdx);
+		for (auto& importedMaterial : importedMesh.materials) {
+			auto subMat = material->addSubMaterial();
+			//subMat.t_diffuse = graphicsEngine->createTexture(importedMaterial.texPathDiffuse);
 		}
-		
+		std::vector<u32> matIDs;
+		matIDs.reserve(importedMesh.materials.size());
+		for (auto& m : importedMesh.materials)
+			matIDs.push_back(m.faceStartIdx);
+
 		graphics::IMesh::MeshData meshData;
-			meshData.index_data = a.indices.data();
-			meshData.index_num = a.indices.size();
-			meshData.mat_ids = matIDs.data();
-			meshData.mat_ids_num = matIDs.size();
-			meshData.vertex_bytes = a.nVertices * a.vertexSize;
-			meshData.vertex_data = a.vertexBuffers[0];
+			meshData.index_data		= importedMesh.indices.data();
+			meshData.index_num		= importedMesh.indices.size();
+			meshData.mat_ids		= matIDs.data();
+			meshData.mat_ids_num	= matIDs.size();
+			meshData.vertex_bytes	= importedMesh.nVertices * importedMesh.vertexSize;
+			meshData.vertex_data	= importedMesh.vertexBuffers[0];
 
 			graphics::IMesh::ElementDesc elements[] = {
 				graphics::IMesh::POSITION, 3,
@@ -66,14 +79,14 @@ Entity* EngineCore::createEntity(graphics::IScene* gScene, const std::wstring& m
 			meshData.vertex_elements_num = sizeof(elements) / sizeof(elements[0]);
 
 		// Feed data to mesh
-		mesh->update(meshData);
-
-		// Set entity's mesh
-		// TODO: need add not set
-		assert(desc.meshes.size() <= 1);
-
-		gEntity->setMesh(mesh);
+		graphicsMesh->update(meshData);
 	}
+
+// TODO:
+// Create Physics engine
+	//physicsEngine->........
+
+
 
 	// new entity created
 	Entity* e = new Entity(gEntity);

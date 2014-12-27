@@ -13,7 +13,6 @@ class ITexture
 public:
 	virtual void release() = 0;
 
-	virtual void load(const char* file_path) = 0;
 	virtual void load(const wchar_t* file_path) = 0;
 };
 

@@ -18,7 +18,6 @@ public:
 	void release() override;
 
 	// load
-	void load(const char* file_path) override;
 	void load(const wchar_t* file_path) override;
 
 	void reset() override;
