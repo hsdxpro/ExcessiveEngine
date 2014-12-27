@@ -1,12 +1,18 @@
 #include "Texture.h"
 #include <memory>
 #include <iostream> // for debug only
+#include <cstring>
+#include "../GraphicsApi_Interface/interface/ITexture.h"
+#include "../GraphicsApi_Interface/interface/IGapi.h"
+#include <SFML/Graphics/Image.hpp>
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructor & destructor
 
-Texture::Texture() {
+Texture::Texture(IGapi* gapi) 
+	: gapi(gapi), tex(nullptr)
+{
 	refcount = 1;
 }
 
@@ -33,12 +39,68 @@ void Texture::release() {
 ////////////////////////////////////////////////////////////////////////////////
 // load
 
-void Texture::load(const char* file_path) {
+bool Texture::load(const char* file_path) {
 	size_t s = strlen(file_path);
 	auto wstr = std::make_unique<wchar_t>(s);
 	return load(wstr.get());
 }
 
-void Texture::load(const wchar_t* file_path) {
+bool Texture::load(const wchar_t* file_path) {
+	// clean up old contents, if any
+	if (tex) {
+		reset();
+	}
 
+	// load image with sfml
+	size_t len = wcslen(file_path);
+	char* ansiPath = new char[len+1];
+	wcstombs(ansiPath, file_path, len);
+
+	sf::Image im;
+	im.loadFromFile(ansiPath);
+	delete[] ansiPath;
+
+	rTexture texdata;
+	texdata.width = im.getSize().x;
+	texdata.height = im.getSize().y;
+	texdata.depth = 1;
+	texdata.format = RGBA8;
+	texdata.is_cubemap = false;
+	texdata.is_layered = false;
+	texdata.num_levels = 1;
+
+	tex = gapi->createTexture(texdata);
+	if (!tex) {
+		return false;
+	}
+
+	rTextureUpdate texupdata;
+	texupdata.data = (char*)im.getPixelsPtr();
+	texupdata.depth = texdata.depth;
+	texupdata.format = texdata.format;
+	texupdata.width = texdata.width;
+	texupdata.height = texdata.height;
+	texupdata.level = 0;
+	texupdata.x_offset = 0;
+	texupdata.y_offset = 0;
+	texupdata.z_offset = 0;
+
+	gapi->WriteTexture(tex, texupdata);
+
+	return true;
+}
+
+
+void Texture::reset() {
+	if (tex) {
+		tex->destroy();
+		tex = nullptr;
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// internal accessors
+::ITexture* Texture::getTexture() {
+	return tex;
 }

@@ -12,7 +12,6 @@
 
 #include <iostream>
 #include <functional>
-#include "SFML\Graphics\Image.hpp"
 #include "GL\glew.h"
 
 using namespace std;
@@ -416,40 +415,6 @@ TextureGL* GapiGL::createTexture(const rTexture& data)
 		0,
 		1);
 
-	return tex;
-}
-
-TextureGL* GapiGL::createTexture(const wchar_t* path)
-{
-	char ansiPath[256];
-	wcstombs_s(nullptr, ansiPath, path, 256);
-
-	sf::Image im;
-	im.loadFromFile(ansiPath);
-
-	rTexture texdata;
-	texdata.width = im.getSize().x;
-	texdata.height = im.getSize().y;
-	texdata.depth = 1;
-	texdata.format = RGBA8;
-	texdata.is_cubemap = false;
-	texdata.is_layered = false;
-	texdata.num_levels = 1;
-
-	TextureGL* tex = createTexture(texdata);
-
-	rTextureUpdate texupdata;
-	texupdata.data = (char*)im.getPixelsPtr();
-	texupdata.depth = texdata.depth;
-	texupdata.format = texdata.format;
-	texupdata.width = texdata.width;
-	texupdata.height = texdata.height;
-	texupdata.level = 0;
-	texupdata.x_offset = 0;
-	texupdata.y_offset = 0;
-	texupdata.z_offset = 0;
-
-	WriteTexture(tex, texupdata);
 	return tex;
 }
 

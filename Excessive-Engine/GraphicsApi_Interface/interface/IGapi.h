@@ -41,9 +41,6 @@ public:
 	virtual IIndexBuffer*	createIndexBuffer(const rBuffer& data) = 0;
 	virtual ITexture*		createTexture(const rTexture& data) = 0;
 
-	// TODO Uram atyám teremtőm ezt minél hamarabb cseréljük le wchar_t* - ra
-	virtual ITexture*		createTexture(const wchar_t* path) = 0;
-
 	virtual void WriteTexture(ITexture* t, const rTextureUpdate& d) = 0;
 
 	virtual void setDepthState(const rDepthState& state) = 0;

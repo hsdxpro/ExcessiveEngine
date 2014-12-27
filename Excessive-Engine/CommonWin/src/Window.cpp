@@ -11,7 +11,7 @@ Window::Window(const rWindow& d)
 	std::cout << sizeof(sf::Event) << std::endl;
 	std::cout.flush();
 	w.create(sf::VideoMode(d.clientW, d.clientH), d.capText.c_str());
-	w.setVerticalSyncEnabled(true);
+	w.setVerticalSyncEnabled(false);
 }
 
 bool Window::popEvent(rWindowEvent* evt_out) {

@@ -139,7 +139,6 @@ int main() {
 
 	cout << "\n-------------------------------------------------------------------" << endl;
 	cout << "Test exited with code " << ret << "." << endl;
-	Pause();
 
 	// write last test's name to config file
 	conf_file.close();

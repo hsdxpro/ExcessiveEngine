@@ -14,8 +14,6 @@ using std::endl;
 #define EXPORT
 #endif
 
-//
-ITexture* gTmpTex;
 
 static const char vertexShaderCode[] =
 /**
@@ -60,6 +58,12 @@ static const char pixelShaderCode[] =
 "#version 440 core \n"
 "uniform sampler2D tex; \n"
 
+"layout(std140) uniform ps_const \n"
+"{ \n"
+"	vec4 diffuse; \n"
+"	int hasTex; \n"
+"} pscd; \n"
+
 "in vec3 pos; \n"
 "in vec3 normal; \n"
 "in vec2 tex0; \n"
@@ -70,7 +74,16 @@ static const char pixelShaderCode[] =
 "	const float t = 0.7;"
 "	const vec4 sun_color = vec4(1.0, 0.92, 0.72, 1);"
 "	const vec4 sky_color = vec4(0.6, 0.8, 1.0, 1);"
-"   color = texture(tex, tex0)*t*intensity*sun_color + (1-t)*sky_color;\n"
+
+"if (pscd.hasTex != 0) { \n"
+"	color = pscd.diffuse;//*texture(tex, tex0); \n"
+"} \n"
+"else { \n"
+"	color = pscd.diffuse; \n"
+"} \n"
+"	color = clamp(color,0,1) + vec4(0.3,0,0,0); \n"
+
+"   color = color*t*intensity*sun_color + color*(1-t)*sky_color;\n"
 "} \n"
 ;
 
@@ -109,13 +122,6 @@ GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRaster& d) {
 	// create shaders
 	shader = gapi->createShaderSource(vertexShaderCode, pixelShaderCode);
 	isValid = shader != nullptr;
-
-
-	gTmpTex = gapi->createTexture((Sys::getWorkDir() + L"../Runtime/image.png").c_str());
-	return;
-
-	u32 index = shader->getAttributeIndex("in_vertex");
-	cout << index;
 
 	gapi->setDebugOutput(true);
 	gapi->setSeamlessCubeMaps(true);
@@ -162,7 +168,7 @@ Material* GraphicsEngineRaster::createMaterial() {
 }
 
 Texture* GraphicsEngineRaster::createTexture() {
-	return new Texture;
+	return new Texture(gapi);
 }
 
 Camera* GraphicsEngineRaster::createCam() {
@@ -240,8 +246,6 @@ void GraphicsEngineRaster::update() {
 		gapi->setShaderProgram(shader);
 		gapi->setRenderTargets(0, 0);
 
-		gapi->setTexture(gTmpTex, shader->getSamplerIndex("tex"));
-
 		mm::mat4 wvp = scene.getCam()->getProjMatrix() * scene.getCam()->getViewMatrix();
 
 		rBuffer ubo_alloc_data;
@@ -251,8 +255,9 @@ void GraphicsEngineRaster::update() {
 			ubo_alloc_data.prefer_cpu_storage = false;
 			ubo_alloc_data.size = 1 * sizeof(mm::mat4);
 		auto ubo_buf = gapi->createUniformBuffer(ubo_alloc_data);
-		ubo_buf->update((char*)&wvp[0][0], sizeof(mm::mat4), 0);
-		gapi->setUniformBuffer(ubo_buf, shader->getUniformBlockIndex("constant_data"));
+		ubo_buf->update(&wvp, sizeof(mm::mat4), 0);
+		auto index_vs = shader->getUniformBlockIndex("constant_data");
+		gapi->setUniformBuffer(ubo_buf, index_vs);
 
 		// set vertex buffer
 		IVertexBuffer* tmp[3] = { attribInfos[0].buffer, attribInfos[1].buffer, attribInfos[2].buffer };
@@ -261,6 +266,43 @@ void GraphicsEngineRaster::update() {
 		// set index buffer
 		auto ib = mesh->getIndexBuffer();
 		gapi->setIndexBuffer(mesh->getIndexBuffer());
+
+		// set material
+		Material* mtl = entity->getMaterial();
+		mm::vec4 diffuse;
+		Texture* tdiffuse = nullptr;
+
+		struct {
+			mm::vec4 diffuse;
+			i32 hasTex;
+		} ps_const;
+
+		if (mtl != nullptr && mtl->getNumSubMaterials() > 0) {
+			diffuse = mtl->getSubMaterial(0).base;
+			tdiffuse = (Texture*)mtl->getSubMaterial(0).t_diffuse;
+
+			ps_const.diffuse = diffuse;
+			ps_const.hasTex = (tdiffuse != nullptr && tdiffuse->getTexture() != nullptr);
+		}
+		else {
+			ps_const.diffuse = mm::vec4(1, 1, 1, 1);
+			ps_const.hasTex = false;
+		}
+		
+		rBuffer pc_const_desc;
+		pc_const_desc.is_persistent = false;
+		pc_const_desc.is_readable = true;
+		pc_const_desc.is_writable = true;
+		pc_const_desc.prefer_cpu_storage = false;
+		pc_const_desc.size = 1 * sizeof(mm::mat4);
+		auto ps_const_buf = gapi->createUniformBuffer(pc_const_desc);
+		ps_const_buf->update(&ps_const, sizeof(ps_const), 0);
+		auto index_ps = shader->getUniformBlockIndex("ps_const");
+		gapi->setUniformBuffer(ps_const_buf, index_ps);
+
+		if (ps_const.hasTex) {
+			gapi->setTexture(tdiffuse->getTexture(), shader->getSamplerIndex("tex"));
+		}
 
 		// draw
 		u32 num_indices = mesh->getIndexBuffer()->getDesc().size / sizeof(u32);
@@ -275,6 +317,7 @@ void GraphicsEngineRaster::update() {
 		num_drawn++;
 
 		ubo_buf->destroy();
+		ps_const_buf->destroy();
 	}
 
 	//cout << num_drawn << " entities actually drawn." << endl;

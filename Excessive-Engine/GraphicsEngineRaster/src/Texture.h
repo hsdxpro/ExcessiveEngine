@@ -2,20 +2,28 @@
 
 #include "../GraphicsEngine_Interface/interface/ITexture.h"
 
+class ITexture;
+class IGapi;
+
 class Texture : public graphics::ITexture 
 {
 public:
-	Texture();
+	Texture(IGapi* gapi);
 	~Texture();
 
 	void acquire();
 	void release() override;
 
-	void load(const char* file_path);
-	void load(const wchar_t* file_path);
+	bool load(const char* file_path) override;
+	bool load(const wchar_t* file_path) override;
+
+	void reset() override;
+
+	::ITexture* getTexture();
 private:
 	size_t refcount;
 
 	// gpu resource
-	ITexture* tex;
+	IGapi* gapi;
+	::ITexture* tex;
 };
