@@ -42,8 +42,9 @@ public:
 	Texture* createTexture() override;
 
 	Camera* createCam() override;
+
 	// states
-	// empty
+	void setResolution(u32 width, u32 height) override;
 
 
 	// interact

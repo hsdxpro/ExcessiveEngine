@@ -38,6 +38,9 @@ public:
 
 	Camera* createCam() override;
 
+	// state
+	void setResolution(u32 width, u32 height) override {}
+
 	// interact
 	void update() override;
 

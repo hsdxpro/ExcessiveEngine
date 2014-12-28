@@ -75,14 +75,12 @@ static const char pixelShaderCode[] =
 "	const vec4 sun_color = vec4(1.0, 0.92, 0.72, 1);"
 "	const vec4 sky_color = vec4(0.6, 0.8, 1.0, 1);"
 
-//"if (pscd.hasTex != 0) { \n"
+"if (pscd.hasTex != 0) { \n"
 "	color = pscd.diffuse*texture(tex, tex0); \n"
-//"} \n"
-//"else { \n"
-//"	color = pscd.diffuse; \n"
-//"} \n"
-//"	color = clamp(color,0,1) + vec4(0.3,0,0,0); \n"
-
+"} \n"
+"else { \n"
+"	color = pscd.diffuse; \n"
+"} \n"
 "   color = color*t*intensity*sun_color + color*(1-t)*sky_color;\n"
 "} \n"
 ;
@@ -174,6 +172,20 @@ Texture* GraphicsEngineRaster::createTexture() {
 Camera* GraphicsEngineRaster::createCam() {
 	return new Camera();
 }
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// state
+
+void GraphicsEngineRaster::setResolution(u32 width, u32 height) {
+	if (width < 1 && height < 1) {
+		return;
+	}
+	gapi->setViewport(0, 0, width, height);
+}
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // update
@@ -276,17 +288,13 @@ void GraphicsEngineRaster::update() {
 		auto ib = mesh->getIndexBuffer();
 		gapi->setIndexBuffer(mesh->getIndexBuffer());
 
-		// set material
+		// get material
 		Material* mtl = entity->getMaterial();
-		mm::vec4 diffuse;
-		Texture* tdiffuse = nullptr;
 
 		struct {
 			mm::vec4 diffuse;
 			int hasTex;
 		} ps_const;
-
-
 
 		rBuffer pc_const_desc;
 			pc_const_desc.is_persistent = false;
@@ -297,7 +305,41 @@ void GraphicsEngineRaster::update() {
 		auto ps_const_buf = gapi->createUniformBuffer(pc_const_desc);
 		auto index_ps = shader->getUniformBlockIndex("ps_const");
 
+		// draw each mesh mat id group
+		auto& matGroups = mesh->getMaterialIds();
+		for (auto& matGroup : matGroups) {
+			// get corresponding material id
+			::ITexture* texture = nullptr; // gapi resource
+
+			// if has mtl
+			if (mtl->getNumSubMaterials() > matGroup.id) {
+				Material::SubMaterial subMat = mtl->getSubMaterial(matGroup.id);
+				ps_const.diffuse = subMat.base;
+				if (subMat.t_diffuse) {
+					texture = ((Texture*)subMat.t_diffuse)->getTexture();
+				}
+				ps_const.hasTex = (texture != nullptr);
+			}
+			else {
+				ps_const.diffuse = mm::vec4(1, 0, 0, 1);
+				ps_const.hasTex = false;
+			}
+
+			// set uniform buffer
+			ps_const_buf->update(&ps_const, sizeof(ps_const), 0);
+			gapi->setUniformBuffer(ps_const_buf, index_ps);
+
+			// set texture
+			if (ps_const.hasTex) {
+				gapi->setTexture(texture, shader->getSamplerIndex("tex"));
+			}
+
+			// draw matgroup
+			gapi->draw((matGroup.endFace - matGroup.beginFace) * 3, matGroup.beginFace * 3 * sizeof(u32));
+		}
+
 		// Draw each subMaterial
+		/*
 		if (mtl != nullptr)
 		for (int i = 0; i < mtl->getNumSubMaterials(); i++) {
 			auto& subMat = mtl->getSubMaterial(i);
@@ -314,8 +356,8 @@ void GraphicsEngineRaster::update() {
 				ps_const.hasTex = false;
 			}
 
-			gapi->setUniformBuffer(ps_const_buf, index_ps);
 			ps_const_buf->update(&ps_const, sizeof(ps_const), 0);
+			gapi->setUniformBuffer(ps_const_buf, index_ps);
 
 			if (ps_const.hasTex) {
 				gapi->setTexture(tdiffuse->getTexture(), shader->getSamplerIndex("tex"));
@@ -328,6 +370,8 @@ void GraphicsEngineRaster::update() {
 
 			num_drawn++;
 		}
+		*/
+
 		ps_const_buf->destroy();
 		ubo_buf->destroy();
 	}

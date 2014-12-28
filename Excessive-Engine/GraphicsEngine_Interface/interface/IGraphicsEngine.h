@@ -37,7 +37,7 @@ public:
 
 	// states | just as examples, not stable yet
 		// virtual void setTargetWindow();
-		// virtual void setScreenSize(int width, int height);
+	virtual void setResolution(u32 width, u32 height) = 0;
 
 	// interact
 	virtual void update() = 0;

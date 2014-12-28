@@ -20,35 +20,31 @@ int Ricsi() {
 
 	// Init window
 	rWindow d;
-		d.clientW = 800;
-		d.clientH = 600;
-		d.capText = "Excessive-Engine -> Ricsi teszt";
+	d.clientW = 800;
+	d.clientH = 600;
+	d.capText = "Excessive-Engine -> Ricsi teszt";
 	IWindow* window = Factory::createWindow(d);
-	
+
 	// Init core (graphics.... etc)
 	rGraphicsEngineRaster gDesc;
-		gDesc.type = eGapiType::OPENGL_4_5;
-	
+	gDesc.type = eGapiType::OPENGL_4_5;
+
 	EngineCore core;
-		graphics::IGraphicsEngine* gEngine = core.initGraphicsEngineRaster(gDesc);
-	
+	graphics::IGraphicsEngine* gEngine = core.initGraphicsEngineRaster(gDesc);
+
 	// Create scene and camera
 	graphics::IScene* scene = gEngine->createScene();
-		graphics::ICamera* cam = gEngine->createCam();
-		cam->setFOV(70 / 180.f*3.1415926f);
-		cam->setAspectRatio(window->getClientAspectRatio());
-		cam->setNearPlane(0.2f);
-		cam->setFarPlane(2000);
-		cam->setPos(mm::vec3(0, -3, 1));
+	graphics::ICamera* cam = gEngine->createCam();
+	cam->setFOV(70 / 180.f*3.1415926f);
+	cam->setAspectRatio(window->getClientAspectRatio());
+	cam->setNearPlane(0.2f);
+	cam->setFarPlane(2000);
+	cam->setPos(mm::vec3(0, -3, 1));
 	scene->setCam(cam);
 
 
 	Entity* simpleEntity = core.createEntity(scene, Sys::getWorkDir() + L"../Assets/terminal/terminal_blender.dae");
 
-	// So that I can read init messages
-	//std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-	
 	// Run the main loop
 	rWindowEvent ev;
 	double elapsed;
@@ -80,7 +76,7 @@ int Ricsi() {
 
 		while (window->popEvent(&ev))
 			switch (ev.msg)
-			{
+		{
 				case eWindowMsg::MOUSE_PRESS:
 					if (ev.mouseBtn == eMouseBtn::RIGHT)
 						bRMBDown = true;
@@ -100,10 +96,10 @@ int Ricsi() {
 						static float angleX = acos(lenXY)*(viewDir.z > 0 ? 1 : -1);
 						angleX += angleChangeX;
 						angleX = std::max(-85.f / 180 * 3.141592653f, std::min(angleX, 85.f / 180 * 3.141592653f));
-						static float angleZ = atan2(viewDir.y / lenXY, viewDir.z / lenXY) - 3.141592653f/2;
+						static float angleZ = atan2(viewDir.y / lenXY, viewDir.z / lenXY) - 3.141592653f / 2;
 						angleZ += angleChangeZ;
 						if (angleZ > 3.141592653f) {
-							angleZ -= floor(angleZ / 3.141592653f) * 2*3.141592653f;
+							angleZ -= floor(angleZ / 3.141592653f) * 2 * 3.141592653f;
 						}
 						else if (angleZ < -3.141592653f) {
 							angleZ -= ceil(angleZ / 3.141592653f) * 2 * 3.141592653f;
@@ -151,7 +147,10 @@ int Ricsi() {
 						case eKey::D: bDDown = false; break;
 						case eKey::LSHIFT: gCamSpeedMultiplier = 1; break;
 					} break;
-			}
+
+				case eWindowMsg::RESIZE:
+					break;
+		}
 
 		// Camera move
 		if (bWDown) // W
