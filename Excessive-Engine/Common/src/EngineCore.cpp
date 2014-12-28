@@ -80,6 +80,7 @@ Entity* EngineCore::createEntity(graphics::IScene* gScene, const std::wstring& m
 		graphics::IMesh* graphicsMesh = graphicsEngine->createMesh();
 		gEntity->setMesh(graphicsMesh);
 
+		// Materials
 		for (auto& importedMaterial : importedMesh.materials) {
 			auto& subMat = material->addSubMaterial();
 			subMat.base = mm::vec4(1, 1, 1, 1);
@@ -87,16 +88,21 @@ Entity* EngineCore::createEntity(graphics::IScene* gScene, const std::wstring& m
 			//subMat.t_diffuse->load(importedMaterial.texPathDiffuse.c_str());
 			subMat.t_diffuse->load((Sys::getWorkDir() + L"image.png").c_str());
 		}
-		std::vector<u32> matIDs;
-		matIDs.reserve(importedMesh.materials.size());
-		for (auto& m : importedMesh.materials)
-			matIDs.push_back(m.faceStartIdx);
+
+		// Material groups (face assignment)
+		std::vector<graphics::IMesh::MaterialGroup> matIDs;
+		matIDs.resize(importedMesh.materials.size());
+		for (u32 i = 0; i < matIDs.size(); i++) {
+			matIDs[i].beginFace = importedMesh.materials[i].faceStartIdx;
+			matIDs[i].endFace = importedMesh.materials[i].faceEndIdx;
+			matIDs[i].id = i;
+		}
 
 		graphics::IMesh::MeshData meshData;
 			meshData.index_data		= importedMesh.indices.data();
 			meshData.index_num		= importedMesh.indices.size();
-			meshData.mat_ids		= nullptr;// matIDs.data();
-			meshData.mat_ids_num	= 0;// matIDs.size();
+			meshData.mat_ids		= matIDs.data();
+			meshData.mat_ids_num	= matIDs.size();
 			meshData.vertex_bytes	= importedMesh.nVertices * importedMesh.vertexSize;
 			meshData.vertex_data	= importedMesh.vertexBuffers[0];
 
