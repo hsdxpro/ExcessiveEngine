@@ -39,15 +39,15 @@ enum class eWindowMsg {
 };
 
 struct rWindowEvent {
-	rWindowEvent() : msg(eWindowMsg::COUNT), key(eKey::COUNT), mouseDeltaX(0), mouseDeltaY(0), mouseX(0), mouseY(0) {}
+	rWindowEvent() : msg(eWindowMsg::COUNT), key(eKey::COUNT), deltaX(0), deltaY(0), x(0), y(0) {}
 
 	eWindowMsg msg;
 	eKey key;
 	eMouseBtn mouseBtn;
-	i32 mouseDeltaX;
-	i32 mouseDeltaY;
-	i32 mouseX;
-	i32 mouseY;
+	i32 deltaX;
+	i32 deltaY;
+	i32 x;
+	i32 y;
 };
 
 class IWindow

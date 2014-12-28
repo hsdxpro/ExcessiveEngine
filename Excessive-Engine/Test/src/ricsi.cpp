@@ -31,6 +31,7 @@ int Ricsi() {
 
 	EngineCore core;
 	graphics::IGraphicsEngine* gEngine = core.initGraphicsEngineRaster(gDesc);
+	gEngine->setResolution(window->getClientW(), window->getClientH());
 
 	// Create scene and camera
 	graphics::IScene* scene = gEngine->createScene();
@@ -88,8 +89,8 @@ int Ricsi() {
 				case eWindowMsg::MOUSE_MOVE: {
 					if (bRMBDown)
 					{
-						float angleChangeZ = (float)(ev.mouseDeltaX) * 0.009;
-						float angleChangeX = (float)(-ev.mouseDeltaY) * 0.009;
+						float angleChangeZ = (float)(ev.deltaX) * 0.009;
+						float angleChangeX = (float)(-ev.deltaY) * 0.009;
 
 						mm::vec3 viewDir = mm::normalize(cam->getTarget() - cam->getPos());
 						float lenXY = mm::length(viewDir.xy);
@@ -149,6 +150,7 @@ int Ricsi() {
 					} break;
 
 				case eWindowMsg::RESIZE:
+					gEngine->setResolution(ev.x, ev.y);
 					break;
 		}
 

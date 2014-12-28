@@ -121,6 +121,7 @@ GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRaster& d) {
 	shader = gapi->createShaderSource(vertexShaderCode, pixelShaderCode);
 	isValid = shader != nullptr;
 
+	gapi->setViewport(0, 0, 640, 480);
 	gapi->setDebugOutput(true);
 	gapi->setSeamlessCubeMaps(true);
 	gapi->setSyncDebugOutput(true);
@@ -262,7 +263,6 @@ void GraphicsEngineRaster::update() {
 
 
 		// set stuff
-		gapi->setViewport(0, 0, 800, 600);
 		gapi->setShaderProgram(shader);
 		gapi->setRenderTargets(0, 0);
 
