@@ -84,9 +84,20 @@ Entity* EngineCore::createEntity(graphics::IScene* gScene, const std::wstring& m
 		for (auto& importedMaterial : importedMesh.materials) {
 			auto& subMat = material->addSubMaterial();
 			subMat.base = mm::vec4(1, 1, 1, 1);
-			subMat.t_diffuse = graphicsEngine->createTexture();
-			subMat.t_diffuse->load(importedMaterial.texPathDiffuse.c_str());
-			//subMat.t_diffuse->load((Sys::getWorkDir() + L"image.png").c_str());
+
+			if (importedMaterial.texPathDiffuse != L"") {
+				subMat.t_diffuse = graphicsEngine->createTexture();
+
+				// TODO:
+				// turn .bmp references into .jpg (UGLY TMP)
+				if (importedMaterial.texPathDiffuse.rfind(L".bmp")) {
+					auto idx = importedMaterial.texPathDiffuse.rfind('.');
+					auto jpgExtension = importedMaterial.texPathDiffuse.substr(0, idx + 1) + L"jpg";
+					subMat.t_diffuse->load(jpgExtension.c_str());
+				}
+				else
+					subMat.t_diffuse->load(importedMaterial.texPathDiffuse.c_str());
+			}
 		}
 
 		// Material groups (face assignment)

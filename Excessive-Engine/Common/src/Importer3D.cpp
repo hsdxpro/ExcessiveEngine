@@ -187,5 +187,6 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 	mesh_out.vertexSize = vertexSize;
 	mesh_out.vertexBuffers = { vertices };
 		data_out.meshes = { mesh_out };
+
 	return true;
 }
