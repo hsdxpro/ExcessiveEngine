@@ -451,7 +451,8 @@ void GapiGL::WriteTexture(ITexture* t, const rTextureUpdate& d)
 
 	if (tex->dim == 1)
 	{
-		glTextureSubImage1D(tex->ID, d.level, d.x_offset, d.width, texture_formats[d.format], texture_types[d.format], d.data);
+		//glTextureSubImage1D(tex->ID, d.level, d.x_offset, d.width, texture_formats[d.format], texture_types[d.format], d.data);
+		glTexSubImage1D(tex->target, d.level, d.x_offset, d.width, texture_formats[d.format], texture_types[d.format], d.data);
 	}
 	else if (tex->dim == 2)
 	{
@@ -462,6 +463,7 @@ void GapiGL::WriteTexture(ITexture* t, const rTextureUpdate& d)
 	else //threesome
 	{
 		glTextureSubImage3D(tex->ID, d.level, d.x_offset, d.y_offset, d.z_offset, d.width, d.height, d.depth, texture_formats[d.format], texture_types[d.format], d.data);
+		//glTextureSubImage3D(tex->ID, d.level, d.x_offset, d.y_offset, d.z_offset, d.width, d.height, d.depth, texture_formats[d.format], texture_types[d.format], d.data);
 	}
 }
 
@@ -717,7 +719,7 @@ void GapiGL::setIndexBuffer(IIndexBuffer* ibo)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBufferGL*>(ibo)->id);
 }
 
-void GapiGL::draw(u32 num_indices)
+void GapiGL::draw(u32 num_indices, u32 index_byte_offset /*= 0*/)
 {
 #ifdef DEBUG_SHADER_ERRORS
 	glValidateProgram(static_cast<ShaderProgram*>(s)->id);
@@ -727,7 +729,7 @@ void GapiGL::draw(u32 num_indices)
 	cerr << infolog << endl;
 #endif
 
-	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, (void*)index_byte_offset);
 }
 
 void GapiGL::clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth /*= 0*/, i32 stencil /*= 0*/)

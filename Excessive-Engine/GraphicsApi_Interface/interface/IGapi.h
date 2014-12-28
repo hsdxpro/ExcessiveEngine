@@ -66,7 +66,7 @@ public:
     virtual void setIndexBuffer(IIndexBuffer* ibo) = 0;
     
     //draw stuff
-    virtual void draw(size_t num_indices) = 0;
+	virtual void draw(size_t num_indices, u32 index_byte_offset = 0) = 0;
 
 	// Clear actual frame buffer which is blitted to window client region
 	virtual void clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth = 0, i32 stencil = 0) = 0;

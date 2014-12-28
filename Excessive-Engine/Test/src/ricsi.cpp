@@ -11,7 +11,7 @@
 #include "Sys.h"
 
 
-#define CAM_MOVE_SPEED 10
+#define CAM_MOVE_SPEED 5
 float gCamSpeedMultiplier = 1;
 
 IGapi* gGapi;

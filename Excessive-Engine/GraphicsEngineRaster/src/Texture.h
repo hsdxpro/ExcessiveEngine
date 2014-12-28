@@ -14,7 +14,6 @@ public:
 	void acquire();
 	void release() override;
 
-	bool load(const char* file_path) override;
 	bool load(const wchar_t* file_path) override;
 
 	void reset() override;

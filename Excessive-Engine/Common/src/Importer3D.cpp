@@ -1,8 +1,12 @@
 #include "Importer3D.h"
+
+// Assimp
 #include "assimp\Importer.hpp"
-#include <fstream>
 #include "assimp\PostProcess.h"
 #include "assimp\Scene.h"
+
+// Util
+#include <fstream>
 #include <map>
 
 bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, rImporter3DData& data_out) {
@@ -98,8 +102,12 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 			size_t nConvertedChar;
 			mbstowcs_s(&nConvertedChar, unicodePath, diffusePath.C_Str(), 256);
 
+			std::wstring modelDirectory = path;
+			auto chIdx = modelDirectory.rfind('/');
+			modelDirectory = modelDirectory.substr(0, chIdx + 1);
+
 			// Really fucking absolute path
-			mesh_out.materials[i].texPathDiffuse = path + unicodePath;
+			mesh_out.materials[i].texPathDiffuse = modelDirectory + unicodePath;
 		}
 
 		// Get Normal texture path
@@ -108,7 +116,12 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 			wchar_t unicodePath[256];
 			size_t nConvertedChar;
 			mbstowcs_s(&nConvertedChar, unicodePath, normalPath.C_Str(), 256);
-			mesh_out.materials[i].texPathNormal = path + unicodePath;
+
+			std::wstring modelDirectory = path;
+			auto chIdx = modelDirectory.rfind('/');
+			modelDirectory = modelDirectory.substr(0, chIdx);
+
+			mesh_out.materials[i].texPathNormal = modelDirectory + unicodePath;
 		}
 
 		// Each face
@@ -169,10 +182,10 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 		globalVertexIdx += mesh->mNumVertices;
 	}
 
-		mesh_out.indices = indices;
-		mesh_out.nVertices = nVertices;
-		mesh_out.vertexSize = vertexSize;
-		mesh_out.vertexBuffers = { vertices };
-	data_out.meshes = { mesh_out };
+	mesh_out.indices = indices;
+	mesh_out.nVertices = nVertices;
+	mesh_out.vertexSize = vertexSize;
+	mesh_out.vertexBuffers = { vertices };
+		data_out.meshes = { mesh_out };
 	return true;
 }

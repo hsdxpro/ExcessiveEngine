@@ -41,12 +41,6 @@ void Texture::release() {
 ////////////////////////////////////////////////////////////////////////////////
 // load
 
-bool Texture::load(const char* file_path) {
-	size_t s = strlen(file_path);
-	auto wstr = std::make_unique<wchar_t>(s);
-	return load(wstr.get());
-}
-
 bool Texture::load(const wchar_t* file_path) {
 	// clean up old contents, if any
 	if (tex) {
@@ -56,7 +50,8 @@ bool Texture::load(const wchar_t* file_path) {
 	// load image with sfml
 	size_t len = wcslen(file_path);
 	char* ansiPath = new char[len+1];
-	wcstombs(ansiPath, file_path, len+1);
+	size_t conved;
+	wcstombs_s(&conved, ansiPath, len + 1, file_path, len + 1);
 
 	sf::Image im;
 	bool isLoaded = im.loadFromFile(ansiPath);

@@ -85,8 +85,8 @@ Entity* EngineCore::createEntity(graphics::IScene* gScene, const std::wstring& m
 			auto& subMat = material->addSubMaterial();
 			subMat.base = mm::vec4(1, 1, 1, 1);
 			subMat.t_diffuse = graphicsEngine->createTexture();
-			//subMat.t_diffuse->load(importedMaterial.texPathDiffuse.c_str());
-			subMat.t_diffuse->load((Sys::getWorkDir() + L"image.png").c_str());
+			subMat.t_diffuse->load(importedMaterial.texPathDiffuse.c_str());
+			//subMat.t_diffuse->load((Sys::getWorkDir() + L"image.png").c_str());
 		}
 
 		// Material groups (face assignment)

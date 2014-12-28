@@ -75,13 +75,13 @@ static const char pixelShaderCode[] =
 "	const vec4 sun_color = vec4(1.0, 0.92, 0.72, 1);"
 "	const vec4 sky_color = vec4(0.6, 0.8, 1.0, 1);"
 
-"if (pscd.hasTex != 0) { \n"
+//"if (pscd.hasTex != 0) { \n"
 "	color = pscd.diffuse*texture(tex, tex0); \n"
-"} \n"
-"else { \n"
-"	color = pscd.diffuse; \n"
-"} \n"
-"	color = clamp(color,0,1) + vec4(0.3,0,0,0); \n"
+//"} \n"
+//"else { \n"
+//"	color = pscd.diffuse; \n"
+//"} \n"
+//"	color = clamp(color,0,1) + vec4(0.3,0,0,0); \n"
 
 "   color = color*t*intensity*sun_color + color*(1-t)*sky_color;\n"
 "} \n"
@@ -182,6 +182,14 @@ void GraphicsEngineRaster::update() {
 
 	gapi->clearFrameBuffer(eClearFlag::COLOR_DEPTH, mm::vec4(0, 0, 0, 0), 0, 0);
 
+	rDepthState ds;
+		ds.enable_test = true;
+		ds.enable_write = true;
+		ds.far = 1.0f;
+		ds.near = 0.0f;
+		ds.func = eCompareFunc::LESSER_OR_EQUAL;
+	gapi->setDepthState(ds);
+
 	// ok, this function is only for testing purposes, it's not a real renderer xD	
 	// just render the first scene, entity by entity
 
@@ -255,8 +263,9 @@ void GraphicsEngineRaster::update() {
 			ubo_alloc_data.prefer_cpu_storage = false;
 			ubo_alloc_data.size = 1 * sizeof(mm::mat4);
 		auto ubo_buf = gapi->createUniformBuffer(ubo_alloc_data);
-		ubo_buf->update(&wvp, sizeof(mm::mat4), 0);
 		auto index_vs = shader->getUniformBlockIndex("constant_data");
+
+		ubo_buf->update(&wvp, sizeof(mm::mat4), 0);
 		gapi->setUniformBuffer(ubo_buf, index_vs);
 
 		// set vertex buffer
@@ -274,50 +283,53 @@ void GraphicsEngineRaster::update() {
 
 		struct {
 			mm::vec4 diffuse;
-			i32 hasTex;
+			int hasTex;
 		} ps_const;
 
-		if (mtl != nullptr && mtl->getNumSubMaterials() > 0) {
-			diffuse = mtl->getSubMaterial(0).base;
-			tdiffuse = (Texture*)mtl->getSubMaterial(0).t_diffuse;
 
-			ps_const.diffuse = diffuse;
-			ps_const.hasTex = (tdiffuse != nullptr && tdiffuse->getTexture() != nullptr);
-		}
-		else {
-			ps_const.diffuse = mm::vec4(1, 1, 1, 1);
-			ps_const.hasTex = false;
-		}
-		
+
 		rBuffer pc_const_desc;
-		pc_const_desc.is_persistent = false;
-		pc_const_desc.is_readable = true;
-		pc_const_desc.is_writable = true;
-		pc_const_desc.prefer_cpu_storage = false;
-		pc_const_desc.size = 1 * sizeof(mm::mat4);
+			pc_const_desc.is_persistent = false;
+			pc_const_desc.is_readable = true;
+			pc_const_desc.is_writable = true;
+			pc_const_desc.prefer_cpu_storage = false;
+			pc_const_desc.size = sizeof(ps_const);
 		auto ps_const_buf = gapi->createUniformBuffer(pc_const_desc);
-		ps_const_buf->update(&ps_const, sizeof(ps_const), 0);
 		auto index_ps = shader->getUniformBlockIndex("ps_const");
-		gapi->setUniformBuffer(ps_const_buf, index_ps);
 
-		if (ps_const.hasTex) {
-			gapi->setTexture(tdiffuse->getTexture(), shader->getSamplerIndex("tex"));
+		// Draw each subMaterial
+		if (mtl != nullptr)
+		for (int i = 0; i < mtl->getNumSubMaterials(); i++) {
+			auto& subMat = mtl->getSubMaterial(i);
+
+			if (subMat.t_diffuse) {
+				diffuse = subMat.base;
+				tdiffuse = (Texture*)subMat.t_diffuse;
+
+				ps_const.diffuse = diffuse;
+				ps_const.hasTex = (tdiffuse != nullptr && tdiffuse->getTexture() != nullptr);
+			}
+			else {
+				ps_const.diffuse = mm::vec4(1, 1, 1, 1);
+				ps_const.hasTex = false;
+			}
+
+			gapi->setUniformBuffer(ps_const_buf, index_ps);
+			ps_const_buf->update(&ps_const, sizeof(ps_const), 0);
+
+			if (ps_const.hasTex) {
+				gapi->setTexture(tdiffuse->getTexture(), shader->getSamplerIndex("tex"));
+			}
+
+			auto& matGroup = mesh->getMaterialIds()[i];
+
+			// draw
+			gapi->draw((matGroup.endFace - matGroup.beginFace) * 3, matGroup.beginFace * 3 * sizeof(u32));
+
+			num_drawn++;
 		}
-
-		// draw
-		u32 num_indices = mesh->getIndexBuffer()->getDesc().size / sizeof(u32);
-		gapi->draw(num_indices);
-		rDepthState ds;
-		ds.enable_test = true;
-		ds.enable_write = true;
-		ds.far = 1.0f;
-		ds.near = 0.0f;
-		ds.func = eCompareFunc::LESSER_OR_EQUAL;
-		gapi->setDepthState(ds);
-		num_drawn++;
-
-		ubo_buf->destroy();
 		ps_const_buf->destroy();
+		ubo_buf->destroy();
 	}
 
 	//cout << num_drawn << " entities actually drawn." << endl;

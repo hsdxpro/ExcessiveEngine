@@ -67,7 +67,7 @@ class GapiGL : public IGapi
 	void setTexture(ITexture* t, u32 idx) override;
 
     // draw stuff
-    void draw(u32 num_indices);
+	void draw(u32 num_indices, u32 index_byte_offset = 0);
 
 	void clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth = 0, i32 stencil = 0);
 
