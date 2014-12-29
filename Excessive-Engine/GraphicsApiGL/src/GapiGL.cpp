@@ -283,7 +283,28 @@ ShaderProgramGL* GapiGL::createShaderFile(
 
 ShaderProgramGL* GapiGL::createShaderBinary(void* data, size_t size)
 {
-	return nullptr;
+	// create program
+	auto program_id = glCreateProgram();
+
+	ASSERT(data)
+	{
+		char* ptr = (char*)data;
+		GLint size = reinterpret_cast<GLint*>(ptr)[0];
+		ptr += sizeof(GLint);
+		GLenum format = reinterpret_cast<GLenum*>(ptr)[0];
+		ptr += sizeof(GLenum);
+
+		glProgramBinary(program_id, format, ptr, size);
+	}
+
+	GLint is_linked = 0;
+	glGetProgramiv(program_id, GL_LINK_STATUS, &is_linked);
+	if (!is_linked) {
+		return nullptr;
+	}
+	else {
+		return new ShaderProgramGL(program_id);
+	}
 }
 
 
