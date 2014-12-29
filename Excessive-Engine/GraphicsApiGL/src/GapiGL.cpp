@@ -496,7 +496,10 @@ void GapiGL::writeBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t 
 	glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
 }
 void GapiGL::readBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t offset) {
-	// TODO: implement
+	// TODO 4.5
+  auto id = ((VertexBufferGL*)buffer)->id;
+  glBindBuffer(GL_ARRAY_BUFFER, id);
+  glBufferSubData( GL_ARRAY_BUFFER, offset, size, data );
 }
 
 // index buffers
@@ -506,7 +509,10 @@ void GapiGL::writeBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t o
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, size, data);
 }
 void GapiGL::readBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) {
-	// TODO: implement
+	// TODO 4.5
+  auto id = ((IndexBufferGL*)buffer)->id;
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
+  glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, offset, size, data );
 }
 
 // uniform buffers
@@ -516,7 +522,10 @@ void GapiGL::writeBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t
 	glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
 }
 void GapiGL::readBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t offset) {
-	// TODO: implement
+	// TODO 4.5
+  auto id = ((UniformBufferGL*)buffer)->id;
+  glBindBuffer(GL_UNIFORM_BUFFER, id);
+  glBufferSubData( GL_UNIFORM_BUFFER, offset, size, data );
 }
 
 void GapiGL::setDepthState(const rDepthState& state)
