@@ -470,10 +470,12 @@ void Gapi::passVertexBuffers(IVertexBuffer** vbos, rVertexAttrib* attrib_data, u
     glVertexAttribPointer( attrib_data[c].index, attrib_data[c].data_components, attrib_array[attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset );*/
     //glVertexAttribDivisor( attrib_data[c].index, attrib_data[c].divisor ); //instancing stuff
 
+    glBindBuffer( GL_ARRAY_BUFFER, id );
     glEnableVertexArrayAttrib( global_vao, attrib_data[c].index );
-    glVertexArrayVertexBuffer( global_vao, attrib_data[c].index, id, attrib_data[c].offset, 0 );
-    glVertexArrayAttribFormat( global_vao, attrib_data[c].index, attrib_data[c].data_components, attrib_array[attrib_data[c].type], false, attrib_data[c].offset );
-    glVertexArrayAttribBinding( global_vao, attrib_data[c].index, attrib_data[c].index );
+    glVertexAttribPointer( attrib_data[c].index, attrib_data[c].data_components, attrib_array[attrib_data[c].type], false, attrib_data[c].size, (const void*)attrib_data[c].offset );
+    //glVertexArrayVertexBuffer( global_vao, attrib_data[c].index, id, attrib_data[c].offset, 0 );
+    //glVertexArrayAttribFormat( global_vao, attrib_data[c].index, attrib_data[c].data_components, attrib_array[attrib_data[c].type], false, attrib_data[c].offset );
+    //glVertexArrayAttribBinding( global_vao, attrib_data[c].index, attrib_data[c].index );
     //glVertexArrayBindingDivisor( global_vao, attrib_data[c].index, attrib_data[c].divisor ); //instancing stuff
   }
 }
