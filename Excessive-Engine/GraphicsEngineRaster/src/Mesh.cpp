@@ -211,7 +211,7 @@ bool Mesh::update(MeshData data) {
 	ib_desc.size = data.index_num * sizeof(u32);
 
 	IIndexBuffer* _ib = gapi->createIndexBuffer(ib_desc);
-	_ib->update((char*)data.index_data, ib_desc.size, 0);
+	gapi->writeBuffer(_ib, data.index_data, ib_desc.size, 0);
 
 	if (!_ib) {
 		return false;
@@ -247,7 +247,7 @@ bool Mesh::update(MeshData data) {
 		if (!_vb) {
 			return false;
 		}
-		_vb->update(vb_data.get(), vb_desc.size, 0);
+		gapi->writeBuffer(_vb, vb_data.get(), vb_desc.size, 0);
 		streams[i].vb = _vb;
 	}
 

@@ -5,12 +5,10 @@
 
 class BufferGL : public IBuffer
 {
-  public:
+public:
 	rBuffer adata;
-    GLuint id;
+	GLuint id;
 
-    void destroy() override;
-    void update(void* data, u32 size, u32 offset) override; 
-    void getSubData(void* data, u32 size, u32 offset) override;
-    rBuffer getDesc() override;
+	void destroy() override;
+	rBuffer getDesc() override;
 };

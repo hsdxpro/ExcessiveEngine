@@ -23,8 +23,6 @@ public:
 	rTexture desc;
 
 	void destroy() override;
-
 	const rTexture& getDesc() override;
-	void getSubData(const rTextureUpdate& d) override; //the pointer should be updated
 	void genMipChain() override;
 };

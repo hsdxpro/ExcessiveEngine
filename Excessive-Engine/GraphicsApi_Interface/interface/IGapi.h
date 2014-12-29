@@ -12,8 +12,8 @@
 class IGapi
 {
 public:
-	//virtual IShaderProgram* createShaderProgram(const rShaderPaths& data) = 0;
-	//virtual IShaderProgram* createShaderProgram(const rShaderSources& data) = 0;
+	///////////////////////////////////////
+	// shader creation
 
 	/// Create shader program from source.
 	/// \return nullptr is returned on failure.
@@ -28,13 +28,42 @@ public:
 	/// \return nullptr is returned on failure.
 	virtual IShaderProgram* createShaderBinary(void* data, size_t size) = 0;
 
+
+	///////////////////////////////////////
+	// buffer creation
+
+	/// Create uniform buffer.
+	/// \return nullptr is returned of failure.
 	virtual IUniformBuffer* createUniformBuffer(const rBuffer& data) = 0;
+
+	/// Create vertex buffer.
+	/// \return nullptr is returned of failure.
 	virtual IVertexBuffer*	createVertexBuffer(const rBuffer& data) = 0;
+
+	/// Create index buffer.
+	/// \return nullptr is returned of failure.
 	virtual IIndexBuffer*	createIndexBuffer(const rBuffer& data) = 0;
+
+	/// Create texture.
+	/// \return nullptr is returned of failure.
 	virtual ITexture*		createTexture(const rTexture& data) = 0;
 
-	virtual void WriteTexture(ITexture* t, const rTextureUpdate& d) = 0;
 
+	///////////////////////////////////////
+	// buffer data manipulation
+	virtual void writeTexture(ITexture* t, const rTextureUpdate& d) = 0;
+	virtual void readTexture(ITexture* t, const rTextureUpdate& d) = 0;
+
+	virtual void writeBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) = 0;
+	virtual void readBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) = 0;
+	virtual void writeBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t offset) = 0;
+	virtual void readBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t offset) = 0;
+	virtual void writeBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t offset) = 0;
+	virtual void readBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t offset) = 0;
+
+
+	///////////////////////////////////////
+	// render states
 	virtual void setDepthState(const rDepthState& state) = 0;
 	virtual void setStencilState(const rStencilState& state) = 0;
 	virtual void setBlendState(const rBlendState& state) = 0;
@@ -43,13 +72,19 @@ public:
 
 	virtual void setSRGBWrites(bool val) = 0;
 	virtual void setSeamlessCubeMaps(bool val) = 0;
+
 	virtual void setViewport(int x, int y, unsigned w, unsigned h) = 0;
 
+
+	///////////////////////////////////////
+	// debug
 	virtual bool getError() = 0;
 	virtual void setDebugOutput(bool val) = 0;
 	virtual void setSyncDebugOutput(bool val) = 0;
 
-    //pass input/output to shader
+
+	///////////////////////////////////////
+    // set render input
     virtual void setShaderProgram(IShaderProgram* sp) = 0;
     virtual void setTexture(ITexture* t, u32 idx) = 0;
 	virtual void setRenderTargets(const rRenderTargetInfo* render_targets, u32 size) = 0;
@@ -57,13 +92,20 @@ public:
 	virtual void setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers) = 0;
     virtual void setIndexBuffer(IIndexBuffer* ibo) = 0;
     
-    //draw stuff
+
+	///////////////////////////////////////
+    // draw calls
 	virtual void draw(size_t num_indices, u32 index_byte_offset = 0) = 0;
 
-	// Clear actual frame buffer which is blitted to window client region
+
+	///////////////////////////////////////
+	// global manipulators
+
+	/// Clear actual frame buffer which is blitted to window client region.
 	virtual void clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth = 0, i32 stencil = 0) = 0;
 
 
+	///////////////////////////////////////
 	// input layout & vertex streams
 
 	/// Create an input layout.
@@ -73,7 +115,7 @@ public:
 	virtual void setInputLayout(IInputLayout* layout) = 0;
 
 	/*
-	Egyszerûen bindeli a vertex buffereket a megfelelõ 'slot'-ba.
+	Egyszerűen bindeli a vertex buffereket a megfelelõ 'slot'-ba.
 	Ha több buffert adunk meg, akkor azokat a start_slot, start_slot+1, start_slot+2 helyekre bindeli.
 	A nullptr buffer unbindeli az adott slotból a buffert.
 	*/

@@ -302,11 +302,6 @@ void TextureGL::destroy()
   ID = 0;
 }
 
-void TextureGL::getSubData(const rTextureUpdate& d)
-{
-	glGetTextureSubImage(ID, d.level, d.x_offset, d.y_offset, d.z_offset, d.width, d.height, d.depth, texture_formats[d.format], texture_types[d.format], ((d.width - d.x_offset) * (d.height - d.y_offset) * (d.depth - d.z_offset) * texture_sizes[d.format]) / 8, d.data);
-}
-
 const rTexture& TextureGL::getDesc()
 {
 	return desc;

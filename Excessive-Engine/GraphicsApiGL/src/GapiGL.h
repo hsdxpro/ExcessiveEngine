@@ -12,61 +12,63 @@
 
 class GapiGL : public IGapi
 {
-  public:
-    GLuint global_vao;
-  
+public:
+	GLuint global_vao;
+
 	GapiGL();
 
-	//IShaderProgram* createShaderProgram() override;
-	//IShaderProgram* createShaderProgram(const rShaderPaths& data) override;
-	//IShaderProgram* createShaderProgram(const rShaderSources& data) override;
-
+	// shader creation
 	ShaderProgramGL* createShaderSource(
 		const char* vertex_shader_source,
 		const char* pixel_shader_source,
 		const char* geometry_shader_source = nullptr,
 		const char* tess_control_shader_source = nullptr,
 		const char* tess_eval_shader_source = nullptr) override;
-	ShaderProgramGL* createShaderFile(
-		const wchar_t* vertex_shader_path,
-		const wchar_t* pixel_shader_path,
-		const wchar_t* geometry_shader_path = nullptr,
-		const wchar_t* tess_control_shader_path = nullptr,
-		const wchar_t* tess_eval_shader_path = nullptr) override;
 	ShaderProgramGL* createShaderBinary(void* data, size_t size) override;
 
+	// buffer creationg
 	UniformBufferGL* createUniformBuffer(const rBuffer& data) override;
 	VertexBufferGL*	createVertexBuffer(const rBuffer& data) override;
 	TextureGL*		createTexture(const rTexture& data) override;
 	IndexBufferGL*	createIndexBuffer(const rBuffer& data) override;
-    
-	void WriteTexture(ITexture* t, const rTextureUpdate& d);
-	
-    void setDepthState(const rDepthState& state) override;
-    void setStencilState(const rStencilState& state) override;
-    void setBlendState(const rBlendState& state) override;
-	void setSamplerState(const char* slotName, const rSamplerState& smpdata, ITexture* t) override;
 
-    void setSRGBWrites(bool val) override;
-    void setSeamlessCubeMaps(bool val) override;
-    
-    void setViewport(int x, int y, u32 w, u32 h) override;
+	// buffer data manipulation
+	void writeTexture(ITexture* t, const rTextureUpdate& d) override;
+	void readTexture(ITexture* t, const rTextureUpdate& d) override;
 
-    void setRasterizationState(const rRasterizerState& state) override;
+	void writeBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) override;
+	void readBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) override;
+	void writeBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t offset) override;
+	void readBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t offset) override;
+	void writeBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t offset) override;
+	void readBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t offset) override;
 
-    bool getError() override;
-    void setDebugOutput(bool val) override;
-    void setSyncDebugOutput(bool val) override;
-    
-    //pass input/output to shader
-    void setShaderProgram(IShaderProgram* sp) override;
+	// rendereing states
+	void setDepthState(const rDepthState& state) override;
+	void setStencilState(const rStencilState& state) override;
+	void setBlendState(const rBlendState& state) override;
+	void setRasterizationState(const rRasterizerState& state) override;
+	void setSamplerState(const char* slotName, const rSamplerState& smpdata, ITexture* t) override; // move to setTexture
+
+	void setSRGBWrites(bool val) override; // move to texture parameters
+	void setSeamlessCubeMaps(bool val) override; // should be true by default, shouldn't it?  
+
+	void setViewport(int x, int y, u32 w, u32 h) override;
+
+	// debug
+	bool getError() override;
+	void setDebugOutput(bool val) override;
+	void setSyncDebugOutput(bool val) override;
+
+	// set render input
+	void setShaderProgram(IShaderProgram* sp) override;
 	void setRenderTargets(const rRenderTargetInfo* render_targets, u32 size) override;
 	void setUniformBuffer(IUniformBuffer* buf, u32 index) override;
 	void setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers) override;
 	void setIndexBuffer(IIndexBuffer* ibo) override;
 	void setTexture(ITexture* t, u32 idx) override;
 
-    // draw stuff
+	// draw calls
 	void draw(u32 num_indices, u32 index_byte_offset = 0);
 
 	void clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth = 0, i32 stencil = 0);

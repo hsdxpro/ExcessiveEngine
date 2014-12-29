@@ -64,7 +64,7 @@ bool Texture::load(const wchar_t* file_path) {
 	texdata.width = im.getSize().x;
 	texdata.height = im.getSize().y;
 	texdata.depth = 1;
-	texdata.format = RGBA8;
+	texdata.format = eTextureFormat::RGBA8;
 	texdata.is_cubemap = false;
 	texdata.is_layered = false;
 	texdata.num_levels = 1;
@@ -85,7 +85,7 @@ bool Texture::load(const wchar_t* file_path) {
 	texupdata.y_offset = 0;
 	texupdata.z_offset = 0;
 
-	gapi->WriteTexture(tex, texupdata);
+	gapi->writeTexture(tex, texupdata);
 
 	return true;
 }

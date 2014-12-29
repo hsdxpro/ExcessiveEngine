@@ -28,6 +28,7 @@ EXPORT IGapi* createGraphicsApi()
 	return new GapiGL();
 }
 
+
 GapiGL::GapiGL() {
 	GLenum glew_error = glewInit();
 
@@ -92,22 +93,22 @@ GLenum raster_order_data[] =
 /* DEPRECATED
 IShaderProgram* GapiGL::createShaderProgram(const rShaderPaths& data)
 {
-	// TODO
-	ShaderProgramGL* sp = new ShaderProgramGL();
-	return sp;
+// TODO
+ShaderProgramGL* sp = new ShaderProgramGL();
+return sp;
 }
 
 IShaderProgram* GapiGL::createShaderProgram(const rShaderSources& data)
 {
-	ShaderProgramGL* sp = new ShaderProgramGL();
-	sp->id = glCreateProgram();
-	if (data.vsSrc != 0)				sp->addShader(data.vsSrc, VERTEX_SHADER);
-	if (data.psSrc != 0)				sp->addShader(data.psSrc, PIXEL_SHADER);
-	if (data.tessCtrlSrc != 0)			sp->addShader(data.tessCtrlSrc, TESSELLATION_CONTROL_SHADER);
-	if (data.tessEvaluationSrc != 0)	sp->addShader(data.tessEvaluationSrc, TESSELLATION_EVALUATION_SHADER);
-	if (data.gsSrc != 0)				sp->addShader(data.gsSrc, GEOMETRY_SHADER);
-	sp->link();
-	return sp;
+ShaderProgramGL* sp = new ShaderProgramGL();
+sp->id = glCreateProgram();
+if (data.vsSrc != 0)				sp->addShader(data.vsSrc, VERTEX_SHADER);
+if (data.psSrc != 0)				sp->addShader(data.psSrc, PIXEL_SHADER);
+if (data.tessCtrlSrc != 0)			sp->addShader(data.tessCtrlSrc, TESSELLATION_CONTROL_SHADER);
+if (data.tessEvaluationSrc != 0)	sp->addShader(data.tessEvaluationSrc, TESSELLATION_EVALUATION_SHADER);
+if (data.gsSrc != 0)				sp->addShader(data.gsSrc, GEOMETRY_SHADER);
+sp->link();
+return sp;
 }
 */
 
@@ -121,7 +122,7 @@ ShaderProgramGL* GapiGL::createShaderSource(
 	const char* tess_eval_shader_source)
 {
 	GLuint program_id;
-	GLuint vs=0, ps=0, tcs=0, tes=0, gs=0;
+	GLuint vs = 0, ps = 0, tcs = 0, tes = 0, gs = 0;
 	bool success = false;
 
 	// if success if set to false, frees everything when function returns
@@ -156,7 +157,7 @@ ShaderProgramGL* GapiGL::createShaderSource(
 			std::vector<GLchar> infoLog(maxLength);
 			glGetShaderInfoLog(id, maxLength, &maxLength, infoLog.data());
 			cerr << infoLog.data();
-			
+
 			return nullptr;
 		}
 		glAttachShader(program_id, id);
@@ -271,15 +272,6 @@ ShaderProgramGL* GapiGL::createShaderSource(
 	return shader_program;
 }
 
-ShaderProgramGL* GapiGL::createShaderFile(
-	const wchar_t* vertex_shader_path,
-	const wchar_t* pixel_shader_path,
-	const wchar_t* geometry_shader_path,
-	const wchar_t* tess_control_shader_path,
-	const wchar_t* tess_eval_shader_path)
-{
-	return nullptr;
-}
 
 ShaderProgramGL* GapiGL::createShaderBinary(void* data, size_t size)
 {
@@ -387,7 +379,7 @@ TextureGL* GapiGL::createTexture(const rTexture& data)
 			}
 
 			glBindTexture(tex->target, tex->ID);
-			glTexStorage3D(tex->target, data.num_levels, texture_internal_formats[data.format], data.width, data.height, data.depth);
+			glTexStorage3D(tex->target, data.num_levels, texture_internal_formats[(int)data.format], data.width, data.height, data.depth);
 		}
 		else
 		{
@@ -408,7 +400,7 @@ TextureGL* GapiGL::createTexture(const rTexture& data)
 			}
 
 			glBindTexture(tex->target, tex->ID);
-			glTexStorage2D(tex->target, data.num_levels, texture_internal_formats[data.format], data.width, data.height);
+			glTexStorage2D(tex->target, data.num_levels, texture_internal_formats[(int)data.format], data.width, data.height);
 		}
 	}
 	else
@@ -419,7 +411,7 @@ TextureGL* GapiGL::createTexture(const rTexture& data)
 		tex->target = GL_TEXTURE_1D;
 
 		glBindTexture(tex->target, tex->ID);
-		glTexStorage1D(tex->target, data.num_levels, texture_internal_formats[data.format], data.width);
+		glTexStorage1D(tex->target, data.num_levels, texture_internal_formats[(int)data.format], data.width);
 	}
 
 	tex->desc = data;
@@ -430,7 +422,7 @@ TextureGL* GapiGL::createTexture(const rTexture& data)
 	glTextureView(tex->viewID,
 		tex->target,
 		tex->ID,
-		texture_internal_formats[data.format],
+		texture_internal_formats[(int)data.format],
 		0,
 		data.num_levels,
 		0,
@@ -463,8 +455,10 @@ IndexBufferGL* GapiGL::createIndexBuffer(const rBuffer& data)
 	return ibo;
 }
 
-void GapiGL::WriteTexture(ITexture* t, const rTextureUpdate& d)
-{
+
+
+// textures
+void GapiGL::writeTexture(ITexture* t, const rTextureUpdate& d) {
 	TextureGL* tex = (TextureGL*)t;
 
 	glActiveTexture(GL_TEXTURE0);
@@ -473,19 +467,56 @@ void GapiGL::WriteTexture(ITexture* t, const rTextureUpdate& d)
 	if (tex->dim == 1)
 	{
 		//glTextureSubImage1D(tex->ID, d.level, d.x_offset, d.width, texture_formats[d.format], texture_types[d.format], d.data);
-		glTexSubImage1D(tex->target, d.level, d.x_offset, d.width, texture_formats[d.format], texture_types[d.format], d.data);
+		glTexSubImage1D(tex->target, d.level, d.x_offset, d.width, texture_formats[(int)d.format], texture_types[(int)d.format], d.data);
 	}
 	else if (tex->dim == 2)
 	{
 		//glTextureSubImage2D( id, data->level, data->x_offset, data->y_offset, data->width, data->height, texture_formats[data->format], texture_types[data->format], data->data );
-		glTexSubImage2D(tex->target, d.level, d.x_offset, d.y_offset, d.width, d.height, texture_formats[d.format], texture_types[d.format], d.data);
+		glTexSubImage2D(tex->target, d.level, d.x_offset, d.y_offset, d.width, d.height, texture_formats[(int)d.format], texture_types[(int)d.format], d.data);
 
 	}
 	else //threesome
 	{
-		glTextureSubImage3D(tex->ID, d.level, d.x_offset, d.y_offset, d.z_offset, d.width, d.height, d.depth, texture_formats[d.format], texture_types[d.format], d.data);
+		glTextureSubImage3D(tex->ID, d.level, d.x_offset, d.y_offset, d.z_offset, d.width, d.height, d.depth, texture_formats[(int)d.format], texture_types[(int)d.format], d.data);
 		//glTextureSubImage3D(tex->ID, d.level, d.x_offset, d.y_offset, d.z_offset, d.width, d.height, d.depth, texture_formats[d.format], texture_types[d.format], d.data);
 	}
+}
+void GapiGL::readTexture(ITexture* t, const rTextureUpdate& d) {
+	auto id = ((TextureGL*)t)->ID;
+	glGetTextureSubImage(id, d.level, d.x_offset, d.y_offset, d.z_offset, d.width, d.height, d.depth, texture_formats[(int)d.format], texture_types[(int)d.format], ((d.width - d.x_offset) * (d.height - d.y_offset) * (d.depth - d.z_offset) * texture_sizes[(int)d.format]) / 8, d.data);
+}
+
+// vertex buffers
+void GapiGL::writeBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t offset) {
+	auto id = ((VertexBufferGL*)buffer)->id;
+	/*void* ptr = glMapBufferRange( GL_ARRAY_BUFFER, offset, size, GL_MAP_WRITE_BIT );
+	memcpy( ptr, data, size );
+	glUnmapBuffer( GL_ARRAY_BUFFER );*/
+	glBindBuffer(GL_ARRAY_BUFFER, id);
+	glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
+}
+void GapiGL::readBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t offset) {
+	// TODO: implement
+}
+
+// index buffers
+void GapiGL::writeBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) {
+	auto id = ((IndexBufferGL*)buffer)->id;
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
+	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, size, data);
+}
+void GapiGL::readBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) {
+	// TODO: implement
+}
+
+// uniform buffers
+void GapiGL::writeBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t offset) {
+	auto id = ((UniformBufferGL*)buffer)->id;
+	glBindBuffer(GL_UNIFORM_BUFFER, id);
+	glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
+}
+void GapiGL::readBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t offset) {
+	// TODO: implement
 }
 
 void GapiGL::setDepthState(const rDepthState& state)
@@ -755,7 +786,7 @@ void GapiGL::draw(u32 num_indices, u32 index_byte_offset /*= 0*/)
 
 void GapiGL::clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth /*= 0*/, i32 stencil /*= 0*/)
 {
-	
+
 	unsigned int clearFlag = 0;
 	u32 bits = (u32)f;
 
@@ -764,7 +795,7 @@ void GapiGL::clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth /
 		clearFlag |= GL_COLOR_BUFFER_BIT;
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
-	
+
 	if ((bits & (u32)eClearFlag::DEPTH) != 0)
 	{
 		clearFlag |= GL_DEPTH_BUFFER_BIT;
@@ -787,25 +818,25 @@ static inline GLenum NativeAttribType(eVertexAttribType type) {
 	// GL_HALF_FLOAT, GL_FLOAT, GL_DOUBLE, GL_FIXED, GL_INT_2_10_10_10_REV, GL_UNSIGNED_INT_2_10_10_10_REV and GL_UNSIGNED_INT_10F_11F_11F_REV
 	/*
 		// floating point types
-	FLOAT = 0,
-	HALF,
-	// integer types
-	SINT_32,
-	UINT_32,
-	SINT_16,
-	UINT_16,
-	SINT_8,
-	UINT_8,
-	// normalized integer types
-	// signed: [-1.0f, 1.0f]
-	// unsigned: [0.0f, 1.0f]
-	SNORM_32,
-	UNORM_32,
-	SNORM_16,
-	UNORM_16,
-	SNORM_8,
-	UNORM_8,	
-	*/
+		FLOAT = 0,
+		HALF,
+		// integer types
+		SINT_32,
+		UINT_32,
+		SINT_16,
+		UINT_16,
+		SINT_8,
+		UINT_8,
+		// normalized integer types
+		// signed: [-1.0f, 1.0f]
+		// unsigned: [0.0f, 1.0f]
+		SNORM_32,
+		UNORM_32,
+		SNORM_16,
+		UNORM_16,
+		SNORM_8,
+		UNORM_8,
+		*/
 
 	static const GLenum lut[] = {
 		GL_FLOAT,
@@ -823,7 +854,7 @@ static inline GLenum NativeAttribType(eVertexAttribType type) {
 		GL_BYTE,
 		GL_UNSIGNED_BYTE,
 	};
-	assert((unsigned)type < sizeof(lut)/sizeof(lut[0]));
+	assert((unsigned)type < sizeof(lut) / sizeof(lut[0]));
 	return lut[(unsigned)type];
 }
 

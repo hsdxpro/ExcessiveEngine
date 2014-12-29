@@ -130,7 +130,7 @@ int main(int argc, char** args)
 	texdata.width = im.getSize().x;
 	texdata.height = im.getSize().y;
 	texdata.depth = 1;
-	texdata.format = RGBA8;
+	texdata.format = eTextureFormat::RGBA8;
 	texdata.is_cubemap = false;
 	texdata.is_layered = false;
 	texdata.num_levels = 1;
@@ -148,7 +148,7 @@ int main(int argc, char** args)
 	texupdata.y_offset = 0;
 	texupdata.z_offset = 0;
 
-	gapi->WriteTexture(tex, texupdata);
+	gapi->writeTexture(tex, texupdata);
 
 	rSamplerState smpdata;
 	smpdata.is_anisotropic = false;
@@ -207,10 +207,10 @@ int main(int argc, char** args)
 
 	auto idx_buf = gapi->createIndexBuffer(idx_alloc_data);
 
-	vtx_buf->update((char*)vertices.data(), vertices.size() * sizeof(vec3), 0);
-	tex_buf->update((char*)texcoords.data(), texcoords.size() * sizeof(vec2), 0);
+	gapi->writeBuffer(vtx_buf, vertices.data(), vertices.size() * sizeof(vec3), 0);
+	gapi->writeBuffer(tex_buf, texcoords.data(), texcoords.size() * sizeof(vec2), 0);
 
-	idx_buf->update((char*)indices.data(), indices.size() * sizeof(u32), 0);
+	gapi->writeBuffer(idx_buf, indices.data(), indices.size() * sizeof(u32), 0);
 
 	//set up the uniform buffer
 	rBuffer ubo_alloc_data;
@@ -224,7 +224,7 @@ int main(int argc, char** args)
 
 	auto ubo_buf = gapi->createUniformBuffer(ubo_alloc_data);
 
-	ubo_buf->update((char*)&mvp[0][0], sizeof(mat4), 0);
+	gapi->writeBuffer(ubo_buf, &mvp[0][0], sizeof(mat4), 0);
 
 	//draw stuff
 	bool run = true;

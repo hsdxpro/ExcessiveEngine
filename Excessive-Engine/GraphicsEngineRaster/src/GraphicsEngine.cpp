@@ -277,7 +277,7 @@ void GraphicsEngineRaster::update() {
 		auto ubo_buf = gapi->createUniformBuffer(ubo_alloc_data);
 		auto index_vs = shader->getUniformBlockIndex("constant_data");
 
-		ubo_buf->update(&wvp, sizeof(mm::mat4), 0);
+		gapi->writeBuffer(ubo_buf, &wvp, sizeof(mm::mat4), 0);
 		gapi->setUniformBuffer(ubo_buf, index_vs);
 
 		// set vertex buffer
@@ -326,7 +326,7 @@ void GraphicsEngineRaster::update() {
 			}
 
 			// set uniform buffer
-			ps_const_buf->update(&ps_const, sizeof(ps_const), 0);
+			gapi->writeBuffer(ps_const_buf, &ps_const, sizeof(ps_const), 0);
 			gapi->setUniformBuffer(ps_const_buf, index_ps);
 
 			// set texture
