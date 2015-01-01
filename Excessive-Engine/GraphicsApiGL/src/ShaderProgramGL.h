@@ -1,8 +1,8 @@
 #pragma once
 
 #include "GL/glew.h"
-
 #include "../Module_Interfaces/GraphicsApi/IShaderProgram.h"
+#include <unordered_map>
 
 //#define DEBUG_SHADER_ERRORS
 
@@ -15,8 +15,8 @@
 class ShaderProgramGL : public IShaderProgram
 {
 public:
-	ShaderProgramGL(GLuint program_id) : program(program_id) {}
-	~ShaderProgramGL() { glDeleteProgram(program); }
+	ShaderProgramGL(GLuint program_id);
+	~ShaderProgramGL();
 
 	void destroy() override;
 
@@ -33,4 +33,5 @@ public:
 
 protected:
 	GLuint program;
+	std::unordered_map<std::string, int> attrib_loc_cache;
 };

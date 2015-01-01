@@ -27,17 +27,19 @@ inline static int fast_log2(u32 n) {
 
 Mesh::Mesh(IGapi* gapi) : gapi(gapi) {
 	refcount = 1;
-	ib = nullptr;
+	index_buffer = nullptr;
 
 	num_elements = 0;
 	num_streams = 0;
 
-	for (auto& stream : streams) {
-		stream.vb = nullptr;
-		stream.elements = 0;
+	for (int i = 0; i < sizeof(vertex_streams) / sizeof(vertex_streams[0]); i++) {
+		vertex_streams[i].vb = nullptr;
+		vertex_streams[i].stride = 0;
+		vertex_streams[i].offset = 0;
+		vertex_stream_content[i] = 0;
 	}
 	for (auto& element : elements) {
-		element.buffer = nullptr;
+		element.buffer_index = -1;
 		element.num_components = 0;
 		element.offset = 0;
 	}
@@ -234,7 +236,7 @@ bool Mesh::update(MeshData data) {
 		// copy relevant stuff from packed_vertex_data
 		size_t input_ptr = (size_t)packed_vertex_data.get() + offset;
 		size_t output_ptr = (size_t)vb_data.get();
-		size_t chunk_size = elements[i].num_components * elements[i].width / 8;
+		size_t chunk_size = elements[i].num_components * getElementTypeSize(elements[i].type);
 		offset += chunk_size;
 		for (size_t j = 0; j < num_vertices; j++) {
 			memcpy((void*)output_ptr, (void*)input_ptr, chunk_size);
@@ -248,22 +250,22 @@ bool Mesh::update(MeshData data) {
 			return false;
 		}
 		gapi->writeBuffer(_vb, vb_data.get(), vb_desc.size, 0);
-		streams[i].vb = _vb;
+		vertex_streams[i].vb = _vb;
 	}
 
 	// END WARNING
 	////////////////////////////////////
 
 	num_streams = num_elements;
-	ib = _ib;
+	index_buffer = _ib;
 
 
 
 	// set elements (vb and offset, as other params are set)
 	// int offset = 0;
 	for (int i = 0; i < num_elements; i++) {
-		streams[i].elements = elements[i].semantic;
-		elements[i].buffer = streams[i].vb;
+		vertex_stream_content[i] = elements[i].semantic;
+		elements[i].buffer_index = i;
 		elements[i].offset = 0;
 	}
 
@@ -281,22 +283,31 @@ bool Mesh::updateVertexData(const void* data, u32 offset, u32 size) {
 // reset
 //	- delete all underlying resources
 void Mesh::reset() {
-	for (auto& stream : streams) {
+	// delete and nullify buffers
+	for (auto& stream : vertex_streams) {
 		if (stream.vb) {
-			//stream.vb->destroy();
+			stream.vb->destroy();
 			stream.vb = nullptr;
-			stream.elements = 0;
 		}
+		stream.stride = 0;
+		stream.offset = 0;
 	}
+	// nullify buffer content bitmasks
+	for (auto& e : vertex_stream_content) {
+		e = 0;
+	}
+	// erase vertex elements
 	for (auto& element : elements) {
-		element.buffer = nullptr;
+		element.buffer_index = -1;
 		element.num_components = 0;
 		element.offset = 0;
 	}
-	if (ib) {
-		//ib->destroy();
-		ib = nullptr;
+	// delete and nullify index buffer
+	if (index_buffer) {
+		index_buffer->destroy();
+		index_buffer = nullptr;
 	}
+	// clear mat ids
 	mat_ids.clear();
 
 	num_elements = 0;
@@ -404,7 +415,7 @@ void Mesh::packVertices(ElementDesc* input_format, ElementInfo* output_format, i
 		offset += size;
 	}
 	for (int i = 0, offset = 0; i < output_count; i++) {
-		int size = output_format[i].num_components * output_format[i].width / 8;
+		int size = output_format[i].num_components * getElementTypeSize(output_format[i].type);
 		offset_output[fast_log2(output_format[i].semantic)] = offset;
 		offset += size;
 	}
@@ -529,7 +540,7 @@ u64 Mesh::getElementConfigId() const {
 	// calculate composition
 	// see http://en.wikipedia.org/wiki/Composition_(combinatorics) for nice drawing about binary representation
 	for (int i = 0, j = 0; i < num_streams; i++) {
-		int weight = NumBitsSet(streams[i].elements); // how many elements does that stream have?
+		int weight = NumBitsSet(vertex_stream_content[i]); // how many elements does that stream have?
 		for (int k = 1; k < weight; k++) {
 			comp |= (1u << j);
 			j++;

@@ -108,22 +108,23 @@ public:
 	///////////////////////////////////////
 	// input layout & vertex streams
 
-	/// Create an input layout.
-	/// \return nullptr is returned on failure.
-	virtual IInputLayout* createInputLayout(rInputElement* elements, size_t num_elements) = 0;
-	/// Set input layout.
-	virtual void setInputLayout(IInputLayout* layout) = 0;
+	/// Get number of vertex buffer slots.
+	virtual u32 getNumVertexBufferSlots() const = 0;
 
-	/*
-	Egyszerűen bindeli a vertex buffereket a megfelelõ 'slot'-ba.
-	Ha több buffert adunk meg, akkor azokat a start_slot, start_slot+1, start_slot+2 helyekre bindeli.
-	A nullptr buffer unbindeli az adott slotból a buffert.
-	*/
 	/// Set vertex buffers.
-	virtual void setVertexStreams(
-		IVertexBuffer** buffers, ///< buffers to bind
+	virtual void setVertexBuffers(
+		const IVertexBuffer* const * buffers, ///< buffers to bind
 		u32* strides, ///< size of one vertex in bytes; for each buffer
 		u32* offsets, ///< how many bytes the 0th vertex is offseted from start of buffer
 		u32 start_slot, ///< bind 1st buffer here
 		u32 num_buffers) = 0;
+
+	/// Create an input layout.
+	/// \return nullptr is returned on failure.
+	virtual IInputLayout* createInputLayout(rInputElement* elements, size_t num_elements) = 0;
+
+	/// Set input layout.
+	virtual void setInputLayout(IInputLayout* layout) = 0;
+
+
 };

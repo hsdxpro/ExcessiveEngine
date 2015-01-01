@@ -74,13 +74,32 @@ public:
 	void clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth = 0, i32 stencil = 0);
 
 	// input layout & vertex streams
-	InputLayoutGL* createInputLayout(rInputElement* elements, size_t num_elements) override;
-	void setInputLayout(IInputLayout* layout) override;
-
-	void setVertexStreams(
-		IVertexBuffer** buffers,
+	u32 getNumVertexBufferSlots() const override;
+	void setVertexBuffers(
+		const IVertexBuffer* const * buffers,
 		u32* strides,
 		u32* offsets,
 		u32 start_slot,
 		u32 num_buffers) override;
+
+	InputLayoutGL* createInputLayout(rInputElement* elements, size_t num_elements) override;
+	void setInputLayout(IInputLayout* layout) override;
+
+protected:
+	/// Describes a bound vertex stream
+	struct rVertexStream {
+		VertexBufferGL* buffer;
+		u32 stride;
+		u32 offset;
+	};
+
+	/// Pairs current shader program and input layout.
+	/// Called anytime a layout or a shader is set. 
+	void bindInputLayout();
+
+private:
+	bool is_layout_bound;
+	ShaderProgramGL* active_shader;
+	InputLayoutGL* active_layout;
+	std::vector<rVertexStream> active_vertex_buffers;
 };

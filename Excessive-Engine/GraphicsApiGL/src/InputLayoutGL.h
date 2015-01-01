@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../Module_Interfaces/GraphicsApi/IInputLayout.h"
-
 #include <vector>
+#include <GL/glew.h>
 
 
 
