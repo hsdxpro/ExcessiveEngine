@@ -2,8 +2,7 @@
 
 #include <iostream>
 
-#include <GraphicsEngine>
-
+#include "../Module_Interfaces/GraphicsEngine/IGraphicsEngine.h"
 using namespace graphics;
 
 #ifdef _MSC_VER

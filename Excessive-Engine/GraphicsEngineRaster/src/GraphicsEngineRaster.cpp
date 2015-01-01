@@ -1,5 +1,5 @@
-#include "GraphicsEngine.h"
-#include <GraphicsApi>
+#include "GraphicsEngineRaster.h"
+#include "GraphicsApi"
 
 #include <iostream> // only for debug
 #include <unordered_map> // for crappy test render
@@ -75,12 +75,12 @@ static const char pixelShaderCode[] =
 "	const vec4 sun_color = vec4(1.0, 0.92, 0.72, 1);"
 "	const vec4 sky_color = vec4(0.6, 0.8, 1.0, 1);"
 
-"if (pscd.hasTex != 0) { \n"
+//"if (pscd.hasTex != 0) { \n"
 "	color = pscd.diffuse*texture(tex, tex0); \n"
-"} \n"
-"else { \n"
-"	color = pscd.diffuse; \n"
-"} \n"
+//"} \n"
+//"else { \n"
+//"	color = pscd.diffuse; \n"
+//"} \n"
 "   color = color*t*intensity*sun_color + color*(1-t)*sky_color;\n"
 "} \n"
 ;
@@ -190,7 +190,7 @@ void GraphicsEngineRaster::setResolution(u32 width, u32 height) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // update
-void GraphicsEngineRaster::update() {
+void GraphicsEngineRaster::update(float deltaTime) {
 	//cout << "Updating frame..." << endl;
 
 	gapi->clearFrameBuffer(eClearFlag::COLOR_DEPTH, mm::vec4(0, 0, 0, 0), 0, 0);

@@ -1,0 +1,1 @@
+Common interface for the GraphicsEngine component. Implemented by another project in a DLL or STATIC library.

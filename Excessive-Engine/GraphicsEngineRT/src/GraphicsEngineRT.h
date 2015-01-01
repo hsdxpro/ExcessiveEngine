@@ -1,14 +1,13 @@
 #pragma once
-#include "../GraphicsEngine_Interface/interface/IGraphicsEngine.h"
-
-#include <unordered_set>
+#include "../../Module_Interfaces/GraphicsEngine/IGraphicsEngine.h"
 
 // must be included because of covariant return type override
-#include "../GraphicsEngine_Interface/interface/IScene.h"
-#include "../GraphicsEngine_Interface/interface/IMaterial.h"
-#include "../GraphicsEngine_Interface/interface/IMesh.h"
+#include "../Module_Interfaces/GraphicsEngine/IScene.h"
+#include "../Module_Interfaces/GraphicsEngine/IMaterial.h"
+#include "../Module_Interfaces/GraphicsEngine/IMesh.h"
 #include "../GraphicsEngineRaster/src/Camera.h"
 
+#include <unordered_set>
 
 ////////////////////////////////////////////////////////////////////////////////
 /// GraphicsEngine implementation.
@@ -42,7 +41,7 @@ public:
 	void setResolution(u32 width, u32 height) override {}
 
 	// interact
-	void update() override;
+	void update(float deltaTime) override;
 
 private:
 };

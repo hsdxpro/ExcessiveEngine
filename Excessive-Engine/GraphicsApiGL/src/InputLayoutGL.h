@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../GraphicsApi_Interface/interface/IInputLayout.h"
+#include "../Module_Interfaces/GraphicsApi/IInputLayout.h"
 
 #include <vector>
 

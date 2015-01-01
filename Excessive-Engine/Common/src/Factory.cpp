@@ -3,17 +3,17 @@
 #include <codecvt>
 
 #ifdef	WIN
-	#include "..\CommonWin\src\Window.h"
+	#include "../CommonWin/src/Window.h"
 #elif	LIN
-	#include "..\CommonLin\src\Window.h"
+	#include "../CommonLin/src/Window.h"
 #elif	MAC
-	#include "..\CommonMac\src\Window.h"
+	#include "../CommonMac/src/Window.h"
 #endif
 
 #ifdef BUILD_STATIC
-	#include "..\GraphicsEngineRaster\src\GraphicsEngine.h"
-	#include "..\GraphicsEngineRT\src\GraphicsEngine.h"
-	#include "..\GraphicsApiGL\src\GapiGL.h"
+	#include "../GraphicsEngineRaster/src/GraphicsEngine.h"
+	#include "../GraphicsEngineRT/src/GraphicsEngine.h"
+	#include "../GraphicsApiGL/src/GapiGL.h"
 #endif
 
 graphics::IGraphicsEngine* Factory::createGraphicsEngineRaster(const rGraphicsEngineRaster& d) {
@@ -40,13 +40,64 @@ graphics::IGraphicsEngine* Factory::createGraphicsEngineRT(const rGraphicsEngine
 	if (!module) {
 		return nullptr;
 	}
-	CreateT CreateGraphicsEngine = (CreateT)Sys::getDllProcAddress(module, "CreateGraphicsEngine");
+	CreateT CreateGraphicsEngine = (CreateT)Sys::getDllProcAddress(module, "CreateGraphicsEngineRT");
 	if (!CreateGraphicsEngine) {
 		return nullptr;
 	}
 	return CreateGraphicsEngine(d);
 #elif BUILD_STATIC	
 	return new GraphicsEngineRT(d);
+#endif
+}
+
+physics::IPhysicsEngine* Factory::createPhysicsEngineBullet(const rPhysicsEngineBullet& d) {
+#ifdef BUILD_DLL
+	using CreateT = physics::IPhysicsEngine*(*)(const rPhysicsEngineBullet& d);
+	auto module = Sys::loadDLL(L"PhysicsEngineBullet");
+	if (!module) {
+		return nullptr;
+	}
+	CreateT creator = (CreateT)Sys::getDllProcAddress(module, "CreatePhysicsEngineBullet");
+	if (!creator) {
+		return nullptr;
+	}
+	return creator(d);
+#elif BUILD_STATIC	
+	return new PhysicsEngineBullet(d);
+#endif
+}
+
+network::INetworkEngine* Factory::createNetworkEngine(const rNetworkEngine& d) {
+#ifdef BUILD_DLL
+	using CreateT = network::INetworkEngine*(*)(const rNetworkEngine& d);
+	auto module = Sys::loadDLL(L"NetworkEngine");
+	if (!module) {
+		return nullptr;
+	}
+	CreateT creator = (CreateT)Sys::getDllProcAddress(module, "CreateNetworkEngine");
+	if (!creator) {
+		return nullptr;
+	}
+	return creator(d);
+#elif BUILD_STATIC	
+	return new NetworkEngine(d);
+#endif
+}
+
+sound::ISoundEngine* Factory::createSoundEngine(const rSoundEngine& d) {
+#ifdef BUILD_DLL
+	using CreateT = sound::ISoundEngine*(*)(const rSoundEngine& d);
+	auto module = Sys::loadDLL(L"SoundEngine");
+	if (!module) {
+		return nullptr;
+	}
+	CreateT creator = (CreateT)Sys::getDllProcAddress(module, "CreateSoundEngine");
+	if (!creator) {
+		return nullptr;
+	}
+	return creator(d);
+#elif BUILD_STATIC	
+	return new PhysicsEngineBullet(d);
 #endif
 }
 

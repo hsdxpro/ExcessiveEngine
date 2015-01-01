@@ -1,8 +1,8 @@
 #pragma once
+#include "../Module_Interfaces/GraphicsEngine/IMaterial.h"
 
 #include <mymath/mymath.h>
 #include <vector>
-#include "../GraphicsEngine_Interface/interface/IMaterial.h"
 
 class Texture;
 

@@ -2,11 +2,11 @@
 #include <memory>
 #include <iostream> // for debug only
 #include <cstring>
-#include "../GraphicsApi_Interface/interface/ITexture.h"
-#include "../GraphicsApi_Interface/interface/IGapi.h"
 #include <SFML/Graphics/Image.hpp>
 
 #include <fstream>
+#include "ITexture.h"
+#include "IGapi.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////

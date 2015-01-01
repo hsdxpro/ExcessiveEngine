@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../GraphicsApi_Interface/interface/ITexture.h"
+#include "../../Module_Interfaces/GraphicsApi/ITexture.h"
 
 #include "GL/glew.h"
 

@@ -3,8 +3,8 @@
 #include <vector>
 #include <limits>
 
-#include "../../GraphicsApi_Interface/interface/IInputLayout.h"
-#include "../GraphicsEngine_Interface/interface/IMesh.h"
+#include "../Module_Interfaces/GraphicsEngine/IMesh.h"
+
 
 class IVertexBuffer;
 class IIndexBuffer;

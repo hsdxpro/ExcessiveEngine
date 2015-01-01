@@ -2,7 +2,7 @@
 #pragma once
 
 #include <string>
-#include "mymath\mymath.h"
+#include "mymath/mymath.h"
 
 enum class eKey {
 	INVALID = -1, ///< Unhandled key

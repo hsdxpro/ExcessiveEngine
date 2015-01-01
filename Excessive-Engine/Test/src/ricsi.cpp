@@ -1,6 +1,5 @@
 ﻿#include "EngineCore.h"
 #include "Factory.h"
-#include "ICamera.h"
 
 // basic util
 #include <chrono>
@@ -25,12 +24,15 @@ int Ricsi() {
 	d.capText = "Excessive-Engine -> Ricsi teszt";
 	IWindow* window = Factory::createWindow(d);
 
-	// Init core (graphics.... etc)
-	rGraphicsEngineRaster gDesc;
-	gDesc.type = eGapiType::OPENGL_4_5;
-
+	// Init engine core (graphics, physics, sound, network
 	EngineCore core;
-	graphics::IGraphicsEngine* gEngine = core.initGraphicsEngineRaster(gDesc);
+		core.initSoundEngine();
+		core.initNetworkEngine();
+		core.initPhysicsEngineBullet();
+			rGraphicsEngineRaster gDesc;
+			gDesc.type = eGapiType::OPENGL_4_5;
+		graphics::IGraphicsEngine* gEngine = core.initGraphicsEngineRaster(gDesc);
+
 	gEngine->setResolution(window->getClientW(), window->getClientH());
 
 	// Create scene and camera
@@ -76,82 +78,82 @@ int Ricsi() {
 
 
 		while (window->popEvent(&ev))
-			switch (ev.msg)
+		switch (ev.msg)
 		{
-				case eWindowMsg::MOUSE_PRESS:
-					if (ev.mouseBtn == eMouseBtn::RIGHT)
-						bRMBDown = true;
-					break;
-				case eWindowMsg::MOUSE_RELEASE:
-					if (ev.mouseBtn == eMouseBtn::RIGHT)
-						bRMBDown = false;
-					break;
-				case eWindowMsg::MOUSE_MOVE: {
-					if (bRMBDown)
-					{
-						float angleChangeZ = (float)(ev.deltaX) * 0.009;
-						float angleChangeX = (float)(-ev.deltaY) * 0.009;
+			case eWindowMsg::MOUSE_PRESS:
+				if (ev.mouseBtn == eMouseBtn::RIGHT)
+					bRMBDown = true;
+				break;
+			case eWindowMsg::MOUSE_RELEASE:
+				if (ev.mouseBtn == eMouseBtn::RIGHT)
+					bRMBDown = false;
+				break;
+			case eWindowMsg::MOUSE_MOVE: {
+				if (bRMBDown)
+				{
+					float angleChangeZ = (float)(ev.deltaX) * 0.009;
+					float angleChangeX = (float)(-ev.deltaY) * 0.009;
 
-						mm::vec3 viewDir = mm::normalize(cam->getTarget() - cam->getPos());
-						float lenXY = mm::length(viewDir.xy);
-						static float angleX = acos(lenXY)*(viewDir.z > 0 ? 1 : -1);
-						angleX += angleChangeX;
-						angleX = std::max(-85.f / 180 * 3.141592653f, std::min(angleX, 85.f / 180 * 3.141592653f));
-						static float angleZ = atan2(viewDir.y / lenXY, viewDir.z / lenXY) - 3.141592653f / 2;
-						angleZ += angleChangeZ;
-						if (angleZ > 3.141592653f) {
-							angleZ -= floor(angleZ / 3.141592653f) * 2 * 3.141592653f;
-						}
-						else if (angleZ < -3.141592653f) {
-							angleZ -= ceil(angleZ / 3.141592653f) * 2 * 3.141592653f;
-						}
-
-						mm::vec3 newViewDir(0, 1, 0);
-
-						mm::mat3 rotAroundX(
-							1, 0, 0,
-							0, cos(angleX), -sin(angleX),
-							0, sin(angleX), cos(angleX)
-							);
-						mm::mat3 rotAroundZ(
-							cos(angleZ), -sin(angleZ), 0,
-							sin(angleZ), cos(angleZ), 0,
-							0, 0, 1
-							);
-
-						newViewDir *= rotAroundX;
-						newViewDir *= rotAroundZ;
-
-						camAngleX = angleX;
-						camAngleZ = angleZ;
-
-						cam->setTarget(cam->getPos() + newViewDir);
+					mm::vec3 viewDir = mm::normalize(cam->getTarget() - cam->getPos());
+					float lenXY = mm::length(viewDir.xy);
+					static float angleX = acos(lenXY)*(viewDir.z > 0 ? 1 : -1);
+					angleX += angleChangeX;
+					angleX = std::max(-85.f / 180 * 3.141592653f, std::min(angleX, 85.f / 180 * 3.141592653f));
+					static float angleZ = atan2(viewDir.y / lenXY, viewDir.z / lenXY) - 3.141592653f / 2;
+					angleZ += angleChangeZ;
+					if (angleZ > 3.141592653f) {
+						angleZ -= floor(angleZ / 3.141592653f) * 2 * 3.141592653f;
 					}
+					else if (angleZ < -3.141592653f) {
+						angleZ -= ceil(angleZ / 3.141592653f) * 2 * 3.141592653f;
+					}
+
+					mm::vec3 newViewDir(0, 1, 0);
+
+					mm::mat3 rotAroundX(
+						1, 0, 0,
+						0, cos(angleX), -sin(angleX),
+						0, sin(angleX), cos(angleX)
+						);
+					mm::mat3 rotAroundZ(
+						cos(angleZ), -sin(angleZ), 0,
+						sin(angleZ), cos(angleZ), 0,
+						0, 0, 1
+						);
+
+					newViewDir *= rotAroundX;
+					newViewDir *= rotAroundZ;
+
+					camAngleX = angleX;
+					camAngleZ = angleZ;
+
+					cam->setTarget(cam->getPos() + newViewDir);
+				}
+			} break;
+
+			case eWindowMsg::KEY_PRESS:
+				switch (ev.key)
+				{
+					case eKey::ESCAPE: window->close(); break;
+					case eKey::W: bWDown = true; break;
+					case eKey::S: bSDown = true; break;
+					case eKey::A: bADown = true; break;
+					case eKey::D: bDDown = true; break;
+					case eKey::LSHIFT: gCamSpeedMultiplier = 5; break;
+				} break;
+			case eWindowMsg::KEY_RELEASE:
+				switch (ev.key)
+				{
+					case eKey::W: bWDown = false; break;
+					case eKey::S: bSDown = false; break;
+					case eKey::A: bADown = false; break;
+					case eKey::D: bDDown = false; break;
+					case eKey::LSHIFT: gCamSpeedMultiplier = 1; break;
 				} break;
 
-				case eWindowMsg::KEY_PRESS:
-					switch (ev.key)
-					{
-						case eKey::ESCAPE: window->close(); break;
-						case eKey::W: bWDown = true; break;
-						case eKey::S: bSDown = true; break;
-						case eKey::A: bADown = true; break;
-						case eKey::D: bDDown = true; break;
-						case eKey::LSHIFT: gCamSpeedMultiplier = 5; break;
-					} break;
-				case eWindowMsg::KEY_RELEASE:
-					switch (ev.key)
-					{
-						case eKey::W: bWDown = false; break;
-						case eKey::S: bSDown = false; break;
-						case eKey::A: bADown = false; break;
-						case eKey::D: bDDown = false; break;
-						case eKey::LSHIFT: gCamSpeedMultiplier = 1; break;
-					} break;
-
-				case eWindowMsg::RESIZE:
-					gEngine->setResolution(ev.x, ev.y);
-					break;
+			case eWindowMsg::RESIZE:
+				gEngine->setResolution(ev.x, ev.y);
+				break;
 		}
 
 		// Camera move
@@ -169,7 +171,7 @@ int Ricsi() {
 		//float deltaT = t->getElapsedSinceReset();
 
 		// Update graphics engine
-		gEngine->update();
+		gEngine->update(elapsed);
 
 		// Call that after OpenGL "finish" all of it's rendering
 		window->displayClientRect();

@@ -5,7 +5,7 @@ message( "-GraphicsEngineRT" )
 
 FILE( GLOB_RECURSE sources src/*.c* )
 FILE( GLOB_RECURSE headers src/*.h* )
-FILE( GLOB_RECURSE interfaces ../GraphicsEngine_Interface/interface/*)
+FILE( GLOB_RECURSE interfaces ../Module_Interfaces/GraphicsEngine/*)
 
 #########################################################################
 # Filters
@@ -19,7 +19,7 @@ SOURCE_GROUP(Main FILES src/GraphicsEngine.h src/GraphicsEngine.cpp)
 #########################################################################
 # Project
 
-include_directories("../GraphicsApi_Interface/interface/")
+include_directories("../Module_Interfaces/GraphicsApi/")
 
 if(BUILD_EXCESSIVE_WITH_DLL)
 	add_library( GraphicsEngineRT SHARED ${sources} ${headers} ${interfaces} )

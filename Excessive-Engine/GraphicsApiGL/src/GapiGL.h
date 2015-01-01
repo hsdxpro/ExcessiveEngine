@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GL/glew.h"
-#include "../../GraphicsApi_Interface/interface/IGapi.h"
+#include "../../Module_Interfaces/GraphicsApi/IGapi.h"
 #include "UniformBufferGL.h"
 #include "VertexBufferGL.h"
 #include "IndexBufferGL.h"

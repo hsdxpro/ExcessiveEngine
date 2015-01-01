@@ -1,7 +1,8 @@
 // Camera.cpp implementation
 #include "Camera.h"
+
 #include <cassert>
-#include "mymath\mm_quat_func.h"
+#include "mymath/mm_quat_func.h"
 
 using namespace mymath;
 

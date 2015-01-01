@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../GraphicsApi_Interface/interface/IGapi.h"
+#include "../GraphicsApi/IGapi.h"
 
 // namespace
 namespace graphics {
@@ -40,7 +40,7 @@ public:
 	virtual void setResolution(u32 width, u32 height) = 0;
 
 	// interact
-	virtual void update() = 0;
+	virtual void update(float deltaTime) = 0;
 };
 
 

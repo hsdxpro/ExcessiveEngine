@@ -1,11 +1,12 @@
 #pragma once
+#include "../Module_Interfaces/GraphicsEngine/ICamera.h"
 
-#include "mymath\mm_common.h"
-#include "mymath\mymath.h"
-#include "..\..\Common\src\BasicTypes.h"
-#include "..\GraphicsEngine_Interface\interface\ICamera.h"
+#include "mymath/mm_common.h"
+#include "mymath/mymath.h"
+#include "../../Common/src/BasicTypes.h"
 
-class Camera : public graphics::ICamera {
+class Camera : public graphics::ICamera 
+{
 public:
 	void setFOV(float rad) override;
 	void setAspectRatio(float r) override;

@@ -1,12 +1,12 @@
 #pragma once
+#include "../Module_Interfaces/GraphicsEngine/IEntity.h"
 
-#include <mymath/mymath.h>
-
-#include "../GraphicsEngine_Interface/interface/IEntity.h"
-
-#include "utility/ref_ptr.h"
 #include "Mesh.h"
 #include "Material.h"
+
+#include "utility/ref_ptr.h"
+#include <mymath/mymath.h>
+
 
 class Scene;
 

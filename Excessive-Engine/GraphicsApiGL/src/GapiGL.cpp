@@ -749,7 +749,7 @@ void GapiGL::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attr
 	ASSERT(buffers && attrib_data);
 
 
-	for (int c = 0; c < num_buffers; ++c)
+	for (u32 c = 0; c < num_buffers; ++c)
 	{
 		u32 type;
 		bool normalize = false;

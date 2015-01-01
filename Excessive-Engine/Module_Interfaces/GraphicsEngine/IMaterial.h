@@ -1,6 +1,7 @@
 #pragma once
 
-#include "..\Common\src\BasicTypes.h"
+#include "../Common/src/BasicTypes.h"
+#include "mymath/mymath.h"
 
 // namespace
 namespace graphics {

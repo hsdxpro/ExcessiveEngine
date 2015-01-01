@@ -1,5 +1,5 @@
 
-#include "..\Common\src\Sys.h"
+#include "../Common/src/Sys.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>

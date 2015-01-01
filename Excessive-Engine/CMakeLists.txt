@@ -15,8 +15,8 @@ add_subdirectory( Core )
 add_subdirectory( GraphicsApiGL )
 add_subdirectory( GraphicsEngineRaster )
 add_subdirectory( GraphicsEngineRT )
+add_subdirectory( PhysicsEngineBullet )
+add_subdirectory( SoundEngine )
+add_subdirectory( NetworkEngine )
 
 add_subdirectory( Test )
-
-add_subdirectory( DLLExample )
-add_subdirectory( DLLUser )

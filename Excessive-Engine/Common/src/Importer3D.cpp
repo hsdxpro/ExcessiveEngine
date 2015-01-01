@@ -1,9 +1,9 @@
 #include "Importer3D.h"
 
 // Assimp
-#include "assimp\Importer.hpp"
-#include "assimp\PostProcess.h"
-#include "assimp\Scene.h"
+#include "assimp/Importer.hpp"
+#include "assimp/PostProcess.h"
+#include "assimp/Scene.h"
 
 // Util
 #include <fstream>

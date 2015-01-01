@@ -30,27 +30,52 @@
 
 
 EngineCore::EngineCore() 
-:graphicsEngine(0) {
+:graphicsEngine(0), physicsEngine(0), soundEngine(0), networkEngine(0) {
 }
 
 EngineCore::~EngineCore() {
 	for (auto& a : entities)
 		delete a;
+
+	if (graphicsEngine)	graphicsEngine->release();
+	if (physicsEngine)	physicsEngine->release();
+	if (networkEngine)	networkEngine->release();
+	if (soundEngine)	soundEngine->release();
 }
 
-graphics::IGraphicsEngine* EngineCore::initGraphicsEngineRaster(const rGraphicsEngineRaster& desc) {
+graphics::IGraphicsEngine* EngineCore::initGraphicsEngineRaster(const rGraphicsEngineRaster& d /*= rGraphicsEngineRaster()*/) {
 	if (graphicsEngine) 
 		graphicsEngine->release(); 
 
-	return graphicsEngine = Factory::createGraphicsEngineRaster(desc);
+	return graphicsEngine = Factory::createGraphicsEngineRaster(d);
 }
 
-// Init graphics engine, if one already exists will be destroyed, then instantiate it
-graphics::IGraphicsEngine* EngineCore::initGraphicsEngineRT(const rGraphicsEngineRT& desc) {
+graphics::IGraphicsEngine* EngineCore::initGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/) {
 	if (graphicsEngine) 
 		graphicsEngine->release(); 
 	
-	return Factory::createGraphicsEngineRT(desc);
+	return graphicsEngine = Factory::createGraphicsEngineRT(d);
+}
+
+physics::IPhysicsEngine* EngineCore::initPhysicsEngineBullet(const rPhysicsEngineBullet& d /*= rPhysicsEngineBullet()*/) {
+	if (physicsEngine)
+		physicsEngine->release();
+
+	return physicsEngine = Factory::createPhysicsEngineBullet(d);
+}
+
+network::INetworkEngine* EngineCore::initNetworkEngine(const rNetworkEngine& d /*= rNetworkEngine()*/) {
+	if (networkEngine)
+		networkEngine->release();
+
+	return networkEngine = Factory::createNetworkEngine(d);
+}
+
+sound::ISoundEngine* EngineCore::initSoundEngine(const rSoundEngine& d /*= rSoundEngine()*/) {
+	if (soundEngine)
+		soundEngine->release();
+
+	return soundEngine = Factory::createSoundEngine(d);
 }
 
 Entity* EngineCore::createEntity(graphics::IScene* gScene, const std::wstring& modelPath)

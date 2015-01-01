@@ -1,9 +1,10 @@
 #pragma once
 
-#include "../GraphicsEngine_Interface/interface/ITexture.h"
+#include "../Module_Interfaces/GraphicsEngine/ITexture.h"
 
 class ITexture;
 class IGapi;
+
 
 class Texture : public graphics::ITexture 
 {

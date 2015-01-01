@@ -1,9 +1,9 @@
 // Windows O.S window
 #pragma once
-#include "..\Common\src\IWindow.h"
+#include "SFML/Window/Window.hpp"
+#include "SFML/Window/Event.hpp"
 
-#include "SFML\Window\Window.hpp"
-#include "SFML\Window\Event.hpp"
+#include "../Common/src/IWindow.h"
 
 class Window : public IWindow
 {

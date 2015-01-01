@@ -1,5 +1,4 @@
-#include "GraphicsEngine.h"
-#include "..\GraphicsEngine_Interface\interface\IGraphicsEngine.h"
+#include "GraphicsEngineRT.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,6 +65,6 @@ Camera* GraphicsEngineRT::createCam() {
 
 ////////////////////////////////////////////////////////////////////////////////
 // update
-void GraphicsEngineRT::update() {
+void GraphicsEngineRT::update(float deltaTime) {
 	
 }

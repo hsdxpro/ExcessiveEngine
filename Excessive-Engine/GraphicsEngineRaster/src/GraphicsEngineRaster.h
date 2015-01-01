@@ -1,7 +1,5 @@
 #pragma once
-#include "../GraphicsEngine_Interface/interface/IGraphicsEngine.h"
-
-#include <unordered_set>
+#include "../Module_Interfaces/GraphicsEngine/IGraphicsEngine.h"
 
 // must be included because of covariant return type override
 #include "Scene.h"
@@ -10,6 +8,7 @@
 #include "Texture.h"
 #include "Camera.h"
 
+#include <unordered_set>
 
 ////////////////////////////////////////////////////////////////////////////////
 /// GraphicsEngine implementation.
@@ -48,7 +47,7 @@ public:
 
 
 	// interact
-	void update() override;
+	void update(float deltaTime) override;
 
 	IGapi* getGapi();
 

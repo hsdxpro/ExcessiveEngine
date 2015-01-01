@@ -1,7 +1,5 @@
 #pragma once
-
-#include "../GraphicsEngine_Interface/interface/ILight.h"
-
+#include "../../Module_Interfaces/GraphicsEngine/ILight.h"
 
 class Light : public graphics::ILight
 {

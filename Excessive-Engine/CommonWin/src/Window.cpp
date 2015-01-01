@@ -1,16 +1,10 @@
 #include "Window.h"
-#include "SFML\Window\Event.hpp"
 
 #include <cassert>
-
-// TMP
-#include <iostream>
 #include <limits>
 
 Window::Window(const rWindow& d)
 	:lastMousePos(0, 0), evt(*new (eventSpace)sf::Event) {
-	std::cout << sizeof(sf::Event) << std::endl;
-	std::cout.flush();
 	w.create(sf::VideoMode(d.clientW, d.clientH), d.capText.c_str());
 	w.setVerticalSyncEnabled(true);
 }

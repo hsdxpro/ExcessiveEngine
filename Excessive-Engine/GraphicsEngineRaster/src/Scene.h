@@ -1,11 +1,9 @@
 #pragma once
-
-#include "../GraphicsEngine_Interface/interface/IScene.h"
-#include <unordered_set>
-
 #include "Entity.h"
 #include "Light.h"
-#include "../GraphicsEngine_Interface/interface/ICamera.h"
+#include "../Module_Interfaces/GraphicsEngine/IScene.h"
+
+#include <unordered_set>
 
 class Scene : public graphics::IScene
 {

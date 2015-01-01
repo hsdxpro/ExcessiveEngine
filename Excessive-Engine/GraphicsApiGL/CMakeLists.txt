@@ -2,9 +2,9 @@ message( "-GraphicsApiGL" )
 
 FILE( GLOB_RECURSE sources src/*.c* )
 FILE( GLOB_RECURSE headers src/*.h* )
-FILE( GLOB_RECURSE interfaces ../GraphicsApi_Interface/interface/*)
+FILE( GLOB_RECURSE interfaces ../Module_Interfaces/GraphicsApi/*)
 
-include_directories( "../GraphicsApi_Interface/interface/" )
+include_directories( "../Module_Interfaces/GraphicsApi/" )
 include_directories( "../Common/src/" )
 
 if(BUILD_EXCESSIVE_WITH_DLL)

@@ -53,7 +53,7 @@
 //Izware Nendo(.ndo)
 
 #include "BasicTypes.h"
-#include "mymath\mymath.h"
+#include "mymath/mymath.h"
 #include <vector>
 
 // Flags for importing
