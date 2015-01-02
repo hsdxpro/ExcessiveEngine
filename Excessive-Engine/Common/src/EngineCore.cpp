@@ -2,6 +2,12 @@
 #include "Factory.h"
 #include "Importer3D.h"
 
+#include "../GraphicsEngine/Raster/src/GraphicsEngineRaster.h"
+#include "../GraphicsEngine/RT/src/GraphicsEngineRT.h"
+#include "../PhysicsEngine/Bullet/src/PhysicsEngineBullet.h"
+#include "../NetworkEngine/Boost/src/NetworkEngineBoost.h"
+#include "../SoundEngine/SFML/src/SoundEngineSFML.h"
+
 //////////////////////////////////////////////////
 //                                              //
 //           +----------+                       //
@@ -43,43 +49,42 @@ EngineCore::~EngineCore() {
 	if (soundEngine)	soundEngine->release();
 }
 
-graphics::IGraphicsEngine* EngineCore::initGraphicsEngineRaster(const rGraphicsEngineRaster& d /*= rGraphicsEngineRaster()*/) {
+graphics::IEngine* EngineCore::initGraphicsEngineRaster(const rGraphicsEngineRaster& d /*= rGraphicsEngineRaster()*/) {
 	if (graphicsEngine) 
 		graphicsEngine->release(); 
 
 	return graphicsEngine = Factory::createGraphicsEngineRaster(d);
 }
 
-graphics::IGraphicsEngine* EngineCore::initGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/) {
+graphics::IEngine* EngineCore::initGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/) {
 	if (graphicsEngine) 
 		graphicsEngine->release(); 
 	
 	return graphicsEngine = Factory::createGraphicsEngineRT(d);
 }
 
-physics::IPhysicsEngine* EngineCore::initPhysicsEngineBullet(const rPhysicsEngineBullet& d /*= rPhysicsEngineBullet()*/) {
+physics::IEngine* EngineCore::initPhysicsEngineBullet(const rPhysicsEngineBullet& d /*= rPhysicsEngineBullet()*/) {
 	if (physicsEngine)
 		physicsEngine->release();
 
 	return physicsEngine = Factory::createPhysicsEngineBullet(d);
 }
 
-network::INetworkEngine* EngineCore::initNetworkEngine(const rNetworkEngine& d /*= rNetworkEngine()*/) {
+network::IEngine* EngineCore::initNetworkEngine(const rNetworkEngine& d /*= rNetworkEngine()*/) {
 	if (networkEngine)
 		networkEngine->release();
 
 	return networkEngine = Factory::createNetworkEngine(d);
 }
 
-sound::ISoundEngine* EngineCore::initSoundEngine(const rSoundEngine& d /*= rSoundEngine()*/) {
+sound::IEngine* EngineCore::initSoundEngine(const rSoundEngine& d /*= rSoundEngine()*/) {
 	if (soundEngine)
 		soundEngine->release();
 
 	return soundEngine = Factory::createSoundEngine(d);
 }
 
-Entity* EngineCore::createEntity(graphics::IScene* gScene, const std::wstring& modelPath)
-{
+Entity* EngineCore::createEntity(graphics::IScene* gScene, const std::wstring& modelPath) {
 	// Config for importing
 	rImporter3DCfg cfg({ eImporter3DFlag::VERT_INTERLEAVED, 
 						 eImporter3DFlag::VERT_ATTR_POS, 
@@ -164,4 +169,11 @@ Entity* EngineCore::createEntity(graphics::IScene* gScene, const std::wstring& m
 	Entity* e = new Entity(gEntity);
 		entities.push_back(e);
 	return e;
+}
+
+void EngineCore::update(float deltaTime) {
+	if (physicsEngine)	physicsEngine->update(deltaTime);
+	if (graphicsEngine) graphicsEngine->update(deltaTime);
+	if (soundEngine)	soundEngine->update(deltaTime);
+	if (networkEngine)	networkEngine->update(deltaTime);
 }

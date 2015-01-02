@@ -31,7 +31,7 @@ int Ricsi() {
 		core.initPhysicsEngineBullet();
 			rGraphicsEngineRaster gDesc;
 			gDesc.type = eGapiType::OPENGL_4_5;
-		graphics::IGraphicsEngine* gEngine = core.initGraphicsEngineRaster(gDesc);
+		graphics::IEngine* gEngine = core.initGraphicsEngineRaster(gDesc);
 
 	gEngine->setResolution(window->getClientW(), window->getClientH());
 
@@ -170,8 +170,8 @@ int Ricsi() {
 
 		//float deltaT = t->getElapsedSinceReset();
 
-		// Update graphics engine
-		gEngine->update(elapsed);
+		// Update core
+		core.update(elapsed);
 
 		// Call that after OpenGL "finish" all of it's rendering
 		window->displayClientRect();
