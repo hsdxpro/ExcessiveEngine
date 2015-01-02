@@ -16,7 +16,7 @@ struct Vertex1 {
 
 
 ostream& operator<<(ostream& os, const Mesh::ElementInfo& info) {
-	os << "{" << info.buffer << ", o="<< info.offset << ", comp=" << info.num_components << ", type=" << (int)info.type << "}";
+	os << "{" << info.buffer_index << ", o="<< info.offset << ", comp=" << info.num_components << ", type=" << (int)info.type << "}";
 	return os;
 }
 

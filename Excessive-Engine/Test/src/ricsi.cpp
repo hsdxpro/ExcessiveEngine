@@ -45,8 +45,12 @@ int Ricsi() {
 	cam->setPos(mm::vec3(0, -3, 1));
 	scene->setCam(cam);
 
-
-	Entity* simpleEntity = core.createEntity(scene, Sys::getWorkDir() + L"../Assets/terminal/terminal_blender.dae");
+	//*/
+	static const wchar_t assetName[] = L"../Assets/terminal/terminal_blender.dae";
+	/*/
+	static const wchar_t assetName[] = L"../Assets/teapot.dae";
+	//*/
+	Entity* simpleEntity = core.createEntity(scene, Sys::getWorkDir() + assetName);
 
 	// Run the main loop
 	rWindowEvent ev;

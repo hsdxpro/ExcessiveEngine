@@ -78,27 +78,40 @@ public:
 	// format of the data stored
 
 	enum ElementType : u32 {
+		// floating point types
 		FLOAT = 1,
-		SINT,
-		UINT,
-		SNORM,
-		UNORM,
+		HALF,
+		// integer types
+		SINT_32,
+		UINT_32,
+		SINT_16,
+		UINT_16,
+		SINT_8,
+		UINT_8,
+		// normalized integer types
+		// signed: [-1.0f, 1.0f]
+		// unsigned: [0.0f, 1.0f]
+		SNORM_32,
+		UNORM_32,
+		SNORM_16,
+		UNORM_16,
+		SNORM_8,
+		UNORM_8,
 	};
 
 	// helps lookup of vb by element semantic
 	struct ElementInfo {
-		IVertexBuffer* buffer;
-		u32 offset; // offset from beginning of vertex
+		int buffer_index; // in which buffer this semantic is
+		unsigned offset; // offset from beginning of vertex
 		ElementSemantic semantic;
 		ElementType type;
-		u32 width;
-		u32 num_components;
+		unsigned num_components;
 	};
 
-	// defines a stream
 	struct VertexStream {
 		IVertexBuffer* vb;
-		u32 elements;
+		u32 stride;
+		u32 offset;
 	};
 
 	// getters
@@ -107,7 +120,10 @@ public:
 	const ElementInfo* getElements() const;
 	u64 getElementConfigId() const;
 
-	IIndexBuffer* getIndexBuffer() { return ib; }
+	int getNumVertexBuffers() { return num_streams; }
+	const VertexStream* getVertexBuffers() { return vertex_streams; }
+
+	IIndexBuffer* getIndexBuffer() { return index_buffer; }
 	const std::vector<MaterialGroup>& getMaterialIds() { return mat_ids; }
 
 // internal mechanics
@@ -139,54 +155,80 @@ protected:
 	inline int getFormatStrideInternal(ElementInfo* elements, int num_elements) {
 		int s = 0;
 		for (int i = 0; i < num_elements; i++) {
-			s += elements[i].num_components * elements[i].width / 8;
+			s += elements[i].num_components * getElementTypeSize(elements[i].type);
 		}
 		return s;
+	}
+	inline int getElementTypeSize(ElementType type) {
+		switch (type) {
+			case Mesh::FLOAT:
+				return 4;
+			case Mesh::HALF:
+				return 2;
+			case Mesh::SINT_32:
+			case Mesh::UINT_32:
+				return 4;
+			case Mesh::SINT_16:
+			case Mesh::UINT_16:
+				return 2;
+			case Mesh::SINT_8:
+			case Mesh::UINT_8:
+				return 1;
+			case Mesh::SNORM_32:
+			case Mesh::UNORM_32:
+				return 4;
+			case Mesh::SNORM_16:
+			case Mesh::UNORM_16:
+				return 2;
+			case Mesh::SNORM_8:
+			case Mesh::UNORM_8:
+				return 1;
+			default:
+				return 0;
+		}
+
 	}
 	ElementInfo getBaseInfo(ElementDesc desc) {
 		ElementSemantic semantic = desc.semantic;
 
 		ElementInfo info;
-		info.buffer = nullptr;
+		info.buffer_index = -1;
 		info.offset = 0;
 		if (semantic == POSITION) {
 			info.num_components = 3;
 			info.semantic = POSITION;
 			info.type = FLOAT;
-			info.width = 32;
 		}
 		else if (semantic == NORMAL || semantic == TANGENT || semantic == BITANGENT) {
 			info.num_components = 3;
 			info.semantic = desc.semantic;
 			info.type = FLOAT;
-			info.width = 32;
 		}
 		else if (COLOR0 <= semantic && semantic <= COLOR7) {
 			info.num_components = desc.num_components;
 			info.semantic = desc.semantic;
 			info.type = FLOAT;
-			info.width = 32;
 		}
 		else if (TEX0 <= semantic && semantic <= TEX7) {
 			info.num_components = desc.num_components;
 			info.semantic = desc.semantic;
 			info.type = FLOAT;
-			info.width = 32;
 		}
 		else {
 			info.num_components = 0;
-			info.width = 0;
 		}
 
 		return info;
 	}
 
 	// mesh gpu resource
-	VertexStream streams[20];
+	VertexStream vertex_streams[20];
+	u32 vertex_stream_content[20];
+
 	ElementInfo elements[20];
 	int num_streams;
 	int num_elements;
-	IIndexBuffer* ib;
+	IIndexBuffer* index_buffer;
 	std::vector<MaterialGroup> mat_ids;
 
 // private vars

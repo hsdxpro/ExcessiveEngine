@@ -52,6 +52,11 @@ GapiGL::GapiGL() {
 	//use a single global vao
 	glGenVertexArrays(1, &global_vao);
 	glBindVertexArray(global_vao);
+
+	// set initial bindings
+	active_shader = nullptr;
+	active_layout = nullptr;
+	active_vertex_buffers.resize(getNumVertexBufferSlots(), {nullptr,0,0});
 }
 
 GLenum func_data[] =
@@ -712,6 +717,10 @@ void GapiGL::setShaderProgram(IShaderProgram* sp)
 {
 	ASSERT(sp);
 	glUseProgram(static_cast<ShaderProgramGL*>(sp)->getProgramId());
+
+	// set dirty flag
+	is_layout_bound = false;
+	bindInputLayout();
 }
 
 void GapiGL::setTexture(ITexture* t, u32 idx)
@@ -765,7 +774,7 @@ void GapiGL::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attr
 		}
 
 
-		GLuint id = static_cast<VertexBufferGL*>(buffers[c])->id;
+		GLuint id = static_cast<const VertexBufferGL*>(buffers[c])->id;
 		glBindBuffer(GL_ARRAY_BUFFER, id);
 		glEnableVertexAttribArray(attrib_data[c].index);
 		glVertexAttribPointer(attrib_data[c].index, attrib_data[c].nComponent, type, normalize, attrib_data[c].size, (const void*)attrib_data[c].offset);
@@ -821,31 +830,12 @@ void GapiGL::clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth /
 
 
 
-static inline GLenum NativeAttribType(eVertexAttribType type) {
-	// GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT, GL_INT, and GL_UNSIGNED_INT
-	// GL_HALF_FLOAT, GL_FLOAT, GL_DOUBLE, GL_FIXED, GL_INT_2_10_10_10_REV, GL_UNSIGNED_INT_2_10_10_10_REV and GL_UNSIGNED_INT_10F_11F_11F_REV
-	/*
-		// floating point types
-		FLOAT = 0,
-		HALF,
-		// integer types
-		SINT_32,
-		UINT_32,
-		SINT_16,
-		UINT_16,
-		SINT_8,
-		UINT_8,
-		// normalized integer types
-		// signed: [-1.0f, 1.0f]
-		// unsigned: [0.0f, 1.0f]
-		SNORM_32,
-		UNORM_32,
-		SNORM_16,
-		UNORM_16,
-		SNORM_8,
-		UNORM_8,
-		*/
+////////////////////////////////////////////////////////////////////////////////
+// input layout & vertex streams
 
+
+// convert attrib type to native
+static inline GLenum NativeAttribType(eVertexAttribType type) {
 	static const GLenum lut[] = {
 		GL_FLOAT,
 		GL_HALF_FLOAT,
@@ -865,8 +855,18 @@ static inline GLenum NativeAttribType(eVertexAttribType type) {
 	assert((unsigned)type < sizeof(lut) / sizeof(lut[0]));
 	return lut[(unsigned)type];
 }
+static inline GLboolean IsNormalizedType(eVertexAttribType type) {
+	return
+		type == eVertexAttribType::SNORM_32 ||
+		type == eVertexAttribType::SNORM_16 ||
+		type == eVertexAttribType::SNORM_8 ||
+		type == eVertexAttribType::UNORM_32 ||
+		type == eVertexAttribType::UNORM_16 ||
+		type == eVertexAttribType::UNORM_8;
+}
 
 
+// create an input layout
 InputLayoutGL* GapiGL::createInputLayout(rInputElement* elements, size_t num_elements) {
 	// validate here
 	for (size_t i = 0; i < num_elements; i++) {
@@ -874,25 +874,89 @@ InputLayoutGL* GapiGL::createInputLayout(rInputElement* elements, size_t num_ele
 			return nullptr;
 		}
 	}
-
-
+	// create and return a new layout
 	InputLayoutGL* layout = new InputLayoutGL(elements, num_elements);
 	return layout;
 }
 
-void GapiGL::setInputLayout(IInputLayout* layout) {
-	for (size_t i = 0; i < layout->getNumElements(); i++) {
-		// now some opengl magic
 
-	}
+// set an input layout
+void GapiGL::setInputLayout(IInputLayout* layout) {
+	active_layout = (InputLayoutGL*)layout;
+
+	// set dirty flag
+	is_layout_bound = false;
+	bindInputLayout();
 }
 
-void GapiGL::setVertexStreams(
-	IVertexBuffer** buffers,
+void GapiGL::bindInputLayout() {
+	if (!active_layout || !active_shader) {
+		return;
+	}
+
+	// set each element (== attribute)
+	for (size_t i = 0; i < active_layout->getNumElements(); i++) {
+		auto& element = active_layout->getElement(i);
+
+		// check if there's a buffer on that location
+		if (active_vertex_buffers.size() <= element.stream_index ||
+			!active_vertex_buffers[element.stream_index].buffer)
+		{
+			continue;
+		}
+
+		// get attribute location
+		int location = active_shader->getAttributeIndex(element.name);
+
+		// set bindig point
+		glVertexAttribBinding(location, element.stream_index);
+
+		// set attribute
+		glVertexAttribPointer(
+			location,
+			element.num_components,
+			NativeAttribType(element.type),
+			IsNormalizedType(element.type),
+			active_vertex_buffers[element.stream_index].stride,
+			(GLvoid*)element.offset);
+	}
+
+	// set dirty flag
+	is_layout_bound = true;
+}
+
+void GapiGL::setVertexBuffers(
+	const IVertexBuffer* const * buffers,
 	u32* strides,
 	u32* offsets,
 	u32 start_slot,
 	u32 num_buffers)
 {
-	// magic here
+	for (size_t i = 0; i < num_buffers; i++) {
+		u32 slot = start_slot + i;
+		if (slot >= active_vertex_buffers.size()) {
+			break;
+		}
+
+		// set internal streams
+		active_vertex_buffers[slot].buffer = (VertexBufferGL*)buffers[i];
+		active_vertex_buffers[slot].stride = strides[i];
+		active_vertex_buffers[slot].offset = offsets[i];
+
+		// bind buffers
+		glBindVertexBuffer(
+			slot,
+			active_vertex_buffers[slot].buffer->id,
+			offsets[i],
+			strides[i]);
+	}
+
+	// set dirty flag
+	is_layout_bound = false;
+	bindInputLayout();
+}
+
+
+u32 GapiGL::getNumVertexBufferSlots() const {
+	return 16;
 }

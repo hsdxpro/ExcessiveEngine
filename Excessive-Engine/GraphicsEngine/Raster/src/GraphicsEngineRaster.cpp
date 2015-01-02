@@ -2,7 +2,8 @@
 #include "GraphicsApi"
 
 #include <iostream> // only for debug
-#include <unordered_map> // for crappy test render
+#include <unordered_map>
+#include <map>
 #include "..\Common\src\Factory.h"
 using std::cout;
 using std::endl;
@@ -217,8 +218,6 @@ void GraphicsEngineRaster::update(float deltaTime) {
 	auto entities = scene.getEntities();
 	auto lights = scene.getLights();
 
-	//cout << entities.size() << " entities to be drawn..." << endl;
-
 
 	// for each entity
 	int num_drawn = 0;
@@ -226,19 +225,63 @@ void GraphicsEngineRaster::update(float deltaTime) {
 		// get mesh
 		Mesh* mesh = entity->getMesh();
 		if (!mesh) {
-			//cout << "Entity has no mesh :(" << endl;
 			continue;
 		}
 		rVertexAttrib attribs[3];
 		Mesh::ElementInfo attribInfos[3];
-		//bool hasPosition;
-		mesh->getElementBySemantic(attribInfos[0], Mesh::POSITION);
-		mesh->getElementBySemantic(attribInfos[1], Mesh::NORMAL);
-		mesh->getElementBySemantic(attribInfos[2], Mesh::TEX0);
-		//if (!hasPosition) {
-		//	//cout << "This mesh does not have position... KILL IT WITH FIRE!" << endl;
-		//	continue;
-		//}
+		bool hasAllAttribs =
+			mesh->getElementBySemantic(attribInfos[0], Mesh::POSITION) &&
+			mesh->getElementBySemantic(attribInfos[1], Mesh::NORMAL) &&
+			mesh->getElementBySemantic(attribInfos[2], Mesh::TEX0);
+		if (!hasAllAttribs) {
+			continue;
+		}
+
+		// create input layout
+		auto ConvertType = [](Mesh::ElementType type)->eVertexAttribType {
+			switch (type) {
+				case Mesh::FLOAT: return eVertexAttribType::FLOAT;
+				case Mesh::HALF: return eVertexAttribType::HALF;
+				case Mesh::SINT_32: return eVertexAttribType::SINT_32;
+				case Mesh::UINT_32: return eVertexAttribType::UINT_32;
+				case Mesh::SINT_16: return eVertexAttribType::SINT_16;
+				case Mesh::UINT_16: return eVertexAttribType::UINT_16;
+				case Mesh::SINT_8: return eVertexAttribType::SINT_8;
+				case Mesh::UINT_8: return eVertexAttribType::UINT_8;
+				case Mesh::SNORM_32: return eVertexAttribType::SNORM_32;
+				case Mesh::UNORM_32: return eVertexAttribType::UNORM_32;
+				case Mesh::SNORM_16: return eVertexAttribType::SNORM_16;
+				case Mesh::UNORM_16: return eVertexAttribType::UNORM_16;
+				case Mesh::SNORM_8: return eVertexAttribType::SNORM_8;
+				case Mesh::UNORM_8: return eVertexAttribType::UNORM_8;
+				default: return eVertexAttribType::FLOAT;
+			}
+		};
+
+		rInputElement elements[3];
+		elements[0].setName("in_vertex");
+		elements[0].num_components = attribInfos[0].num_components;
+		elements[0].offset = attribInfos[0].offset;
+		elements[0].type = ConvertType(attribInfos[0].type);
+
+		elements[1].setName("in_vertex");
+		elements[1].num_components = attribInfos[1].num_components;
+		elements[1].offset = attribInfos[1].offset;
+		elements[1].type = ConvertType(attribInfos[1].type);
+
+		elements[2].setName("in_vertex");
+		elements[2].num_components = attribInfos[2].num_components;
+		elements[2].offset = attribInfos[2].offset;
+		elements[2].type = ConvertType(attribInfos[2].type);
+
+		elements[0].stream_index = attribInfos[0].buffer_index;
+		elements[1].stream_index = attribInfos[1].buffer_index;
+		elements[2].stream_index = attribInfos[2].buffer_index;
+		
+		//IInputLayout* input_layout = gapi->createInputLayout(elements, 3);
+		//gapi->setInputLayout(input_layout);
+		//gapi->setVertexBuffers(mesh->getVertexBuffers(), nullptr, nullptr, 0, mesh->getNumVertexBuffers());
+
 
 		attribs[0].index = shader->getAttributeIndex("in_vertex");
 		attribs[0].nComponent = attribInfos[0].num_components;
@@ -281,7 +324,11 @@ void GraphicsEngineRaster::update(float deltaTime) {
 		gapi->setUniformBuffer(ubo_buf, index_vs);
 
 		// set vertex buffer
-		IVertexBuffer* tmp[3] = { attribInfos[0].buffer, attribInfos[1].buffer, attribInfos[2].buffer };
+		IVertexBuffer* tmp[3] = {
+			mesh->getVertexBuffers()[attribInfos[0].buffer_index].vb,
+			mesh->getVertexBuffers()[attribInfos[1].buffer_index].vb,
+			mesh->getVertexBuffers()[attribInfos[2].buffer_index].vb
+		};
 		gapi->setVertexBuffers(tmp, attribs, 3);
 
 		// set index buffer
@@ -338,45 +385,9 @@ void GraphicsEngineRaster::update(float deltaTime) {
 			gapi->draw((matGroup.endFace - matGroup.beginFace) * 3, matGroup.beginFace * 3 * sizeof(u32));
 		}
 
-		// Draw each subMaterial
-		/*
-		if (mtl != nullptr)
-		for (int i = 0; i < mtl->getNumSubMaterials(); i++) {
-			auto& subMat = mtl->getSubMaterial(i);
-
-			if (subMat.t_diffuse) {
-				diffuse = subMat.base;
-				tdiffuse = (Texture*)subMat.t_diffuse;
-
-				ps_const.diffuse = diffuse;
-				ps_const.hasTex = (tdiffuse != nullptr && tdiffuse->getTexture() != nullptr);
-			}
-			else {
-				ps_const.diffuse = mm::vec4(1, 1, 1, 1);
-				ps_const.hasTex = false;
-			}
-
-			ps_const_buf->update(&ps_const, sizeof(ps_const), 0);
-			gapi->setUniformBuffer(ps_const_buf, index_ps);
-
-			if (ps_const.hasTex) {
-				gapi->setTexture(tdiffuse->getTexture(), shader->getSamplerIndex("tex"));
-			}
-
-			auto& matGroup = mesh->getMaterialIds()[i];
-
-			// draw
-			gapi->draw((matGroup.endFace - matGroup.beginFace) * 3, matGroup.beginFace * 3 * sizeof(u32));
-
-			num_drawn++;
-		}
-		*/
-
 		ps_const_buf->destroy();
 		ubo_buf->destroy();
 	}
-
-	//cout << num_drawn << " entities actually drawn." << endl;
 }
 
 IGapi* GraphicsEngineRaster::getGapi() {

@@ -6,6 +6,43 @@
 using namespace std;
 
 
+ShaderProgramGL::ShaderProgramGL(GLuint program_id) 
+	: program(program_id)
+{
+	// get all attributes
+	GLint count = 0;
+	GLint attrib_name_len = 512;
+	glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &count); 
+	glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &attrib_name_len);
+	vector<GLchar> attrib_name(attrib_name_len+1);
+	for (GLint i = 0; i < count; i++) {
+		// get name
+		GLint array_size = 0;
+		GLenum type = 0;
+		GLsizei name_len = 0;
+		glGetActiveAttrib(program, i, attrib_name.size(), &name_len, &array_size, &type, attrib_name.data());
+		string name(attrib_name.data(), attrib_name.data() + name_len);
+
+		// get location
+		auto location = glGetAttribLocation(program, name.c_str());
+
+		assert(location >= 0);
+
+		// add to cache
+		attrib_loc_cache.insert(pair<string, int>(name, location));
+	}
+}
+
+
+ShaderProgramGL::~ShaderProgramGL() 
+{
+	glDeleteProgram(program);
+}
+
+
+
+
+
 // Remove this unless necessary.
 //should be indexed by an eShaderType enum
 GLenum shader_types[] =
@@ -98,7 +135,13 @@ int ShaderProgramGL::getUniformBlockIndex(const char* str)
 int ShaderProgramGL::getAttributeIndex(const char* str)
 {
 	ASSERT(str);
-	return glGetAttribLocation(program, str);
+	auto it = attrib_loc_cache.find(str);
+	if (it != attrib_loc_cache.end()) {
+		return it->second;
+	}
+	else {
+		return -1;
+	}
 }
 
 int ShaderProgramGL::getSamplerIndex(const char* str)
@@ -115,40 +158,3 @@ int ShaderProgramGL::getRenderTargetIndex(const char* str)
 	ASSERT(str);
 	return glGetFragDataLocation(program, str);
 }
-
-
-// Deprecated API
-/*
-void ShaderProgramGL::addShader(const char* src, eShaderType type)
-{
-GLuint shader_id = glCreateShader(shader_types[type]);
-glShaderSource(shader_id, 1, &src, 0);
-glCompileShader(shader_id);
-
-#ifdef DEBUG_SHADER_ERRORS
-GLchar infolog[INFOLOG_SIZE];
-infolog[0] = '\0';
-glGetShaderInfoLog(shader_id, INFOLOG_SIZE, 0, infolog);
-cerr << infolog << endl;
-#endif
-
-glAttachShader(id, shader_id);
-glDeleteShader(shader_id);
-}
-*/
-
-
-// Deprecated API
-/*
-void ShaderProgramGL::link()
-{
-glLinkProgram(id);
-
-#ifdef DEBUG_SHADER_ERRORS
-GLchar infolog[INFOLOG_SIZE];
-infolog[0] = '\0';
-glGetProgramInfoLog(id, INFOLOG_SIZE, 0, infolog);
-cerr << infolog << endl;
-#endif
-}
-*/
