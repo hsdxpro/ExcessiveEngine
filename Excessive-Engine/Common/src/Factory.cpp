@@ -10,15 +10,9 @@
 	#include "../CommonMac/src/Window.h"
 #endif
 
-#ifdef BUILD_STATIC
-	#include "../GraphicsEngineRaster/src/GraphicsEngine.h"
-	#include "../GraphicsEngineRT/src/GraphicsEngine.h"
-	#include "../GraphicsApiGL/src/GapiGL.h"
-#endif
-
-graphics::IGraphicsEngine* Factory::createGraphicsEngineRaster(const rGraphicsEngineRaster& d) {
+graphics::IEngine* Factory::createGraphicsEngineRaster(const rGraphicsEngineRaster& d) {
 #ifdef BUILD_DLL
-	using CreateT = graphics::IGraphicsEngine*(*)(const rGraphicsEngineRaster& d);
+	using CreateT = graphics::IEngine*(*)(const rGraphicsEngineRaster& d);
 	auto module = Sys::loadDLL(L"GraphicsEngineRaster");
 	if (!module) {
 		return nullptr;
@@ -33,9 +27,9 @@ graphics::IGraphicsEngine* Factory::createGraphicsEngineRaster(const rGraphicsEn
 #endif
 }
 
-graphics::IGraphicsEngine* Factory::createGraphicsEngineRT(const rGraphicsEngineRT& d) {
+graphics::IEngine* Factory::createGraphicsEngineRT(const rGraphicsEngineRT& d) {
 #ifdef BUILD_DLL
-	using CreateT = graphics::IGraphicsEngine*(*)(const rGraphicsEngineRT& d);
+	using CreateT = graphics::IEngine*(*)(const rGraphicsEngineRT& d);
 	auto module = Sys::loadDLL(L"GraphicsEngineRasterRT");
 	if (!module) {
 		return nullptr;
@@ -50,9 +44,9 @@ graphics::IGraphicsEngine* Factory::createGraphicsEngineRT(const rGraphicsEngine
 #endif
 }
 
-physics::IPhysicsEngine* Factory::createPhysicsEngineBullet(const rPhysicsEngineBullet& d) {
+physics::IEngine* Factory::createPhysicsEngineBullet(const rPhysicsEngineBullet& d) {
 #ifdef BUILD_DLL
-	using CreateT = physics::IPhysicsEngine*(*)(const rPhysicsEngineBullet& d);
+	using CreateT = physics::IEngine*(*)(const rPhysicsEngineBullet& d);
 	auto module = Sys::loadDLL(L"PhysicsEngineBullet");
 	if (!module) {
 		return nullptr;
@@ -67,9 +61,9 @@ physics::IPhysicsEngine* Factory::createPhysicsEngineBullet(const rPhysicsEngine
 #endif
 }
 
-network::INetworkEngine* Factory::createNetworkEngine(const rNetworkEngine& d) {
+network::IEngine* Factory::createNetworkEngine(const rNetworkEngine& d) {
 #ifdef BUILD_DLL
-	using CreateT = network::INetworkEngine*(*)(const rNetworkEngine& d);
+	using CreateT = network::IEngine*(*)(const rNetworkEngine& d);
 	auto module = Sys::loadDLL(L"NetworkEngine");
 	if (!module) {
 		return nullptr;
@@ -80,13 +74,13 @@ network::INetworkEngine* Factory::createNetworkEngine(const rNetworkEngine& d) {
 	}
 	return creator(d);
 #elif BUILD_STATIC	
-	return new NetworkEngine(d);
+	return new NetworkEngineBoost(d);
 #endif
 }
 
-sound::ISoundEngine* Factory::createSoundEngine(const rSoundEngine& d) {
+sound::IEngine* Factory::createSoundEngine(const rSoundEngine& d) {
 #ifdef BUILD_DLL
-	using CreateT = sound::ISoundEngine*(*)(const rSoundEngine& d);
+	using CreateT = sound::IEngine*(*)(const rSoundEngine& d);
 	auto module = Sys::loadDLL(L"SoundEngine");
 	if (!module) {
 		return nullptr;
@@ -97,7 +91,7 @@ sound::ISoundEngine* Factory::createSoundEngine(const rSoundEngine& d) {
 	}
 	return creator(d);
 #elif BUILD_STATIC	
-	return new PhysicsEngineBullet(d);
+	return new SoundEngineSFML(d);
 #endif
 }
 

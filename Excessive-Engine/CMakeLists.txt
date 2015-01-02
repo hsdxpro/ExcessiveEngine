@@ -12,10 +12,9 @@ endif()
 
 add_subdirectory( PIL )
 add_subdirectory( Core )
-add_subdirectory( GraphicsApiGL )
-add_subdirectory( GraphicsEngineRaster )
-add_subdirectory( GraphicsEngineRT )
-add_subdirectory( PhysicsEngineBullet )
+add_subdirectory( GraphicsApi )
+add_subdirectory( GraphicsEngine )
+add_subdirectory( PhysicsEngine )
 add_subdirectory( SoundEngine )
 add_subdirectory( NetworkEngine )
 

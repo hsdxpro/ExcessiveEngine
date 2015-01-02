@@ -1,24 +1,24 @@
-﻿// IWindow, IGraphicsEngine, etc interfacek mögött levő példányok létrehozására használatos
+﻿// IWindow, IEngine, etc interfacek mögött levő példányok létrehozására használatos
 #pragma once
 
-#include "../GraphicsEngineRT/src/GraphicsEngineRT.h"
-#include "../GraphicsEngineRaster/src/GraphicsEngineRaster.h"
-#include "../PhysicsEngineBullet/src/PhysicsEngineBullet.h"
-#include "../NetworkEngine/src/NetworkEngine.h"
-#include "../SoundEngine/src/SoundEngine.h"
+#include "../GraphicsApi/GL/src/GapiGL.h"
+#include "../../GraphicsEngine/Raster/src/GraphicsEngineRaster.h"
+#include "../../GraphicsEngine/RT/src/GraphicsEngineRT.h"
+#include "../../PhysicsEngine/Bullet/src/PhysicsEngineBullet.h"
+#include "../../SoundEngine/SFML/src/SoundEngineSFML.h"
+#include "../../NetworkEngine/Boost/src/NetworkEngineBoost.h"
 
-#include "../Module_Interfaces/GraphicsApi/IGapi.h"
 #include "IWindow.h"
 
 class Factory
 {
 public:
-	static graphics::IGraphicsEngine*	createGraphicsEngineRaster(const rGraphicsEngineRaster& d);
-	static graphics::IGraphicsEngine*	createGraphicsEngineRT(const rGraphicsEngineRT& d);
-	static physics::IPhysicsEngine*		createPhysicsEngineBullet(const rPhysicsEngineBullet& d);
-	static network::INetworkEngine*		createNetworkEngine(const rNetworkEngine& d);
-	static sound::ISoundEngine*			createSoundEngine(const rSoundEngine& d);
+	static graphics::IEngine*	createGraphicsEngineRaster(const rGraphicsEngineRaster& d);
+	static graphics::IEngine*	createGraphicsEngineRT(const rGraphicsEngineRT& d);
+	static physics::IEngine*	createPhysicsEngineBullet(const rPhysicsEngineBullet& d);
+	static network::IEngine*	createNetworkEngine(const rNetworkEngine& d);
+	static sound::IEngine*		createSoundEngine(const rSoundEngine& d);
 
-	static IWindow*						createWindow(const struct rWindow& d);
-	static IGapi*						createGapiGL();
+	static IWindow*				createWindow(const struct rWindow& d);
+	static IGapi*				createGapiGL();
 };

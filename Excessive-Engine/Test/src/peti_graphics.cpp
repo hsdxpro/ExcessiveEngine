@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "../Module_Interfaces/GraphicsEngine/IGraphicsEngine.h"
+#include "../GraphicsEngine/Interfaces/IEngine.h"
 using namespace graphics;
 
 #ifdef _MSC_VER
@@ -23,7 +23,7 @@ int PetiGraphics() {
 		return 1;
 	}
 	// load function
-	IGraphicsEngine*(*CreateGraphicsEngine)() = (IGraphicsEngine*(*)())GetProcAddress(module, "CreateGraphicsEngine");
+	IEngine*(*CreateGraphicsEngine)() = (IEngine*(*)())GetProcAddress(module, "CreateGraphicsEngine");
 	if (CreateGraphicsEngine == nullptr) {
 		cout << "Could not find function in module, code " << GetLastError() << endl;
 		return 2;
