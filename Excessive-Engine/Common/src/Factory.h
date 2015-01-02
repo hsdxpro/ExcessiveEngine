@@ -1,7 +1,7 @@
 ﻿// IWindow, IEngine, etc interfacek mögött levő példányok létrehozására használatos
 #pragma once
 
-#include "../GraphicsApi/GraphicsApiGL/src/GapiGL.h"
+#include "../GraphicsApi/GL/src/GapiGL.h"
 #include "../../GraphicsEngine/Raster/src/GraphicsEngineRaster.h"
 #include "../../GraphicsEngine/RT/src/GraphicsEngineRT.h"
 #include "../../PhysicsEngine/Bullet/src/PhysicsEngineBullet.h"
