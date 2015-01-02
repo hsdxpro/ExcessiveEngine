@@ -6,15 +6,15 @@
 using namespace std;
 
 
-ShaderProgramGL::ShaderProgramGL(GLuint program_id) 
+ShaderProgramGL::ShaderProgramGL(GLuint program_id)
 	: program(program_id)
 {
 	// get all attributes
 	GLint count = 0;
 	GLint attrib_name_len = 512;
-	glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &count); 
+	glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &count);
 	glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &attrib_name_len);
-	vector<GLchar> attrib_name(attrib_name_len+1);
+	vector<GLchar> attrib_name(attrib_name_len + 1);
 	for (GLint i = 0; i < count; i++) {
 		// get name
 		GLint array_size = 0;
@@ -34,7 +34,7 @@ ShaderProgramGL::ShaderProgramGL(GLuint program_id)
 }
 
 
-ShaderProgramGL::~ShaderProgramGL() 
+ShaderProgramGL::~ShaderProgramGL()
 {
 	glDeleteProgram(program);
 }
@@ -61,37 +61,31 @@ void ShaderProgramGL::destroy()
 // TODO: I could not get it working with the new signature (Peti)
 size_t ShaderProgramGL::getBinary(void* data, size_t max_size)
 {
-	// well, it ain't gonna work out that way 
-	/*
-	vector<char> buf;
-	GLenum format = 0;
-
-	GLint bufsize = 0;
-	glGetProgramiv(id, GL_PROGRAM_BINARY_LENGTH, &bufsize);
-
-	if (data == nullptr) {
-		return bufsize;
-	}
-
-	if (bufsize)
-	{
-		buf.resize(bufsize);
-
-		glGetProgramBinary(id, bufsize, 0, &format, (void*)buf.data());
-
-		//add space for the enum and the size
-		size_t size = bufsize + sizeof(GLint) + sizeof(GLenum);
-		data = new char[size];
-
-		char* ptr = *data;
-		reinterpret_cast<GLint*>(ptr)[0] = bufsize;
-		ptr += sizeof(GLint);
-		reinterpret_cast<GLenum*>(ptr)[0] = format;
-		ptr += sizeof(GLenum);
-		memcpy(ptr, buf.data(), bufsize);
-	}
-	//* /
-	return 0;
+// well, it ain't gonna work out that way
+/*
+vector<char> buf;
+GLenum format = 0;
+GLint bufsize = 0;
+glGetProgramiv(id, GL_PROGRAM_BINARY_LENGTH, &bufsize);
+if (data == nullptr) {
+return bufsize;
+}
+if (bufsize)
+{
+buf.resize(bufsize);
+glGetProgramBinary(id, bufsize, 0, &format, (void*)buf.data());
+//add space for the enum and the size
+size_t size = bufsize + sizeof(GLint) + sizeof(GLenum);
+data = new char[size];
+char* ptr = *data;
+reinterpret_cast<GLint*>(ptr)[0] = bufsize;
+ptr += sizeof(GLint);
+reinterpret_cast<GLenum*>(ptr)[0] = format;
+ptr += sizeof(GLenum);
+memcpy(ptr, buf.data(), bufsize);
+}
+//* /
+return 0;
 }
 //*/
 
@@ -99,19 +93,18 @@ size_t ShaderProgramGL::getBinary(void* data, size_t max_size)
 // TODO: I could not get it working with the new signature (Peti)
 bool ShaderProgramGL::loadBinary(void* data, size_t size)
 {
-	// neither will this
-	/*
-	ASSERT(data)
-	{
-		char* ptr = data;
-		GLint size = reinterpret_cast<GLint*>(ptr)[0];
-		ptr += sizeof(GLint);
-		GLenum format = reinterpret_cast<GLenum*>(ptr)[0];
-		ptr += sizeof(GLenum);
-
-		glProgramBinary(id, format, ptr, size);
-	}
-	//* /
+// neither will this
+/*
+ASSERT(data)
+{
+char* ptr = data;
+GLint size = reinterpret_cast<GLint*>(ptr)[0];
+ptr += sizeof(GLint);
+GLenum format = reinterpret_cast<GLenum*>(ptr)[0];
+ptr += sizeof(GLenum);
+glProgramBinary(id, format, ptr, size);
+}
+//* /
 }
 //*/
 
