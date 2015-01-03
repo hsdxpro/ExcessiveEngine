@@ -31,6 +31,19 @@ void Entity::setScale(const mm::vec3& s) {
 }
 
 
+mm::vec3 Entity::getPos() {
+	return pos;
+}
+
+mm::quat Entity::getRot() {
+	return rot;
+}
+
+mm::vec3 Entity::getScale() {
+	return scale;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // mesh & mtl properties
 

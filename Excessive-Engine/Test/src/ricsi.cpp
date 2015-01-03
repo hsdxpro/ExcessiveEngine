@@ -51,6 +51,8 @@ int Ricsi() {
 	static const wchar_t assetName[] = L"../Assets/teapot.dae";
 	//*/
 	Entity* simpleEntity = core.createEntity(scene, Sys::getWorkDir() + assetName);
+	Entity* skyBox = core.createEntity(scene, Sys::getWorkDir() + L"../Assets/skybox.dae");
+
 
 	// Run the main loop
 	rWindowEvent ev;

@@ -100,6 +100,9 @@ Entity* EngineCore::createEntity(graphics::IScene* gScene, const std::wstring& m
 // Creating graphics entity
 	// We will feed meshes to that graphics entity
 	graphics::IEntity* gEntity = gScene->createEntity();
+	if (modelPath.substr(modelPath.find_last_of(L'/')+1) == L"skybox.dae") {
+		gEntity->setScale(mm::vec3(1000, 1000, 1000));
+	}
 
 	// Material for entity
 	graphics::IMaterial* material = graphicsEngine->createMaterial();

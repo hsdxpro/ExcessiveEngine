@@ -64,7 +64,7 @@ physics::IEngine* Factory::createPhysicsEngineBullet(const rPhysicsEngineBullet&
 network::IEngine* Factory::createNetworkEngine(const rNetworkEngine& d) {
 #ifdef BUILD_DLL
 	using CreateT = network::IEngine*(*)(const rNetworkEngine& d);
-	auto module = Sys::loadDLL(L"NetworkEngine");
+	auto module = Sys::loadDLL(L"NetworkEngineBoost");
 	if (!module) {
 		return nullptr;
 	}
@@ -81,7 +81,7 @@ network::IEngine* Factory::createNetworkEngine(const rNetworkEngine& d) {
 sound::IEngine* Factory::createSoundEngine(const rSoundEngine& d) {
 #ifdef BUILD_DLL
 	using CreateT = sound::IEngine*(*)(const rSoundEngine& d);
-	auto module = Sys::loadDLL(L"SoundEngine");
+	auto module = Sys::loadDLL(L"SoundEngineSFML");
 	if (!module) {
 		return nullptr;
 	}

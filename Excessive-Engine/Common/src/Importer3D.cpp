@@ -31,6 +31,10 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 	// Free memory
 	free(mem);
 
+	if (!scene) {
+		return false;
+	}
+
 
 	// Parsed "scene" have meshes
 	size_t nMeshes = scene->mNumMeshes;

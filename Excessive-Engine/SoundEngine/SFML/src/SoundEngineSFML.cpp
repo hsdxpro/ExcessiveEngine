@@ -1,4 +1,7 @@
 #include "SoundEngineSFML.h"
+#include <iostream>
+
+using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Export Create function
@@ -28,5 +31,5 @@ void SoundEngineSFML::release() {
 }
 
 void SoundEngineSFML::update(float deltaTime) {
-	
+
 }

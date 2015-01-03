@@ -309,7 +309,10 @@ void GraphicsEngineRaster::update(float deltaTime) {
 		gapi->setShaderProgram(shader);
 		gapi->setRenderTargets(0, 0);
 
-		mm::mat4 wvp = scene.getCam()->getProjMatrix() * scene.getCam()->getViewMatrix();
+		mm::mat4 prs =
+			mm::create_translation(entity->getPos())
+			*mm::create_scale(entity->getScale());
+		mm::mat4 wvp = scene.getCam()->getProjMatrix() * scene.getCam()->getViewMatrix() * prs;
 
 		rBuffer ubo_alloc_data;
 			ubo_alloc_data.is_persistent = false;

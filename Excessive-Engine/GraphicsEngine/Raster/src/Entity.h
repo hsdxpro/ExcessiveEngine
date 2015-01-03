@@ -23,6 +23,10 @@ public:
 	void setRot(const mm::quat&) override;
 	void setScale(const mm::vec3&) override;
 
+	mm::vec3 getPos() override;
+	mm::quat getRot() override;
+	mm::vec3 getScale() override;
+
 	virtual void setMesh(graphics::IMesh* mesh) override;
 	virtual void setMaterial(graphics::IMaterial* mtl) override;
 	void setMesh(Mesh* mesh);
@@ -30,14 +34,16 @@ public:
 	Mesh* getMesh() const override;
 	Material* getMaterial() const override;
 
-private:
-	// mtl
-	ref_ptr<Mesh> mesh;
-	ref_ptr<Material> mtl;
+protected:
 	// pos-rot-scale
 	mm::vec3 pos;
 	mm::quat rot;
 	mm::vec3 scale;
+
+private:
+	// mtl
+	ref_ptr<Mesh> mesh;
+	ref_ptr<Material> mtl;
 };
 
 } // graphics namespace end

@@ -21,6 +21,10 @@ public:
 	virtual void setRot(const mm::quat&) = 0;
 	virtual void setScale(const mm::vec3&) = 0;
 
+	virtual mm::vec3 getPos() = 0;
+	virtual mm::quat getRot() = 0;
+	virtual mm::vec3 getScale() = 0;
+
 	virtual void setMesh(IMesh* mesh) = 0;
 	virtual void setMaterial(IMaterial* material) = 0;
 	virtual IMesh* getMesh() const = 0;
