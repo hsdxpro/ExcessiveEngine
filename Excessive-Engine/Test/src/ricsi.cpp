@@ -164,6 +164,7 @@ int Ricsi() {
 
 			case eWindowMsg::RESIZE:
 				gEngine->setResolution(ev.x, ev.y);
+				cam->setAspectRatio((float)ev.x / (float)ev.y);
 				break;
 		}
 
