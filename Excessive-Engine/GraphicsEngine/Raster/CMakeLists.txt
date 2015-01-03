@@ -14,7 +14,7 @@ FILE( GLOB_RECURSE interfaces ../Interfaces/*)
 SOURCE_GROUP(\\ FILES $(sources) $(headers))
 
 # Main
-SOURCE_GROUP(Main FILES src/GraphicsEngine.h src/GraphicsEngine.cpp)
+SOURCE_GROUP(Main FILES src/GraphicsEngineRaster.h src/GraphicsEngineRaster.cpp)
 
 # Utility
 SOURCE_GROUP(Utility FILES src/utility/ref_ptr.h)
@@ -51,8 +51,6 @@ src/Camera.cpp
 
 #########################################################################
 # Project
-
-include_directories("../../GraphicsApi/Interfaces/")
 
 if(BUILD_EXCESSIVE_WITH_DLL)
 	add_library( GraphicsEngineRaster SHARED ${sources} ${headers} ${interfaces} )

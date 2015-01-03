@@ -19,9 +19,9 @@ int Ricsi() {
 
 	// Init window
 	rWindow d;
-	d.clientW = 800;
-	d.clientH = 600;
-	d.capText = "Excessive-Engine -> Ricsi teszt";
+		d.clientW = 800;
+		d.clientH = 600;
+		d.capText = "Excessive-Engine -> Ricsi teszt";
 	IWindow* window = Factory::createWindow(d);
 
 	// Init engine core (graphics, physics, sound, network
@@ -35,22 +35,25 @@ int Ricsi() {
 
 	gEngine->setResolution(window->getClientW(), window->getClientH());
 
-	// Create scene and camera
-	graphics::IScene* scene = gEngine->createScene();
+	// Create camera
 	graphics::ICamera* cam = gEngine->createCam();
-	cam->setFOV(70 / 180.f*3.1415926f);
-	cam->setAspectRatio(window->getClientAspectRatio());
-	cam->setNearPlane(0.2f);
-	cam->setFarPlane(2000);
-	cam->setPos(mm::vec3(0, -3, 1));
+		cam->setFOV(70 / 180.f*3.1415926f);
+		cam->setAspectRatio(window->getClientAspectRatio());
+		cam->setNearPlane(0.2f);
+		cam->setFarPlane(2000);
+		cam->setPos(mm::vec3(0, -3, 1));
+
+	// Create scene, plug camera
+	graphics::IScene* scene = gEngine->createScene();
 	scene->setCam(cam);
 
 	//*/
 	static const wchar_t assetName[] = L"../Assets/terminal/terminal_blender.dae";
+	static const wchar_t teapotModelPath[] = L"../Assets/teapot.dae";
 	/*/
 	static const wchar_t assetName[] = L"../Assets/teapot.dae";
 	//*/
-	Entity* simpleEntity = core.createEntity(scene, Sys::getWorkDir() + assetName);
+	Entity* simpleEntity = core.addEntity(scene, Sys::getWorkDir() + assetName, 0);
 
 	// Run the main loop
 	rWindowEvent ev;
@@ -87,6 +90,10 @@ int Ricsi() {
 			case eWindowMsg::MOUSE_PRESS:
 				if (ev.mouseBtn == eMouseBtn::RIGHT)
 					bRMBDown = true;
+				else if (ev.mouseBtn == eMouseBtn::LEFT) {
+					Entity* e = core.addEntity(scene, Sys::getWorkDir() + teapotModelPath, 10);
+					e->setPos(cam->getPos());
+				}
 				break;
 			case eWindowMsg::MOUSE_RELEASE:
 				if (ev.mouseBtn == eMouseBtn::RIGHT)

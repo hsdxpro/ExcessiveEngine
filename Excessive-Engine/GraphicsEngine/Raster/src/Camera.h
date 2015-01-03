@@ -4,7 +4,6 @@
 
 #include "mymath/mm_common.h"
 #include "mymath/mymath.h"
-#include "../../Common/src/BasicTypes.h"
 
 class Camera : public graphics::ICamera 
 {

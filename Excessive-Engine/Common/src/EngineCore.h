@@ -53,7 +53,7 @@ public:
 	
 	// Create high level Entity, that encapsulates (graphics, phyiscs, sound, network, ....) entities
 	// The input paths are files like .dae, .fbx etc
-	Entity* createEntity(graphics::IScene* gScene, const std::wstring& modelPath);
+	Entity* addEntity(graphics::IScene* gScene, const std::wstring& modelPath, float mass);
 
 	void update(float deltaTime);
 

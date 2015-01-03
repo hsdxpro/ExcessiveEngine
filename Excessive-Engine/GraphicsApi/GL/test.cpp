@@ -3,8 +3,6 @@
 
 #include "../../Common/src/Factory.h"
 
-#include "GraphicsApi"
-
 #include "SFML/System.hpp"
 #include "SFML/Window.hpp"
 #include "SFML/Graphics.hpp"
