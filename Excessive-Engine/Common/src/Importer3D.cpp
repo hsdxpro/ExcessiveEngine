@@ -67,18 +67,17 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 	u32 offset = 0;
 	for (auto f : cfg.flags) {
 		switch (f) {
-		case eImporter3DFlag::VERT_ATTR_POS:	vertexSize += 12; pos_attribOffset	 = offset; offset += 12; break;
-		case eImporter3DFlag::VERT_ATTR_NORM:	vertexSize += 12; norm_attribOffset  = offset; offset += 12; break;
-		case eImporter3DFlag::VERT_ATTR_TAN:	vertexSize += 12; tan_attribOffset	 = offset; offset += 12; break;
-		case eImporter3DFlag::VERT_ATTR_BITAN:	vertexSize += 12; bitan_attribOffset = offset; offset += 12; break;
-		case eImporter3DFlag::VERT_ATTR_TEX0:	vertexSize += 8;  tex0_attribOffset  = offset; offset += 8;  break;
+		case eImporter3DFlag::VERT_ATTR_POS:	vertexSize += sizeof(mm::vec3); pos_attribOffset	= offset; offset += sizeof(mm::vec3); break;
+		case eImporter3DFlag::VERT_ATTR_NORM:	vertexSize += sizeof(mm::vec3); norm_attribOffset	= offset; offset += sizeof(mm::vec3); break;
+		case eImporter3DFlag::VERT_ATTR_TAN:	vertexSize += sizeof(mm::vec3); tan_attribOffset	= offset; offset += sizeof(mm::vec3); break;
+		case eImporter3DFlag::VERT_ATTR_BITAN:	vertexSize += sizeof(mm::vec3); bitan_attribOffset	= offset; offset += sizeof(mm::vec3); break;
+		case eImporter3DFlag::VERT_ATTR_TEX0:	vertexSize += sizeof(mm::vec2); tex0_attribOffset	= offset; offset += sizeof(mm::vec2); break;
 		}
 	}
 
 	// Copy indices, vertices from meshes
 	void* vertices = new u8[vertexSize * nVertices];
-	std::vector<u32> indices(nIndices);
-	
+	u32* indices = new u32[nIndices];
 
 	// We collect each meshes indices and vertices into a big vertices, indices buffer, so meshes have local indexes to their local vertices
 	// we have global index for containers.  GlobalIdx += localIdx
@@ -150,7 +149,6 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 
 					// Then copy the data to the appropriate attrib offset in that vertex
 					memcpy(((u8*)vertices) + vertexSize * vertexIdx + pos_attribOffset, &mm::vec3(pos.x, pos.y, pos.z), sizeof(mm::vec3));
-					
 				}
 
 				if (mesh->HasNormals()) {
@@ -187,6 +185,8 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 	}
 
 	mesh_out.indices = indices;
+	mesh_out.nIndices = nIndices;
+	mesh_out.indexSize = sizeof(indices[0]);
 	mesh_out.nVertices = nVertices;
 	mesh_out.vertexSize = vertexSize;
 	mesh_out.vertexBuffers = { vertices };

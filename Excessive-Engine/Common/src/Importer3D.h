@@ -106,7 +106,9 @@ struct rImporter3DMesh {
 	std::vector<void*> vertexBuffers;
 
 	// Indices
-	std::vector<u32> indices;
+	void* indices;// std::vector<u32> indices;
+	u32 indexSize;
+	u32 nIndices;
 
 	// Materials
 	std::vector<rMaterial> materials;

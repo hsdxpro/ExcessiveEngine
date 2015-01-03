@@ -1,12 +1,12 @@
 #include "Texture.h"
+
+#include "../GraphicsApi/Interfaces/IGapi.h"
+#include <SFML/Graphics/Image.hpp>
+
 #include <memory>
 #include <iostream> // for debug only
 #include <cstring>
-#include <SFML/Graphics/Image.hpp>
-
 #include <fstream>
-#include "ITexture.h"
-#include "IGapi.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////

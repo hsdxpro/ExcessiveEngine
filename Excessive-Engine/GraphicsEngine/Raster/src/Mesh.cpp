@@ -1,11 +1,11 @@
 #include "Mesh.h"
 
+#include "../GraphicsApi/Interfaces/IGapi.h"
+
 #include <memory>
 #include <iostream> // only for debug!!
 #include <algorithm>
 #include <vector>
-
-#include <GraphicsApi>
 #include <mymath/mymath.h>
 
 using namespace mymath;

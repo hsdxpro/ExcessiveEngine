@@ -84,20 +84,21 @@ sound::IEngine* EngineCore::initSoundEngine(const rSoundEngine& d /*= rSoundEngi
 	return soundEngine = Factory::createSoundEngine(d);
 }
 
-Entity* EngineCore::createEntity(graphics::IScene* gScene, const std::wstring& modelPath) {
+Entity* EngineCore::addEntity(graphics::IScene* gScene, const std::wstring& modelPath, float mass) {
 	// Config for importing
-	rImporter3DCfg cfg({ eImporter3DFlag::VERT_INTERLEAVED, 
-						 eImporter3DFlag::VERT_ATTR_POS, 
-						 eImporter3DFlag::VERT_ATTR_NORM, 
+	rImporter3DCfg cfg({ eImporter3DFlag::VERT_INTERLEAVED,
+						 eImporter3DFlag::VERT_ATTR_POS,
+						 eImporter3DFlag::VERT_ATTR_NORM,
 						 eImporter3DFlag::VERT_ATTR_TEX0 });
-	rImporter3DData desc;
-	Importer3D::loadFile(modelPath, cfg, desc);
+	rImporter3DData modelDesc;
+	Importer3D::loadFile(modelPath, cfg, modelDesc);
 
 
 	// TODO: need add not set for entity, or subMeshes needed, like material -> subMaterial
-	assert(desc.meshes.size() <= 1);
+	assert(modelDesc.meshes.size() <= 1);
 
-// Creating graphics entity
+//// --------------- GRAPHICS PART OF ENTITY ------------------------------/////
+
 	// We will feed meshes to that graphics entity
 	graphics::IEntity* gEntity = gScene->createEntity();
 	if (modelPath.substr(modelPath.find_last_of(L'/')+1) == L"skybox.dae") {
@@ -109,7 +110,7 @@ Entity* EngineCore::createEntity(graphics::IScene* gScene, const std::wstring& m
 	gEntity->setMaterial(material);
 	
 	// For each mesh imported, create graphics mesh
-	for (auto& importedMesh : desc.meshes) {
+	for (auto& importedMesh : modelDesc.meshes) {
 		graphics::IMesh* graphicsMesh = graphicsEngine->createMesh();
 		gEntity->setMesh(graphicsMesh);
 
@@ -143,8 +144,8 @@ Entity* EngineCore::createEntity(graphics::IScene* gScene, const std::wstring& m
 		}
 
 		graphics::IMesh::MeshData meshData;
-			meshData.index_data		= importedMesh.indices.data();
-			meshData.index_num		= importedMesh.indices.size();
+			meshData.index_data		= (u32*)importedMesh.indices;
+			meshData.index_num		= importedMesh.nIndices;
 			meshData.mat_ids		= matIDs.data();
 			meshData.mat_ids_num	= matIDs.size();
 			meshData.vertex_bytes	= importedMesh.nVertices * importedMesh.vertexSize;
@@ -162,14 +163,17 @@ Entity* EngineCore::createEntity(graphics::IScene* gScene, const std::wstring& m
 		graphicsMesh->update(meshData);
 	}
 
-// TODO:
-// Create Physics engine
-	//physicsEngine->........
+//// --------------- PHYSICS PART OF ENTITY ------------------------------/////
+	physics::IEntity* pEntity = nullptr;
 
-
+	//auto mesh = modelDesc.meshes[0];
+	//if (mass == 0)
+	//	pEntity = physicsEngine->addEntityRigidStatic((mm::vec3*)mesh.vertexBuffers[0], mesh.nVertices, mesh.indices, mesh.indexSize, mesh.nIndices);
+	//else
+	//	pEntity = physicsEngine->addEntityRigidDynamic((mm::vec3*)mesh.vertexBuffers[0], mesh.nVertices, mass);
 
 	// new entity created
-	Entity* e = new Entity(gEntity);
+	Entity* e = new Entity(gEntity, pEntity);
 		entities.push_back(e);
 	return e;
 }

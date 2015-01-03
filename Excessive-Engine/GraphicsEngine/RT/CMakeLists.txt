@@ -13,13 +13,14 @@ FILE( GLOB_RECURSE interfaces ../Interfaces/*)
 # Global filter
 SOURCE_GROUP(\\ FILES $(sources) $(headers))
 
+#interfaces
+SOURCE_GROUP(Interfaces FILES ${interfaces})
+
 # Main
 SOURCE_GROUP(Main FILES src/GraphicsEngine.h src/GraphicsEngine.cpp)
 
 #########################################################################
 # Project
-
-include_directories("../../GraphicsApi/Interfaces/")
 
 if(BUILD_EXCESSIVE_WITH_DLL)
 	add_library( GraphicsEngineRT SHARED ${sources} ${headers} ${interfaces} )

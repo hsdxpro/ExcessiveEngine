@@ -35,23 +35,26 @@ int Ricsi() {
 
 	gEngine->setResolution(window->getClientW(), window->getClientH());
 
-	// Create scene and camera
-	graphics::IScene* scene = gEngine->createScene();
+	// Create camera
 	graphics::ICamera* cam = gEngine->createCam();
 	cam->setFOV(70 / 180.f*3.1415926f);
 	cam->setAspectRatio(window->getClientAspectRatio());
 	cam->setNearPlane(0.2f);
 	cam->setFarPlane(2000);
 	cam->setPos(mm::vec3(0, -3, 1));
+
+	// Create scene, plug camera
+	graphics::IScene* scene = gEngine->createScene();
 	scene->setCam(cam);
 
 	//*/
 	static const wchar_t assetName[] = L"../Assets/terminal/terminal_blender.dae";
+	static const wchar_t teapotModelPath[] = L"../Assets/teapot.dae";
 	/*/
 	static const wchar_t assetName[] = L"../Assets/teapot.dae";
 	//*/
-	Entity* simpleEntity = core.createEntity(scene, Sys::getWorkDir() + assetName);
-	Entity* skyBox = core.createEntity(scene, Sys::getWorkDir() + L"../Assets/skybox.dae");
+	Entity* simpleEntity = core.addEntity(scene, Sys::getWorkDir() + assetName, 100000.f);
+	Entity* skyBox = core.addEntity(scene, Sys::getWorkDir() + L"../Assets/skybox.dae", 1.0f);
 
 
 	// Run the main loop
@@ -89,6 +92,10 @@ int Ricsi() {
 			case eWindowMsg::MOUSE_PRESS:
 				if (ev.mouseBtn == eMouseBtn::RIGHT)
 					bRMBDown = true;
+				else if (ev.mouseBtn == eMouseBtn::LEFT) {
+					Entity* e = core.addEntity(scene, Sys::getWorkDir() + teapotModelPath, 10);
+					e->setPos(cam->getPos());
+				}
 				break;
 			case eWindowMsg::MOUSE_RELEASE:
 				if (ev.mouseBtn == eMouseBtn::RIGHT)
