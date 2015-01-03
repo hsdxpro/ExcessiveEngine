@@ -166,11 +166,11 @@ Entity* EngineCore::addEntity(graphics::IScene* gScene, const std::wstring& mode
 //// --------------- PHYSICS PART OF ENTITY ------------------------------/////
 	physics::IEntity* pEntity = nullptr;
 
-	//auto mesh = modelDesc.meshes[0];
-	//if (mass == 0)
-	//	pEntity = physicsEngine->addEntityRigidStatic((mm::vec3*)mesh.vertexBuffers[0], mesh.nVertices, mesh.indices, mesh.indexSize, mesh.nIndices);
-	//else
-	//	pEntity = physicsEngine->addEntityRigidDynamic((mm::vec3*)mesh.vertexBuffers[0], mesh.nVertices, mass);
+	auto mesh = modelDesc.meshes[0];
+	if (mass == 0)
+		pEntity = physicsEngine->addEntityRigidStatic((mm::vec3*)mesh.vertexBuffers[0], mesh.nVertices, mesh.indices, mesh.indexSize, mesh.nIndices);
+	else
+		pEntity = physicsEngine->addEntityRigidDynamic((mm::vec3*)mesh.vertexBuffers[0], mesh.nVertices, mass);
 
 	// new entity created
 	Entity* e = new Entity(gEntity, pEntity);
@@ -180,6 +180,17 @@ Entity* EngineCore::addEntity(graphics::IScene* gScene, const std::wstring& mode
 
 void EngineCore::update(float deltaTime) {
 	if (physicsEngine)	physicsEngine->update(deltaTime);
+
+	// Okay physics updated, now time to send transformation to graphics
+
+	for (auto& a : entities) {
+		physics::IEntity* pEntity = a->getComponentPhysics();
+		graphics::IEntity* gEntity = a->getComponentGraphics();
+
+		if (pEntity && gEntity)
+			gEntity->setPos(pEntity->getPos());
+	}
+
 	if (graphicsEngine) graphicsEngine->update(deltaTime);
 	if (soundEngine)	soundEngine->update(deltaTime);
 	if (networkEngine)	networkEngine->update(deltaTime);

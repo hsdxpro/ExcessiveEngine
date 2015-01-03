@@ -53,8 +53,8 @@ int Ricsi() {
 	/*/
 	static const wchar_t assetName[] = L"../Assets/teapot.dae";
 	//*/
-	Entity* simpleEntity = core.addEntity(scene, Sys::getWorkDir() + assetName, 100000.f);
-	Entity* skyBox = core.addEntity(scene, Sys::getWorkDir() + L"../Assets/skybox.dae", 1.0f);
+	Entity* simpleEntity = core.addEntity(scene, Sys::getWorkDir() + assetName, 0);
+	Entity* skyBox = core.addEntity(scene, Sys::getWorkDir() + L"../Assets/skybox.dae", 0);
 
 
 	// Run the main loop

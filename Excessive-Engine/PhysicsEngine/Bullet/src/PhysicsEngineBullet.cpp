@@ -73,7 +73,7 @@ void PhysicsEngineBullet::release() {
 }
 
 void PhysicsEngineBullet::update(float deltaTime) {
-	world->stepSimulation(deltaTime);
+	world->stepSimulation(1.f / 60.f, 1, 1.0f / 60.f);
 }
 
 physics::IEntity* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) {
@@ -90,6 +90,7 @@ physics::IEntity* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vertices,
 	// Create rigid body
 	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), colShape, localInertia);
 	world->addRigidBody(body);
+	body->setLinearFactor(btVector3(1, 1, 1));
 
 	EntityRigid* e = new EntityRigid(body);
 	entities.push_back(e);
@@ -110,12 +111,10 @@ physics::IEntity* PhysicsEngineBullet::addEntityRigidStatic(mm::vec3* vertices, 
 			memcpy(vertices_memCorrected[i], (unsigned char*)vertices + i * sizeof(mm::vec3), sizeof(mm::vec3));
 
 		VBIB = new btTriangleIndexVertexArray(nIndices / 3, (int*)indices, 3 * indexSize, nVertices, (btScalar*)vertices_memCorrected, sizeof(btVector3));
-		//delete[] vertices_memCorrected;
 	}
 	
 	// Create rigid body
 	btRigidBody* body = new btRigidBody(0, new btDefaultMotionState(), new btBvhTriangleMeshShape(VBIB, true), btVector3(0, 0, 0));
-	delete VBIB;
 	world->addRigidBody(body);
 
 	EntityRigid* e = new EntityRigid(body);

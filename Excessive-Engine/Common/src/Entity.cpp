@@ -5,6 +5,6 @@ Entity::Entity(graphics::IEntity* g, physics::IEntity* p)
 }
 
 void Entity::setPos(const mm::vec3& p) {
-	gEntity->setPos(p);
-	//pEntity->setPos(p);
+	if(gEntity)gEntity->setPos(p);
+	if(pEntity)pEntity->setPos(p);
 }
