@@ -82,6 +82,13 @@ struct rImporter3DCfg {
 
 		rImporter3DCfg(const std::vector<eImporter3DFlag>& flags) :flags(flags){}
 
+	bool isContain(eImporter3DFlag f) {
+		for (auto& a : flags)
+			if (a == f)
+				return true;
+		return false;
+	}
+
 	std::vector<eImporter3DFlag> flags;
 };
 
@@ -116,6 +123,19 @@ struct rImporter3DMesh {
 
 // Importer output 
 struct rImporter3DData {
+		~rImporter3DData() {
+
+			for (auto& a : meshes) {
+				delete[] a.indices; // Delete indices
+				a.indices = nullptr;
+
+				for (auto& b : a.vertexBuffers) {
+					delete[] b;
+					b = nullptr;
+				}
+			}
+		}
+
 	std::vector<rImporter3DMesh> meshes;
 };
 

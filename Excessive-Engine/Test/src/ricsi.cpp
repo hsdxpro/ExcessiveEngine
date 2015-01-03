@@ -72,19 +72,28 @@ int Ricsi() {
 
 	bool bRMBDown = false;
 
+	// Jesus, just because we dont want garbage for last_frame variable at first run
+	static bool bFirstRun = true;
+
 	while (window->isOpen()) {
 		//t->reset();
 
 		// keep 60 fps
-		elapsed = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - last_frame).count() / 1.0e6;
-		last_frame = std::chrono::high_resolution_clock::now();
+		auto now = std::chrono::high_resolution_clock::now();
+
+		if (bFirstRun) {
+			bFirstRun = false;
+			last_frame = now;
+		}
+		elapsed = std::chrono::duration_cast<std::chrono::microseconds>(now - last_frame).count() / 1.0e6;
+		last_frame = now;
+
 		int fps = 1 / elapsed + 0.5;
 		std::wstringstream title_ss;
 		static float camAngleX = 0; // upwards/downwards looking
 		static float camAngleZ = 0; // orientation
 		title_ss << L"Excessive-Engine - Ricsi teszt | FPS=" << fps << L" | Pitch=" << camAngleX * 180 / 3.141592653f << L"° Facing=" << camAngleZ * 180 / 3.141592653f << L"°";
 		window->setText(title_ss.str().c_str());
-
 
 		while (window->popEvent(&ev))
 		switch (ev.msg)
@@ -191,8 +200,8 @@ int Ricsi() {
 		window->displayClientRect();
 
 		// keep 60 fps
-		std::chrono::time_point<std::chrono::high_resolution_clock> now = std::chrono::high_resolution_clock::now();
-		std::chrono::microseconds sleep_time = std::chrono::microseconds(16667) - std::chrono::duration_cast<std::chrono::microseconds>(now - last_frame);
+		//std::chrono::time_point<std::chrono::high_resolution_clock> now = std::chrono::high_resolution_clock::now();
+		//std::chrono::microseconds sleep_time = std::chrono::microseconds(16667) - std::chrono::duration_cast<std::chrono::microseconds>(now - last_frame);
 		//this_thread::sleep_for(sleep_time);
 	}
 	std::cout << std::endl;

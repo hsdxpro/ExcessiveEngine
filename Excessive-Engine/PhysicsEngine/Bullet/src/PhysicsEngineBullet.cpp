@@ -73,7 +73,7 @@ void PhysicsEngineBullet::release() {
 }
 
 void PhysicsEngineBullet::update(float deltaTime) {
-	world->stepSimulation(1.f / 60.f, 1, 1.0f / 60.f);
+	world->stepSimulation(deltaTime, 2, 1.f / 60);
 }
 
 physics::IEntity* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) {
@@ -106,11 +106,16 @@ physics::IEntity* PhysicsEngineBullet::addEntityRigidStatic(mm::vec3* vertices, 
 	if (sizeof(mm::vec3) == sizeof(btVector3)) {
 		VBIB = new btTriangleIndexVertexArray(nIndices / 3, (int*)indices, 3 * indexSize, nVertices, (btScalar*)vertices, sizeof(btVector3));
 	} else { // Bullshit if mm::vec3 and btVector3 size not equal, we need into new array, mm::vec3.xyz to btVector3
+
+		int* myIndices = new int[nIndices];
+		for (u32 i = 0; i < nIndices; i++)
+			myIndices[i] = (int)*((u32*)(indices) + i);
+
 		btVector3* vertices_memCorrected = new btVector3[nVertices];
 		for (u32 i = 0; i < nVertices; i++)
 			memcpy(vertices_memCorrected[i], (unsigned char*)vertices + i * sizeof(mm::vec3), sizeof(mm::vec3));
 
-		VBIB = new btTriangleIndexVertexArray(nIndices / 3, (int*)indices, 3 * indexSize, nVertices, (btScalar*)vertices_memCorrected, sizeof(btVector3));
+		VBIB = new btTriangleIndexVertexArray(nIndices / 3, (int*)myIndices, 3 * indexSize, nVertices, (btScalar*)vertices_memCorrected, sizeof(btVector3));
 	}
 	
 	// Create rigid body
