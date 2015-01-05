@@ -257,18 +257,19 @@ void GraphicsEngineRaster::update(float deltaTime) {
 			}
 		};
 
+		// new vertex attribs (doesn't work yet)
 		rInputElement elements[3];
 		elements[0].setName("in_vertex");
 		elements[0].num_components = attribInfos[0].num_components;
 		elements[0].offset = attribInfos[0].offset;
 		elements[0].type = ConvertType(attribInfos[0].type);
 
-		elements[1].setName("in_vertex");
+		elements[1].setName("in_normal");
 		elements[1].num_components = attribInfos[1].num_components;
 		elements[1].offset = attribInfos[1].offset;
 		elements[1].type = ConvertType(attribInfos[1].type);
 
-		elements[2].setName("in_vertex");
+		elements[2].setName("in_tex0");
 		elements[2].num_components = attribInfos[2].num_components;
 		elements[2].offset = attribInfos[2].offset;
 		elements[2].type = ConvertType(attribInfos[2].type);
@@ -277,11 +278,11 @@ void GraphicsEngineRaster::update(float deltaTime) {
 		elements[1].stream_index = attribInfos[1].buffer_index;
 		elements[2].stream_index = attribInfos[2].buffer_index;
 		
-		//IInputLayout* input_layout = gapi->createInputLayout(elements, 3);
-		//gapi->setInputLayout(input_layout);
-		//gapi->setVertexBuffers(mesh->getVertexBuffers(), nullptr, nullptr, 0, mesh->getNumVertexBuffers());
+		IInputLayout* input_layout = gapi->createInputLayout(elements, 3);
+		gapi->setInputLayout(input_layout);
 
-
+		// old vertex attribs
+		/*
 		attribs[0].index = shader->getAttributeIndex("in_vertex");
 		attribs[0].nComponent = attribInfos[0].num_components;
 		attribs[0].offset = attribInfos[2].offset;
@@ -302,6 +303,7 @@ void GraphicsEngineRaster::update(float deltaTime) {
 		attribs[2].type = eVertexAttribType::FLOAT;
 		attribs[2].size = 0;
 		attribs[2].divisor = 0;
+		*/
 
 
 		// set stuff
@@ -325,13 +327,23 @@ void GraphicsEngineRaster::update(float deltaTime) {
 		gapi->writeBuffer(ubo_buf, &wvp, sizeof(mm::mat4), 0);
 		gapi->setUniformBuffer(ubo_buf, index_vs);
 
-		// set vertex buffer
+		// set vertex buffer (old)
+		/*/
 		IVertexBuffer* tmp[3] = {
 			mesh->getVertexBuffers()[attribInfos[0].buffer_index].vb,
 			mesh->getVertexBuffers()[attribInfos[1].buffer_index].vb,
 			mesh->getVertexBuffers()[attribInfos[2].buffer_index].vb
 		};
 		gapi->setVertexBuffers(tmp, attribs, 3);
+		/*/
+
+		// set vertex buffers (new)
+		for (int i = 0; i < mesh->getNumVertexBuffers(); i++) {
+			auto stream = mesh->getVertexBuffers()[i];
+			gapi->setVertexBuffers(&stream.vb, &stream.stride, &stream.offset, i, 1);
+		}
+		//*/
+
 
 		// set index buffer
 		auto ib = mesh->getIndexBuffer();
@@ -387,6 +399,7 @@ void GraphicsEngineRaster::update(float deltaTime) {
 			gapi->draw((matGroup.endFace - matGroup.beginFace) * 3, matGroup.beginFace * 3 * sizeof(u32));
 		}
 
+		input_layout->release();
 		ps_const_buf->destroy();
 		ubo_buf->destroy();
 	}

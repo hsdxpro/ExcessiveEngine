@@ -716,8 +716,10 @@ void GapiGL::setSyncDebugOutput(bool val)
 void GapiGL::setShaderProgram(IShaderProgram* sp)
 {
 	ASSERT(sp);
-	glUseProgram(static_cast<ShaderProgramGL*>(sp)->getProgramId());
+	ShaderProgramGL* shader_program = static_cast<ShaderProgramGL*>(sp);
+	glUseProgram(shader_program->getProgramId());
 
+	active_shader = shader_program;
 	// set dirty flag
 	is_layout_bound = false;
 	bindInputLayout();
@@ -752,6 +754,8 @@ GLenum attrib_array[] =
 	GL_FLOAT, GL_INT, GL_UNSIGNED_INT
 };
 
+
+// DEPRECATED API
 void GapiGL::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers)
 {
 	ASSERT(buffers && attrib_data);
@@ -908,17 +912,23 @@ void GapiGL::bindInputLayout() {
 		// get attribute location
 		int location = active_shader->getAttributeIndex(element.name);
 
-		// set bindig point
-		glVertexAttribBinding(location, element.stream_index);
+		GLenum result;
 
 		// set attribute
-		glVertexAttribPointer(
+		glVertexAttribFormat(
 			location,
 			element.num_components,
 			NativeAttribType(element.type),
 			IsNormalizedType(element.type),
-			active_vertex_buffers[element.stream_index].stride,
-			(GLvoid*)element.offset);
+			element.offset
+			);
+		result = glGetError();
+
+		// set bindig point
+		glVertexAttribBinding(location, element.stream_index);
+		result = glGetError();
+		// enable this format
+		glEnableVertexAttribArray(location);
 	}
 
 	// set dirty flag
@@ -932,10 +942,23 @@ void GapiGL::setVertexBuffers(
 	u32 start_slot,
 	u32 num_buffers)
 {
+	// masse unbindig
+	if (buffers == nullptr) {
+		glBindVertexBuffers(start_slot, num_buffers, nullptr, nullptr, nullptr);
+	}
+
+	// bind buffers one by one
+	// TODO: replace by multibind glBindVertexBuffer[s]
 	for (size_t i = 0; i < num_buffers; i++) {
 		u32 slot = start_slot + i;
 		if (slot >= active_vertex_buffers.size()) {
 			break;
+		}
+
+		// clear zero buffers
+		if (buffers[i] == nullptr) {
+			glBindVertexBuffer(slot, 0, 0, 0);
+				continue;
 		}
 
 		// set internal streams

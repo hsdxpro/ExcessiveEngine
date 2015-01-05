@@ -204,7 +204,7 @@ bool Mesh::update(MeshData data) {
 	// WARNING: 
 	//	vertex buffers are subject to change
 
-	// index buffers
+	// index buffer
 	rBuffer ib_desc;
 	ib_desc.is_readable = false;
 	ib_desc.is_writable = true;
@@ -251,6 +251,8 @@ bool Mesh::update(MeshData data) {
 		}
 		gapi->writeBuffer(_vb, vb_data.get(), vb_desc.size, 0);
 		vertex_streams[i].vb = _vb;
+		vertex_streams[i].stride = chunk_size;
+		vertex_streams[i].offset = 0;
 	}
 
 	// END WARNING
