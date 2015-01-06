@@ -56,7 +56,6 @@ GapiGL::GapiGL() {
 	// set initial bindings
 	active_shader = nullptr;
 	active_layout = nullptr;
-	active_vertex_buffers.resize(getNumVertexBufferSlots(), {nullptr,0,0});
 }
 
 GLenum func_data[] =
@@ -722,7 +721,7 @@ void GapiGL::setShaderProgram(IShaderProgram* sp)
 	active_shader = shader_program;
 	// set dirty flag
 	is_layout_bound = false;
-	bindInputLayout();
+	//bindInputLayout();
 }
 
 void GapiGL::setTexture(ITexture* t, u32 idx)
@@ -801,6 +800,9 @@ void GapiGL::draw(u32 num_indices, u32 index_byte_offset /*= 0*/)
 	glGetProgramInfoLog(static_cast<ShaderProgram*>(s)->id, INFOLOG_SIZE, 0, infolog);
 	cerr << infolog << endl;
 #endif
+	if (!is_layout_bound) {
+		bindInputLayout();
+	}
 
 	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, (void*)index_byte_offset);
 }
@@ -890,7 +892,7 @@ void GapiGL::setInputLayout(IInputLayout* layout) {
 
 	// set dirty flag
 	is_layout_bound = false;
-	bindInputLayout();
+	//bindInputLayout();
 }
 
 void GapiGL::bindInputLayout() {
@@ -901,13 +903,6 @@ void GapiGL::bindInputLayout() {
 	// set each element (== attribute)
 	for (size_t i = 0; i < active_layout->getNumElements(); i++) {
 		auto& element = active_layout->getElement(i);
-
-		// check if there's a buffer on that location
-		if (active_vertex_buffers.size() <= element.stream_index ||
-			!active_vertex_buffers[element.stream_index].buffer)
-		{
-			continue;
-		}
 
 		// get attribute location
 		int location = active_shader->getAttributeIndex(element.name);
@@ -951,9 +946,6 @@ void GapiGL::setVertexBuffers(
 	// TODO: replace by multibind glBindVertexBuffer[s]
 	for (size_t i = 0; i < num_buffers; i++) {
 		u32 slot = start_slot + i;
-		if (slot >= active_vertex_buffers.size()) {
-			break;
-		}
 
 		// clear zero buffers
 		if (buffers[i] == nullptr) {
@@ -961,22 +953,13 @@ void GapiGL::setVertexBuffers(
 				continue;
 		}
 
-		// set internal streams
-		active_vertex_buffers[slot].buffer = (VertexBufferGL*)buffers[i];
-		active_vertex_buffers[slot].stride = strides[i];
-		active_vertex_buffers[slot].offset = offsets[i];
-
 		// bind buffers
 		glBindVertexBuffer(
 			slot,
-			active_vertex_buffers[slot].buffer->id,
+			((VertexBufferGL*)buffers[i])->id,
 			offsets[i],
 			strides[i]);
 	}
-
-	// set dirty flag
-	is_layout_bound = false;
-	bindInputLayout();
 }
 
 

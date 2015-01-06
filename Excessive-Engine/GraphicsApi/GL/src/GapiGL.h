@@ -88,13 +88,6 @@ public:
 	void setInputLayout(IInputLayout* layout) override;
 
 protected:
-	/// Describes a bound vertex stream
-	struct rVertexStream {
-		VertexBufferGL* buffer;
-		u32 stride;
-		u32 offset;
-	};
-
 	/// Pairs current shader program and input layout.
 	/// Called anytime a layout or a shader is set. 
 	void bindInputLayout();
@@ -103,5 +96,4 @@ private:
 	bool is_layout_bound;
 	ShaderProgramGL* active_shader;
 	InputLayoutGL* active_layout;
-	std::vector<rVertexStream> active_vertex_buffers;
 };
