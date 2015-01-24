@@ -87,11 +87,12 @@ sound::IEngine* EngineCore::initSoundEngine(const rSoundEngine& d /*= rSoundEngi
 Entity* EngineCore::addEntity(graphics::IScene* gScene, const std::wstring& modelPath, float mass) {
 	// Config for importing
 	rImporter3DCfg cfg({ eImporter3DFlag::VERT_INTERLEAVED,
-		eImporter3DFlag::VERT_ATTR_POS,
-		eImporter3DFlag::VERT_ATTR_NORM,
-		eImporter3DFlag::VERT_ATTR_TEX0 });
+						 eImporter3DFlag::VERT_ATTR_POS,
+						 eImporter3DFlag::VERT_ATTR_NORM,
+						 eImporter3DFlag::VERT_ATTR_TEX0 });
+
 	rImporter3DData modelDesc;
-		Importer3D::loadFile(modelPath, cfg, modelDesc);
+	Importer3D::loadFile(modelPath, cfg, modelDesc);
 
 
 	// TODO: need add not set for entity, or subMeshes needed, like material -> subMaterial
@@ -203,7 +204,10 @@ void EngineCore::update(float deltaTime) {
 		graphics::IEntity* gEntity = a->getComponentGraphics();
 
 		if (pEntity && gEntity)
+		{
 			gEntity->setPos(pEntity->getPos());
+			gEntity->setRot(pEntity->getRot());
+		}
 	}
 
 	if (graphicsEngine) graphicsEngine->update(deltaTime);

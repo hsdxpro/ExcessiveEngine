@@ -153,13 +153,13 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 
 				if (mesh->HasNormals()) {
 					// Pos to gather
-					const aiVector3D& pos = mesh->mNormals[localVertIdx];
+					const aiVector3D& normal = mesh->mNormals[localVertIdx];
 
 					// Determine vertex index
 					u32 vertexIdx = localVertIdx + globalVertexIdx;
 
 					// Then copy the data to the appropriate attrib offset in that vertex
-					memcpy(((u8*)vertices) + vertexSize * vertexIdx + norm_attribOffset, &mm::vec3(pos.x, pos.y, pos.z), sizeof(mm::vec3));
+					memcpy(((u8*)vertices) + vertexSize * vertexIdx + norm_attribOffset, &mm::vec3(normal.x, normal.y, normal.z), sizeof(mm::vec3));
 				}
 
 				//if (mesh->HasTangentsAndBitangents()) {

@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <map>
 #include "..\Common\src\Factory.h"
+#include "mymath\mm_quat_func.h"
 using std::cout;
 using std::endl;
 
@@ -324,7 +325,9 @@ void GraphicsEngineRaster::update(float deltaTime) {
 
 		mm::mat4 prs =
 			mm::create_translation(entity->getPos())
+			*mm::mat4(entity->getRot())
 			*mm::create_scale(entity->getScale());
+
 		mm::mat4 wvp = scene.getCamera()->getProjMatrix() * scene.getCamera()->getViewMatrix() * prs;
 
 		rBuffer ubo_alloc_data;
