@@ -45,7 +45,11 @@ int Ricsi() {
 
 	// Create scene, plug camera
 	graphics::IScene* scene = gEngine->createScene();
-	scene->setCam(cam);
+	scene->setCamera(cam);
+
+	graphics::IEngine::Layer layer;
+	layer.scene = scene;
+	gEngine->addLayer(layer);
 
 	//*/
 	static const wchar_t assetName[] = L"../Assets/terminal/terminal_blender.dae";

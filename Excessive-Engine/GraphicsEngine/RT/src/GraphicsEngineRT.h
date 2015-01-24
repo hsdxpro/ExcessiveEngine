@@ -29,13 +29,16 @@ public:
 
 	// create stuff
 	graphics::IScene*	createScene() override;
-	void				deleteScene(graphics::IScene* scene) override;
-
 	graphics::IMesh*	 createMesh() override;
 	graphics::IMaterial* createMaterial() override;
 	graphics::ITexture*  createTexture() override;
-
 	Camera* createCam() override;
+
+	void addLayer(const Layer& layer) override;
+	void removeLayer(size_t index) override;
+	size_t getNumLayers() const override;
+	void setNumLayers(size_t num_layers) override;
+	Layer& getLayer(size_t index) override;
 
 	// state
 	void setResolution(u32 width, u32 height) override {}
