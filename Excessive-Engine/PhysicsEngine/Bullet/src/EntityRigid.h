@@ -10,8 +10,10 @@ public:
 	EntityRigid(btRigidBody* body);
 
 	void setPos(const mm::vec3& p) override;
+	void setRot(const mm::quat& r) override;
 
 	mm::vec3 getPos() override;
+	mm::quat getRot() override;
 
 	btRigidBody* getBody() { return body;  }
 
