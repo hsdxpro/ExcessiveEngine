@@ -9,7 +9,9 @@ class AlignedAllocator : public std::allocator< t >
 {
     AlignedAllocator& operator=( const AlignedAllocator& ); //no assignment
 
-    static_assert( alignment > 1, "only works if alignment > 1, else use regular heap allocator (malloc)" );
+    static_assert( alignment >= 1, "only works if alignment >= 1" );
+    static_assert( alignment <= 128, "only works if alignment <= 128" );
+    static_assert( !(alignment & (alignment - 1)), "only works if alignment is power of 2" );
 
   public:
     template< class u >
@@ -42,9 +44,11 @@ class AlignedAllocator : public std::allocator< t >
       u32 misalignment = unaligned_address & mask;
       u32 adjustment = alignment - misalignment;
 
+      ASSERT(adjustment < 256);
+
       u32 aligned_address = unaligned_address + adjustment;
 
-      u32* adjustment_ptr = (u32*)(aligned_address - 4);
+      u8* adjustment_ptr = (u8*)(aligned_address) - 1;
       *adjustment_ptr = adjustment;
 
       return static_cast<typename std::allocator<t>::pointer>( (void*)aligned_address );
@@ -53,7 +57,7 @@ class AlignedAllocator : public std::allocator< t >
     void deallocate( typename std::allocator<t>::pointer p, typename std::allocator<t>::size_type n )
     {
       u32 aligned_address = (u32)p;
-      u32* adjustment_ptr = (u32*)(aligned_address - 4);
+      u8* adjustment_ptr = (u8*)(aligned_address) - 1;
       u32 adjustment = *adjustment_ptr;
       u32 unaligned_address = aligned_address - adjustment;
 
