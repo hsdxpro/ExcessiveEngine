@@ -16,6 +16,7 @@
 #include "AlignedAllocator.h"
 #include "LinearAllocator.h"
 #include "StackAllocator.h"
+#include "PoolAllocator.h"
 
 #include "json/json.h"
 
@@ -108,7 +109,7 @@ int CommonTest()
   u32 mod = (u32)ptr % 4;
 
   LinearAllocator linall( (char*)base_ptr, base_size );
-  u32 stack_size = 256 * 1024 * 1024;
+  u32 stack_size = 128 * 1024 * 1024;
   void* stack_mem = linall.alloc( stack_size ); //allocate 256 mb of memory for the stack
 
   StackAllocator<16> stack( (char*)stack_mem, stack_size );
@@ -123,6 +124,17 @@ int CommonTest()
   stack.freeToMarker( mark );
 
   stack.clear();
+
+  void* pool_mem = linall.alloc( stack_size );
+  PoolAllocator<u32> pa( (char*)pool_mem, stack_size );
+
+  u32* unsigned_int1 = pa.alloc();
+  u32* unsigned_int2 = pa.alloc();
+  u32* unsigned_int3 = pa.alloc();
+  u32* unsigned_int4 = pa.alloc();
+
+  pa.free( unsigned_int3 );
+  pa.free( unsigned_int4 );
 
   json_example();
 
