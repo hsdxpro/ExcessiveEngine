@@ -17,6 +17,7 @@
 #include "LinearAllocator.h"
 #include "StackAllocator.h"
 #include "PoolAllocator.h"
+#include "DoubleEndedStackAllocator.h"
 
 #include "json/json.h"
 
@@ -135,6 +136,21 @@ int CommonTest()
 
   pa.free( unsigned_int3 );
   pa.free( unsigned_int4 );
+
+  void* destack_mem = linall.alloc( stack_size );
+  DoubleEndedStackAllocator<16> destack( (char*)destack_mem, stack_size );
+
+  void* demem = destack.allocTop( 255 ); //allocate 256 bytes
+  marker mark2 = stack.getMarker();
+  destack.allocTop( 254 );
+  destack.allocTop( 253 );
+  destack.allocBottom( 252 );
+  destack.allocBottom( 239 );
+
+  destack.freeToMarkerTop( mark2 );
+
+  destack.clearTop();
+  destack.clearBottom();
 
   json_example();
 

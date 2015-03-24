@@ -16,7 +16,7 @@ class StackAllocator
 
     u32 getAligned( u32 s )
     {
-		return s + (alignment - s % alignment);
+		  return s + (alignment - s % alignment);
     }
 
   public:
