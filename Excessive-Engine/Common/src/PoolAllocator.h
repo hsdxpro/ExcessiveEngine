@@ -14,6 +14,7 @@ class PoolAllocator
   static_assert( sizeof(t) >= sizeof(u32), "Element size must be at least 4 bytes" );
 
   public:
+  PoolAllocator() : pool(0), size(0) {}
   PoolAllocator( char* p, u32 s ) : pool(p), size(s)
   {
     first_free_element = 0;
@@ -26,6 +27,7 @@ class PoolAllocator
 
   t* alloc()
   {
+    ASSERT(pool && size > 0);
     u32 next = *(u32*)(pool+first_free_element);
     ASSERT(next != -1);
     void* ret = pool + first_free_element;

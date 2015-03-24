@@ -15,6 +15,7 @@ class LinearAllocator
     int size;
     int offset;
   public:
+    LinearAllocator() : buffer(0), size(0), offset(0) {}
     LinearAllocator(char* b, int s) : buffer(b), size(s), offset(0)
     {
       ASSERT( (u32)b % 4 == 0 ); //only allocated memory!
@@ -22,6 +23,7 @@ class LinearAllocator
 
     void* alloc( int s )
     {
+      ASSERT( buffer && size > 0 );
       ASSERT( s % 4 == 0 ); //only aligned allocations
       void* mem_to_return = buffer + offset + s;
       offset += s;

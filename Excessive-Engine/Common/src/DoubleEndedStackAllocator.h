@@ -21,10 +21,12 @@ class DoubleEndedStackAllocator
     }
 
   public:
+    DoubleEndedStackAllocator() : stack(0), size(0), bottom(0), top(0) {}
     DoubleEndedStackAllocator( char* b, u32 s ) : stack( b ), size( s ), bottom( 0 ), top( size-size%alignment-1 ) {}
 
     void* allocBottom( u32 s )
     {
+      ASSERT( stack && size > 0 );
       ASSERT( bottom + s < size && bottom + s < top );
       u32 aligned_size = getAligned( s );
       char* mem = stack + bottom;
@@ -34,6 +36,7 @@ class DoubleEndedStackAllocator
 
     void* allocTop( u32 s )
     {
+      ASSERT( stack && size > 0 );
       ASSERT( top - s > 0 && top - s > bottom );
       u32 aligned_size = getAligned( s );
       char* mem = stack + top;

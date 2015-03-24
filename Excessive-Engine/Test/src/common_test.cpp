@@ -18,6 +18,7 @@
 #include "StackAllocator.h"
 #include "PoolAllocator.h"
 #include "DoubleEndedStackAllocator.h"
+#include "DoubleBufferedAllocator.h"
 
 #include "json/json.h"
 
@@ -104,7 +105,7 @@ int CommonTest()
   my::log << my::lock << random_type::get( 0.1, 0.9 ) << my::endl << my::unlock;
 
   AlignedAllocator<char, 16> aa;
-  u32 base_size = 512 * 1024 * 1024;
+  u32 base_size = 1024 * 1024 * 1024;
   auto base_ptr = aa.allocate( base_size );
   char* ptr = (char*)base_ptr;
   u32 mod = (u32)ptr % 4;
@@ -151,6 +152,29 @@ int CommonTest()
 
   destack.clearTop();
   destack.clearBottom();
+
+  void* da_mem = linall.alloc( stack_size );
+  DoubleBufferedAllocator<4> da((char*)da_mem, stack_size);
+ 
+  u32* prevp = (u32*)da.alloc(sizeof(u32));
+  *prevp = 0;
+
+  for(int c = 0; c < 4; ++c)
+  { //simulate 4 frames
+    da.swapBuffers();
+    da.clearCurrentBuffer();
+    //the memory from the previous frame is still intact
+
+    u32* curp = (u32*)da.alloc(sizeof(u32));
+    
+    *curp = 10 + *prevp;
+
+    //save pointer for next frame ;)
+    prevp = curp;
+  }
+
+  printf("%i\n", *prevp);
+  da.clearCurrentBuffer();
 
   json_example();
 
