@@ -17,5 +17,6 @@ add_subdirectory( GraphicsEngine )
 add_subdirectory( PhysicsEngine )
 add_subdirectory( SoundEngine )
 add_subdirectory( NetworkEngine )
+add_subdirectory( Deployment )
 
 add_subdirectory( Test )
