@@ -16,6 +16,9 @@
 #include "AlignedAllocator.h"
 #include "LinearAllocator.h"
 #include "StackAllocator.h"
+#include "PoolAllocator.h"
+#include "DoubleEndedStackAllocator.h"
+#include "DoubleBufferedAllocator.h"
 
 #include "json/json.h"
 
@@ -102,13 +105,13 @@ int CommonTest()
   my::log << my::lock << random_type::get( 0.1, 0.9 ) << my::endl << my::unlock;
 
   AlignedAllocator<char, 16> aa;
-  u32 base_size = 512 * 1024 * 1024;
+  u32 base_size = 1024 * 1024 * 1024;
   auto base_ptr = aa.allocate( base_size );
   char* ptr = (char*)base_ptr;
   u32 mod = (u32)ptr % 4;
 
   LinearAllocator linall( (char*)base_ptr, base_size );
-  u32 stack_size = 256 * 1024 * 1024;
+  u32 stack_size = 128 * 1024 * 1024;
   void* stack_mem = linall.alloc( stack_size ); //allocate 256 mb of memory for the stack
 
   StackAllocator<16> stack( (char*)stack_mem, stack_size );
@@ -124,12 +127,61 @@ int CommonTest()
 
   stack.clear();
 
+  void* pool_mem = linall.alloc( stack_size );
+  PoolAllocator<u32> pa( (char*)pool_mem, stack_size );
+
+  u32* unsigned_int1 = pa.alloc();
+  u32* unsigned_int2 = pa.alloc();
+  u32* unsigned_int3 = pa.alloc();
+  u32* unsigned_int4 = pa.alloc();
+
+  pa.free( unsigned_int3 );
+  pa.free( unsigned_int4 );
+
+  void* destack_mem = linall.alloc( stack_size );
+  DoubleEndedStackAllocator<16> destack( (char*)destack_mem, stack_size );
+
+  void* demem = destack.allocTop( 255 ); //allocate 256 bytes
+  marker mark2 = stack.getMarker();
+  destack.allocTop( 254 );
+  destack.allocTop( 253 );
+  destack.allocBottom( 252 );
+  destack.allocBottom( 239 );
+
+  destack.freeToMarkerTop( mark2 );
+
+  destack.clearTop();
+  destack.clearBottom();
+
+  void* da_mem = linall.alloc( stack_size );
+  DoubleBufferedAllocator<4> da((char*)da_mem, stack_size);
+ 
+  u32* prevp = (u32*)da.alloc(sizeof(u32));
+  *prevp = 0;
+
+  for(int c = 0; c < 4; ++c)
+  { //simulate 4 frames
+    da.swapBuffers();
+    da.clearCurrentBuffer();
+    //the memory from the previous frame is still intact
+
+    u32* curp = (u32*)da.alloc(sizeof(u32));
+    
+    *curp = 10 + *prevp;
+
+    //save pointer for next frame ;)
+    prevp = curp;
+  }
+
+  printf("%i\n", *prevp);
+  da.clearCurrentBuffer();
+
   json_example();
 
 
   ////////////////////////////////////////////////////////////////////////////
   // ez itt peti cucca, töröld ki ha nagyon nem tetszik
-  cout << sizeof(std::unique_ptr<int>);
+  cout << sizeof(std::unique_ptr<int>) << endl;
 
 
   ////////////////////////////////////////////////////////////////////////////
