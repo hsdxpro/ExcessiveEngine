@@ -11,6 +11,7 @@ public:
 	Entity(graphics::IEntity* g, physics::IEntity* p);
 
 	void setPos(const mm::vec3& p);
+	void setScale(const mm::vec3& s);
 
 	graphics::IEntity*	getComponentGraphics() { return gEntity; }
 	physics::IEntity*	getComponentPhysics() { return pEntity; }

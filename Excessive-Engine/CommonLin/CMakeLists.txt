@@ -7,6 +7,6 @@ add_library( CommonLin STATIC ${sources} ${headers} )
 
 if(BUILD_EXCESSIVE_DEBUG)
 	target_link_libraries( CommonLin sfml-main-d sfml-system-d sfml-window-d sfml-graphics-d sfml-audio-d sfml-network-d)
-elseif(NOT BUILD_EXCESSIVE_DEBUG)
+else()
 	target_link_libraries( CommonLin sfml-main sfml-system sfml-window sfml-graphics sfml-audio sfml-network)
 endif()
