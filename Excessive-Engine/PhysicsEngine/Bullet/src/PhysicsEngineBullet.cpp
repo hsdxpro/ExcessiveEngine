@@ -49,20 +49,20 @@ PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d) {
 	// GImpact dispatching registering, need for some special collision variances
 	btGImpactCollisionAlgorithm::registerAlgorithm(dispatcher);
 
-	world->setGravity(btVector3(0, 0, -10));
+	world->setGravity(btVector3(0, 0, -9.81));
 
-	//world->getDispatchInfo().m_useContinuous = true;
-	world->getDispatchInfo().m_enableSPU = true;
+	world->getDispatchInfo().m_useContinuous = true;
+	world->getDispatchInfo().m_enableSPU = false;
 
-	btSoftBodyWorldInfo	softBodyWorldInfo;
-		softBodyWorldInfo.air_density = (btScalar)1.2;
-		softBodyWorldInfo.water_density = 0;
-		softBodyWorldInfo.water_offset = 0;
-		softBodyWorldInfo.water_normal = btVector3(0, 0, 1);
-		softBodyWorldInfo.m_gravity = world->getGravity();
-		softBodyWorldInfo.m_dispatcher = world->getDispatcher();
-		softBodyWorldInfo.m_broadphase = world->getBroadphase();
-		softBodyWorldInfo.m_sparsesdf.Initialize();
+	//btSoftBodyWorldInfo	softBodyWorldInfo;
+	//	softBodyWorldInfo.air_density = (btScalar)1.2;
+	//	softBodyWorldInfo.water_density = 0;
+	//	softBodyWorldInfo.water_offset = 0;
+	//	softBodyWorldInfo.water_normal = btVector3(0, 0, 1);
+	//	softBodyWorldInfo.m_gravity = world->getGravity();
+	//	softBodyWorldInfo.m_dispatcher = world->getDispatcher();
+	//	softBodyWorldInfo.m_broadphase = world->getBroadphase();
+	//	softBodyWorldInfo.m_sparsesdf.Initialize();
 }
 
 PhysicsEngineBullet::~PhysicsEngineBullet() {
@@ -73,7 +73,8 @@ void PhysicsEngineBullet::release() {
 }
 
 void PhysicsEngineBullet::update(float deltaTime) {
-	world->stepSimulation(deltaTime, 2, 1.f / 60);
+	//world->stepSimulation(deltaTime, 2, 1.f / 60);
+	world->stepSimulation(deltaTime);
 }
 
 physics::IEntity* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) {

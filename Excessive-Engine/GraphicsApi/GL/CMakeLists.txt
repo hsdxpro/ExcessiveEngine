@@ -18,7 +18,7 @@ target_link_libraries( GLGapiTest Common)
 
 # Link SFML to GraphicsApiGL
 # This is only a temporary hack, we should remove this dependency...
-#if(BUILD_EXCESSIVE_DEBUG)
+#if(DEBUG_BUILD)
 #	target_link_libraries( GraphicsApiGL sfml-main-d sfml-system-d sfml-window-d sfml-graphics-d sfml-audio-d sfml-network-d)
 #else()
 #	target_link_libraries( GraphicsApiGL sfml-main sfml-system sfml-window sfml-graphics sfml-audio sfml-network)
