@@ -9,6 +9,7 @@ int PetiGraphics();
 int Ricsi();
 int breakpadTest();
 int physFsTest();
+int sqliteTest();
 
 const std::map<std::string, int(*)(void)> test_cases = {
 	// add you test here
@@ -18,4 +19,5 @@ const std::map<std::string, int(*)(void)> test_cases = {
 		{"ricsi",				Ricsi },
     {"breakpad_test",				breakpadTest },
 		{"physfs_test",				physFsTest },
+		{"sqlite_test",				sqliteTest },
 };

@@ -16,6 +16,7 @@ if(DEBUG_BUILD)
   crash_generation_clientd
   commond )
   target_link_libraries( Test physfs-d )
+  target_link_libraries( Test sqlite-d )
 else()
   target_link_libraries( Test jsoncpp )
   target_link_libraries( Test
@@ -24,6 +25,7 @@ else()
   crash_generation_client
   common )
   target_link_libraries( Test physfs )
+  target_link_libraries( Test sqlite )
 endif()
 
 target_link_libraries( Test Common )
