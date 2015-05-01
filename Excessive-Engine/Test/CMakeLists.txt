@@ -7,7 +7,7 @@ include_directories("../Deployment/src/breakpad")
 include_directories("../Common/src")
 include_directories("../GraphicsEngine_Interface/interface")
 add_executable( Test ${sources} ${headers} )
-target_link_libraries( Test json_vc71_libmtd )
+target_link_libraries( Test jsoncpp-d )
 target_link_libraries( Test Common )
 target_link_libraries( Test
 exception_handlerd
