@@ -18,7 +18,7 @@ else()
 	add_library( PhysicsEngineBullet STATIC ${sources} ${headers} ${interfaces} )
 endif()
 
-if(BUILD_EXCESSIVE_DEBUG)
+if(DEBUG_BUILD)
 	target_link_libraries( PhysicsEngineBullet 	Bullet3_d/Bullet3Collision_Debug 
 							Bullet3_d/Bullet3Common_Debug
 							Bullet3_d/Bullet3Dynamics_Debug

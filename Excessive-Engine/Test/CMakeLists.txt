@@ -7,11 +7,23 @@ include_directories("../Deployment/src/breakpad")
 include_directories("../Common/src")
 include_directories("../GraphicsEngine_Interface/interface")
 add_executable( Test ${sources} ${headers} )
-target_link_libraries( Test jsoncpp-d )
+
+if(DEBUG_BUILD)
+  target_link_libraries( Test jsoncpp-d )
+  target_link_libraries( Test
+  exception_handlerd
+  crash_generation_serverd
+  crash_generation_clientd
+  commond )
+  target_link_libraries( Test physfs-d )
+else()
+  target_link_libraries( Test jsoncpp )
+  target_link_libraries( Test
+  exception_handler
+  crash_generation_server
+  crash_generation_client
+  common )
+  target_link_libraries( Test physfs )
+endif()
+
 target_link_libraries( Test Common )
-target_link_libraries( Test
-exception_handlerd
-crash_generation_serverd
-crash_generation_clientd
-commond )
-target_link_libraries( Test debug physfs-d optimized physfs )
