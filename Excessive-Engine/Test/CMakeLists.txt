@@ -14,3 +14,4 @@ exception_handlerd
 crash_generation_serverd
 crash_generation_clientd
 commond )
+target_link_libraries( Test debug physfs-d optimized physfs )
