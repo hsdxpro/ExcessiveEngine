@@ -14,16 +14,18 @@ class ICamera;
 class IScene
 {
 public:
-	virtual IEntity* createEntity() = 0;
-	virtual ILight* createLight() = 0;
-	virtual void erase(IEntity* entity) = 0;
-	virtual void erase(ILight* light) = 0;
+	virtual void release() = 0;
+
+	virtual IEntity* addEntity() = 0;
+	virtual ILight* addLight() = 0;
+	virtual void remove(IEntity* entity) = 0;
+	virtual void remove(ILight* light) = 0;
 
 	virtual void clear() = 0;	
 
-	virtual void setCam(ICamera* c) = 0;
+	virtual void setCamera(ICamera* c) = 0;
 
-	virtual ICamera* getCam() = 0;
+	virtual ICamera* getCamera() = 0;
 };
 
 

@@ -14,24 +14,27 @@ Scene::~Scene() {
 	clear();
 }
 
+void Scene::release() {
+	delete this;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // scene content add/erase
 
-Entity* Scene::createEntity() {
+Entity* Scene::addEntity() {
 	Entity* e = new Entity;
 	entities.insert(e);
 	return e;
 }
 
-Light* Scene::createLight() {
+Light* Scene::addLight() {
 	Light* l = new Light;
 	lights.insert(l);
 	return l;
 }
 
 
-void Scene::erase(graphics::IEntity* entity) {
+void Scene::remove(graphics::IEntity* entity) {
 	auto it = entities.find((Entity*)entity);
 	if (it != entities.end()) {
 		delete *it;
@@ -39,7 +42,7 @@ void Scene::erase(graphics::IEntity* entity) {
 	}
 }
 
-void Scene::erase(graphics::ILight* light) {
+void Scene::remove(graphics::ILight* light) {
 	auto it = lights.find((Light*)light);
 	if (it != lights.end()) {
 		delete *it;
@@ -60,11 +63,11 @@ void Scene::clear()
 	lights.clear();
 }
 
-void Scene::setCam(graphics::ICamera* c) {
+void Scene::setCamera(graphics::ICamera* c) {
 	cam = c;
 }
 
-graphics::ICamera* Scene::getCam() {
+graphics::ICamera* Scene::getCamera() {
 	return cam;
 }
 

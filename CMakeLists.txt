@@ -13,9 +13,7 @@ OPTION(BUILD_EXCESSIVE_DEBUG "BUILD_EXCESSIVE_DEBUG" ON)
 
 if(BUILD_EXCESSIVE_WITH_DLL)
 	add_definitions( -DBUILD_DLL )
-endif()
-
-if( NOT BUILD_EXCESSIVE_WITH_DLL)
+else()
 	add_definitions( -DBUILD_STATIC )
 endif()
 
@@ -29,7 +27,7 @@ endif()
 
 if(BUILD_EXCESSIVE_DEBUG)
 	set(BUILD_CONFIG_LIST_DEBUG 	D_32) #D_64
-elseif(NOT BUILD_EXCESSIVE_DEBUG)
+else()
 	set(BUILD_CONFIG_LIST_RELEASE 	R_32) #R_64
 endif()
 

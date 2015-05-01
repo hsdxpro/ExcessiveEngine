@@ -8,6 +8,11 @@ template< class t, std::size_t alignment = 16 >
 class AlignedAllocator : public std::allocator< t >
 {
     AlignedAllocator& operator=( const AlignedAllocator& ); //no assignment
+
+    static_assert( alignment >= 1, "only works if alignment >= 1" );
+    static_assert( alignment <= 128, "only works if alignment <= 128" );
+    static_assert( !(alignment & (alignment - 1)), "only works if alignment is power of 2" );
+
   public:
     template< class u >
     struct rebind
@@ -27,31 +32,36 @@ class AlignedAllocator : public std::allocator< t >
         throw std::length_error( "aligned_allocator<t>::allocate() - Integer overflow." );
       }
 
-#ifdef WIN_BUILD
-      void* pv = _aligned_malloc( n * sizeof( typename std::allocator<t>::value_type ), alignment );
-#else
-      void* pv = 0;
-
-      if( posix_memalign( &pv, alignment, n * sizeof( typename std::allocator<t>::value_type ) ) )
-        pv = 0;
-
-#endif
-
-      if( !pv )
+      u32 extended_size = n * sizeof( typename std::allocator<t>::value_type ) + alignment;
+      u32 unaligned_address = (u32)malloc(extended_size); //use whatever unaligned allocator is available
+      
+      if( !unaligned_address )
       {
         throw std::bad_alloc();
       }
 
-      return static_cast<typename std::allocator<t>::pointer>( pv );
+      u32 mask = alignment - 1;
+      u32 misalignment = unaligned_address & mask;
+      u32 adjustment = alignment - misalignment;
+
+      ASSERT(adjustment < 256);
+
+      u32 aligned_address = unaligned_address + adjustment;
+
+      u8* adjustment_ptr = (u8*)(aligned_address) - 1;
+      *adjustment_ptr = adjustment;
+
+      return static_cast<typename std::allocator<t>::pointer>( (void*)aligned_address );
     }
 
     void deallocate( typename std::allocator<t>::pointer p, typename std::allocator<t>::size_type n )
     {
-#ifdef WIN_BUILD
-      _aligned_free( p );
-#else
-      free( p );
-#endif
+      u32 aligned_address = (u32)p;
+      u8* adjustment_ptr = (u8*)(aligned_address) - 1;
+      u32 adjustment = *adjustment_ptr;
+      u32 unaligned_address = aligned_address - adjustment;
+
+      free((void*)unaligned_address);
     }
 };
 

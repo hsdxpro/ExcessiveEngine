@@ -101,7 +101,7 @@ Entity* EngineCore::addEntity(graphics::IScene* gScene, const std::wstring& mode
 	//// --------------- GRAPHICS PART OF ENTITY ------------------------------/////
 
 	// We will feed meshes to that graphics entity
-	graphics::IEntity* gEntity = gScene->createEntity();
+	graphics::IEntity* gEntity = gScene->addEntity();
 	if (modelPath.substr(modelPath.find_last_of(L'/') + 1) == L"skybox.dae") {
 		gEntity->setScale(mm::vec3(1000, 1000, 1000));
 	}

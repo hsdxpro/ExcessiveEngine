@@ -12,18 +12,19 @@ public:
 	// ctor, dtor, 
 	Scene();
 	~Scene();
+	void release() override;
 
 	// scene content creation
-	graphics::Entity* createEntity() override;
-	Light* createLight() override;
-	void erase(graphics::IEntity* entity) override;
-	void erase(graphics::ILight* light) override;
+	graphics::Entity* addEntity() override;
+	Light* addLight() override;
+	void remove(graphics::IEntity* entity) override;
+	void remove(graphics::ILight* light) override;
 
 	void clear() override;
 
-	void setCam(graphics::ICamera* c) override;
+	void setCamera(graphics::ICamera* c) override;
 
-	graphics::ICamera* getCam() override;
+	graphics::ICamera* getCamera() override;
 
 	// access content
 	const std::unordered_set<graphics::Entity*>& getEntities();

@@ -82,6 +82,7 @@ static const char pixelShaderCode[] =
 //"else { \n"
 //"	color = pscd.diffuse; \n"
 //"} \n"
+"	if (color.a < 0.5f) discard; \n"
 "   color = color*t*intensity*sun_color + color*(1-t)*sky_color;\n"
 "} \n"
 ;
@@ -129,12 +130,7 @@ GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRaster& d) {
 }
 
 GraphicsEngineRaster::~GraphicsEngineRaster() {
-	for (auto scene : scenes) {
-		delete scene;
-	}
-	/*
-	meshes and materials should be freed externally
-	*/
+
 }
 
 
@@ -147,16 +143,7 @@ void GraphicsEngineRaster::release() {
 // create stuff
 Scene* GraphicsEngineRaster::createScene() {
 	Scene* s = new Scene;
-	scenes.insert(s);
 	return s;
-}
-
-void GraphicsEngineRaster::deleteScene(graphics::IScene* scene) {
-	auto it = scenes.find((Scene*)scene);
-	if (it != scenes.end()) {
-		delete *it;
-		scenes.erase(it);
-	}
 }
 
 Mesh* GraphicsEngineRaster::createMesh() {
@@ -173,6 +160,32 @@ Texture* GraphicsEngineRaster::createTexture() {
 
 Camera* GraphicsEngineRaster::createCam() {
 	return new Camera();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// scene system
+
+void GraphicsEngineRaster::addLayer(const Layer& layer) {
+	layers.push_back(layer);
+}
+
+void GraphicsEngineRaster::removeLayer(size_t index) {
+	assert(index < getNumLayers());
+	layers.erase(layers.begin() + index);
+}
+
+size_t GraphicsEngineRaster::getNumLayers() const {
+	return layers.size();
+}
+
+void GraphicsEngineRaster::setNumLayers(size_t num_layers) {
+	layers.resize(num_layers);
+}
+
+auto GraphicsEngineRaster::getLayer(size_t index) -> Layer& {
+	assert(index < getNumLayers());
+	return layers[index];
 }
 
 
@@ -207,13 +220,13 @@ void GraphicsEngineRaster::update(float deltaTime) {
 	// ok, this function is only for testing purposes, it's not a real renderer xD	
 	// just render the first scene, entity by entity
 
-	if (scenes.empty()) {
+	if (layers.empty() || !layers.begin()->scene) {
 		cout << "No scene were found :(" << endl;
 		return;
 	}
 
 	// get entities and lights
-	Scene& scene = **scenes.begin();
+	Scene& scene = *((Scene*)layers.begin()->scene);
 	
 	auto entities = scene.getEntities();
 	auto lights = scene.getLights();
@@ -310,13 +323,13 @@ void GraphicsEngineRaster::update(float deltaTime) {
 		// set stuff
 		gapi->setShaderProgram(shader);
 		gapi->setRenderTargets(0, 0);
-		
+
 		mm::mat4 prs =
 			mm::create_translation(entity->getPos())
-			*mm::create_scale(entity->getScale())
-			*mm::mat4(entity->getRot());
+			*mm::mat4(entity->getRot())
+			*mm::create_scale(entity->getScale());
 
-		mm::mat4 wvp = scene.getCam()->getProjMatrix() * scene.getCam()->getViewMatrix() * prs;
+		mm::mat4 wvp = scene.getCamera()->getProjMatrix() * scene.getCamera()->getViewMatrix() * prs;
 
 		rBuffer ubo_alloc_data;
 			ubo_alloc_data.is_persistent = false;

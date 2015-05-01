@@ -16,14 +16,16 @@ class StackAllocator
 
     u32 getAligned( u32 s )
     {
-		return s + (alignment - s % alignment);
+		  return s + (alignment - s % alignment);
     }
 
   public:
+    StackAllocator() : stack(0), size(0), top(0) {}
     StackAllocator( char* b, u32 s ) : stack( b ), size( s ), top( 0 ) {}
 
     void* alloc( u32 s )
     {
+      ASSERT( stack && size > 0 );
       ASSERT( top + s < size );
       u32 aligned_size = getAligned( s );
       char* mem = stack + top;

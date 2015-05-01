@@ -44,9 +44,6 @@ graphics::IScene* GraphicsEngineRT::createScene() {
 	return 0;
 }
 
-void GraphicsEngineRT::deleteScene(graphics::IScene* scene) {
-}
-
 graphics::IMesh* GraphicsEngineRT::createMesh() {
 	return nullptr;
 }
@@ -67,4 +64,26 @@ Camera* GraphicsEngineRT::createCam() {
 // update
 void GraphicsEngineRT::update(float deltaTime) {
 	
+}
+
+
+
+
+
+void GraphicsEngineRT::addLayer(const Layer& layer) {
+}
+
+void GraphicsEngineRT::removeLayer(size_t index) {
+}
+
+size_t GraphicsEngineRT::getNumLayers() const {
+	return 0;
+}
+
+void GraphicsEngineRT::setNumLayers(size_t num_layers) {
+}
+
+auto GraphicsEngineRT::getLayer(size_t index) -> Layer& {
+	static Layer l;
+	return l;
 }
