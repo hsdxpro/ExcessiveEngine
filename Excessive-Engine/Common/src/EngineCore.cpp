@@ -96,7 +96,7 @@ Entity* EngineCore::addEntity(graphics::IScene* gScene, const std::wstring& mode
 
 
 	// TODO: need add not set for entity, or subMeshes needed, like material -> subMaterial
-	assert(modelDesc.meshes.size() >= 1);
+	assert(modelDesc.meshes.size() <= 1);
 
 	//// --------------- GRAPHICS PART OF ENTITY ------------------------------/////
 

@@ -52,8 +52,7 @@ int Ricsi() {
 	gEngine->addLayer(layer);
 
 	//*/
-	static const wchar_t assetName[] = L"../Assets/Terminal/terminal_blender.dae";
-//	static const wchar_t assetName[] = L"../Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
+	static const wchar_t assetName[] = L"../Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
 	static const wchar_t teapotModelPath[] = L"../Assets/box.dae"; // Assets/teapot.dae
 	/*/
 	static const wchar_t assetName[] = L"../Assets/teapot.dae";
@@ -109,7 +108,7 @@ int Ricsi() {
 				else if (ev.mouseBtn == eMouseBtn::LEFT) {
 					Entity* e = core.addEntity(scene, Sys::getWorkDir() + teapotModelPath, 10);
 					e->setPos(cam->getPos());
-					e->setScale({ 1.f / 20,  1.f/20, 1.f / 20 });
+					e->setScale({ 0.1f, 0.1f, 0.1f });
 				}
 				break;
 			case eWindowMsg::MOUSE_RELEASE:
