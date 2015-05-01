@@ -5,5 +5,10 @@ FILE( GLOB_RECURSE headers src/*.h* )
 
 include_directories("../Common/src")
 add_executable( Deployment ${sources} ${headers} )
-target_link_libraries( Deployment json_vc71_libmtd )
 target_link_libraries( Deployment Common )
+
+if(DEBUG_BUILD)
+  target_link_libraries( Deployment jsoncpp-d )
+else()
+  target_link_libraries( Deployment jsoncpp )
+endif()

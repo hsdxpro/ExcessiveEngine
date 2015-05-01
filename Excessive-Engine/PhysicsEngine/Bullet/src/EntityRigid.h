@@ -11,9 +11,11 @@ public:
 
 	void setPos(const mm::vec3& p) override;
 	void setRot(const mm::quat& r) override;
+	void setScale(const mm::vec3& s) override;
 
 	mm::vec3 getPos() override;
 	mm::quat getRot() override;
+	mm::vec3 getScale() override;
 
 	btRigidBody* getBody() { return body;  }
 

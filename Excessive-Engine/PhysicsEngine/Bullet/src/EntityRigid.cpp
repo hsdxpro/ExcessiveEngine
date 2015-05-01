@@ -1,6 +1,7 @@
 #include "EntityRigid.h"
 
 #include "BulletDynamics/Dynamics/btRigidBody.h"
+#include "BulletCollision/CollisionShapes/btCollisionShape.h"
 
 EntityRigid::EntityRigid(btRigidBody* body) 
 :body(body) {
@@ -25,7 +26,16 @@ void EntityRigid::setRot(const mm::quat& r)
 	body->getMotionState()->setWorldTransform(trans);
 }
 
-mm::vec3 EntityRigid::getPos() {
+void EntityRigid::setScale(const mm::vec3& s)
+{
+	btCollisionShape* shape = body->getCollisionShape();
+
+	if (shape)
+		shape->setLocalScaling(btVector3(s.x, s.y, s.z));
+}
+
+mm::vec3 EntityRigid::getPos() 
+{
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
 	
@@ -33,7 +43,8 @@ mm::vec3 EntityRigid::getPos() {
 	return mm::vec3(vec.x(), vec.y(), vec.z());
 }
 
-mm::quat EntityRigid::getRot() {
+mm::quat EntityRigid::getRot() 
+{
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
 
@@ -44,4 +55,16 @@ mm::quat EntityRigid::getRot() {
 		rot.value.z = btRot.z();
 		rot.value.w = btRot.w();
 	return rot;
+}
+
+mm::vec3 EntityRigid::getScale()
+{
+	btCollisionShape* shape = body->getCollisionShape();
+
+	if (shape)
+	{
+		const btVector3& scale = shape->getLocalScaling();
+		return mm::vec3(scale.x(), scale.y(), scale.z());
+	}
+	return mm::vec3(0, 0, 0);
 }

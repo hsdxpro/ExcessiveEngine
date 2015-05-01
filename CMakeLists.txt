@@ -3,19 +3,16 @@ message( "-root" )
 cmake_minimum_required( VERSION 2.6 )
 
 set( project_name Excessive-Team )
-set( DEBUG_BUILD true )
 set( ARCH_32BIT true )
 set( CMAKE_VERBOSE_MAKEFILE ON )
 
 OPTION(BUILD_EXCESSIVE_WITH_DLL "BUILD_EXCESSIVE_WITH_DLL" ON)
-OPTION(BUILD_EXCESSIVE_DEBUG "BUILD_EXCESSIVE_DEBUG" ON)
+OPTION(DEBUG_BUILD "DEBUG_BUILD" ON)
 
 
 if(BUILD_EXCESSIVE_WITH_DLL)
 	add_definitions( -DBUILD_DLL )
-endif()
-
-if( NOT BUILD_EXCESSIVE_WITH_DLL)
+else()
 	add_definitions( -DBUILD_STATIC )
 endif()
 
@@ -27,9 +24,9 @@ elseif(APPLE)
 	add_definitions( -DMAC )
 endif()
 
-if(BUILD_EXCESSIVE_DEBUG)
+if(DEBUG_BUILD)
 	set(BUILD_CONFIG_LIST_DEBUG 	D_32) #D_64
-elseif(NOT BUILD_EXCESSIVE_DEBUG)
+else()
 	set(BUILD_CONFIG_LIST_RELEASE 	R_32) #R_64
 endif()
 

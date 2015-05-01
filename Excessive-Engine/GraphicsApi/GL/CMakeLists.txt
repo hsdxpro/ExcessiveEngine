@@ -6,7 +6,7 @@ FILE( GLOB_RECURSE interfaces ../Interfaces/*)
 
 if(BUILD_EXCESSIVE_WITH_DLL)
 	add_library( GraphicsApiGL SHARED ${sources} ${headers} ${interfaces} )
-elseif( NOT BUILD_EXCESSIVE_WITH_DLL)
+else()
 	add_library( GraphicsApiGL STATIC ${sources} ${headers} ${interfaces} )
 endif()
 
@@ -18,8 +18,8 @@ target_link_libraries( GLGapiTest Common)
 
 # Link SFML to GraphicsApiGL
 # This is only a temporary hack, we should remove this dependency...
-#if(BUILD_EXCESSIVE_DEBUG)
+#if(DEBUG_BUILD)
 #	target_link_libraries( GraphicsApiGL sfml-main-d sfml-system-d sfml-window-d sfml-graphics-d sfml-audio-d sfml-network-d)
-#elseif(NOT BUILD_EXCESSIVE_DEBUG)
+#else()
 #	target_link_libraries( GraphicsApiGL sfml-main sfml-system sfml-window sfml-graphics sfml-audio sfml-network)
 #endif()

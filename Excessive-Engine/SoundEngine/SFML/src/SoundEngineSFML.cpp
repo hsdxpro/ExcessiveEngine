@@ -16,7 +16,7 @@ using namespace std;
 
 extern "C"
 EXPORT sound::IEngine* CreateSoundEngine(const rSoundEngine& d) {
-	return new SoundEngineSFML(d);
+	return nullptr;// new SoundEngineSFML(d);
 }
 
 SoundEngineSFML::SoundEngineSFML(const rSoundEngine& d) {

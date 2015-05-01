@@ -8,6 +8,7 @@ int CommonTest();
 int PetiGraphics();
 int Ricsi();
 int breakpadTest();
+int physFsTest();
 
 const std::map<std::string, int(*)(void)> test_cases = {
 	// add you test here
@@ -16,4 +17,5 @@ const std::map<std::string, int(*)(void)> test_cases = {
 		{"common_test",			CommonTest},
 		{"ricsi",				Ricsi },
     {"breakpad_test",				breakpadTest },
+		{"physfs_test",				physFsTest },
 };
