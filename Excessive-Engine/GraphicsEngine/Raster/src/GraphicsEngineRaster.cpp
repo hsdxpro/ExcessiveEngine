@@ -82,6 +82,7 @@ static const char pixelShaderCode[] =
 //"else { \n"
 //"	color = pscd.diffuse; \n"
 //"} \n"
+"	if (color.a < 0.5f) discard; \n"
 "   color = color*t*intensity*sun_color + color*(1-t)*sky_color;\n"
 "} \n"
 ;
