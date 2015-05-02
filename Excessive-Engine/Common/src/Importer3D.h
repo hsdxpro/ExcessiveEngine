@@ -65,24 +65,31 @@ enum class eImporter3DFlag : u32 {
 	VERT_ATTR_TEX0,
 	VERT_INTERLEAVED,
 	VERT_NON_INTERLEAVED,
+	PIVOT_RECENTER,
 	COUNT,
 };
 
 // Configuring importer for importing, for example u dont want tangent for output meshes
-struct rImporter3DCfg {
-		rImporter3DCfg() {	// Default importing all attributes in interleaved form
-			flags.resize(6);
-			flags[0] = eImporter3DFlag::VERT_ATTR_POS;
-				flags[1] = eImporter3DFlag::VERT_ATTR_NORM;
-				flags[2] = eImporter3DFlag::VERT_ATTR_TAN;
-				flags[3] = eImporter3DFlag::VERT_ATTR_BITAN;
-				flags[4] = eImporter3DFlag::VERT_ATTR_TEX0;
-				flags[5] = eImporter3DFlag::VERT_INTERLEAVED;
-		}
+struct rImporter3DCfg 
+{
+	rImporter3DCfg() 
+	{	
+		// Default importing all attributes in interleaved form
+		flags.resize(6);
+		flags[0] = eImporter3DFlag::VERT_ATTR_POS;
+		flags[1] = eImporter3DFlag::VERT_ATTR_NORM;
+		flags[2] = eImporter3DFlag::VERT_ATTR_TAN;
+		flags[3] = eImporter3DFlag::VERT_ATTR_BITAN;
+		flags[4] = eImporter3DFlag::VERT_ATTR_TEX0;
+		flags[5] = eImporter3DFlag::VERT_INTERLEAVED;
+	}
 
-		rImporter3DCfg(const std::vector<eImporter3DFlag>& flags) :flags(flags){}
+	rImporter3DCfg(const std::vector<eImporter3DFlag>& flags)
+	:flags(flags)
+	{}
 
-	bool isContain(eImporter3DFlag f) {
+	bool isContain(eImporter3DFlag f) const
+	{
 		for (auto& a : flags)
 			if (a == f)
 				return true;

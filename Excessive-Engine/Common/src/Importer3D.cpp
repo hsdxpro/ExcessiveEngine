@@ -48,7 +48,8 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 	// Get indexCount, vertexCount, Gather matGroups from meshes
 	std::vector<u32> matIDs;
 	matIDs.resize(nMeshes);
-	for (size_t i = 0; i < nMeshes; i++) {
+	for (size_t i = 0; i < nMeshes; i++) 
+	{
 		matIDs[i] = nIndices / 3;
 
 		// VB, IB
@@ -65,8 +66,10 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 	u32 tex0_attribOffset;
 
 	u32 offset = 0;
-	for (auto f : cfg.flags) {
-		switch (f) {
+	for (auto f : cfg.flags) 
+	{
+		switch (f) 
+		{
 		case eImporter3DFlag::VERT_ATTR_POS:	vertexSize += sizeof(mm::vec3); pos_attribOffset	= offset; offset += sizeof(mm::vec3); break;
 		case eImporter3DFlag::VERT_ATTR_NORM:	vertexSize += sizeof(mm::vec3); norm_attribOffset	= offset; offset += sizeof(mm::vec3); break;
 		case eImporter3DFlag::VERT_ATTR_TAN:	vertexSize += sizeof(mm::vec3); tan_attribOffset	= offset; offset += sizeof(mm::vec3); break;
@@ -90,7 +93,8 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 		mesh_out.materials.resize(nMeshes);
 
 	// Each mesh
-	for (size_t i = 0; i < nMeshes; i++) {
+	for (size_t i = 0; i < nMeshes; i++)
+	{
 		aiMesh* mesh = meshes[i];
 
 		// Get mesh material infos
@@ -100,7 +104,8 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 
 		// Get Diffuse texture path
 		aiString diffusePath;
-		if (aiReturn_SUCCESS == scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &diffusePath)) {
+		if (aiReturn_SUCCESS == scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &diffusePath)) 
+		{
 			wchar_t unicodePath[256];
 			size_t nConvertedChar;
 			mbstowcs_s(&nConvertedChar, unicodePath, diffusePath.C_Str(), 256);
@@ -115,7 +120,8 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 
 		// Get Normal texture path
 		aiString normalPath;
-		if (aiReturn_SUCCESS == scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_NORMALS, 0, &normalPath)) {
+		if (aiReturn_SUCCESS == scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_NORMALS, 0, &normalPath)) 
+		{
 			wchar_t unicodePath[256];
 			size_t nConvertedChar;
 			mbstowcs_s(&nConvertedChar, unicodePath, normalPath.C_Str(), 256);
@@ -128,11 +134,13 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 		}
 
 		// Each face
-		for (size_t j = 0; j < mesh->mNumFaces; globalIndicesIdx += 3, j++) {
+		for (size_t j = 0; j < mesh->mNumFaces; globalIndicesIdx += 3, j++) 
+		{
 			aiFace& face = mesh->mFaces[j];
 
 			// Each vertex on face
-			for (size_t k = 0; k < 3; k++) {
+			for (size_t k = 0; k < 3; k++) 
+			{
 
 				unsigned localVertIdx = face.mIndices[k];
 
@@ -140,7 +148,8 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 				indices[globalIndicesIdx + k] = localVertIdx + globalVertexIdx;
 
 				// Vertex Data
-				if (mesh->HasPositions()) {
+				if (mesh->HasPositions()) 
+				{
 					// Pos to gather
 					const aiVector3D& pos = mesh->mVertices[localVertIdx];
 					
@@ -151,7 +160,8 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 					memcpy(((u8*)vertices) + vertexSize * vertexIdx + pos_attribOffset, &mm::vec3(pos.x, pos.y, pos.z), sizeof(mm::vec3));
 				}
 
-				if (mesh->HasNormals()) {
+				if (mesh->HasNormals()) 
+				{
 					// Pos to gather
 					const aiVector3D& normal = mesh->mNormals[localVertIdx];
 
@@ -169,7 +179,8 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 
 				// @TODO not general algorithm, wee need to handle more UV channels
 				auto vecPtr = mesh->mTextureCoords[0];
-				if (vecPtr) {
+				if (vecPtr) 
+				{
 					// Pos to gather
 					const aiVector3D& tex0 = vecPtr[localVertIdx];
 
@@ -182,6 +193,24 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 			}
 		}
 		globalVertexIdx += mesh->mNumVertices;
+	}
+
+	// If requested, recenter pivot
+	if (cfg.isContain(eImporter3DFlag::PIVOT_RECENTER))
+	{
+		mm::vec3 avgCenter(0, 0, 0);
+		for (u32 i = 0; i < nVertices; i++)
+		{
+			mm::vec3* pos = (mm::vec3*)(((u8*)vertices) + i * vertexSize);
+			avgCenter += *pos;
+		}
+		avgCenter /= nVertices;
+
+		for (u32 i = 0; i < nVertices; i++)
+		{
+			mm::vec3* pos = (mm::vec3*)(((u8*)vertices) + i * vertexSize);
+			*pos -= avgCenter;
+		}
 	}
 
 	mesh_out.indices = indices;

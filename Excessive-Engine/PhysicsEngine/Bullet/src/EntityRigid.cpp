@@ -28,10 +28,21 @@ void EntityRigid::setRot(const mm::quat& r)
 
 void EntityRigid::setScale(const mm::vec3& s)
 {
-	btCollisionShape* shape = body->getCollisionShape();
+	btCollisionShape* colShape = body->getCollisionShape();
 
-	if (shape)
-		shape->setLocalScaling(btVector3(s.x, s.y, s.z));
+	if (colShape)
+	{
+		colShape->setLocalScaling(btVector3(s.x, s.y, s.z));
+		
+		// I think it's needed
+		btVector3 localInertia(0, 0, 0);
+		float mass = 1.f / body->getInvMass();
+		if (mass != 0)
+			colShape->calculateLocalInertia(mass, localInertia);
+		
+		body->setMassProps(mass, localInertia);
+	}
+		
 }
 
 mm::vec3 EntityRigid::getPos() 

@@ -97,7 +97,8 @@ Entity* EngineCore::addEntity(graphics::IScene* gScene, const std::wstring& mode
 	rImporter3DCfg cfg({ eImporter3DFlag::VERT_INTERLEAVED,
 						 eImporter3DFlag::VERT_ATTR_POS,
 						 eImporter3DFlag::VERT_ATTR_NORM,
-						 eImporter3DFlag::VERT_ATTR_TEX0 });
+						 eImporter3DFlag::VERT_ATTR_TEX0,
+						 eImporter3DFlag::PIVOT_RECENTER });
 
 	rImporter3DData modelDesc;
 	Importer3D::loadFile(modelPath, cfg, modelDesc);
@@ -242,9 +243,11 @@ void EngineCore::update(float deltaTime, graphics::IScene* scene)
 	*/
 
 	// Okay physics updated, now time to send transformation to graphics
-	if (physicsEngine)	physicsEngine->update(deltaTime);
+	if (physicsEngine)
+		physicsEngine->update(deltaTime);
 
-	for (auto& a : entities) {
+	for (auto& a : entities) 
+	{
 		physics::IEntity* pEntity = a->getComponentPhysics();
 		graphics::IEntity* gEntity = a->getComponentGraphics();
 
@@ -255,7 +258,12 @@ void EngineCore::update(float deltaTime, graphics::IScene* scene)
 		}
 	}
 
-	if (graphicsEngine) graphicsEngine->update(deltaTime);
-	if (soundEngine)	soundEngine->update(deltaTime);
-	if (networkEngine)	networkEngine->update(deltaTime);
+	if (graphicsEngine) 
+		graphicsEngine->update(deltaTime);
+
+	if (soundEngine)
+		soundEngine->update(deltaTime);
+
+	if (networkEngine)	
+		networkEngine->update(deltaTime);
 }
