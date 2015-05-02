@@ -20,7 +20,7 @@ void EntityRigid::setRot(const mm::quat& r)
 {
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
-	trans.setRotation(btQuaternion(r.scalar(), r.vector().x, r.vector().y, r.vector().z));
+	trans.setRotation(btQuaternion(r.vector().x, r.vector().y, r.vector().z, r.scalar()));
 
 	body->setWorldTransform(trans);
 	body->getMotionState()->setWorldTransform(trans);
