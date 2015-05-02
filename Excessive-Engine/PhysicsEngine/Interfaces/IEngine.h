@@ -18,6 +18,8 @@ public:
 
 	// Create, add STATIC rigid body to physics world
 	virtual physics::IEntity* addEntityRigidStatic(mm::vec3* vertices, u32 nVertices, void* indices, u32 indexSize, u32 nIndices) = 0;
+
+	virtual void GetDebugData(mm::vec3* nonIndexedVertices, uint32_t vertsByteSize, uint32_t& nVertices) = 0;
 };
 
 } 

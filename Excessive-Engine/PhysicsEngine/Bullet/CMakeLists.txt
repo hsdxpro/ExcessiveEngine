@@ -7,7 +7,7 @@ FILE( GLOB_RECURSE sources src/*.c* )
 FILE( GLOB_RECURSE headers src/*.h* )
 FILE( GLOB_RECURSE interfaces ../Interfaces/*)
 
-include_directories("../../../Externals/include/Bullet3")
+include_directories("../../../Externals/include/Bullet3/")
 
 SOURCE_GROUP( Interfaces FILES ${interfaces})
 

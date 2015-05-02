@@ -7,6 +7,7 @@
 #include <vector>
 
 class btSoftRigidDynamicsWorld;
+class btDiscreteDynamicsWorld;
 
 struct rPhysicsEngineBullet {
 
@@ -27,8 +28,10 @@ public:
 	// Create, add STATIC rigid body to physics world
 	physics::IEntity* addEntityRigidStatic(mm::vec3* vertices, u32 nVertices, void* indices, u32 indexStride, u32 nIndices) override;
 
+	void GetDebugData(mm::vec3* nonIndexedVertices, uint32_t vertsByteSize, uint32_t& nVertices) override;
+
 private:
-	btSoftRigidDynamicsWorld* world;
+	btDiscreteDynamicsWorld* world;
 
 	std::vector<physics::IEntity*> entities;
 };

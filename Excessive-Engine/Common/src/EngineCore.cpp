@@ -36,10 +36,12 @@
 
 
 EngineCore::EngineCore() 
-:graphicsEngine(0), physicsEngine(0), soundEngine(0), networkEngine(0) {
+:graphicsEngine(0), physicsEngine(0), soundEngine(0), networkEngine(0) 
+{
 }
 
-EngineCore::~EngineCore() {
+EngineCore::~EngineCore() 
+{
 	for (auto& a : entities)
 		delete a;
 
@@ -49,42 +51,48 @@ EngineCore::~EngineCore() {
 	if (soundEngine)	soundEngine->release();
 }
 
-graphics::IEngine* EngineCore::initGraphicsEngineRaster(const rGraphicsEngineRaster& d /*= rGraphicsEngineRaster()*/) {
+graphics::IEngine* EngineCore::initGraphicsEngineRaster(const rGraphicsEngineRaster& d /*= rGraphicsEngineRaster()*/) 
+{
 	if (graphicsEngine) 
 		graphicsEngine->release(); 
 
 	return graphicsEngine = Factory::createGraphicsEngineRaster(d);
 }
 
-graphics::IEngine* EngineCore::initGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/) {
+graphics::IEngine* EngineCore::initGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/) 
+{
 	if (graphicsEngine) 
 		graphicsEngine->release(); 
 	
 	return graphicsEngine = Factory::createGraphicsEngineRT(d);
 }
 
-physics::IEngine* EngineCore::initPhysicsEngineBullet(const rPhysicsEngineBullet& d /*= rPhysicsEngineBullet()*/) {
+physics::IEngine* EngineCore::initPhysicsEngineBullet(const rPhysicsEngineBullet& d /*= rPhysicsEngineBullet()*/) 
+{
 	if (physicsEngine)
 		physicsEngine->release();
 
 	return physicsEngine = Factory::createPhysicsEngineBullet(d);
 }
 
-network::IEngine* EngineCore::initNetworkEngine(const rNetworkEngine& d /*= rNetworkEngine()*/) {
+network::IEngine* EngineCore::initNetworkEngine(const rNetworkEngine& d /*= rNetworkEngine()*/) 
+{
 	if (networkEngine)
 		networkEngine->release();
 
 	return networkEngine = Factory::createNetworkEngine(d);
 }
 
-sound::IEngine* EngineCore::initSoundEngine(const rSoundEngine& d /*= rSoundEngine()*/) {
+sound::IEngine* EngineCore::initSoundEngine(const rSoundEngine& d /*= rSoundEngine()*/) 
+{
 	if (soundEngine)
 		soundEngine->release();
 
 	return soundEngine = Factory::createSoundEngine(d);
 }
 
-Entity* EngineCore::addEntity(graphics::IScene* gScene, const std::wstring& modelPath, float mass) {
+Entity* EngineCore::addEntity(graphics::IScene* gScene, const std::wstring& modelPath, float mass) 
+{
 	// Config for importing
 	rImporter3DCfg cfg({ eImporter3DFlag::VERT_INTERLEAVED,
 						 eImporter3DFlag::VERT_ATTR_POS,
@@ -194,10 +202,47 @@ Entity* EngineCore::addEntity(graphics::IScene* gScene, const std::wstring& mode
 	return e;
 }
 
-void EngineCore::update(float deltaTime) {
-	if (physicsEngine)	physicsEngine->update(deltaTime);
+void EngineCore::update(float deltaTime, graphics::IScene* scene)
+{
+	/*
+	// Debugging fcking bullet physics
+	static graphics::IMesh* debugRenderMesh = graphicsEngine->createMesh();
+
+	uint32_t nVertices;
+	mm::vec3* nonIndexedVertices = new mm::vec3[999999];
+	u32* indices = new u32[999999];
+	physicsEngine->GetDebugData(nonIndexedVertices, 0, nVertices);
+
+	for (u32 i = 0; i < nVertices; i++)
+		indices[i] = i;
+
+	graphics::IMesh::MeshData data;
+		data.index_data = indices;
+		data.index_num = nVertices;
+		data.vertex_bytes = nVertices * sizeof(mm::vec3);
+		data.vertex_data = nonIndexedVertices;
+		data.vertex_elements_num = 1;
+		graphics::IMesh::ElementDesc d;
+			d.num_components = 3;
+			d.semantic = graphics::IMesh::POSITION;
+		data.vertex_elements = &d;
+		data.mat_ids_num = 1;
+		graphics::IMesh::MaterialGroup matGroup;
+			matGroup.beginFace = 0;
+			matGroup.endFace = nVertices / 3;
+			matGroup.id = 0;
+		data.mat_ids = &matGroup;
+	debugRenderMesh->update(data);
+	
+	static graphics::IEntity* entity = scene->addEntity();
+	entity->setMesh(debugRenderMesh);
+
+	delete[] nonIndexedVertices;
+	delete[] indices;
+	*/
 
 	// Okay physics updated, now time to send transformation to graphics
+	if (physicsEngine)	physicsEngine->update(deltaTime);
 
 	for (auto& a : entities) {
 		physics::IEntity* pEntity = a->getComponentPhysics();

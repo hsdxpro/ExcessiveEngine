@@ -55,7 +55,7 @@ public:
 	// The input paths are files like .dae, .fbx etc
 	Entity* addEntity(graphics::IScene* gScene, const std::wstring& modelPath, float mass);
 
-	void update(float deltaTime);
+	void update(float deltaTime, graphics::IScene* scene);
 
 	graphics::IEngine*	getGraphicsEngine() { return graphicsEngine; }
 	physics::IEngine*	getPhysicsEngine() { return physicsEngine; }

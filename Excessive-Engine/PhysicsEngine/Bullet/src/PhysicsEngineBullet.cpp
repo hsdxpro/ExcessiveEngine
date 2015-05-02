@@ -28,41 +28,14 @@ EXPORT physics::IEngine* CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d
 	return new PhysicsEngineBullet(d);
 }
 
-PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d) {
-	///collision configuration contains default setup for memory, collision setup. Advanced users can create their own configuration.
-	btSoftBodyRigidBodyCollisionConfiguration* collisionConfiguration = new btSoftBodyRigidBodyCollisionConfiguration();
+PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d) 
+{
+	world = new btDiscreteDynamicsWorld(new	btCollisionDispatcher(new btDefaultCollisionConfiguration()), 
+										new btDbvtBroadphase, 
+										new btSequentialImpulseConstraintSolver,
+										new btDefaultCollisionConfiguration);
 
-	///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
-	btCollisionDispatcher* dispatcher = new	btCollisionDispatcher(collisionConfiguration);
-
-	btVector3 worldMin(-1000, -1000, -1000);
-	btVector3 worldMax(1000, 1000, 1000);
-
-	///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
-	btBroadphaseInterface* overlappingPairCache = new btAxisSweep3(worldMin, worldMax);
-
-	///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
-	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver();
-
-	world = new btSoftRigidDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-
-	// GImpact dispatching registering, need for some special collision variances
-	btGImpactCollisionAlgorithm::registerAlgorithm(dispatcher);
-
-	world->setGravity(btVector3(0, 0, -10));
-
-	//world->getDispatchInfo().m_useContinuous = true;
-	world->getDispatchInfo().m_enableSPU = true;
-
-	btSoftBodyWorldInfo	softBodyWorldInfo;
-		softBodyWorldInfo.air_density = (btScalar)1.2;
-		softBodyWorldInfo.water_density = 0;
-		softBodyWorldInfo.water_offset = 0;
-		softBodyWorldInfo.water_normal = btVector3(0, 0, 1);
-		softBodyWorldInfo.m_gravity = world->getGravity();
-		softBodyWorldInfo.m_dispatcher = world->getDispatcher();
-		softBodyWorldInfo.m_broadphase = world->getBroadphase();
-		softBodyWorldInfo.m_sparsesdf.Initialize();
+	world->setGravity(btVector3(0, 0, -9.81));
 }
 
 PhysicsEngineBullet::~PhysicsEngineBullet() {
@@ -73,7 +46,7 @@ void PhysicsEngineBullet::release() {
 }
 
 void PhysicsEngineBullet::update(float deltaTime) {
-	world->stepSimulation(deltaTime, 2, 1.f / 60);
+	world->stepSimulation(deltaTime);
 }
 
 physics::IEntity* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) {
@@ -82,16 +55,19 @@ physics::IEntity* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vertices,
 	assert(mass != 0);
 
 	// Create collision shape for rigid body, based on it's vertices and mass
-	btCollisionShape* colShape = new btConvexHullShape((btScalar*)vertices, nVertices, sizeof(mm::vec3));;
+	btCollisionShape* colShape = new btConvexHullShape((btScalar*)vertices, nVertices, sizeof(mm::vec3));
 
 	btVector3 localInertia(0, 0, 0);
-	colShape->calculateLocalInertia(mass, localInertia);
+	if (mass != 0)
+		colShape->calculateLocalInertia(mass, localInertia);
+
+	btRigidBody::btRigidBodyConstructionInfo defaultRigidDesc(mass, new btDefaultMotionState(), colShape, localInertia);
 
 	// Create rigid body
-	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), colShape, localInertia);
+	//btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), colShape, localInertia,);
+	btRigidBody* body = new btRigidBody(defaultRigidDesc);
 	world->addRigidBody(body);
 	body->setLinearFactor(btVector3(1, 1, 1));
-
 	EntityRigid* e = new EntityRigid(body);
 	entities.push_back(e);
 	return e;
@@ -125,4 +101,34 @@ physics::IEntity* PhysicsEngineBullet::addEntityRigidStatic(mm::vec3* vertices, 
 	EntityRigid* e = new EntityRigid(body);
 	entities.push_back(e);
 	return e;
+}
+
+void PhysicsEngineBullet::GetDebugData(mm::vec3* nonIndexedVertices, uint32_t vertsByteSize, uint32_t& nVertices)
+{
+	nVertices = 0;
+	const btCollisionObjectArray& colObjArray = world->getCollisionWorld()->getCollisionObjectArray();
+	u32 nObjs = world->getNumCollisionObjects();
+
+	for (size_t i = 0; i < nObjs; i++)
+	{
+		btCollisionShape* colShape = colObjArray[i]->getCollisionShape();
+		btTransform worldTrans = colObjArray[i]->getWorldTransform();
+
+		// Add each edge from convex Shape to the list
+		if (colShape->isConvex())
+		{
+			btConvexHullShape* col = (btConvexHullShape*)colShape;
+
+			u32 nVerts = col->getNumVertices();
+
+			for (u32 j = 0; j < nVerts; j++)
+			{
+				btVector3 vtx;
+				col->getVertex(j, vtx);
+				vtx = worldTrans * vtx;
+				nonIndexedVertices[nVertices + j] = { vtx.x(), vtx.y(), vtx.z() };
+			}
+			nVertices += nVerts;
+		}
+	}
 }

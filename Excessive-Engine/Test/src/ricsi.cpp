@@ -15,13 +15,15 @@ float gCamSpeedMultiplier = 1;
 
 IGapi* gGapi;
 
-int Ricsi() {
+int Ricsi() 
+{
+	mm::mat4 asd = mm::quat();
 
 	// Init window
 	rWindow d;
-	d.clientW = 800;
-	d.clientH = 600;
-	d.capText = "Excessive-Engine -> Ricsi teszt";
+		d.clientW = 800;
+		d.clientH = 600;
+		d.capText = "Excessive-Engine -> Ricsi teszt";
 	IWindow* window = Factory::createWindow(d);
 
 	// Init engine core (graphics, physics, sound, network
@@ -79,13 +81,15 @@ int Ricsi() {
 	// Jesus, just because we dont want garbage for last_frame variable at first run
 	static bool bFirstRun = true;
 
-	while (window->isOpen()) {
+	while (window->isOpen())
+	{
 		//t->reset();
 
 		// keep 60 fps
 		auto now = std::chrono::high_resolution_clock::now();
 
-		if (bFirstRun) {
+		if (bFirstRun) 
+		{
 			bFirstRun = false;
 			last_frame = now;
 		}
@@ -105,17 +109,19 @@ int Ricsi() {
 			case eWindowMsg::MOUSE_PRESS:
 				if (ev.mouseBtn == eMouseBtn::RIGHT)
 					bRMBDown = true;
-				else if (ev.mouseBtn == eMouseBtn::LEFT) {
+				else if (ev.mouseBtn == eMouseBtn::LEFT) 
+				{
 					Entity* e = core.addEntity(scene, Sys::getWorkDir() + teapotModelPath, 10);
 					e->setPos(cam->getPos());
-					e->setScale({ 0.1f, 0.1f, 0.1f });
+					e->setScale({ 1.f / 20, 1.f / 20, 1.f / 20 });
 				}
 				break;
 			case eWindowMsg::MOUSE_RELEASE:
 				if (ev.mouseBtn == eMouseBtn::RIGHT)
 					bRMBDown = false;
 				break;
-			case eWindowMsg::MOUSE_MOVE: {
+			case eWindowMsg::MOUSE_MOVE: 
+			{
 				if (bRMBDown)
 				{
 					float angleChangeZ = (float)(ev.deltaX) * 0.009;
@@ -128,25 +134,20 @@ int Ricsi() {
 					angleX = std::max(-85.f / 180 * 3.141592653f, std::min(angleX, 85.f / 180 * 3.141592653f));
 					static float angleZ = atan2(viewDir.y / lenXY, viewDir.z / lenXY) - 3.141592653f / 2;
 					angleZ += angleChangeZ;
-					if (angleZ > 3.141592653f) {
+					if (angleZ > 3.141592653f)
 						angleZ -= floor(angleZ / 3.141592653f) * 2 * 3.141592653f;
-					}
-					else if (angleZ < -3.141592653f) {
+					else if (angleZ < -3.141592653f)
 						angleZ -= ceil(angleZ / 3.141592653f) * 2 * 3.141592653f;
-					}
 
 					mm::vec3 newViewDir(0, 1, 0);
 
-					mm::mat3 rotAroundX(
-						1, 0, 0,
-						0, cos(angleX), -sin(angleX),
-						0, sin(angleX), cos(angleX)
-						);
-					mm::mat3 rotAroundZ(
-						cos(angleZ), -sin(angleZ), 0,
-						sin(angleZ), cos(angleZ), 0,
-						0, 0, 1
-						);
+					mm::mat3 rotAroundX(1,		0,			0,
+										0, cos(angleX), -sin(angleX),
+										0, sin(angleX),  cos(angleX));
+
+					mm::mat3 rotAroundZ(cos(angleZ), -sin(angleZ),	0,
+										sin(angleZ),  cos(angleZ),	0,
+											0,			0,			1);
 
 					newViewDir *= rotAroundX;
 					newViewDir *= rotAroundZ;
@@ -199,7 +200,7 @@ int Ricsi() {
 		//float deltaT = t->getElapsedSinceReset();
 
 		// Update core
-		core.update(elapsed);
+		core.update(elapsed, scene);
 
 		// Call that after OpenGL "finish" all of it's rendering
 		window->displayClientRect();

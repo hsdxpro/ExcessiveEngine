@@ -43,15 +43,15 @@ mm::vec3 EntityRigid::getPos()
 	return mm::vec3(vec.x(), vec.y(), vec.z());
 }
 
-mm::quat EntityRigid::getRot() 
+mm::quat EntityRigid::getRot()
 {
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
 
 	auto& btRot = trans.getRotation();
 	mm::quat rot;
-		rot.value.y = btRot.y();
 		rot.value.x = btRot.x();
+		rot.value.y = btRot.y();
 		rot.value.z = btRot.z();
 		rot.value.w = btRot.w();
 	return rot;

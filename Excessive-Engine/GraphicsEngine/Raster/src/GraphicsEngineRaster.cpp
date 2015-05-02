@@ -246,9 +246,9 @@ void GraphicsEngineRaster::update(float deltaTime) {
 			mesh->getElementBySemantic(attribInfos[0], Mesh::POSITION) &&
 			mesh->getElementBySemantic(attribInfos[1], Mesh::NORMAL) &&
 			mesh->getElementBySemantic(attribInfos[2], Mesh::TEX0);
-		if (!hasAllAttribs) {
-			continue;
-		}
+		//if (!hasAllAttribs) {
+		//	continue;
+		//}
 
 		// create input layout
 		auto ConvertType = [](Mesh::ElementType type)->eVertexAttribType {
@@ -363,7 +363,8 @@ void GraphicsEngineRaster::update(float deltaTime) {
 
 		// set index buffer
 		auto ib = mesh->getIndexBuffer();
-		gapi->setIndexBuffer(mesh->getIndexBuffer());
+		if (ib)
+			gapi->setIndexBuffer(mesh->getIndexBuffer());
 
 		// get material
 		Material* mtl = entity->getMaterial();
@@ -389,7 +390,7 @@ void GraphicsEngineRaster::update(float deltaTime) {
 			::ITexture* texture = nullptr; // gapi resource
 
 			// if has mtl
-			if (mtl->getNumSubMaterials() > matGroup.id) {
+			if (mtl && mtl->getNumSubMaterials() > matGroup.id) {
 				Material::SubMaterial subMat = mtl->getSubMaterial(matGroup.id);
 				ps_const.diffuse = subMat.base;
 				if (subMat.t_diffuse) {
