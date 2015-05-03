@@ -31,20 +31,15 @@ EXPORT physics::IEngine* CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d
 
 PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d) 
 {
-	auto collisionConfiguration = new btDefaultCollisionConfiguration();
-	collisionConfiguration->setConvexConvexMultipointIterations(3);
-
-	bt32BitAxisSweep3* broadPhase = new bt32BitAxisSweep3({ -1000, -1000, -1000 }, { 1000, 1000, 1000 });
-
-	world = new btDiscreteDynamicsWorld(new	btCollisionDispatcher(collisionConfiguration),
-										broadPhase,
+	world = new btDiscreteDynamicsWorld(new	btCollisionDispatcher(new btDefaultCollisionConfiguration),
+										new btDbvtBroadphase,
 										new btSequentialImpulseConstraintSolver,
 										new btDefaultCollisionConfiguration);
 
 	world->setGravity(btVector3(0, 0, -9.81));
 }
 
-PhysicsEngineBullet::~PhysicsEngineBullet() 
+PhysicsEngineBullet::~PhysicsEngineBullet()
 {
 }
 
@@ -56,16 +51,29 @@ void PhysicsEngineBullet::release()
 void PhysicsEngineBullet::update(float deltaTime)
 {
 	world->stepSimulation(deltaTime);
+
+	// Contact mainfolds for debugging
+	//auto overlappingPairCache = world->getBroadphase()->getOverlappingPairCache();
+	//auto nPairs = overlappingPairCache->getNumOverlappingPairs();
+	//for (u32 i = 0; i < nPairs; i++)
+	//{
+	//	btManifoldArray array;
+	//	overlappingPairCache->getOverlappingPairArray()[i].m_algorithm->getAllContactManifolds(array);
+	//	for (u32 j = 0; j < array.size(); j++)
+	//	{
+	//		auto& maniFold = array.at(j);
+	//	}
+	//}
 }
 
 physics::IEntity* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) 
 {
-
 	// You should call PhysicsEngineBullet::createEntityRigidStatic
 	assert(mass != 0);
 
 	// Create collision shape for rigid body, based on it's vertices and mass
-	btCollisionShape* colShape = new btConvexHullShape((btScalar*)vertices, nVertices, sizeof(mm::vec3));
+	btConvexHullShape* colShape = new btConvexHullShape((btScalar*)vertices, nVertices, sizeof(mm::vec3));
+	colShape->setSafeMargin(0, 0); // Thanks convex hull for your imprecision...
 
 	btVector3 localInertia(0, 0, 0);
 	if (mass != 0)
@@ -73,10 +81,6 @@ physics::IEntity* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vertices,
 
 	// Create rigid body
 	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), colShape, localInertia);
-	//body->setContactProcessingThreshold(0);
-	//float asd = body->getContactProcessingThreshold();
-	//body->setCcdMotionThreshold(1);
-	//body->setCcdSweptSphereRadius(0.2f);
 	world->addRigidBody(body);
 	
 	EntityRigid* e = new EntityRigid(body);

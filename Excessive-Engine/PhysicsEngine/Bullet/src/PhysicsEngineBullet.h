@@ -9,7 +9,8 @@
 class btSoftRigidDynamicsWorld;
 class btDiscreteDynamicsWorld;
 
-struct rPhysicsEngineBullet {
+struct rPhysicsEngineBullet 
+{
 
 };
 
