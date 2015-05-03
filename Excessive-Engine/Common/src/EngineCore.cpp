@@ -111,9 +111,6 @@ Entity* EngineCore::addEntity(graphics::IScene* gScene, const std::wstring& mode
 
 	// We will feed meshes to that graphics entity
 	graphics::IEntity* gEntity = gScene->addEntity();
-	if (modelPath.substr(modelPath.find_last_of(L'/') + 1) == L"skybox.dae") {
-		gEntity->setScale(mm::vec3(1000, 1000, 1000));
-	}
 
 	// Material for entity
 	graphics::IMaterial* material = graphicsEngine->createMaterial();
@@ -179,23 +176,24 @@ Entity* EngineCore::addEntity(graphics::IScene* gScene, const std::wstring& mode
 	auto mesh = modelDesc.meshes[0];
 
 	mm::vec3* vertices;
-
-	if (cfg.isContain(eImporter3DFlag::VERT_INTERLEAVED)) {
+	if (cfg.isContain(eImporter3DFlag::VERT_INTERLEAVED)) // Interleaved buffer? Okay gather positions from vertices stepping with vertex stride
+	{
 		vertices = new mm::vec3[mesh.nVertices];
 		for (u32 i = 0; i < mesh.nVertices; i++)
 			vertices[i] = *(mm::vec3*)((u8*)mesh.vertexBuffers[0] + i * mesh.vertexSize);
-	} else {
-		vertices = (mm::vec3*)mesh.vertexBuffers[0];
+	}
+	else
+	{
+		vertices = (mm::vec3*)mesh.vertexBuffers[0]; // Non interleaved buffers, cool 0.th buffer will be position
 	}
 
-	if (mass == 0) {
+	if (mass == 0)
 		pEntity = physicsEngine->addEntityRigidStatic(vertices, mesh.nVertices, mesh.indices, mesh.indexSize, mesh.nIndices);
-	}
 	else
 		pEntity = physicsEngine->addEntityRigidDynamic(vertices, mesh.nVertices, mass);
 
 	delete vertices;
-		vertices = nullptr; // Important
+	vertices = nullptr; // Important
 
 	// new entity created
 	Entity* e = new Entity(gEntity, pEntity);
@@ -203,7 +201,7 @@ Entity* EngineCore::addEntity(graphics::IScene* gScene, const std::wstring& mode
 	return e;
 }
 
-void EngineCore::update(float deltaTime, graphics::IScene* scene)
+void EngineCore::update(float deltaTime/*, graphics::IScene* scene*/)
 {
 	/*
 	// Debugging fcking bullet physics

@@ -61,7 +61,7 @@ int Ricsi()
 	//*/
 	Entity* simpleEntity = core.addEntity(scene, Sys::getWorkDir() + assetName, 0);
 	Entity* skyBox = core.addEntity(scene, Sys::getWorkDir() + L"../Assets/skybox.dae", 0);
-
+	skyBox->setScale({ 1000, 1000, 1000 });
 
 	// Run the main loop
 	rWindowEvent ev;
@@ -200,7 +200,7 @@ int Ricsi()
 		//float deltaT = t->getElapsedSinceReset();
 
 		// Update core
-		core.update(elapsed, scene);
+		core.update(elapsed/*, scene*/);
 
 		// Call that after OpenGL "finish" all of it's rendering
 		window->displayClientRect();

@@ -36,11 +36,13 @@ void EntityRigid::setScale(const mm::vec3& s)
 		
 		// I think it's needed
 		btVector3 localInertia(0, 0, 0);
-		float mass = 1.f / body->getInvMass();
-		if (mass != 0)
+		float invMass = body->getInvMass();
+		if (invMass != 0)
+		{
+			float mass = 1.f / invMass;
 			colShape->calculateLocalInertia(mass, localInertia);
-		
-		body->setMassProps(mass, localInertia);
+			body->setMassProps(mass, localInertia);
+		}
 	}
 		
 }

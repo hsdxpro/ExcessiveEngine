@@ -24,32 +24,42 @@
 #endif
 
 extern "C"
-EXPORT physics::IEngine* CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d) {
+EXPORT physics::IEngine* CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d) 
+{
 	return new PhysicsEngineBullet(d);
 }
 
 PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d) 
 {
-	world = new btDiscreteDynamicsWorld(new	btCollisionDispatcher(new btDefaultCollisionConfiguration()), 
-										new btDbvtBroadphase, 
+	auto collisionConfiguration = new btDefaultCollisionConfiguration();
+	collisionConfiguration->setConvexConvexMultipointIterations(3);
+
+	bt32BitAxisSweep3* broadPhase = new bt32BitAxisSweep3({ -1000, -1000, -1000 }, { 1000, 1000, 1000 });
+
+	world = new btDiscreteDynamicsWorld(new	btCollisionDispatcher(collisionConfiguration),
+										broadPhase,
 										new btSequentialImpulseConstraintSolver,
 										new btDefaultCollisionConfiguration);
 
 	world->setGravity(btVector3(0, 0, -9.81));
 }
 
-PhysicsEngineBullet::~PhysicsEngineBullet() {
+PhysicsEngineBullet::~PhysicsEngineBullet() 
+{
 }
 
-void PhysicsEngineBullet::release() {
+void PhysicsEngineBullet::release() 
+{
 	delete this;
 }
 
-void PhysicsEngineBullet::update(float deltaTime) {
+void PhysicsEngineBullet::update(float deltaTime)
+{
 	world->stepSimulation(deltaTime);
 }
 
-physics::IEntity* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) {
+physics::IEntity* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) 
+{
 
 	// You should call PhysicsEngineBullet::createEntityRigidStatic
 	assert(mass != 0);
@@ -61,27 +71,32 @@ physics::IEntity* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vertices,
 	if (mass != 0)
 		colShape->calculateLocalInertia(mass, localInertia);
 
-	btRigidBody::btRigidBodyConstructionInfo defaultRigidDesc(mass, new btDefaultMotionState(), colShape, localInertia);
-
 	// Create rigid body
-	//btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), colShape, localInertia,);
-	btRigidBody* body = new btRigidBody(defaultRigidDesc);
+	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), colShape, localInertia);
+	//body->setContactProcessingThreshold(0);
+	//float asd = body->getContactProcessingThreshold();
+	//body->setCcdMotionThreshold(1);
+	//body->setCcdSweptSphereRadius(0.2f);
 	world->addRigidBody(body);
-	body->setLinearFactor(btVector3(1, 1, 1));
+	
 	EntityRigid* e = new EntityRigid(body);
 	entities.push_back(e);
 	return e;
 }
 
-physics::IEntity* PhysicsEngineBullet::addEntityRigidStatic(mm::vec3* vertices, u32 nVertices, void* indices, u32 indexSize, u32 nIndices) {
+physics::IEntity* PhysicsEngineBullet::addEntityRigidStatic(mm::vec3* vertices, u32 nVertices, void* indices, u32 indexSize, u32 nIndices) 
+{
 
 	btTriangleIndexVertexArray* VBIB;
 
 	// Indices need copy, signed unsigne differences -.-
 	// Okay bullet vector container equal size, let bullet read out pointer
-	if (sizeof(mm::vec3) == sizeof(btVector3)) {
+	if (sizeof(mm::vec3) == sizeof(btVector3)) 
+	{
 		VBIB = new btTriangleIndexVertexArray(nIndices / 3, (int*)indices, 3 * indexSize, nVertices, (btScalar*)vertices, sizeof(btVector3));
-	} else { // Bullshit if mm::vec3 and btVector3 size not equal, we need into new array, mm::vec3.xyz to btVector3
+	} 
+	else // Bullshit if mm::vec3 and btVector3 size not equal, we need into new array, mm::vec3.xyz to btVector3
+	{
 
 		int* myIndices = new int[nIndices];
 		for (u32 i = 0; i < nIndices; i++)

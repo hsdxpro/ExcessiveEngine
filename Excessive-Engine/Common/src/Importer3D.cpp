@@ -212,7 +212,7 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 			*pos -= avgCenter;
 		}
 	}
-
+	
 	mesh_out.indices = indices;
 	mesh_out.nIndices = nIndices;
 	mesh_out.indexSize = sizeof(indices[0]);
