@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mymath/mymath.h>
+#include <cstdint>
 
 // namespace
 namespace graphics {
@@ -29,6 +30,10 @@ public:
 	virtual void setMaterial(IMaterial* material) = 0;
 	virtual IMesh* getMesh() const = 0;
 	virtual IMaterial* getMaterial() const = 0;
+
+	virtual mm::mat4* getBoneMatrices() = 0;
+	virtual const mm::mat4* getBoneMatrices() const = 0;
+	virtual uint32_t getNumBones() const = 0;
 };
 
 

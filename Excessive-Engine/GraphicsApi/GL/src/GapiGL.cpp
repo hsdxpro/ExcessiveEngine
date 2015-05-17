@@ -11,7 +11,7 @@
 #include <iostream>
 #include <functional>
 #include "GL\glew.h"
-#include "..\Common\src\custom_assert.h"
+#include <cassert>
 
 using namespace std;
 
@@ -281,7 +281,7 @@ ShaderProgramGL* GapiGL::createShaderBinary(void* data, size_t size)
 	// create program
 	auto program_id = glCreateProgram();
 
-	ASSERT(data)
+	assert(data != nullptr);
 	{
 		char* ptr = (char*)data;
 		GLint size = reinterpret_cast<GLint*>(ptr)[0];
@@ -714,7 +714,7 @@ void GapiGL::setSyncDebugOutput(bool val)
 
 void GapiGL::setShaderProgram(IShaderProgram* sp)
 {
-	ASSERT(sp);
+	assert(sp);
 	ShaderProgramGL* shader_program = static_cast<ShaderProgramGL*>(sp);
 	glUseProgram(shader_program->getProgramId());
 
@@ -743,7 +743,7 @@ void GapiGL::setRenderTargets(const rRenderTargetInfo* render_targets, u32 size)
 
 void GapiGL::setUniformBuffer(IUniformBuffer* buf, u32 index)
 {
-	ASSERT(buf);
+	assert(buf);
 	auto buffer_id = static_cast<UniformBufferGL*>(buf)->id;
 	glBindBufferBase(GL_UNIFORM_BUFFER, index, buffer_id);
 }
@@ -757,7 +757,7 @@ GLenum attrib_array[] =
 // DEPRECATED API
 void GapiGL::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers)
 {
-	ASSERT(buffers && attrib_data);
+	assert(buffers && attrib_data);
 
 
 	for (u32 c = 0; c < num_buffers; ++c)
@@ -785,10 +785,10 @@ void GapiGL::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attr
 	}
 }
 
-void GapiGL::setIndexBuffer(IIndexBuffer* ibo)
+void GapiGL::setIndexBuffer(const IIndexBuffer* ibo)
 {
-	ASSERT(ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBufferGL*>(ibo)->id);
+	assert(ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<const IndexBufferGL*>(ibo)->id);
 }
 
 void GapiGL::draw(u32 num_indices, u32 index_byte_offset /*= 0*/)

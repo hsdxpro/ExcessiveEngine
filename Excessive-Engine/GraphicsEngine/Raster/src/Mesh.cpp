@@ -183,6 +183,24 @@ bool Mesh::update(MeshData data) {
 	RawUniquePtr packed_vertex_data(operator new(internal_stride * num_vertices));
 	packVertices(data.vertex_elements, elements, data.vertex_elements_num,  num_elements, data.vertex_data, packed_vertex_data.get(), num_vertices);
 
+	// get highest bone index
+	int offset_bone_indices = 0;
+	for (int i = 0; i < 20; i++) {
+		if (elements[i].semantic == BONE_WEIGHTS) {
+			break;
+		}
+		else {
+			offset_bone_indices += getElementTypeSize(elements[i].type)*elements[i].num_components;
+		}
+	}
+	// note that offset must not be 0, since there's position before it, thus it being 0 means no BONE_WEIGHTS
+	highestBoneIndex = -1;
+	if (offset_bone_indices != 0) {		
+		for (size_t i = 0; i < num_vertices; i++) {
+			uint16_t* bone_indices = (uint16_t*)(size_t(packed_vertex_data.get()) + i*internal_stride + offset_bone_indices);
+			highestBoneIndex = std::max(highestBoneIndex, (int)*std::max_element(bone_indices, bone_indices+4));
+		}
+	}
 
 
 	// compute mat ids
@@ -397,6 +415,28 @@ void PackColor(void* input, void* output, int num_components) { // copies n byte
 	memcpy(output, input, num_components * sizeof(float));
 }
 
+void PackBoneIndices(void* input, void* output, int num_components) {
+	int i;
+	for (i = 0; i < num_components; i++) {
+		((uint16_t*)output)[i] = ((float*)input)[i] + 0.1f;
+	}
+	for (; i < 4; i++) {
+		((uint16_t*)output)[i] = 0xFFFF;
+	}
+}
+
+void PackBoneWeights(void* input, void* output, int num_components) {
+	float sum;
+	float values[4] = { 0,0,0,0 };
+	for (int i = 0; i < num_components; i++) {
+		values[i] = ((float*)input)[i];
+		sum += values[i];
+	}
+	for (int i = 0; i < 4; i++) {
+		((uint8_t*)output)[i] = values[i] / sum;
+	}		
+}
+
 void Mesh::packVertices(ElementDesc* input_format, ElementInfo* output_format, int input_count, int output_count, void* input, void* output, u32 num_verts) {
 	// create a function that can pack 1 vertex
 
@@ -464,13 +504,21 @@ void Mesh::packVertices(ElementDesc* input_format, ElementInfo* output_format, i
 			else if (semantic == BITANGENT) {
 				is_bitangent = true;
 			}
-			else if (COLOR0 <= semantic && semantic <= COLOR7) {
+			else if (COLOR0 <= semantic && semantic <= COLOR6) {
 				int comp = num_components_input[fast_log2(semantic)];
 				PackColor(off_in, off_out, comp);
 			}
-			else if (TEX0 <= semantic && semantic <= TEX7) {
+			else if (TEX0 <= semantic && semantic <= TEX6) {
 				int comp = num_components_input[fast_log2(semantic)];
 				PackTexcoord(off_in, off_out, comp);
+			}
+			else if (semantic == BONE_INDICES) {
+				int comp = num_components_input[fast_log2(semantic)];
+				PackBoneIndices(off_in, off_out, comp);
+			}
+			else if (semantic == BONE_WEIGHTS) {
+				int comp = num_components_input[fast_log2(semantic)];
+				PackBoneWeights(off_in, off_out, comp);
 			}
 		}
 
@@ -557,7 +605,7 @@ u64 Mesh::getElementConfigId() const {
 	// since position is implicit, log2(5^19) = 44.11 bits -> 45 bits
 	// with the 19 bits of composition, it is exactly 64 bits - cool
 	// we must write this stuff in base 5 number system
-	assert((num_elements == 0) || (num_elements > 0 && elements[0].semantic == POSITION)); // no implicit position if an earlier flaw
+	assert((num_elements == 0) || (num_elements > 0 && elements[0].semantic == POSITION)); // no implicit position is an earlier flaw
 	for (int i = 1, j = 0; i < num_elements; i++, j+=2) {
 		id += elements[i].num_components;
 		id *= 5;

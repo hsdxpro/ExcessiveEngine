@@ -1,5 +1,10 @@
 #include "tests.h"
 
+#include <iostream>
+#include <memory>
+using namespace std;
+
+/*
 #include "custom_assert.h"
 #include "HashedString.h"
 
@@ -22,9 +27,6 @@
 
 #include "json/json.h"
 
-#include <iostream>
-#include <memory>
-using namespace std;
 
 std::string json_str = "{ \"encoding\" : \"UTF-8\", \"plug-ins\" : [ \"python\", \"c++\", \"ruby\" ], \"indent\" : { \"length\" : 3, \"use_space\": true } }";
 
@@ -189,4 +191,10 @@ int CommonTest()
   system( "PAUSE" );
 
   return 0;
+}
+*/
+
+int CommonTest() {
+	cout << "I removed most of its belongings, so this test is no longer relevant." << endl;
+	return 0;
 }

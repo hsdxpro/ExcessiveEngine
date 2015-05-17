@@ -57,6 +57,16 @@ void Entity::setMaterial(graphics::IMaterial* mtl) {
 
 void Entity::setMesh(Mesh* mesh) {
 	this->mesh.reset(mesh);
+	// set bone matrices to correspond to mesh's bone indices
+	if (mesh->getHighestBoneIndex() >= 0) {
+		boneMatrices.resize(mesh->getHighestBoneIndex() + 1);
+		for (auto& v : boneMatrices) {
+			v = mm::create_scale({1,1,1}); // identity matrix
+		}
+	}
+	else {
+		boneMatrices.clear();
+	}
 }
 
 void Entity::setMaterial(Material* material) {
@@ -69,4 +79,17 @@ Mesh* Entity::getMesh() const {
 
 Material* Entity::getMaterial() const {
 	return mtl.get();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// animation shit
+mm::mat4* Entity::getBoneMatrices() {
+	return boneMatrices.size() > 0 ? boneMatrices.data() : nullptr;
+}
+const mm::mat4* Entity::getBoneMatrices() const {
+	return boneMatrices.size() > 0 ? boneMatrices.data() : nullptr;
+}
+uint32_t Entity::getNumBones() const {
+	return boneMatrices.size();
 }

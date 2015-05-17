@@ -6,6 +6,7 @@
 
 #include "utility/ref_ptr.h"
 #include <mymath/mymath.h>
+#include <vector>
 
 
 class Scene;
@@ -34,6 +35,10 @@ public:
 	Mesh* getMesh() const override;
 	Material* getMaterial() const override;
 
+	mm::mat4* getBoneMatrices() override;
+	const mm::mat4* getBoneMatrices() const override;
+	uint32_t getNumBones() const override;
+
 protected:
 	// pos-rot-scale
 	mm::vec3 pos;
@@ -44,6 +49,9 @@ private:
 	// mtl
 	ref_ptr<Mesh> mesh;
 	ref_ptr<Material> mtl;
+
+	// animation
+	std::vector<mm::mat4> boneMatrices;
 };
 
 } // graphics namespace end

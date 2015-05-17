@@ -1,7 +1,7 @@
 #include "ShaderProgramGL.h"
 
 #include <vector>
-#include "../Common/src/custom_assert.h"
+#include <cassert>
 
 using namespace std;
 
@@ -117,7 +117,7 @@ glProgramBinary(id, format, ptr, size);
 // Depracated API
 int ShaderProgramGL::getUniformBlockIndex(const char* str)
 {
-	ASSERT(str);
+	assert(str);
 	auto index = glGetUniformBlockIndex(program, str);
 	// ugly hack to get uniform blocks working...
 	// delete this as soon as you can
@@ -127,7 +127,7 @@ int ShaderProgramGL::getUniformBlockIndex(const char* str)
 
 int ShaderProgramGL::getAttributeIndex(const char* str)
 {
-	ASSERT(str);
+	assert(str);
 	auto it = attrib_loc_cache.find(str);
 	if (it != attrib_loc_cache.end()) {
 		return it->second;
@@ -139,7 +139,7 @@ int ShaderProgramGL::getAttributeIndex(const char* str)
 
 int ShaderProgramGL::getSamplerIndex(const char* str)
 {
-	ASSERT(str);
+	assert(str);
 	int loc = glGetUniformLocation(program, str);
 	int idx;
 	glGetUniformiv(program, loc, &idx);
@@ -148,6 +148,6 @@ int ShaderProgramGL::getSamplerIndex(const char* str)
 
 int ShaderProgramGL::getRenderTargetIndex(const char* str)
 {
-	ASSERT(str);
+	assert(str);
 	return glGetFragDataLocation(program, str);
 }

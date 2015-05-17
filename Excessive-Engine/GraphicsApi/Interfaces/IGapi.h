@@ -90,7 +90,7 @@ public:
 	virtual void setRenderTargets(const rRenderTargetInfo* render_targets, u32 size) = 0;
     virtual void setUniformBuffer(IUniformBuffer* buf, u32 idx) = 0;
 	virtual void setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers) = 0;
-    virtual void setIndexBuffer(IIndexBuffer* ibo) = 0;
+    virtual void setIndexBuffer(const IIndexBuffer* ibo) = 0;
     
 
 	///////////////////////////////////////

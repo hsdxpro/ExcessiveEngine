@@ -67,7 +67,7 @@ public:
 	void setRenderTargets(const rRenderTargetInfo* render_targets, u32 size) override;
 	void setUniformBuffer(IUniformBuffer* buf, u32 index) override;
 	void setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers) override;
-	void setIndexBuffer(IIndexBuffer* ibo) override;
+	void setIndexBuffer(const IIndexBuffer* ibo) override;
 	void setTexture(ITexture* t, u32 idx) override;
 
 	// draw calls

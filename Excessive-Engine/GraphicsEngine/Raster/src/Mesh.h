@@ -120,11 +120,13 @@ public:
 	const ElementInfo* getElements() const;
 	u64 getElementConfigId() const;
 
-	int getNumVertexBuffers() { return num_streams; }
-	const VertexStream* getVertexBuffers() { return vertex_streams; }
+	int getNumVertexBuffers() const { return num_streams; }
+	const VertexStream* getVertexBuffers() const { return vertex_streams; }
 
-	IIndexBuffer* getIndexBuffer() { return index_buffer; }
-	const std::vector<MaterialGroup>& getMaterialIds() { return mat_ids; }
+	const IIndexBuffer* getIndexBuffer() const { return index_buffer; }
+	const std::vector<MaterialGroup>& getMaterialIds() const { return mat_ids; }
+
+	int getHighestBoneIndex() const { return highestBoneIndex; }
 
 // internal mechanics
 protected:
@@ -204,15 +206,25 @@ protected:
 			info.semantic = desc.semantic;
 			info.type = FLOAT;
 		}
-		else if (COLOR0 <= semantic && semantic <= COLOR7) {
+		else if (COLOR0 <= semantic && semantic <= COLOR6) {
 			info.num_components = desc.num_components;
 			info.semantic = desc.semantic;
 			info.type = FLOAT;
 		}
-		else if (TEX0 <= semantic && semantic <= TEX7) {
+		else if (TEX0 <= semantic && semantic <= TEX6) {
 			info.num_components = desc.num_components;
 			info.semantic = desc.semantic;
 			info.type = FLOAT;
+		}
+		else if (semantic == BONE_INDICES) {
+			info.num_components = 4;
+			info.semantic = BONE_INDICES;
+			info.type = UINT_16;
+		}
+		else if (semantic == BONE_WEIGHTS) {
+			info.num_components = 4;
+			info.semantic = BONE_WEIGHTS;
+			info.type = UNORM_8;
 		}
 		else {
 			info.num_components = 0;
@@ -230,6 +242,8 @@ protected:
 	int num_elements;
 	IIndexBuffer* index_buffer;
 	std::vector<MaterialGroup> mat_ids;
+
+	int highestBoneIndex;
 
 // private vars
 private:
