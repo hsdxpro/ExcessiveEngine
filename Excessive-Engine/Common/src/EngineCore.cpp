@@ -94,7 +94,7 @@ sound::IEngine* EngineCore::initSoundEngine(const rSoundEngine& d /*= rSoundEngi
 Entity* EngineCore::addEntity(graphics::IScene* gScene, const std::wstring& modelPath, float mass) 
 {
 	// Config for importing
-	rImporter3DCfg cfg({ eImporter3DFlag::VERT_INTERLEAVED,
+	rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED,
 						 eImporter3DFlag::VERT_ATTR_POS,
 						 eImporter3DFlag::VERT_ATTR_NORM,
 						 eImporter3DFlag::VERT_ATTR_TEX0,
@@ -176,7 +176,7 @@ Entity* EngineCore::addEntity(graphics::IScene* gScene, const std::wstring& mode
 	auto mesh = modelDesc.meshes[0];
 
 	mm::vec3* vertices;
-	if (cfg.isContain(eImporter3DFlag::VERT_INTERLEAVED)) // Interleaved buffer? Okay gather positions from vertices stepping with vertex stride
+	if (cfg.isContain(eImporter3DFlag::VERT_BUFF_INTERLEAVED)) // Interleaved buffer? Okay gather positions from vertices stepping with vertex stride
 	{
 		vertices = new mm::vec3[mesh.nVertices];
 		for (u32 i = 0; i < mesh.nVertices; i++)

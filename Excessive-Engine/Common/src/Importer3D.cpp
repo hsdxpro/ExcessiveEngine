@@ -64,17 +64,21 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 	u32 tan_attribOffset;
 	u32 bitan_attribOffset;
 	u32 tex0_attribOffset;
+	u32 boneIndices_attribOffset;
+	u32 boneWeights_attribOffset;
 
 	u32 offset = 0;
 	for (auto f : cfg.flags) 
 	{
 		switch (f) 
 		{
-		case eImporter3DFlag::VERT_ATTR_POS:	vertexSize += sizeof(mm::vec3); pos_attribOffset	= offset; offset += sizeof(mm::vec3); break;
-		case eImporter3DFlag::VERT_ATTR_NORM:	vertexSize += sizeof(mm::vec3); norm_attribOffset	= offset; offset += sizeof(mm::vec3); break;
-		case eImporter3DFlag::VERT_ATTR_TAN:	vertexSize += sizeof(mm::vec3); tan_attribOffset	= offset; offset += sizeof(mm::vec3); break;
-		case eImporter3DFlag::VERT_ATTR_BITAN:	vertexSize += sizeof(mm::vec3); bitan_attribOffset	= offset; offset += sizeof(mm::vec3); break;
-		case eImporter3DFlag::VERT_ATTR_TEX0:	vertexSize += sizeof(mm::vec2); tex0_attribOffset	= offset; offset += sizeof(mm::vec2); break;
+		case eImporter3DFlag::VERT_ATTR_POS:			vertexSize += sizeof(mm::vec3);  pos_attribOffset		  = offset;	offset += sizeof(mm::vec3); break;
+		case eImporter3DFlag::VERT_ATTR_TEX0:			vertexSize += sizeof(mm::vec2);  tex0_attribOffset		  = offset;	offset += sizeof(mm::vec2); break;
+		case eImporter3DFlag::VERT_ATTR_NORM:			vertexSize += sizeof(mm::vec3);  norm_attribOffset		  = offset;	offset += sizeof(mm::vec3); break;
+		case eImporter3DFlag::VERT_ATTR_TAN:			vertexSize += sizeof(mm::vec3);  tan_attribOffset		  = offset;	offset += sizeof(mm::vec3); break;
+		case eImporter3DFlag::VERT_ATTR_BITAN:			vertexSize += sizeof(mm::vec3);  bitan_attribOffset		  = offset;	offset += sizeof(mm::vec3); break;
+		case eImporter3DFlag::VERT_ATTR_BONE_INDICES:	vertexSize += sizeof(u32) * 4;	 boneIndices_attribOffset = offset;	offset += sizeof(mm::vec2); break;
+		case eImporter3DFlag::VERT_ATTR_BONE_WEIGHTS:	vertexSize += sizeof(float) * 4; boneWeights_attribOffset = offset;	offset += sizeof(float) * 4; break;
 		}
 	}
 
@@ -133,7 +137,10 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 			mesh_out.materials[i].texPathNormal = modelDirectory + unicodePath;
 		}
 
-		// Each face
+		bool bHasPos = mesh->HasPositions();
+		bool bHasNormals = mesh->HasNormals();
+
+		// Gather Each face
 		for (size_t j = 0; j < mesh->mNumFaces; globalIndicesIdx += 3, j++) 
 		{
 			aiFace& face = mesh->mFaces[j];
@@ -141,14 +148,13 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 			// Each vertex on face
 			for (size_t k = 0; k < 3; k++) 
 			{
-
 				unsigned localVertIdx = face.mIndices[k];
 
-				// Index data
+				// Gather Index data
 				indices[globalIndicesIdx + k] = localVertIdx + globalVertexIdx;
 
-				// Vertex Data
-				if (mesh->HasPositions()) 
+				// Gather position
+				if (bHasPos) 
 				{
 					// Pos to gather
 					const aiVector3D& pos = mesh->mVertices[localVertIdx];
@@ -160,9 +166,9 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 					memcpy(((u8*)vertices) + vertexSize * vertexIdx + pos_attribOffset, &mm::vec3(pos.x, pos.y, pos.z), sizeof(mm::vec3));
 				}
 
-				if (mesh->HasNormals()) 
+				// Gather normal
+				if (bHasNormals)
 				{
-					// Pos to gather
 					const aiVector3D& normal = mesh->mNormals[localVertIdx];
 
 					// Determine vertex index
@@ -191,6 +197,12 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 					memcpy(((u8*)vertices) + vertexSize * vertexIdx + tex0_attribOffset, &mm::vec2(tex0.x, -tex0.y), sizeof(mm::vec2)); // UV flip y
 				}
 			}
+		}
+
+		// TODO
+		if (mesh->HasBones())
+		{
+			
 		}
 		globalVertexIdx += mesh->mNumVertices;
 	}

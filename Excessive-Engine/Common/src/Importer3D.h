@@ -59,12 +59,14 @@
 // Flags for importing
 enum class eImporter3DFlag : u32 {
 	VERT_ATTR_POS,
+	VERT_ATTR_TEX0,
 	VERT_ATTR_NORM,
 	VERT_ATTR_TAN,
 	VERT_ATTR_BITAN,
-	VERT_ATTR_TEX0,
-	VERT_INTERLEAVED,
-	VERT_NON_INTERLEAVED,
+	VERT_ATTR_BONE_WEIGHTS,
+	VERT_ATTR_BONE_INDICES,
+	VERT_BUFF_INTERLEAVED,
+	VERT_BUFF_NON_INTERLEAVED,
 	PIVOT_RECENTER,
 	COUNT,
 };
@@ -77,11 +79,13 @@ struct rImporter3DCfg
 		// Default importing all attributes in interleaved form
 		flags.resize(6);
 		flags[0] = eImporter3DFlag::VERT_ATTR_POS;
-		flags[1] = eImporter3DFlag::VERT_ATTR_NORM;
-		flags[2] = eImporter3DFlag::VERT_ATTR_TAN;
-		flags[3] = eImporter3DFlag::VERT_ATTR_BITAN;
-		flags[4] = eImporter3DFlag::VERT_ATTR_TEX0;
-		flags[5] = eImporter3DFlag::VERT_INTERLEAVED;
+		flags[1] = eImporter3DFlag::VERT_ATTR_TEX0;
+		flags[2] = eImporter3DFlag::VERT_ATTR_NORM;
+		flags[3] = eImporter3DFlag::VERT_ATTR_TAN;
+		flags[4] = eImporter3DFlag::VERT_ATTR_BITAN;
+		flags[5] = eImporter3DFlag::VERT_ATTR_BONE_INDICES;
+		flags[6] = eImporter3DFlag::VERT_ATTR_BONE_WEIGHTS;
+		flags[7] = eImporter3DFlag::VERT_BUFF_INTERLEAVED;
 	}
 
 	rImporter3DCfg(const std::vector<eImporter3DFlag>& flags)
