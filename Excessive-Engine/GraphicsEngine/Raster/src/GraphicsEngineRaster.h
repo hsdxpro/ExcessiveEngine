@@ -57,7 +57,7 @@ public:
 	// interact
 	void update(float deltaTime) override;
 
-	IGapi* getGapi();
+	IGapi* getGapi() override;
 
 private:
 	IGapi* gapi;
