@@ -88,6 +88,75 @@ static const char pixelShaderCode[] =
 ;
 
 
+
+static const char vertexAnimShaderCode[] =
+"#version 440 core \n"
+"layout(std140) uniform constant_data \n"
+"{ \n"
+"	mat4 mvp; \n"
+"	mat4 bones[512]; \n"
+"} cd; \n"
+"in vec3 in_vertex; \n"
+"in vec3 in_normal; \n"
+"in vec2 in_tex0; \n"
+"in vec4 in_bone_index; \n"
+"in vec4 in_bone_weight; \n"
+"out vec3 pos; \n"
+"out vec3 normal; \n"
+"out vec2 tex0; \n"
+"out vec4 v_color; \n"
+"void main() \n"
+"{ \n"
+"	pos = vec3(in_vertex.x, in_vertex.y, in_vertex.z); \n"
+"	normal = in_normal; \n"
+"	tex0 = in_tex0; \n"
+"	v_color = in_bone_weight; \n"
+"	mat4 boneMat; \n"
+"	vec4 skinPos = vec4(pos, 1); \n"
+"	boneMat = cd.bones[int(in_bone_index.x + 0.1)] * in_bone_weight.x; \n"
+"	boneMat += cd.bones[int(in_bone_index.y + 0.1)] * in_bone_weight.y; \n"
+"	boneMat += cd.bones[int(in_bone_index.z + 0.1)] * in_bone_weight.z; \n"
+"	boneMat += cd.bones[int(in_bone_index.w + 0.1)] * in_bone_weight.w; \n"
+"	skinPos = boneMat * skinPos; \n"
+"	gl_Position =  cd.mvp * skinPos;\n"
+"} \n";
+
+
+static const char pixelAnimShaderCode[] =
+"#version 440 core \n"
+"uniform sampler2D tex; \n"
+
+"layout(std140) uniform ps_const \n"
+"{ \n"
+"	vec4 diffuse; \n"
+"	int hasTex; \n"
+"} pscd; \n"
+
+"in vec3 pos; \n"
+"in vec3 normal; \n"
+"in vec2 tex0; \n"
+"in vec4 v_color; \n"
+"out vec4 color; \n"
+"void main() \n"
+"{ \n"
+"	float intensity = clamp(dot(normalize(normal), normalize(vec3(1, 1, 1))), 0, 1); \n"
+"	const float t = 0.7;"
+"	const vec4 sun_color = vec4(1.0, 0.92, 0.72, 1);"
+"	const vec4 sky_color = vec4(0.6, 0.8, 1.0, 1);"
+
+//"if (pscd.hasTex != 0) { \n"
+"	color = v_color; \n"
+"	color.a = 1.0f;\n"
+//"} \n"
+//"else { \n"
+//"	color = pscd.diffuse; \n"
+//"} \n"
+"	if (color.a < 0.5f) discard; \n"
+"   color = color*t*intensity*sun_color + color*(1-t)*sky_color;\n"
+"} \n"
+;
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Export Create function
 //
@@ -121,6 +190,7 @@ GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRaster& d) {
 	// WARNING: temporary testing code
 	// create shaders
 	shader = gapi->createShaderSource(vertexShaderCode, pixelShaderCode);
+	animShader = gapi->createShaderSource(vertexAnimShaderCode, pixelAnimShaderCode);
 	isValid = shader != nullptr;
 
 	gapi->setViewport(0, 0, 640, 480);
@@ -240,15 +310,20 @@ void GraphicsEngineRaster::update(float deltaTime) {
 		if (!mesh) {
 			continue;
 		}
-		rVertexAttrib attribs[3];
-		Mesh::ElementInfo attribInfos[3];
+		rVertexAttrib attribs[5];
+		Mesh::ElementInfo attribInfos[5];
 		bool hasAllAttribs =
 			mesh->getElementBySemantic(attribInfos[0], Mesh::POSITION) &&
 			mesh->getElementBySemantic(attribInfos[1], Mesh::NORMAL) &&
 			mesh->getElementBySemantic(attribInfos[2], Mesh::TEX0);
-		//if (!hasAllAttribs) {
-		//	continue;
-		//}
+
+		bool isAnimated = hasAllAttribs &&
+			mesh->getElementBySemantic(attribInfos[3], Mesh::BONE_INDICES) &&
+			mesh->getElementBySemantic(attribInfos[4], Mesh::BONE_WEIGHTS);
+
+		if (!hasAllAttribs) {
+			continue;
+		}
 
 		// create input layout
 		auto ConvertType = [](Mesh::ElementType type)->eVertexAttribType {
@@ -271,8 +346,8 @@ void GraphicsEngineRaster::update(float deltaTime) {
 			}
 		};
 
-		// new vertex attribs (doesn't work yet)
-		rInputElement elements[3];
+		// new vertex attribs
+		rInputElement elements[5];
 		elements[0].setName("in_vertex");
 		elements[0].num_components = attribInfos[0].num_components;
 		elements[0].offset = attribInfos[0].offset;
@@ -288,40 +363,43 @@ void GraphicsEngineRaster::update(float deltaTime) {
 		elements[2].offset = attribInfos[2].offset;
 		elements[2].type = ConvertType(attribInfos[2].type);
 
+		if (isAnimated) {
+			elements[3].setName("in_bone_index");
+			elements[3].num_components = attribInfos[3].num_components;
+			elements[3].offset = attribInfos[3].offset;
+			elements[3].type = ConvertType(attribInfos[3].type);
+
+			elements[4].setName("in_bone_weight");
+			elements[4].num_components = attribInfos[4].num_components;
+			elements[4].offset = attribInfos[4].offset;
+			elements[4].type = ConvertType(attribInfos[4].type);
+		}
+
 		elements[0].stream_index = attribInfos[0].buffer_index;
 		elements[1].stream_index = attribInfos[1].buffer_index;
 		elements[2].stream_index = attribInfos[2].buffer_index;
+		if (isAnimated) {
+			elements[3].stream_index = attribInfos[3].buffer_index;
+			elements[4].stream_index = attribInfos[4].buffer_index;
+		}
 		
-		IInputLayout* input_layout = gapi->createInputLayout(elements, 3);
+		IInputLayout* input_layout;
+		if (isAnimated) {
+			input_layout = gapi->createInputLayout(elements, 5);
+		}
+		else {
+			input_layout = gapi->createInputLayout(elements, 3);
+		}
 		gapi->setInputLayout(input_layout);
-
-		// old vertex attribs
-		/*
-		attribs[0].index = shader->getAttributeIndex("in_vertex");
-		attribs[0].nComponent = attribInfos[0].num_components;
-		attribs[0].offset = attribInfos[2].offset;
-		attribs[0].type = eVertexAttribType::FLOAT;
-		attribs[0].size = 0;
-		attribs[0].divisor = 0;
-
-		attribs[1].index = shader->getAttributeIndex("in_normal");
-		attribs[1].nComponent = attribInfos[1].num_components;
-		attribs[1].offset = attribInfos[2].offset;
-		attribs[1].type = eVertexAttribType::FLOAT;
-		attribs[1].size = 0;
-		attribs[1].divisor = 0;
-
-		attribs[2].index = shader->getAttributeIndex("in_tex0");
-		attribs[2].nComponent = attribInfos[2].num_components;
-		attribs[2].offset = attribInfos[2].offset;
-		attribs[2].type = eVertexAttribType::FLOAT;
-		attribs[2].size = 0;
-		attribs[2].divisor = 0;
-		*/
 
 
 		// set stuff
-		gapi->setShaderProgram(shader);
+		if (isAnimated) {
+			gapi->setShaderProgram(animShader);
+		}
+		else {
+			gapi->setShaderProgram(shader);
+		}
 		gapi->setRenderTargets(0, 0);
 
 		mm::mat4 prs =
@@ -330,28 +408,42 @@ void GraphicsEngineRaster::update(float deltaTime) {
 			*mm::create_scale(entity->getScale());
 
 		mm::mat4 wvp = scene.getCamera()->getProjMatrix() * scene.getCamera()->getViewMatrix() * prs;
+		struct AnimData {
+			mm::mat4 wvp;
+			mm::mat4 boneMatrices[512];
+		} animData;
+		if (isAnimated) {
+			animData.wvp = wvp;
+			for (auto& m : animData.boneMatrices) {
+				m = mm::create_scale({ 1, 1, 1 });
+			}
+			// set bone matrices
+			for (int i = 0; i < 512 && i < entity->getNumBones(); i++) {
+				animData.boneMatrices[i] = entity->getBoneMatrices()[i];
+			}
+		}
 
 		rBuffer ubo_alloc_data;
-			ubo_alloc_data.is_persistent = false;
-			ubo_alloc_data.is_readable = true;
-			ubo_alloc_data.is_writable = true;
-			ubo_alloc_data.prefer_cpu_storage = false;
+		ubo_alloc_data.is_persistent = false;
+		ubo_alloc_data.is_readable = true;
+		ubo_alloc_data.is_writable = true;
+		ubo_alloc_data.prefer_cpu_storage = false;
+		if (isAnimated) {
+			ubo_alloc_data.size = sizeof(AnimData);
+		}
+		else {
 			ubo_alloc_data.size = 1 * sizeof(mm::mat4);
+		}
 		auto ubo_buf = gapi->createUniformBuffer(ubo_alloc_data);
 		auto index_vs = shader->getUniformBlockIndex("constant_data");
 
-		gapi->writeBuffer(ubo_buf, &wvp, sizeof(mm::mat4), 0);
+		if (isAnimated) {
+			gapi->writeBuffer(ubo_buf, &animData, sizeof(AnimData), 0);
+		}
+		else {
+			gapi->writeBuffer(ubo_buf, &wvp, sizeof(mm::mat4), 0);
+		}
 		gapi->setUniformBuffer(ubo_buf, index_vs);
-
-		// set vertex buffer (old)
-		/*/
-		IVertexBuffer* tmp[3] = {
-			mesh->getVertexBuffers()[attribInfos[0].buffer_index].vb,
-			mesh->getVertexBuffers()[attribInfos[1].buffer_index].vb,
-			mesh->getVertexBuffers()[attribInfos[2].buffer_index].vb
-		};
-		gapi->setVertexBuffers(tmp, attribs, 3);
-		/*/
 
 		// set vertex buffers (new)
 		for (int i = 0; i < mesh->getNumVertexBuffers(); i++) {

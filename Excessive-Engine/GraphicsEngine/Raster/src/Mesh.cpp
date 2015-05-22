@@ -185,8 +185,10 @@ bool Mesh::update(MeshData data) {
 
 	// get highest bone index
 	int offset_bone_indices = 0;
-	for (int i = 0; i < 20; i++) {
-		if (elements[i].semantic == BONE_WEIGHTS) {
+	bool hasBones = false;;
+	for (int i = 0; i < num_elements; i++) {
+		if (elements[i].semantic == BONE_INDICES) {
+			hasBones = true;
 			break;
 		}
 		else {
@@ -195,10 +197,10 @@ bool Mesh::update(MeshData data) {
 	}
 	// note that offset must not be 0, since there's position before it, thus it being 0 means no BONE_WEIGHTS
 	highestBoneIndex = -1;
-	if (offset_bone_indices != 0) {		
+	if (hasBones) {
 		for (size_t i = 0; i < num_vertices; i++) {
-			uint16_t* bone_indices = (uint16_t*)(size_t(packed_vertex_data.get()) + i*internal_stride + offset_bone_indices);
-			highestBoneIndex = std::max(highestBoneIndex, (int)*std::max_element(bone_indices, bone_indices+4));
+			float* bone_indices = (float*)(size_t(packed_vertex_data.get()) + i*internal_stride + offset_bone_indices);
+			highestBoneIndex = std::max(highestBoneIndex, (int)(*std::max_element(bone_indices, bone_indices+4)+0.1));
 		}
 	}
 
@@ -418,23 +420,24 @@ void PackColor(void* input, void* output, int num_components) { // copies n byte
 void PackBoneIndices(void* input, void* output, int num_components) {
 	int i;
 	for (i = 0; i < num_components; i++) {
-		((uint16_t*)output)[i] = ((float*)input)[i] + 0.1f;
+		((float*)output)[i] = ((float*)input)[i] + 0.1f;
 	}
 	for (; i < 4; i++) {
-		((uint16_t*)output)[i] = 0xFFFF;
+		((float*)output)[i] = 0xFFFF;
 	}
 }
 
 void PackBoneWeights(void* input, void* output, int num_components) {
-	float sum;
+	float sum = 0.0f;
 	float values[4] = { 0,0,0,0 };
 	for (int i = 0; i < num_components; i++) {
 		values[i] = ((float*)input)[i];
 		sum += values[i];
 	}
 	for (int i = 0; i < 4; i++) {
-		((uint8_t*)output)[i] = values[i] / sum;
-	}		
+		assert(values[i] >= 0 && values[i] <= 1);
+		((float*)output)[i] = values[i] / sum;
+	}
 }
 
 void Mesh::packVertices(ElementDesc* input_format, ElementInfo* output_format, int input_count, int output_count, void* input, void* output, u32 num_verts) {

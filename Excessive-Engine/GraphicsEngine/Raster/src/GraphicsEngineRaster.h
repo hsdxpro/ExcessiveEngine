@@ -65,6 +65,7 @@ private:
 
 	// WARNING: temporary code
 	IShaderProgram* shader;
+	IShaderProgram* animShader;
 
 	// WARNING: pretty crappy solution
 	bool isValid;

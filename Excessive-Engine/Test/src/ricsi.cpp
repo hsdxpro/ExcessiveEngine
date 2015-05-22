@@ -1,5 +1,6 @@
 ﻿#include "EngineCore.h"
 #include "Factory.h"
+#include "AnimHand.h"
 
 // basic util
 #include <chrono>
@@ -53,6 +54,7 @@ int Ricsi()
 	layer.scene = scene;
 	gEngine->addLayer(layer);
 
+
 	//*/
 	static const wchar_t assetName[] = L"../Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
 	static const wchar_t teapotModelPath[] = L"../Assets/box.dae"; // Assets/teapot.dae
@@ -63,10 +65,32 @@ int Ricsi()
 	Entity* skyBox = core.addEntity(scene, Sys::getWorkDir() + L"../Assets/skybox.dae", 0);
 	skyBox->setScale({ 1000, 1000, 1000 });
 
+	// create an animated hand
+	graphics::IEntity* hand = scene->addEntity();
+	graphics::IMesh* handMesh = gEngine->createMesh();
+	KeyframeAnimation animation;
+	Animator animator;
+	animator.setEntity(hand);
+	animator.setAnimation(&animation);
+	bool isAnim = CreateAnimatedHand(gEngine, handMesh, animation);
+	if (isAnim) {
+		hand->setMesh(handMesh);
+	}
+	else {
+		std::cout << "COULD NOT LOAD ANIMATED MESH!!!" << std::endl;
+	}
+	if (!animator.isCompatible()) {
+		std::cout << "ANIMATION INCOMPATIBLE" << std::endl;
+		assert(false);
+	}
+	animator.setPlayTime(0);
+	animator.setPlaySpeed(1);
+
 	// Run the main loop
 	rWindowEvent ev;
 	double elapsed;
 	std::chrono::time_point<std::chrono::high_resolution_clock> last_frame;
+
 
 	// Timer for dT frame calc
 	//ITimer* t = Factory::createTimer();
@@ -83,8 +107,6 @@ int Ricsi()
 
 	while (window->isOpen())
 	{
-		//t->reset();
-
 		// keep 60 fps
 		auto now = std::chrono::high_resolution_clock::now();
 
@@ -198,6 +220,12 @@ int Ricsi()
 		// Update everything
 
 		//float deltaT = t->getElapsedSinceReset();
+
+		// Update animator
+		animator.update(elapsed);
+		if (animation.getTimeAt(animation.getNumKeyframes() - 1) + animation.getKeyframeDuration(animation.getNumKeyframes() - 1) < animator.getPlayTime()) {
+			animator.setPlayTime(0);
+		}
 
 		// Update core
 		core.update(elapsed/*, scene*/);

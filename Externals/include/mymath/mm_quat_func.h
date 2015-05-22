@@ -82,12 +82,31 @@ namespace mymath
   template<typename ty>
   impl::quati<ty> pow(const impl::quati<ty>& q, const ty& power)
   {
-    const impl::vec3i<ty> vec_normal = normalize(q.vector());
+	
+	  impl::vec3i<ty> vec_normal;
+	  float vlen = length(q.vector());
+	  if (vlen > 0.0000001f) {
+		  vec_normal = q.vector() / vlen;
+	  }
+	  else {
+		  vec_normal = vec3(0, 0, 0);
+	  }
     const ty norm_raised_to_pow = std::pow(norm(q), power);
     const ty theta = std::acos(q.scalar()/norm(q));
 
+	impl::quati<ty> ret;
+	ret.value.w = norm_raised_to_pow*std::cos(power*theta);
+	auto vpart = vec_normal*norm_raised_to_pow*std::sin(power*theta);
+	ret.value.x = vpart.x;
+	ret.value.y = vpart.y;
+	ret.value.z = vpart.z;
+	return ret;
+	
+
+	/*
     return impl::quati<ty>(vec_normal*norm_raised_to_pow*std::sin(power*theta),
         norm_raised_to_pow*std::cos(power*theta));
+		*/
   }
 
   template<typename ty>

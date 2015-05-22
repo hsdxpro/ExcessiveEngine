@@ -74,6 +74,7 @@ public:
 	virtual bool update(MeshData data) = 0;
 	virtual bool updateVertexData(const void* data, u32 offset, u32 size) = 0; // both params in bytes, format and total size considered the same
 	virtual void reset() = 0;
+	virtual int getHighestBoneIndex() const = 0;
 };
 
 

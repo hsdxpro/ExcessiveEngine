@@ -219,12 +219,12 @@ protected:
 		else if (semantic == BONE_INDICES) {
 			info.num_components = 4;
 			info.semantic = BONE_INDICES;
-			info.type = UINT_16;
+			info.type = FLOAT;
 		}
 		else if (semantic == BONE_WEIGHTS) {
 			info.num_components = 4;
 			info.semantic = BONE_WEIGHTS;
-			info.type = UNORM_8;
+			info.type = FLOAT;
 		}
 		else {
 			info.num_components = 0;
