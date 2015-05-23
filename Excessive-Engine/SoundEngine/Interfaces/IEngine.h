@@ -28,13 +28,13 @@ public:
 	///////////////////////////////////////
 	// states
 	
-	/// Set the volume. Will effect every sound that comes from this sound engine.
+	/// Set the volume. Will affect every sound that comes from this sound engine.
 	/// volume should be a positive real number.
 	/// If volume is 0 the engine is muted,
 	/// if it's 1 than the engine is at maximum unampified volume (100%).
-	virtual void setGlobalVolume(float volume) = 0;
+	virtual void setMasterVolume(float volume) = 0;
 	
-	virtual float getGlobalVolume() const = 0;
+	virtual float getMasterVolume() const = 0;
 	
 	// interact
 	virtual void update(float deltaTime) = 0;

@@ -7,6 +7,31 @@ FILE( GLOB_RECURSE sources src/*.c* )
 FILE( GLOB_RECURSE headers src/*.h* )
 FILE( GLOB_RECURSE interfaces ../Interfaces/*)
 
+# Interface
+SOURCE_GROUP(Interfaces FILES ${interfaces})
+
+# Main
+SOURCE_GROUP(Main FILES src/SoundEngineSFML.h src/SoundEngineSFML.cpp)
+
+# Scene
+SOURCE_GROUP(Scene FILES
+src/SoundScene.h
+src/SoundScene.cpp
+src/Emitter.h
+src/Emitter.cpp
+src/Listener.h
+src/Listener.cpp
+)
+
+# Resource management files filter
+SOURCE_GROUP(Resources FILES
+src/SoundData.h
+src/SoundData.cpp
+)
+
+#########################################################################
+# Project
+
 if(BUILD_EXCESSIVE_WITH_DLL)
 	add_library( SoundEngineSFML SHARED ${sources} ${headers} ${interfaces} )
 	target_link_libraries( SoundEngineSFML "-Wl,--whole-archive" Common  "-Wl,--no-whole-archive")
