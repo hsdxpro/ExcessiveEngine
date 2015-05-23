@@ -413,7 +413,7 @@ void GraphicsEngineRaster::update(float deltaTime) {
 			}
 
 			// draw matgroup
-			gapi->draw((matGroup.endFace - matGroup.beginFace) * 3, matGroup.beginFace * 3 * sizeof(u32));
+			gapi->drawIndexed((matGroup.endFace - matGroup.beginFace) * 3, matGroup.beginFace * 3 * sizeof(u32));
 		}
 
 		input_layout->release();

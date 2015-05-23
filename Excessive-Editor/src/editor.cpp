@@ -57,6 +57,9 @@ int main()
 	Awesomium::WebView* view = web_core->CreateWebView(window->getClientW(), window->getClientH());
 	Awesomium::WebURL url(Awesomium::WSLit("http://www.google.com"));
 	view->LoadURL(url);
+	
+	while (view->IsLoading())
+		web_core->Update();
 
 	// Texture we render awesomium into
 	rTexture texDesc;
@@ -76,18 +79,53 @@ int main()
 		rWindowEvent evt;
 		while (window->popEvent(&evt))
 		{
-			if (evt.msg == eWindowMsg::RESIZE)
+			if (evt.msg == eWindowMsg::MOUSE_MOVE)
 			{
-				tmpAwesomiumSurfaceData = realloc(tmpAwesomiumSurfaceData, window->getClientW() * window->getClientH() * 4);
-				view->Resize(window->getClientW(), window->getClientH());
-				gapi->setViewport(0, 0, window->getClientW(), window->getClientH());
+				view->InjectMouseMove(evt.x, evt.y);
+			}
+			else if (evt.msg == eWindowMsg::MOUSE_PRESS)
+			{
+				if (evt.mouseBtn == eMouseBtn::LEFT)
+					view->InjectMouseDown(Awesomium::kMouseButton_Left);
+				else if (evt.mouseBtn == eMouseBtn::MIDDLE)
+					view->InjectMouseDown(Awesomium::kMouseButton_Middle);
+				else if (evt.mouseBtn == eMouseBtn::RIGHT)
+					view->InjectMouseDown(Awesomium::kMouseButton_Right);
+			}
+			else if (evt.msg == eWindowMsg::MOUSE_RELEASE)
+			{
+				if (evt.mouseBtn == eMouseBtn::LEFT)
+					view->InjectMouseUp(Awesomium::kMouseButton_Left);
+				else if (evt.mouseBtn == eMouseBtn::MIDDLE)
+					view->InjectMouseUp(Awesomium::kMouseButton_Middle);
+				else if (evt.mouseBtn == eMouseBtn::RIGHT)
+					view->InjectMouseUp(Awesomium::kMouseButton_Right);
+			}
+			else if (evt.msg == eWindowMsg::MOUSE_WHEEL)
+			{
+				view->InjectMouseWheel(evt.deltaY * 100, 0);
+			}
+			else if (evt.msg == eWindowMsg::RESIZE)
+			{
+				tmpAwesomiumSurfaceData = realloc(tmpAwesomiumSurfaceData, evt.x * evt.y * 4);
+				view->Resize(evt.x, evt.y);
+				gapi->setViewport(0, 0, evt.x, evt.y);
+
+				texAwesome->destroy();
+
+				rTexture texDesc;
+					texDesc.depth = 1;
+					texDesc.format = eTextureFormat::RGBA8;
+					texDesc.height = evt.y;
+					texDesc.width = evt.x;
+					texDesc.is_cubemap = false;
+					texDesc.is_layered = false;
+					texDesc.num_levels = 1;
+				texAwesome = gapi->createTexture(texDesc);
 			}
 		}
-		while (view->IsLoading())
-			web_core->Update();
 
-		//web_core->Updwhile(view->IsLoading())
-		//	web_core->Update(); ate();
+		web_core->Update();
 
 		Awesomium::BitmapSurface* surface = (Awesomium::BitmapSurface*)view->surface();
 		

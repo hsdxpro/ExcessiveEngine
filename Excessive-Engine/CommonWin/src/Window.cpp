@@ -58,6 +58,10 @@ bool Window::popEvent(rWindowEvent* evt_out) {
 		evt_out->y = evt.mouseButton.y;
 		evt_out->mouseBtn = (eMouseBtn)((int)evt.mouseButton.button + 1); //  1 cuz our enum start with (out of sfml custom "INVALID" enum member)
 	}
+	else if (evt.type == sf::Event::EventType::MouseWheelMoved)
+	{
+		evt_out->deltaY = evt.mouseWheel.delta;
+	}
 	else if (evt_out->msg == eWindowMsg::CLOSE) {
 		close();
 	}
