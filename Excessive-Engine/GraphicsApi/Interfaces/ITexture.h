@@ -78,6 +78,8 @@ enum class eTextureFormat : uint32_t
 //specifies how you'd like to update the texture
 struct rTextureUpdate
 {
+	rTextureUpdate() : x_offset(0), y_offset(0), z_offset(0), level(0), width(0), height(0), depth(0), data(0){}
+
 	u32 level;
 	u32 x_offset;
 	u32 y_offset;

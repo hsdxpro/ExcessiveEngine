@@ -2,68 +2,46 @@
 #include "Awesomium/BitmapSurface.h"
 #include "Awesomium/STLHelpers.h"
 
-#include <thread>
 #include "../Common/src/IWindow.h"
 #include "../Common/src/Factory.h"
 #include "../Common/src/EngineCore.h"
 
-// Various macro definitions
-#define WIDTH   800
-#define HEIGHT  600
-#define URL     "http://www.google.com"
-
-//using namespace Awesomium;
-
 static const char vertexShaderCode[] =
-/**
 "#version 440 core \n"
-"layout(std140) uniform constant_data \n"
-"{ \n"
-"  mat4 mvp; \n"
-"} cd; \n"
-"layout(location = 0) in vec3 in_vertex; \n"
-"void main() \n"
-"{ \n"
-"  gl_Position = cd.mvp * vec4(in_vertex, 1); \n"
-"} \n";
-*/
-
-"#version 440 core \n"
-"in vec3 in_vertex; \n"
-"void main() \n"
-"{ \n"
-"	gl_Position = vec4(in_vertex.xy,0.0,1.0);\n"
-"} \n";
-
+"const vec2 quadVertices[3] = { vec2(-1, -1), vec2(3, -1), vec2(-1, 3) };\n"
+"const vec2 quadTexcoords[3] = { vec2(0, 1), vec2(2, 1), vec2(0, -1) };\n"
+"out vec2 tex0; \n"
+"void main()\n"
+"{\n"
+"	gl_Position = vec4(quadVertices[gl_VertexID], 0.0, 1.0);\n"
+"	tex0 = quadTexcoords[gl_VertexID]; \n"
+"}\n";
 
 static const char pixelShaderCode[] =
 "#version 440 core \n"
 "uniform sampler2D tex; \n"
-
 "in vec3 pos; \n"
+"in vec2 tex0; \n"
 "out vec4 color; \n"
 "void main() \n"
 "{ \n"
-"   color = vec4(1,0,0,1);\n"
+"   color = texture(tex, tex0);\n"
 "} \n"
 ;
 
 int main() 
 {
-	// Init window
+	// Window
 	rWindow d;
 		d.clientW = 800;
 		d.clientH = 600;
 		d.capText = "Excessive Awesome Editor";
 	IWindow* window = Factory::createWindow(d);
 
-	// Init engine core (graphics, physics, sound, network
+	// Engine core
 	EngineCore core;
-		//core.initSoundEngine();
-		//core.initNetworkEngine();
-		//core.initPhysicsEngineBullet();
 	rGraphicsEngineRaster gDesc;
-	gDesc.type = eGapiType::OPENGL_4_5;
+		gDesc.type = eGapiType::OPENGL_4_5;
 	graphics::IEngine* gEngine = core.initGraphicsEngineRaster(gDesc);
 
 	gEngine->setResolution(window->getClientW(), window->getClientH());
@@ -74,116 +52,87 @@ int main()
 	// Shader for fsq render
 	auto shaderAwesomium = gapi->createShaderSource(vertexShaderCode, pixelShaderCode);
 
-	// new vertex attribs (doesn't work yet)
-	rInputElement elements[1];
-		elements[0].setName("in_vertex");
-		elements[0].num_components = 3;
-		elements[0].offset = 0;
-		elements[0].type = eVertexAttribType::FLOAT;
-		elements[0].stream_index = 0;
-
-	IInputLayout* input_layout = gapi->createInputLayout(elements, 1);
-
-	mm::vec3 vertices[6];
-	vertices[0] = mm::vec3(0, 0, 0);
-	vertices[1] = mm::vec3(1, 1, 0);
-	vertices[2] = mm::vec3(1, 0, 0);
-	vertices[3] = mm::vec3(0, 0, 0);
-	vertices[4] = mm::vec3(0, 0, 0);
-	vertices[5] = mm::vec3(0, 0, 0);
-
-
-	// vertex buffer(s)
-	rBuffer vbDesc;
-		vbDesc.is_readable = false;
-		vbDesc.is_writable = false;
-		vbDesc.is_persistent = true;
-		vbDesc.prefer_cpu_storage = false;
-		vbDesc.size = elements[0].num_components * sizeof(float) * 6;
-		vbDesc.initial_data = vertices;
-	auto vb0 = gapi->createVertexBuffer(vbDesc);
-
-	u32 indices[6] = { 0, 1, 2, 3, 4, 5 };
-
-	rBuffer ibDesc;
-		ibDesc.is_readable = false;
-		ibDesc.is_writable = true;
-		ibDesc.is_persistent = false;
-		ibDesc.prefer_cpu_storage = false;
-		ibDesc.size = 6 * sizeof(u32);
-		ibDesc.initial_data = indices;
-	auto ib = gapi->createIndexBuffer(ibDesc);
-// (GAPI HACKED THINGS) END
-	// Create the WebCore singleton with default configuration
+// Awesome...
 	Awesomium::WebCore* web_core = Awesomium::WebCore::Initialize(Awesomium::WebConfig());
-
-	// Create a new WebView instance with a certain width and height
-	Awesomium::WebView* view = web_core->CreateWebView(WIDTH, HEIGHT);
-
-	// Load a certain URL into our WebView instance
-	Awesomium::WebURL url(Awesomium::WSLit(URL));
+	Awesomium::WebView* view = web_core->CreateWebView(window->getClientW(), window->getClientH());
+	Awesomium::WebURL url(Awesomium::WSLit("http://www.google.com"));
 	view->LoadURL(url);
 
-	// Wait for our WebView to finish loading
-	
+	// Texture we render awesomium into
+	rTexture texDesc;
+		texDesc.depth = 1;
+		texDesc.format = eTextureFormat::RGBA8;
+		texDesc.height = window->getClientH();
+		texDesc.width = window->getClientW();
+		texDesc.is_cubemap = false;
+		texDesc.is_layered = false;
+		texDesc.num_levels = 1;
+	ITexture* texAwesome = gapi->createTexture(texDesc);
+
+	void* tmpAwesomiumSurfaceData = malloc(window->getClientW() * window->getClientH() * 4);
 
 	while (window->isOpen())
 	{
 		rWindowEvent evt;
 		while (window->popEvent(&evt))
 		{
-			//if (evt.msg == eWindowMsg::CLOSE)
-			//	window->close()
-			//...
+			if (evt.msg == eWindowMsg::RESIZE)
+			{
+				tmpAwesomiumSurfaceData = realloc(tmpAwesomiumSurfaceData, window->getClientW() * window->getClientH() * 4);
+				view->Resize(window->getClientW(), window->getClientH());
+				gapi->setViewport(0, 0, window->getClientW(), window->getClientH());
+			}
+		}
+		while (view->IsLoading())
+			web_core->Update();
+
+		//web_core->Updwhile(view->IsLoading())
+		//	web_core->Update(); ate();
+
+		Awesomium::BitmapSurface* surface = (Awesomium::BitmapSurface*)view->surface();
+		
+		if (surface->is_dirty())
+		{
+			surface->CopyTo((u8*)tmpAwesomiumSurfaceData, window->getClientW() * 4, 4, false, false);
+			rTextureUpdate texUpdate;
+				texUpdate.data = tmpAwesomiumSurfaceData;
+				texUpdate.depth = 1;
+				texUpdate.format = eTextureFormat::RGBA8;
+				texUpdate.height = window->getClientH();
+				texUpdate.width = window->getClientW();
+				texUpdate.level = 0;
+			gapi->writeTexture(texAwesome, texUpdate);
 		}
 
-		//while (view->IsLoading())
-		//	web_core->Update();
-		//
-		//web_core->Update();
-		//gapi->clearFrameBuffer(eClearFlag::COLOR_DEPTH_STENCIL, mm::vec4(0, 0, 0, 1));
+		gapi->setTexture(texAwesome, shaderAwesomium->getSamplerIndex("tex"));
 
-		// Get the WebView's rendering Surface. The default Surface is of
-		// type 'BitmapSurface', we must cast it before we can use it.
-		//Awesomium::BitmapSurface* surface = (Awesomium::BitmapSurface*)view->surface();
-
-		gapi->clearFrameBuffer(eClearFlag::COLOR_DEPTH, mm::vec4(0, 0, 0, 0), 1, 0);
+		gapi->clearFrameBuffer(eClearFlag::COLOR_DEPTH_STENCIL, mm::vec4(0, 1, 0, 1), 1);
 
 		rDepthState ds;
-		ds.enable_test = false;
-		ds.enable_write = true;
-		ds.far = 1.0f;
-		ds.near = 0.0f;
-		ds.func = eCompareFunc::ALWAYS;
+			ds.enable_test = false;
 		gapi->setDepthState(ds);
 
-		// Set input layout, vertex buffers
-		gapi->setInputLayout(input_layout);
-
-		u32 strides = 12;// [2] = { 12, 8 };
-		u32 offsets = 0;// [2] = { 0, 0, };
-		gapi->setVertexBuffers(&vb0, &strides, &offsets, 0, 1);
-		gapi->setIndexBuffer(ib);
-		//gapi->setVertexBuffers(&vb1, &strides[1], &offsets[1], 0, 1);
 		gapi->setShaderProgram(shaderAwesomium);
 		gapi->setRenderTargets(0, 0);
 
-		gapi->draw(6);
+		gapi->draw(3);
 
-		// Kirenderelõdik az egész világ szépen ahogy van, és ennek a tetejére szeretnénk renderelni
-		// egyelõre opengl framebufferére is rámásolhatnánk
-
-		// Vagy csinálunk egy olyan entity - t
 		window->displayClientRect();
 	}
 
+	Awesomium::BitmapSurface* surface = (Awesomium::BitmapSurface*)view->surface();
 	// Make sure our surface is not NULL-- it may be NULL if the WebView 
 	// process has crashed.
-	//if (surface != 0) {
-	//	// Save our BitmapSurface to a JPEG image in the current
-	//	// working directory.
-	//	surface->SaveToJPEG(Awesomium::WSLit("./result.jpg"));
-	//}
+	if (surface != 0) {
+		// Save our BitmapSurface to a JPEG image in the current
+		// working directory.
+		surface->SaveToJPEG(Awesomium::WSLit("./result.jpg"));
+	}
+
+	// Clean up
+	free(tmpAwesomiumSurfaceData);
+	view->Destroy();
+	Awesomium::WebCore::Shutdown();
 
 	return 0;
 }

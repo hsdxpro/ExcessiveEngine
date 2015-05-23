@@ -95,8 +95,9 @@ public:
 
 	///////////////////////////////////////
     // draw calls
-	virtual void draw(size_t num_indices, u32 index_byte_offset = 0) = 0;
+	virtual void drawIndexed(u32 num_indices, u32 index_byte_offset = 0) = 0;
 
+	virtual void draw(u32 nVertices, u32 offset = 0) = 0;
 
 	///////////////////////////////////////
 	// global manipulators

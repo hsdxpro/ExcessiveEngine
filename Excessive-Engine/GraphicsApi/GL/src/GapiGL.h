@@ -71,9 +71,10 @@ public:
 	void setTexture(ITexture* t, u32 idx) override;
 
 	// draw calls
-	void draw(u32 num_indices, u32 index_byte_offset = 0);
+	void drawIndexed(u32 num_indices, u32 index_byte_offset = 0) override;
+	void draw(u32 nVertices, u32 offset = 0) override;
 
-	void clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth = 0, i32 stencil = 0);
+	void clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth = 0, i32 stencil = 0) override;
 
 	// input layout & vertex streams
 	u32 getNumVertexBufferSlots() const override;
