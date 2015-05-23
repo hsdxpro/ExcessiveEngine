@@ -30,6 +30,27 @@ void SoundEngineSFML::release() {
 	delete this;
 }
 
-void SoundEngineSFML::update(float deltaTime) {
+SoundScene* SoundEngineSFML::createScene(){
+	return nullptr;
+}
 
+SoundData* SoundEngineSFML::createSoundData() {
+	return nullptr;
+}
+
+Listener* SoundEngineSFML::createListener() {
+	return nullptr;
+}
+
+void SoundEngineSFML::setMasterVolume(float volume) {
+}
+
+float SoundEngineSFML::getMasterVolume() const {
+	//TODO
+	return 0;
+}
+
+
+void SoundEngineSFML::update(float deltaTime) {
+	//TODO commit, push audio engine!!
 }

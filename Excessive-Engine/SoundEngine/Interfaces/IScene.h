@@ -16,8 +16,9 @@ public:
 	virtual void clear() = 0;
 	
 	virtual void setListener(IListener* listener) = 0;
+	
 	virtual IListener* getListener() const = 0;
 };
-	
-	
+
+
 } // namespace
