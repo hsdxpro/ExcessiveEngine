@@ -42,7 +42,7 @@ EngineCore::EngineCore()
 
 EngineCore::~EngineCore() 
 {
-	for (auto& a : entities)
+	for (auto& a : actors)
 		delete a;
 
 	if (graphicsEngine)	graphicsEngine->release();
@@ -91,7 +91,7 @@ sound::IEngine* EngineCore::initSoundEngine(const rSoundEngine& d /*= rSoundEngi
 	return soundEngine = Factory::createSoundEngine(d);
 }
 
-Entity* EngineCore::addEntity(graphics::IScene* gScene, const std::wstring& modelPath, float mass) 
+Actor* EngineCore::addActor(graphics::IScene* gScene, const std::wstring& modelPath, float mass) 
 {
 	// Config for importing
 	rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED,
@@ -196,8 +196,8 @@ Entity* EngineCore::addEntity(graphics::IScene* gScene, const std::wstring& mode
 	vertices = nullptr; // Important
 
 	// new entity created
-	Entity* e = new Entity(gEntity, pEntity);
-		entities.push_back(e);
+	Actor* e = new Actor(gEntity, pEntity);
+		actors.push_back(e);
 	return e;
 }
 
@@ -244,7 +244,7 @@ void EngineCore::update(float deltaTime/*, graphics::IScene* scene*/)
 	if (physicsEngine)
 		physicsEngine->update(deltaTime);
 
-	for (auto& a : entities) 
+	for (auto& a : actors) 
 	{
 		physics::IEntity* pEntity = a->getComponentPhysics();
 		graphics::IEntity* gEntity = a->getComponentGraphics();

@@ -129,7 +129,8 @@ public:
 	static DLLHandle	loadDLL(const wchar_t* path);
 	static bool			unloadDLL(DLLHandle h);
 
-	static void*			getDllProcAddress(DLLHandle h, const std::string& procName);
+	static void*			getDLLProcAddress(DLLHandle h, const std::string& procName);
 	static std::wstring		getWorkDir();
 	static mm::ivec2		getMousePos();
+	static mm::ivec2		getScreenSize();
 };

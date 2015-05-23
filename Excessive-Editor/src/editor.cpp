@@ -155,7 +155,7 @@ int main()
 
 		gapi->draw(3);
 
-		window->displayClientRect();
+		window->present();
 	}
 
 	Awesomium::BitmapSurface* surface = (Awesomium::BitmapSurface*)view->surface();

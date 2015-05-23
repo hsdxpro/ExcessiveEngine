@@ -59,8 +59,8 @@ int Ricsi()
 	/*/
 	static const wchar_t assetName[] = L"../Assets/teapot.dae";
 	//*/
-	Entity* simpleEntity = core.addEntity(scene, Sys::getWorkDir() + assetName, 0);
-	Entity* skyBox = core.addEntity(scene, Sys::getWorkDir() + L"../Assets/skybox.dae", 0);
+	Actor* simpleEntity = core.addActor(scene, Sys::getWorkDir() + assetName, 0);
+	Actor* skyBox = core.addActor(scene, Sys::getWorkDir() + L"../Assets/skybox.dae", 0);
 	skyBox->setScale({ 1000, 1000, 1000 });
 
 	// Run the main loop
@@ -109,9 +109,9 @@ int Ricsi()
 			case eWindowMsg::MOUSE_PRESS:
 				if (ev.mouseBtn == eMouseBtn::RIGHT)
 					bRMBDown = true;
-				else if (ev.mouseBtn == eMouseBtn::LEFT) 
+				else if (ev.mouseBtn == eMouseBtn::LEFT)
 				{
-					Entity* e = core.addEntity(scene, Sys::getWorkDir() + teapotModelPath, 10);
+					Actor* e = core.addActor(scene, Sys::getWorkDir() + teapotModelPath, 10);
 					e->setPos(cam->getPos() + cam->getDirFront() * 3); // 3 méterrel elénk
 					e->setScale({ 1.f / 20, 1.f / 20, 1.f / 20 });
 				}
@@ -203,7 +203,7 @@ int Ricsi()
 		core.update(elapsed/*, scene*/);
 
 		// Call that after OpenGL "finish" all of it's rendering
-		window->displayClientRect();
+		window->present();
 
 		// keep 60 fps
 		//std::chrono::time_point<std::chrono::high_resolution_clock> now = std::chrono::high_resolution_clock::now();

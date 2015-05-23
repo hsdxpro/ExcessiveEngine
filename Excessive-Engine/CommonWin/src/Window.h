@@ -14,7 +14,7 @@ public:
 
 	void close() override;
 
-	void displayClientRect() override;
+	void present() override;
 
 	// getters
 	bool isOpen() const override;

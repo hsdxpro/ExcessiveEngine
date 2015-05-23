@@ -3,7 +3,7 @@
 
 // Modules
 
-#include "Entity.h"
+#include "Actor.h"
 #include "../GraphicsEngine/Raster/src/GraphicsEngineRaster.h"
 #include "../GraphicsEngine/RT/src/GraphicsEngineRT.h"
 #include "../PhysicsEngine/Bullet/src/PhysicsEngineBullet.h"
@@ -53,7 +53,7 @@ public:
 	
 	// Create high level Entity, that encapsulates (graphics, phyiscs, sound, network, ....) entities
 	// The input paths are files like .dae, .fbx etc
-	Entity* addEntity(graphics::IScene* gScene, const std::wstring& modelPath, float mass);
+	Actor* addActor(graphics::IScene* gScene, const std::wstring& modelPath, float mass);
 
 	void update(float deltaTime/*, graphics::IScene* scene*/);
 
@@ -68,5 +68,5 @@ protected:
 	network::IEngine*	networkEngine;
 	sound::IEngine*		soundEngine;
 
-	std::vector<Entity*> entities;
+	std::vector<Actor*> actors;
 };

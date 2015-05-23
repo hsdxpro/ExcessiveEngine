@@ -4,19 +4,21 @@
 #include "BasicTypes.h"
 #include "Sys.h"
 
-// TMP, REMOVE THAT
 #include <string>
 
-// Descriptor of window
-struct rWindow {
-	rWindow() : clientW(0), clientH(0){}
+enum class eWindowStyle
+{
+	NO_BORDER_NO_TITLE = 0,      ///< No border / title bar (this flag and all others are mutually exclusive)
+	TITLE__FIXEDBORDER = 1 << 0, ///< Title bar + fixed border
+	TITLE__RESIZABLE__MAXIMIZEBUTTON = 1 << 1, ///< Titlebar + resizable border + maximize button
+	TITLE__CLOSE = 1 << 2, ///< Titlebar + close button
+	FULLSCREEN = 1 << 3, ///< Fullscreen mode (this flag and all others are mutually exclusive)
 
-	u16 clientW;
-	u16 clientH;
-	std::string capText;
+	TITLE__RESIZE__CLOSE = TITLE__FIXEDBORDER | TITLE__RESIZABLE__MAXIMIZEBUTTON | TITLE__CLOSE ///< Default window style
 };
 
-enum class eWindowMsg {
+enum class eWindowMsg 
+{
 	CLOSE,						///< The window requested to be closed (no data)
 	RESIZE,						///< The window was resized (data in event.size)
 	DEFOCUS,					///< The window lost the focus (no data)
@@ -38,7 +40,8 @@ enum class eWindowMsg {
 	COUNT						///< Keep last -- the total number of event types
 };
 
-struct rWindowEvent {
+struct rWindowEvent 
+{
 	rWindowEvent() : msg(eWindowMsg::COUNT), key(eKey::COUNT), deltaX(0), deltaY(0), x(0), y(0) {}
 
 	eWindowMsg msg;
@@ -48,6 +51,17 @@ struct rWindowEvent {
 	i32 deltaY;
 	i32 x;
 	i32 y;
+};
+
+// Descriptor of window
+struct rWindow
+{
+	rWindow() : clientW(0), clientH(0){}
+
+	u16 clientW;
+	u16 clientH;
+	eWindowStyle style;
+	std::string capText;
 };
 
 class IWindow
@@ -60,7 +74,7 @@ public:
 	virtual bool popEvent(rWindowEvent* evt_out) = 0;
 
 	// U need to call that function after some DrawingAPI finishe s draw on window client region, this will BLIT the content to your monitor where client region is defined
-	virtual void displayClientRect() = 0;
+	virtual void present() = 0;
 
 	// Window client surface width
 	virtual u16 getClientW() const = 0;

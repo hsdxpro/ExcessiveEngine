@@ -4,18 +4,23 @@
 #include <limits>
 
 Window::Window(const rWindow& d)
-	:lastMousePos(0, 0), evt(*new (eventSpace)sf::Event) {
-	w.create(sf::VideoMode(d.clientW, d.clientH), d.capText.c_str());
+:lastMousePos(0, 0), evt(*new (eventSpace)sf::Event) 
+{
+	w.create(sf::VideoMode(d.clientW, d.clientH), d.capText.c_str(), (u32)d.style);
 	w.setVerticalSyncEnabled(true);
 }
 
-bool Window::popEvent(rWindowEvent* evt_out) {
+bool Window::popEvent(rWindowEvent* evt_out)
+{
+	assert(evt_out);
+
 	bool b = w.pollEvent(evt);
 
 	evt_out->msg = (eWindowMsg)(evt.type);
 
 	// Key press release
-	if (evt.type == sf::Event::EventType::KeyPressed || evt.type == sf::Event::EventType::KeyReleased) {
+	if (evt.type == sf::Event::EventType::KeyPressed || evt.type == sf::Event::EventType::KeyReleased) 
+	{
 		evt_out->mouseBtn = eMouseBtn::INVALID;
 
 		evt_out->key = (eKey)((int)evt.key.code);
@@ -24,7 +29,8 @@ bool Window::popEvent(rWindowEvent* evt_out) {
 		evt_out->x = 0;
 		evt_out->y = 0;
 	}
-	else if (evt.type == sf::Event::EventType::MouseMoved) {
+	else if (evt.type == sf::Event::EventType::MouseMoved) 
+	{
 		evt_out->key = eKey::INVALID;
 		evt_out->mouseBtn = eMouseBtn::INVALID;
 
@@ -43,13 +49,15 @@ bool Window::popEvent(rWindowEvent* evt_out) {
 		lastMousePos.x = evt.mouseMove.x;
 		lastMousePos.y = evt.mouseMove.y;
 	}
-	else if (evt.type == sf::Event::EventType::MouseEntered) {
+	else if (evt.type == sf::Event::EventType::MouseEntered) 
+	{
 		// TODO: This sign was used, to ensure 0 dx, dy delta mouse move when gain focus
 		// BAD IDEA
 		lastMousePos.x = std::numeric_limits<int>::min();
 		//lastMousePos.y = std::numeric_limits<int>.min();
 	}
-	else if (evt.type == sf::Event::EventType::MouseButtonPressed || evt.type == sf::Event::EventType::MouseButtonReleased)	{
+	else if (evt.type == sf::Event::EventType::MouseButtonPressed || evt.type == sf::Event::EventType::MouseButtonReleased)	
+	{
 		evt_out->key = eKey::INVALID;
 		evt_out->deltaX = 0;
 		evt_out->deltaY = 0;
@@ -62,10 +70,12 @@ bool Window::popEvent(rWindowEvent* evt_out) {
 	{
 		evt_out->deltaY = evt.mouseWheel.delta;
 	}
-	else if (evt_out->msg == eWindowMsg::CLOSE) {
+	else if (evt_out->msg == eWindowMsg::CLOSE) 
+	{
 		close();
 	}
-	else if (evt_out->msg == eWindowMsg::RESIZE) {
+	else if (evt_out->msg == eWindowMsg::RESIZE) 
+	{
 		evt_out->x = evt.size.width;
 		evt_out->y = evt.size.height;
 	}
@@ -73,31 +83,38 @@ bool Window::popEvent(rWindowEvent* evt_out) {
 	return b;
 }
 
-void Window::close() {
+void Window::close() 
+{
 	w.close();
 }
 
-void Window::displayClientRect() {
+void Window::present() 
+{
 	w.display();
 }
 
-bool Window::isOpen() const {
+bool Window::isOpen() const 
+{
 	return w.isOpen();
 }
 
-u16 Window::getClientW() const {
+u16 Window::getClientW() const 
+{
 	return w.getSize().x;
 }
 
-u16 Window::getClientH() const {
+u16 Window::getClientH() const 
+{
 	return w.getSize().y;
 }
 
-float Window::getClientAspectRatio() const {
+float Window::getClientAspectRatio() const 
+{
 	const sf::Vector2u size = w.getSize();
 	return (float)size.x / size.y;
 }
 
-void Window::setText(const wchar_t* text) {
+void Window::setText(const wchar_t* text)
+{
 	w.setTitle(text);
 }
