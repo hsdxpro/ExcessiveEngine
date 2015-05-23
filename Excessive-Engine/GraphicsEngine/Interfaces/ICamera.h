@@ -59,7 +59,7 @@ public:
 	
 	virtual const mm::vec3& getPos() const = 0;
 	virtual const mm::quat& getRot() const = 0;
-	virtual const mm::vec3& getTarget() const = 0;
+	virtual const mm::vec3& getTargetPos() const = 0;
 };
 
 

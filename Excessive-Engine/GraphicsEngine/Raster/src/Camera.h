@@ -34,7 +34,7 @@ public:
 
 	const mm::vec3& getPos() const override;
 	const mm::quat& getRot() const override;
-	const mm::vec3& getTarget() const override;
+	const mm::vec3& getTargetPos() const override;
 
 	Camera(graphics::rProjOrtho proj, float nearPlane, float farPlane);
 	Camera(graphics::rProjPersp proj, float nearPlane, float farPlane);

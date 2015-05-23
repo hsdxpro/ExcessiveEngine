@@ -791,7 +791,7 @@ void GapiGL::setIndexBuffer(IIndexBuffer* ibo)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBufferGL*>(ibo)->id);
 }
 
-void GapiGL::draw(u32 num_indices, u32 index_byte_offset /*= 0*/)
+void GapiGL::drawIndexed(u32 num_indices, u32 index_byte_offset /*= 0*/)
 {
 #ifdef DEBUG_SHADER_ERRORS
 	glValidateProgram(static_cast<ShaderProgram*>(s)->id);
@@ -805,6 +805,11 @@ void GapiGL::draw(u32 num_indices, u32 index_byte_offset /*= 0*/)
 	}
 
 	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, (void*)index_byte_offset);
+}
+
+void GapiGL::draw(u32 nVertices, u32 offset /*= 0*/)
+{
+	glDrawArrays(GL_TRIANGLES, offset, nVertices);
 }
 
 void GapiGL::clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth /*= 0*/, i32 stencil /*= 0*/)

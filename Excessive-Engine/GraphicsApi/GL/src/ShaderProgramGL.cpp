@@ -26,10 +26,15 @@ ShaderProgramGL::ShaderProgramGL(GLuint program_id)
 		// get location
 		auto location = glGetAttribLocation(program, name.c_str());
 
-		assert(location >= 0);
-
-		// add to cache
-		attrib_loc_cache.insert(pair<string, int>(name, location));
+		if (location >= 0)
+		{
+			// add to cache
+			attrib_loc_cache.insert(pair<string, int>(name, location));
+		}
+		else
+		{
+			// Log pls.. name.c_str()
+		}
 	}
 }
 

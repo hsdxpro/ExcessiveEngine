@@ -46,6 +46,8 @@ public:
 	// interact
 	void update(float deltaTime) override;
 
+	IGapi* getGapi() override { return nullptr;  }
+
 private:
 };
 

@@ -156,7 +156,6 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 				// Gather position
 				if (bHasPos) 
 				{
-					// Pos to gather
 					const aiVector3D& pos = mesh->mVertices[localVertIdx];
 					
 					// Determine vertex index
@@ -187,7 +186,6 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 				auto vecPtr = mesh->mTextureCoords[0];
 				if (vecPtr) 
 				{
-					// Pos to gather
 					const aiVector3D& tex0 = vecPtr[localVertIdx];
 
 					// Determine vertex index

@@ -112,7 +112,7 @@ int Ricsi()
 				else if (ev.mouseBtn == eMouseBtn::LEFT) 
 				{
 					Entity* e = core.addEntity(scene, Sys::getWorkDir() + teapotModelPath, 10);
-					e->setPos(cam->getPos());
+					e->setPos(cam->getPos() + cam->getDirFront() * 3); // 3 méterrel elénk
 					e->setScale({ 1.f / 20, 1.f / 20, 1.f / 20 });
 				}
 				break;
@@ -127,7 +127,7 @@ int Ricsi()
 					float angleChangeZ = (float)(ev.deltaX) * 0.009;
 					float angleChangeX = (float)(-ev.deltaY) * 0.009;
 
-					mm::vec3 viewDir = mm::normalize(cam->getTarget() - cam->getPos());
+					mm::vec3 viewDir = mm::normalize(cam->getTargetPos() - cam->getPos());
 					float lenXY = mm::length(viewDir.xy);
 					static float angleX = acos(lenXY)*(viewDir.z > 0 ? 1 : -1);
 					angleX += angleChangeX;

@@ -1,6 +1,7 @@
 #pragma once
 #include "../Common/src/BasicTypes.h"
 
+class IGapi;
 
 // namespace
 namespace graphics {
@@ -81,6 +82,7 @@ public:
 	virtual void setNumLayers(size_t num_layers) = 0;
 	virtual Layer& getLayer(size_t index) = 0;
 
+	virtual IGapi* getGapi() = 0;
 
 	///////////////////////////////////////
 	// states

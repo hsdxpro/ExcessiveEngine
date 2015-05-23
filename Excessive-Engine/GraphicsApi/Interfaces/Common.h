@@ -24,6 +24,8 @@ enum class eCompareFunc : u32
 
 struct rDepthState
 {
+	rDepthState(): enable_test(true), enable_write(true), near(0), far(0), func(eCompareFunc::ALWAYS) {}
+
 	bool enable_test;
 	bool enable_write;
 	float near, far;

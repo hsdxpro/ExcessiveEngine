@@ -166,6 +166,6 @@ const mm::quat& Camera::getRot() const {
 	return mm::quat();// ::DirToRot(target - pos, GetDirUp());
 }
 
-const mm::vec3& Camera::getTarget() const {
+const mm::vec3& Camera::getTargetPos() const {
 	return target;
 }
