@@ -17,9 +17,9 @@ int main()
 {
 	// Full screen popup window for our game
 	rWindow d;
-		d.style = eWindowStyle::TITLE__RESIZE__CLOSE;
-		d.clientW = 800;// Sys::getScreenSize().x;
-		d.clientH = 600;// Sys::getScreenSize().y;
+		d.style = eWindowStyle::FULLSCREEN;
+		d.clientW = Sys::getScreenSize().x;
+		d.clientH = Sys::getScreenSize().y;
 	gWindow = Factory::createWindow(d);
 
 	gEngineCore = new EngineCore();
@@ -35,8 +35,6 @@ int main()
 
 	// EZ A BULLSHIT RÉSZ AMIT ÁTKÉNE GONDOLNI HOGY LEGYEN
 	{
-		// Ehelyett grafikus motornak átadunk egy ablakot, és tudja hogy arra kell renderelni olyan méretben a client felületre
-		gEngineGraphics->setResolution(gWindow->getClientW(), gWindow->getClientH());
 
 		// Grafikus motor használatának nincs értelme 1 scene 1 layer nélkül, EngineCore majd elintézi
 		auto mainScene = gEngineGraphics->createScene();
@@ -47,8 +45,10 @@ int main()
 
 		// Oké létrehozok kamerát, de azt majd core - n keresztül állítom be ????
 		auto mainCam = gEngineGraphics->createCam();
-		mainScene->setCamera(mainCam);
+		mainCam->setAspectRatio(gWindow->getClientAspectRatio());
 		mainCam->setPos(mm::vec3(0, -3, 10));
+
+		mainScene->setCamera(mainCam);
 
 		// REMOVE THIS SHIIIIIT !!!!!! REFACTOR
 		Actor* actorGround = gEngineCore->addActor(mainScene, Sys::getWorkDir() + L"../Assets/demo_ground.dae", 0);

@@ -123,7 +123,7 @@ GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRaster& d) {
 	shader = gapi->createShaderSource(vertexShaderCode, pixelShaderCode);
 	isValid = shader != nullptr;
 
-	gapi->setViewport(0, 0, 640, 480);
+	gapi->setViewport(0, 0, d.targetWindow->getClientW(), d.targetWindow->getClientH());
 	gapi->setDebugOutput(true);
 	gapi->setSeamlessCubeMaps(true);
 	gapi->setSyncDebugOutput(true);

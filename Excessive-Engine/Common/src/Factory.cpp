@@ -23,7 +23,7 @@ graphics::IEngine* Factory::createGraphicsEngineRaster(const rGraphicsEngineRast
 	if (!module) {
 		return nullptr;
 	}
-	CreateT CreateGraphicsEngine = (CreateT)Sys::getDllProcAddress(module, "CreateGraphicsEngineRaster");
+	CreateT CreateGraphicsEngine = (CreateT)Sys::getDLLProcAddress(module, "CreateGraphicsEngineRaster");
 	if (!CreateGraphicsEngine) {
 		return nullptr;
 	}
@@ -41,7 +41,7 @@ graphics::IEngine* Factory::createGraphicsEngineRT(const rGraphicsEngineRT& d)
 	if (!module) {
 		return nullptr;
 	}
-	CreateT CreateGraphicsEngine = (CreateT)Sys::getDllProcAddress(module, "CreateGraphicsEngineRT");
+	CreateT CreateGraphicsEngine = (CreateT)Sys::getDLLProcAddress(module, "CreateGraphicsEngineRT");
 	if (!CreateGraphicsEngine) {
 		return nullptr;
 	}
@@ -59,7 +59,7 @@ physics::IEngine* Factory::createPhysicsEngineBullet(const rPhysicsEngineBullet&
 	if (!module) {
 		return nullptr;
 	}
-	CreateT creator = (CreateT)Sys::getDllProcAddress(module, "CreatePhysicsEngineBullet");
+	CreateT creator = (CreateT)Sys::getDLLProcAddress(module, "CreatePhysicsEngineBullet");
 	if (!creator) {
 		return nullptr;
 	}
@@ -77,7 +77,7 @@ network::IEngine* Factory::createNetworkEngine(const rNetworkEngine& d)
 	if (!module) {
 		return nullptr;
 	}
-	CreateT creator = (CreateT)Sys::getDllProcAddress(module, "CreateNetworkEngine");
+	CreateT creator = (CreateT)Sys::getDLLProcAddress(module, "CreateNetworkEngine");
 	if (!creator) {
 		return nullptr;
 	}
@@ -95,7 +95,7 @@ sound::IEngine* Factory::createSoundEngine(const rSoundEngine& d)
 	if (!module) {
 		return nullptr;
 	}
-	CreateT creator = (CreateT)Sys::getDllProcAddress(module, "CreateSoundEngine");
+	CreateT creator = (CreateT)Sys::getDLLProcAddress(module, "CreateSoundEngine");
 	if (!creator) {
 		return nullptr;
 	}
@@ -108,7 +108,7 @@ sound::IEngine* Factory::createSoundEngine(const rSoundEngine& d)
 IGapi* Factory::createGapiGL() 
 {
 #ifdef BUILD_DLL
-	return ((IGapi*(*)())Sys::getDllProcAddress(Sys::loadDLL((Sys::getWorkDir() + L"GraphicsApiGL").c_str()), "createGraphicsApi"))();
+	return ((IGapi*(*)())Sys::getDLLProcAddress(Sys::loadDLL((Sys::getWorkDir() + L"GraphicsApiGL").c_str()), "createGraphicsApi"))();
 #elif BUILD_STATIC
 	return (IGapi*)new GapiGL();
 #endif

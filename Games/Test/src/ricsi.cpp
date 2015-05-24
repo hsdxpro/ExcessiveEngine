@@ -36,8 +36,6 @@ int Ricsi()
 			gDesc.targetWindow = window;
 		graphics::IEngine* gEngine = core.initGraphicsEngineRaster(gDesc);
 
-	gEngine->setResolution(window->getClientW(), window->getClientH());
-
 	// Create camera
 	graphics::ICamera* cam = gEngine->createCam();
 	cam->setFOV(70 / 180.f*3.1415926f);
