@@ -48,6 +48,9 @@ EngineCore::~EngineCore()
 	for (auto& a : actors)
 		delete a;
 
+	for (auto& a : importedModels)
+		delete a.second;
+
 	if (graphicsEngine)	graphicsEngine->release();
 	if (physicsEngine)	physicsEngine->release();
 	if (networkEngine)	networkEngine->release();
@@ -63,7 +66,9 @@ graphics::IEngine* EngineCore::initGraphicsEngineRaster(const rGraphicsEngineRas
 
 	// Load error diffuse texture, that we place on materials which fails load their own texture by path
 	texError = graphicsEngine->createTexture();
-	assert(texError->load(Sys::getWorkDir() + L"../Assets/error.jpg"));
+	
+	bool bSuccess = texError->load(Sys::getWorkDir() + L"../Assets/error.jpg");
+	assert(bSuccess);
 
 	return graphicsEngine;
 }
@@ -100,44 +105,61 @@ sound::IEngine* EngineCore::initSoundEngine(const rSoundEngine& d /*= rSoundEngi
 	return soundEngine = Factory::createSoundEngine(d);
 }
 
-Actor* EngineCore::addActor(graphics::IScene* gScene, const std::wstring& modelPath, float mass) 
+Actor* EngineCore::addActor()
 {
-	// Config for importing
-	rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED,
-						 eImporter3DFlag::VERT_ATTR_POS,
-						 eImporter3DFlag::VERT_ATTR_NORM,
-						 eImporter3DFlag::VERT_ATTR_TEX0,
-						 eImporter3DFlag::PIVOT_RECENTER });
+	// new entity created
+	Actor* e = new Actor();
+	actors.push_back(e);
+	return e;
+}
 
-	rImporter3DData modelDesc;
-	Importer3D::loadFile(modelPath, cfg, modelDesc);
+graphics::IEntity* EngineCore::addCompGraphicsFromFile(WorldComponent* a, const std::wstring& modelFilePath, graphics::IScene* scene)
+{
+	// Check if model already loaded somehow
+	rImporter3DData* modelDesc;
+	auto it = importedModels.find(modelFilePath);
+	if (it != importedModels.end())
+	{
+		modelDesc = it->second;
+	}
+	else // Not found, import it...
+	{
+		// Config for importing
+		rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED,
+							 eImporter3DFlag::VERT_ATTR_POS,
+							 eImporter3DFlag::VERT_ATTR_NORM,
+							 eImporter3DFlag::VERT_ATTR_TEX0,
+							 eImporter3DFlag::PIVOT_RECENTER });
 
+		modelDesc = new rImporter3DData();
+		Importer3D::loadFile(modelFilePath, cfg, *modelDesc);
+
+		importedModels[modelFilePath] = modelDesc;
+	}
 
 	// TODO: need add not set for entity, or subMeshes needed, like material -> subMaterial
-	assert(modelDesc.meshes.size() <= 1);
-
-	//// --------------- GRAPHICS PART OF ENTITY ------------------------------/////
+	assert(modelDesc->meshes.size() <= 1);
 
 	// We will feed meshes to that graphics entity
-	graphics::IEntity* gEntity = gScene->addEntity();
+	graphics::IEntity* compGraphics = scene->addEntity();
 
 	// Material for entity
 	graphics::IMaterial* material = graphicsEngine->createMaterial();
-	gEntity->setMaterial(material);
+	compGraphics->setMaterial(material);
 
 	// For each mesh imported, create graphics mesh
-	for (auto& importedMesh : modelDesc.meshes)
+	for (auto& importedMesh : modelDesc->meshes)
 	{
 		graphics::IMesh* graphicsMesh = graphicsEngine->createMesh();
-		gEntity->setMesh(graphicsMesh);
+		compGraphics->setMesh(graphicsMesh);
 
 		// Materials
-		for (auto& importedMaterial : importedMesh.materials) 
+		for (auto& importedMaterial : importedMesh.materials)
 		{
 			auto& subMat = material->addSubMaterial();
 			subMat.base = mm::vec4(1, 1, 1, 1);
 
-			if (importedMaterial.texPathDiffuse != L"") 
+			if (importedMaterial.texPathDiffuse != L"")
 			{
 				subMat.t_diffuse = graphicsEngine->createTexture();
 
@@ -145,7 +167,7 @@ Actor* EngineCore::addActor(graphics::IScene* gScene, const std::wstring& modelP
 
 				// TODO:
 				// turn .bmp references into .jpg (UGLY TMP)
-				if (importedMaterial.texPathDiffuse.rfind(L".bmp")) 
+				if (importedMaterial.texPathDiffuse.rfind(L".bmp"))
 				{
 					auto idx = importedMaterial.texPathDiffuse.rfind('.');
 					auto jpgExtension = importedMaterial.texPathDiffuse.substr(0, idx + 1) + L"jpg";
@@ -194,35 +216,61 @@ Actor* EngineCore::addActor(graphics::IScene* gScene, const std::wstring& modelP
 		graphicsMesh->update(meshData);
 	}
 
-	//// --------------- PHYSICS PART OF ENTITY ------------------------------/////
-	physics::IEntity* pEntity = nullptr;
+	a->addChild(compGraphics);
+	return compGraphics;
+}
 
-	auto mesh = modelDesc.meshes[0];
+physics::IEntityRigid* EngineCore::addCompRigidBodyFromFile(WorldComponent* a, const std::wstring& modelFilePath, float mass)
+{
+	// Check if model already loaded somehow
+	rImporter3DData* modelDesc;
+	//auto it = importedModels.find(modelFilePath);
+	//if (it != importedModels.end())
+	//{
+	//	modelDesc = it->second;
+	//}
+	//else // Not found, import it...
+	{
+		// Config for importing
+		rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED,
+							 eImporter3DFlag::VERT_ATTR_POS,
+							 eImporter3DFlag::VERT_ATTR_NORM,
+							 eImporter3DFlag::VERT_ATTR_TEX0,
+							 eImporter3DFlag::PIVOT_RECENTER });
+
+		modelDesc = new rImporter3DData();
+		Importer3D::loadFile(modelFilePath, cfg, *modelDesc);
+
+		importedModels[modelFilePath] = modelDesc;
+	}
+
+	physics::IEntityRigid* compRigid = nullptr;
+
+	auto mesh = modelDesc->meshes[0];
 
 	mm::vec3* vertices;
-	if (cfg.isContain(eImporter3DFlag::VERT_BUFF_INTERLEAVED)) // Interleaved buffer? Okay gather positions from vertices stepping with vertex stride
+	// Little hekk, we know it's INTERLEAVED, cuz  addCompRigidBodyFromFile and addCompGraphicsFromFile implementation
+	//if (cfg.isContain(eImporter3DFlag::VERT_BUFF_INTERLEAVED)) // Interleaved buffer? Okay gather positions from vertices stepping with vertex stride
 	{
 		vertices = new mm::vec3[mesh.nVertices];
 		for (u32 i = 0; i < mesh.nVertices; i++)
 			vertices[i] = *(mm::vec3*)((u8*)mesh.vertexBuffers[0] + i * mesh.vertexSize);
 	}
-	else
-	{
-		vertices = (mm::vec3*)mesh.vertexBuffers[0]; // Non interleaved buffers, cool 0.th buffer will be position
-	}
+	//else
+	//{
+	//	vertices = (mm::vec3*)mesh.vertexBuffers[0]; // Non interleaved buffers, cool 0.th buffer will be position
+	//}
 
 	if (mass == 0)
-		pEntity = physicsEngine->addEntityRigidStatic(vertices, mesh.nVertices, mesh.indices, mesh.indexSize, mesh.nIndices);
+		compRigid = physicsEngine->addEntityRigidStatic(vertices, mesh.nVertices, mesh.indices, mesh.indexSize, mesh.nIndices);
 	else
-		pEntity = physicsEngine->addEntityRigidDynamic(vertices, mesh.nVertices, mass);
+		compRigid = physicsEngine->addEntityRigidDynamic(vertices, mesh.nVertices, mass);
 
 	delete vertices;
 	vertices = nullptr; // Important
 
-	// new entity created
-	Actor* e = new Actor(gEntity, pEntity);
-		actors.push_back(e);
-	return e;
+	a->addChild(compRigid);
+	return compRigid;
 }
 
 void EngineCore::update(float deltaTime/*, graphics::IScene* scene*/)
@@ -264,21 +312,8 @@ void EngineCore::update(float deltaTime/*, graphics::IScene* scene*/)
 	delete[] indices;
 	*/
 
-	// Okay physics updated, now time to send transformation to graphics
 	if (physicsEngine)
 		physicsEngine->update(deltaTime);
-
-	for (auto& a : actors) 
-	{
-		physics::IEntity* pEntity = a->getComponentPhysics();
-		graphics::IEntity* gEntity = a->getComponentGraphics();
-
-		if (pEntity && gEntity)
-		{
-			gEntity->setPos(pEntity->getPos());
-			gEntity->setRot(pEntity->getRot());
-		}
-	}
 
 	if (graphicsEngine) 
 		graphicsEngine->update(deltaTime);

@@ -4,6 +4,9 @@
 #include "..\Common\src\EngineCore.h"
 #include "..\Common\src\ITimer.h"
 
+// TMP
+#include <array>
+
 // Spirit of the engine
 EngineCore*			gEngineCore;
 graphics::IEngine*	gEngineGraphics;
@@ -17,9 +20,10 @@ int main()
 {
 	// Full screen popup window for our game
 	rWindow d;
-		d.style = eWindowStyle::FULLSCREEN;
-		d.clientW = Sys::getScreenSize().x;
-		d.clientH = Sys::getScreenSize().y;
+		//d.style = eWindowStyle::FULLSCREEN;
+		d.style = eWindowStyle::TITLE__RESIZABLE__MAXIMIZEBUTTON;
+		d.clientW = 800;// Sys::getScreenSize().x;
+		d.clientH = 600;// Sys::getScreenSize().y;
 	gWindow = Factory::createWindow(d);
 
 	gEngineCore = new EngineCore();
@@ -34,7 +38,7 @@ int main()
 	timer->start();
 
 	// EZ A BULLSHIT RÉSZ AMIT ÁTKÉNE GONDOLNI HOGY LEGYEN
-	{
+	//{
 
 		// Grafikus motor használatának nincs értelme 1 scene 1 layer nélkül, EngineCore majd elintézi
 		auto mainScene = gEngineGraphics->createScene();
@@ -50,16 +54,18 @@ int main()
 
 		mainScene->setCamera(mainCam);
 
-		// REMOVE THIS SHIIIIIT !!!!!! REFACTOR
-		Actor* actorGround = gEngineCore->addActor(mainScene, Sys::getWorkDir() + L"../Assets/demo_ground.dae", 0);
-		Actor* actorSky = gEngineCore->addActor(mainScene, Sys::getWorkDir() + L"../Assets/skybox.dae", 0);
-		actorSky->setScale({ 1000, 1000, 1000 });
-	}
+	//}
+
+	// Add ground to world
+	Actor* ground = gEngineCore->addActor();
+		gEngineCore->addCompGraphicsFromFile(ground, Sys::getWorkDir() + L"../Assets/demo_ground.dae", mainScene);
+		gEngineCore->addCompRigidBodyFromFile(ground, Sys::getWorkDir() + L"../Assets/demo_ground.dae", 0);
 	
-	//Actor* a = gEngineCore->addActor();
-	//	gEngineCore->addComponentGraphicsFromFile(a, modelPath);
-	//	gEngineCore->addComponentRigidBodyFromFile(a, modelPath, 0);
-	
+	// Add sky to world
+	Actor* sky = gEngineCore->addActor();
+		gEngineCore->addCompGraphicsFromFile(sky, Sys::getWorkDir() + L"../Assets/skybox.dae", mainScene);
+	sky->setScale({ 1000, 1000, 1000 });
+
 	while (gWindow->isOpen())
 	{
 		rWindowEvent evt;

@@ -52,6 +52,9 @@ void PhysicsEngineBullet::update(float deltaTime)
 {
 	world->stepSimulation(deltaTime);
 
+	for (auto& rigid : entities)
+		((EntityRigid*)rigid)->updateAfterSimulate();
+
 	// Contact mainfolds for debugging
 	//auto overlappingPairCache = world->getBroadphase()->getOverlappingPairCache();
 	//auto nPairs = overlappingPairCache->getNumOverlappingPairs();
@@ -66,7 +69,7 @@ void PhysicsEngineBullet::update(float deltaTime)
 	//}
 }
 
-physics::IEntity* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) 
+physics::IEntityRigid* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) 
 {
 	// You should call PhysicsEngineBullet::createEntityRigidStatic
 	assert(mass != 0);
@@ -88,7 +91,7 @@ physics::IEntity* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vertices,
 	return e;
 }
 
-physics::IEntity* PhysicsEngineBullet::addEntityRigidStatic(mm::vec3* vertices, u32 nVertices, void* indices, u32 indexSize, u32 nIndices) 
+physics::IEntityRigid* PhysicsEngineBullet::addEntityRigidStatic(mm::vec3* vertices, u32 nVertices, void* indices, u32 indexSize, u32 nIndices) 
 {
 
 	btTriangleIndexVertexArray* VBIB;

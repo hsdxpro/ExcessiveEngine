@@ -1,22 +1,13 @@
 #pragma once
-#include "../GraphicsEngine/Interfaces/IEntity.h"
-#include "../PhysicsEngine/Interfaces/IEntity.h"
-
+#include <vector>
+#include "BasicTypes.h"
+#include "mymath\mymath.h"
+#include "WorldComponent.h"
 
 // The class which has graphical, physical, etc representation in the game world
 // That you can transform, iteract with it.
-class Actor
+class Actor : public WorldComponent
 {
 public:
-	Actor(graphics::IEntity* g, physics::IEntity* p);
-
-	void setPos(const mm::vec3& p);
-	void setScale(const mm::vec3& s);
-
-	graphics::IEntity*	getComponentGraphics() { return gEntity; }
-	physics::IEntity*	getComponentPhysics() { return pEntity; }
-
-protected:
-	graphics::IEntity* gEntity;
-	physics::IEntity* pEntity;
+	Actor();
 };

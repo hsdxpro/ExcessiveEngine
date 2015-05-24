@@ -9,6 +9,9 @@
 #include "../PhysicsEngine/Bullet/src/PhysicsEngineBullet.h"
 #include "../NetworkEngine/Boost/src/NetworkEngineBoost.h"
 #include "../SoundEngine/SFML/src/SoundEngineSFML.h"
+#include <unordered_map>
+
+struct rImporter3DData;
 
 class EngineCore
 {
@@ -32,9 +35,14 @@ public:
 	// Init network engine, if one already exists will be destroyed, then instantiate it
 	sound::IEngine* initSoundEngine(const rSoundEngine& d = rSoundEngine());
 	
+	// DEPRECATED !!!!
 	// Create high level Entity, that encapsulates (graphics, phyiscs, sound, network, ....) entities
 	// The input paths are files like .dae, .fbx etc
-	Actor* addActor(graphics::IScene* gScene, const std::wstring& modelPath, float mass);
+	//Actor* addActor(graphics::IScene* gScene, const std::wstring& modelPath, float mass);
+	Actor* addActor();
+
+	graphics::IEntity* addCompGraphicsFromFile(WorldComponent* a, const std::wstring& modelFilePath, graphics::IScene* scene);
+	physics::IEntityRigid* addCompRigidBodyFromFile(WorldComponent* a, const std::wstring& modelFilePath, float mass);
 
 	void update(float deltaTime/*, graphics::IScene* scene*/);
 
@@ -50,6 +58,8 @@ protected:
 	sound::IEngine*		soundEngine;
 
 	std::vector<Actor*> actors;
+
+	std::unordered_map<std::wstring, rImporter3DData*> importedModels;
 
 	// Error diffuse texture for failed texture loads
 	graphics::ITexture* texError;

@@ -7,32 +7,51 @@ EntityRigid::EntityRigid(btRigidBody* body)
 :body(body) {
 }
 
-void EntityRigid::setPos(const mm::vec3& p) {
+void EntityRigid::updateAfterSimulate()
+{
+	// Okay so after physics simulation done we need the simulation of WorldComponent transform, with calling setPos, setRot
+	WorldComponent::setPos(getPos());
+	WorldComponent::setRot(getRot());	
+}
+
+void EntityRigid::setPos(const mm::vec3& v) 
+{
+	WorldComponent::setPos(v);
+
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
-	trans.setOrigin(btVector3(p.x, p.y, p.z));
+	trans.setOrigin(btVector3( v.x, v.y, v.z ));
 
 	body->setWorldTransform(trans);
 	body->getMotionState()->setWorldTransform(trans);
 }
 
-void EntityRigid::setRot(const mm::quat& r)
+void EntityRigid::setRot(const mm::quat& q)
 {
+	WorldComponent::setRot(q);
+
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
-	trans.setRotation(btQuaternion(r.vector().x, r.vector().y, r.vector().z, r.scalar()));
+	btQuaternion btQuat;
+		btQuat.setX(q.vector().x);
+		btQuat.setY(q.vector().y);
+		btQuat.setZ(q.vector().z);
+		btQuat.setW(q.scalar());
+	trans.setRotation(btQuat);
 
 	body->setWorldTransform(trans);
 	body->getMotionState()->setWorldTransform(trans);
 }
 
-void EntityRigid::setScale(const mm::vec3& s)
+void EntityRigid::setScale(const mm::vec3& v)
 {
+	WorldComponent::setScale(v);
+
 	btCollisionShape* colShape = body->getCollisionShape();
 
 	if (colShape)
 	{
-		colShape->setLocalScaling(btVector3(s.x, s.y, s.z));
+		colShape->setLocalScaling(btVector3(v.x, v.y, v.z));
 		
 		// I think it's needed
 		btVector3 localInertia(0, 0, 0);
@@ -44,40 +63,44 @@ void EntityRigid::setScale(const mm::vec3& s)
 			body->setMassProps(mass, localInertia);
 		}
 	}
-		
 }
 
-mm::vec3 EntityRigid::getPos() 
-{
-	btTransform trans;
-	body->getMotionState()->getWorldTransform(trans);
-	
-	auto& vec = trans.getOrigin();
-	return mm::vec3(vec.x(), vec.y(), vec.z());
-}
-
-mm::quat EntityRigid::getRot()
+const mm::vec3& EntityRigid::getPos() 
 {
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
 
-	auto& btRot = trans.getRotation();
-	mm::quat rot;
-		rot.value.x = btRot.x();
-		rot.value.y = btRot.y();
-		rot.value.z = btRot.z();
-		rot.value.w = btRot.w();
+	pos.x = trans.getOrigin().x();
+	pos.y = trans.getOrigin().y();
+	pos.z = trans.getOrigin().z();
+
+	return pos;
+}
+
+const mm::quat& EntityRigid::getRot()
+{
+	btTransform trans;
+	body->getMotionState()->getWorldTransform(trans);
+
+	rot.value.x = trans.getRotation().x();
+	rot.value.y = trans.getRotation().y();
+	rot.value.z = trans.getRotation().z();
+	rot.value.w = trans.getRotation().w();
+
 	return rot;
 }
 
-mm::vec3 EntityRigid::getScale()
+const mm::vec3& EntityRigid::getScale()
 {
 	btCollisionShape* shape = body->getCollisionShape();
 
 	if (shape)
 	{
-		const btVector3& scale = shape->getLocalScaling();
-		return mm::vec3(scale.x(), scale.y(), scale.z());
+		scale.x = shape->getLocalScaling().x();
+		scale.y = shape->getLocalScaling().y();
+		scale.z = shape->getLocalScaling().z();
+		return scale;
 	}
-	return mm::vec3(0, 0, 0);
+
+	return WorldComponent::getScale();
 }

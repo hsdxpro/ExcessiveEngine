@@ -56,3 +56,8 @@ mm::ivec2 Sys::getScreenSize()
 {
 	return{ GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) };
 }
+
+void Sys::messageBox(const std::wstring& msg)
+{
+	MessageBoxW(0, msg.c_str(), L"", MB_OK);
+}

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mymath/mymath.h>
+#include "../Common/src/WorldComponent.h"
 
 // namespace
 namespace graphics {
@@ -14,16 +15,10 @@ class IMaterial;
 ////////////////////////////////////////////////////////////////////////////////
 
 
-class IEntity
+class IEntity : public WorldComponent
 {
-public:	
-	virtual void setPos(const mm::vec3&) = 0;
-	virtual void setRot(const mm::quat&) = 0;
-	virtual void setScale(const mm::vec3&) = 0;
-
-	virtual mm::vec3 getPos() = 0;
-	virtual mm::quat getRot() = 0;
-	virtual mm::vec3 getScale() = 0;
+public:
+	IEntity():WorldComponent(GRAPHICS){}
 
 	virtual void setMesh(IMesh* mesh) = 0;
 	virtual void setMaterial(IMaterial* material) = 0;

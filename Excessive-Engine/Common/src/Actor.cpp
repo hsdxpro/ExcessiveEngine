@@ -1,18 +1,29 @@
 #include "Actor.h"
 
-Actor::Actor(graphics::IEntity* g, physics::IEntity* p)
-:gEntity(g), pEntity(p) 
+#include "..\GraphicsEngine\Interfaces\IEntity.h"
+#include "..\PhysicsEngine\Interfaces\IEntityRigid.h"
+
+Actor::Actor()
+:WorldComponent(EMPTY)
 {
 }
 
-void Actor::setPos(const mm::vec3& p)
-{
-	if(gEntity)gEntity->setPos(p);
-	if(pEntity)pEntity->setPos(p);
-}
-
-void Actor::setScale(const mm::vec3& s)
-{
-	if (gEntity)gEntity->setScale(s);
-	if (pEntity)pEntity->setScale(s);
-}
+//void Actor::setPos(const mm::vec3& p)
+//{
+//	// TEMPORARY CODE !!! REMOVE
+//	for (auto& rigid : componentTypeContainer[(u32)eCompType::RIGID].childComponents)
+//		rigid->setPos(p);
+//
+//	for (auto& rigid : componentTypeContainer[(u32)eCompType::RIGID].childComponents)
+//		rigid->setPos(p);
+//}
+//
+//void Actor::setScale(const mm::vec3& s)
+//{
+//	// TEMPORARY CODE !!! REMOVE
+//	for (auto& rigid : childComponents->componentsRigid)
+//		rigid->setScale(s);
+//
+//	for (auto& rigid : childComponents->componentsGraphics)
+//		rigid->setScale(s);
+//}

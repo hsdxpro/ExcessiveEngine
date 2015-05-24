@@ -1,21 +1,23 @@
 #pragma once
-#include "../../Interfaces/IEntity.h"
+#include "../../Interfaces/IEntityRigid.h"
 
 
 class btRigidBody;
 
-class EntityRigid : public physics::IEntity 
+class EntityRigid : public physics::IEntityRigid 
 {
 public:
 	EntityRigid(btRigidBody* body);
 
-	void setPos(const mm::vec3& p) override;
-	void setRot(const mm::quat& r) override;
-	void setScale(const mm::vec3& s) override;
+	void updateAfterSimulate();
 
-	mm::vec3 getPos() override;
-	mm::quat getRot() override;
-	mm::vec3 getScale() override;
+	void setPos(const mm::vec3& v) override;
+	void setRot(const mm::quat& q) override;
+	void setScale(const mm::vec3& v) override;
+
+	const mm::vec3& getPos() override;
+	const mm::quat& getRot() override;
+	const mm::vec3& getScale() override;
 
 	btRigidBody* getBody() { return body;  }
 

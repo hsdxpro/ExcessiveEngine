@@ -190,7 +190,7 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 
 				// @TODO not general algorithm, wee need to handle more UV channels
 				auto vecPtr = mesh->mTextureCoords[0];
-				if (vecPtr) 
+				if (vecPtr)
 				{
 					const aiVector3D& tex0 = vecPtr[localVertIdx];
 
@@ -198,7 +198,7 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 					u32 vertexIdx = localVertIdx + globalVertexIdx;
 
 					// Then copy the data to the appropriate attrib offset in that vertex
-					memcpy(((u8*)vertices) + vertexSize * vertexIdx + tex0_attribOffset, &mm::vec2(tex0.x, -tex0.y), sizeof(mm::vec2)); // UV flip y
+					memcpy(((u8*)vertices) + vertexSize * vertexIdx + tex0_attribOffset, &mm::vec2(tex0.x, tex0.y), sizeof(mm::vec2)); // UV flip y
 				}
 			}
 		}

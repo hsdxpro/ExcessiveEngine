@@ -133,4 +133,5 @@ public:
 	static std::wstring		getWorkDir();
 	static mm::ivec2		getMousePos();
 	static mm::ivec2		getScreenSize();
+	static void				messageBox(const std::wstring& msg);
 };

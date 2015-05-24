@@ -58,8 +58,12 @@ int Ricsi()
 	/*/
 	static const wchar_t assetName[] = L"../Assets/teapot.dae";
 	//*/
-	Actor* simpleEntity = core.addActor(scene, Sys::getWorkDir() + assetName, 0);
-	Actor* skyBox = core.addActor(scene, Sys::getWorkDir() + L"../Assets/skybox.dae", 0);
+	Actor* simpleEntity = core.addActor();
+		auto rigidComp = core.addCompRigidBodyFromFile(simpleEntity, Sys::getWorkDir() + assetName, 0);
+			core.addCompGraphicsFromFile(rigidComp, Sys::getWorkDir() + assetName, scene);
+
+	Actor* skyBox = core.addActor();
+		core.addCompGraphicsFromFile(skyBox, Sys::getWorkDir() + L"../Assets/skybox.dae", scene);
 	skyBox->setScale({ 1000, 1000, 1000 });
 
 	// Run the main loop
@@ -110,9 +114,12 @@ int Ricsi()
 					bRMBDown = true;
 				else if (ev.mouseBtn == eMouseBtn::LEFT)
 				{
-					Actor* e = core.addActor(scene, Sys::getWorkDir() + teapotModelPath, 10);
+					Actor* e = core.addActor();
+						auto comp = core.addCompRigidBodyFromFile(e, Sys::getWorkDir() + teapotModelPath, 10);
+							core.addCompGraphicsFromFile(comp, Sys::getWorkDir() + teapotModelPath, scene);
+					
 					e->setPos(cam->getPos() + cam->getDirFront() * 3); // 3 méterrel elénk
-					e->setScale({ 1.f / 20, 1.f / 20, 1.f / 20 });
+					e->setScale(mm::vec3( 1.f / 20, 1.f / 20, 1.f / 20 ));
 				}
 				break;
 			case eWindowMsg::MOUSE_RELEASE:
