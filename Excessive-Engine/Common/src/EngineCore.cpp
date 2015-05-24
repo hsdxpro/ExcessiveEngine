@@ -8,6 +8,9 @@
 #include "../NetworkEngine/Boost/src/NetworkEngineBoost.h"
 #include "../SoundEngine/SFML/src/SoundEngineSFML.h"
 
+#include <assert.h>
+#include "Sys.h"
+
 //////////////////////////////////////////////////
 //                                              //
 //           +----------+                       //
@@ -56,7 +59,13 @@ graphics::IEngine* EngineCore::initGraphicsEngineRaster(const rGraphicsEngineRas
 	if (graphicsEngine) 
 		graphicsEngine->release(); 
 
-	return graphicsEngine = Factory::createGraphicsEngineRaster(d);
+	graphicsEngine = Factory::createGraphicsEngineRaster(d);
+
+	// Load error diffuse texture, that we place on materials which fails load their own texture by path
+	texError = graphicsEngine->createTexture();
+	assert(texError->load(Sys::getWorkDir() + L"../Assets/error.jpg"));
+
+	return graphicsEngine;
 }
 
 graphics::IEngine* EngineCore::initGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/) 
@@ -117,27 +126,42 @@ Actor* EngineCore::addActor(graphics::IScene* gScene, const std::wstring& modelP
 	gEntity->setMaterial(material);
 
 	// For each mesh imported, create graphics mesh
-	for (auto& importedMesh : modelDesc.meshes) {
+	for (auto& importedMesh : modelDesc.meshes)
+	{
 		graphics::IMesh* graphicsMesh = graphicsEngine->createMesh();
 		gEntity->setMesh(graphicsMesh);
 
 		// Materials
-		for (auto& importedMaterial : importedMesh.materials) {
+		for (auto& importedMaterial : importedMesh.materials) 
+		{
 			auto& subMat = material->addSubMaterial();
 			subMat.base = mm::vec4(1, 1, 1, 1);
 
-			if (importedMaterial.texPathDiffuse != L"") {
+			if (importedMaterial.texPathDiffuse != L"") 
+			{
 				subMat.t_diffuse = graphicsEngine->createTexture();
+
+				std::wstring finalPath;
 
 				// TODO:
 				// turn .bmp references into .jpg (UGLY TMP)
-				if (importedMaterial.texPathDiffuse.rfind(L".bmp")) {
+				if (importedMaterial.texPathDiffuse.rfind(L".bmp")) 
+				{
 					auto idx = importedMaterial.texPathDiffuse.rfind('.');
 					auto jpgExtension = importedMaterial.texPathDiffuse.substr(0, idx + 1) + L"jpg";
-					subMat.t_diffuse->load(jpgExtension.c_str());
+					finalPath = jpgExtension;
 				}
 				else
-					subMat.t_diffuse->load(importedMaterial.texPathDiffuse.c_str());
+				{
+					finalPath = importedMaterial.texPathDiffuse;
+				}
+
+				// Try Load texture
+				if (!subMat.t_diffuse->load(finalPath.c_str()))
+				{
+					// Texture load fail...
+					subMat.t_diffuse = texError;
+				}
 			}
 		}
 

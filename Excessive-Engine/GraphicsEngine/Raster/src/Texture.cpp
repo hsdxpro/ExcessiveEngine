@@ -13,7 +13,7 @@
 // Constructor & destructor
 
 Texture::Texture(IGapi* gapi) 
-	: gapi(gapi), tex(nullptr)
+: gapi(gapi), tex(nullptr)
 {
 	refcount = 1;
 }
@@ -41,17 +41,19 @@ void Texture::release() {
 ////////////////////////////////////////////////////////////////////////////////
 // load
 
-bool Texture::load(const wchar_t* file_path) {
+bool Texture::load(const std::wstring& file_path) {
 	// clean up old contents, if any
 	if (tex) {
 		reset();
 	}
 
+	const wchar_t* path = file_path.c_str();
+
 	// load image with sfml
-	size_t len = wcslen(file_path);
+	size_t len = wcslen(path);
 	char* ansiPath = new char[len+1];
 	size_t conved;
-	wcstombs_s(&conved, ansiPath, len + 1, file_path, len + 1);
+	wcstombs_s(&conved, ansiPath, len + 1, path, len + 1);
 
 	sf::Image im;
 	bool isLoaded = im.loadFromFile(ansiPath);
@@ -60,7 +62,7 @@ bool Texture::load(const wchar_t* file_path) {
 		return false;
 	}
 
-	rTexture texdata;
+	rTextureGapi texdata;
 	texdata.width = im.getSize().x;
 	texdata.height = im.getSize().y;
 	texdata.depth = 1;
@@ -101,6 +103,6 @@ void Texture::reset() {
 
 ////////////////////////////////////////////////////////////////////////////////
 // internal accessors
-::ITexture* Texture::getTexture() {
+ITextureGapi* Texture::getTexture() {
 	return tex;
 }

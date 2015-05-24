@@ -39,8 +39,10 @@ public:
 	Camera(graphics::rProjOrtho proj, float nearPlane, float farPlane);
 	Camera(graphics::rProjPersp proj, float nearPlane, float farPlane);
 	Camera();
+
 protected:
 	void calcProjMatrix();
+
 protected:
 	// Pos, Target ( World space )
 	mm::vec3 pos;

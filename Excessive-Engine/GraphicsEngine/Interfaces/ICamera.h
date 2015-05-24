@@ -10,20 +10,23 @@ namespace graphics {
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-enum class eProjType : u32 {
+enum class eProjType : u32 
+{
 	ORTHO,
 	PERSP,
 };
 
-struct rProjOrtho {
+struct rProjOrtho 
+{
 	rProjOrtho(){}
 	rProjOrtho(float left, float right, float bottom, float top) :left(left), right(right), top(top), bottom(bottom){}
 
 	float left, right, top, bottom;
 };
 
-struct rProjPersp {
-	rProjPersp(){}
+struct rProjPersp
+{
+	rProjPersp():fovRad(3.14159265358979f /2), aspectRatio(1) {}
 	rProjPersp(float fovRad, float aspectRatio) :fovRad(fovRad), aspectRatio(aspectRatio){}
 
 	float fovRad;

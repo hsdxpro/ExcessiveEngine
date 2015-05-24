@@ -14,17 +14,22 @@
 #include <unordered_set>
 #include <vector>
 
+class IWindow;
+
 ////////////////////////////////////////////////////////////////////////////////
 /// GraphicsEngine implementation.
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-enum class eGapiType {
+enum class eGapiType 
+{
 	OPENGL_4_5,
 };
 
-struct rGraphicsEngineRaster {
-	eGapiType type;
+struct rGraphicsEngineRaster 
+{
+	eGapiType	gapiType;
+	IWindow*		targetWindow;
 };
 
 class GraphicsEngineRaster : public graphics::IEngine

@@ -7,76 +7,92 @@
 using namespace mymath;
 
 Camera::Camera(graphics::rProjOrtho proj, float nearPlane, float farPlane)
-:nearPlane(nearPlane), farPlane(farPlane), target(0, 1, 0), pos(0, 0, 0), projOrtho(proj), projType(graphics::eProjType::ORTHO) {
+: nearPlane(nearPlane), farPlane(farPlane), target(0, 1, 0), pos(0, 0, 0), projOrtho(proj), projType(graphics::eProjType::ORTHO) 
+{
 	calcProjMatrix();
 }
 
 Camera::Camera(graphics::rProjPersp proj, float nearPlane, float farPlane)
-: nearPlane(nearPlane), farPlane(farPlane), target(0, 1, 0), pos(0, 0, 0), projPersp(proj), projType(graphics::eProjType::PERSP) {
+: nearPlane(nearPlane), farPlane(farPlane), target(0, 1, 0), pos(0, 0, 0), projPersp(proj), projType(graphics::eProjType::PERSP)
+{
 	calcProjMatrix();
 }
 
 Camera::Camera()
-: nearPlane(0), farPlane(0), target(0, 1, 0), pos(0, 0, 0), projType(graphics::eProjType::PERSP) {
+: nearPlane(0.01), farPlane(4000), target(0, 1, 0), pos(0, 0, 0), projType(graphics::eProjType::PERSP)
+{
+	calcProjMatrix();
 }
 
-void Camera::setFOV(float rad) {
+void Camera::setFOV(float rad)
+{
 	assert(projType == graphics::eProjType::PERSP);
 
 	projPersp.fovRad = rad;
 	calcProjMatrix();
 }
 
-void Camera::setAspectRatio(float r) {
+void Camera::setAspectRatio(float r)
+{
 	assert(projType == graphics::eProjType::PERSP);
 
 	projPersp.aspectRatio = r;
 	calcProjMatrix();
 }
 
-void Camera::setNearPlane(float nP) {
+void Camera::setNearPlane(float nP)
+{
 	nearPlane = nP;
 	calcProjMatrix();
 }
 
-void Camera::setFarPlane(float fP) {
+void Camera::setFarPlane(float fP)
+{
 	farPlane = fP;
 	calcProjMatrix();
 }
 
-void Camera::setPos(const mm::vec3& p) {
+void Camera::setPos(const mm::vec3& p)
+{
 	mm::vec3 delta = target - pos;
 
 	pos = p;
 	target = p + delta;
 }
 
-void Camera::setTarget(const mm::vec3& p) {
+void Camera::setTarget(const mm::vec3& p)
+{
 	target = p;
 }
 
-void Camera::setDir(const mm::vec3& p) {
+void Camera::setDir(const mm::vec3& p)
+{
 	target = pos + p;
 }
 
-float Camera::getFOVRad() const {
+float Camera::getFOVRad() const
+{
 	return projPersp.fovRad;
 }
 
-float Camera::getAspectRatio() const {
+float Camera::getAspectRatio() const
+{
 	return projPersp.aspectRatio;
 }
 
-float Camera::getNearPlane() const {
+float Camera::getNearPlane() const
+{
 	return nearPlane;
 }
 
-float Camera::getFarPlane() const {
+float Camera::getFarPlane() const
+{
 	return farPlane;
 }
 
 // TODO REMOVE IT OR I KILL MYSELF
-mm::mat4 Matrix44ViewRH(const mm::vec3& eye, const mm::vec3& target, const mm::vec3& up) {
+mm::mat4 Matrix44ViewRH(const mm::vec3& eye, const mm::vec3& target, const mm::vec3& up)
+{
 	// Negate cuz of OpenGL -z front...
 	mm::vec3 baseFront = normalize(-(target - eye));		// The "look-at" vector.
 	mm::vec3 baseRight = normalize(cross(baseFront, up));	// The "right" vector.
@@ -100,12 +116,14 @@ mm::mat4 Matrix44ViewRH(const mm::vec3& eye, const mm::vec3& target, const mm::v
 	return orientation * translation;	
 }
 
-mm::mat4 Camera::getViewMatrix() const {
+mm::mat4 Camera::getViewMatrix() const
+{
 	const mm::vec3 up(0.0f, 0.0f, 1.0f);
 	return Matrix44ViewRH(pos, target, up);
 }
 
-void Camera::calcProjMatrix() {
+void Camera::calcProjMatrix()
+{
 	switch (projType)
 	{
 	case graphics::eProjType::ORTHO:
@@ -129,43 +147,53 @@ void Camera::calcProjMatrix() {
 	}
 }
 
-mm::mat4 Camera::getProjMatrix() const {
+mm::mat4 Camera::getProjMatrix() const
+{
 	return proj;
 }
 
-mm::vec3 Camera::getDirFront() const {
+mm::vec3 Camera::getDirFront() const
+{
 	return target - pos;
 }
 
-mm::vec3 Camera::getDirBack() const {
+mm::vec3 Camera::getDirBack() const
+{
 	return pos - target;
 }
 
-mm::vec3 Camera::getDirUp() const {
+mm::vec3 Camera::getDirUp() const
+{
 	return cross(getDirRight(), getDirFront());
 }
 
-mm::vec3 Camera::getDirDown() const {
+mm::vec3 Camera::getDirDown() const
+{
 	return cross(getDirFront(), getDirRight());
 }
 
-mm::vec3 Camera::getDirRight() const {
+mm::vec3 Camera::getDirRight() const
+{
 	return cross(mm::vec3(0.0f, 0.0f, 1.0f), getDirFront());
 }
 
-mm::vec3 Camera::getDirLeft() const {
+mm::vec3 Camera::getDirLeft() const
+{
 	return cross(getDirFront(), mm::vec3(0.0f, 0.0f, 1.0f));
 }
 
-const mm::vec3& Camera::getPos() const {
+const mm::vec3& Camera::getPos() const
+{
 	return pos;
 }
 
-const mm::quat& Camera::getRot() const {
+const mm::quat& Camera::getRot() const
+{
 	// TODO
 	return mm::quat();// ::DirToRot(target - pos, GetDirUp());
 }
 
-const mm::vec3& Camera::getTargetPos() const {
+const mm::vec3& Camera::getTargetPos() const
+{
 	return target;
 }

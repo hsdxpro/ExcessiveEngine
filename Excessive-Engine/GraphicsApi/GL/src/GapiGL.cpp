@@ -352,7 +352,7 @@ VertexBufferGL* GapiGL::createVertexBuffer(const rBuffer& data)
 	return vbo;
 }
 
-TextureGL* GapiGL::createTexture(const rTexture& data)
+TextureGL* GapiGL::createTexture(const rTextureGapi& data)
 {
 	TextureGL* tex = new TextureGL();
 	glGenTextures(1, &tex->ID);
@@ -461,7 +461,7 @@ IndexBufferGL* GapiGL::createIndexBuffer(const rBuffer& data)
 
 
 // textures
-void GapiGL::writeTexture(ITexture* t, const rTextureUpdate& d) {
+void GapiGL::writeTexture(ITextureGapi* t, const rTextureUpdate& d) {
 	TextureGL* tex = (TextureGL*)t;
 
 	glActiveTexture(GL_TEXTURE0);
@@ -484,7 +484,7 @@ void GapiGL::writeTexture(ITexture* t, const rTextureUpdate& d) {
 		//glTextureSubImage3D(tex->ID, d.level, d.x_offset, d.y_offset, d.z_offset, d.width, d.height, d.depth, texture_formats[d.format], texture_types[d.format], d.data);
 	}
 }
-void GapiGL::readTexture(ITexture* t, const rTextureUpdate& d) {
+void GapiGL::readTexture(ITextureGapi* t, const rTextureUpdate& d) {
 	auto id = ((TextureGL*)t)->ID;
 	glGetTextureSubImage(id, d.level, d.x_offset, d.y_offset, d.z_offset, d.width, d.height, d.depth, texture_formats[(int)d.format], texture_types[(int)d.format], ((d.width - d.x_offset) * (d.height - d.y_offset) * (d.depth - d.z_offset) * texture_sizes[(int)d.format]) / 8, d.data);
 }
@@ -587,7 +587,7 @@ void GapiGL::setBlendState(const rBlendState& state)
 	glBlendFunc(blend_func_data[(u32)state.src_func], blend_func_data[(u32)state.dst_func]);
 }
 
-void GapiGL::setSamplerState(const char* slotName, const rSamplerState& smpdata, ITexture* t)
+void GapiGL::setSamplerState(const char* slotName, const rSamplerState& smpdata, ITextureGapi* t)
 {
 	TextureGL* tex = (TextureGL*)t;
 
@@ -724,7 +724,7 @@ void GapiGL::setShaderProgram(IShaderProgram* sp)
 	//bindInputLayout();
 }
 
-void GapiGL::setTexture(ITexture* t, u32 idx)
+void GapiGL::setTexture(ITextureGapi* t, u32 idx)
 {
 	TextureGL* tex = (TextureGL*)t;
 

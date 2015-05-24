@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 // namespace
 namespace graphics {
@@ -13,7 +14,7 @@ class ITexture
 public:
 	virtual void release() = 0;
 
-	virtual bool load(const wchar_t* file_path) = 0;
+	virtual bool load(const std::wstring& file_path) = 0;
 
 	virtual void reset() = 0;
 };

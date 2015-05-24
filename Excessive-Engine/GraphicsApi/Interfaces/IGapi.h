@@ -3,7 +3,7 @@
 #include "mymath/mymath.h"
 
 #include "Common.h"
-#include "ITexture.h"
+#include "ITextureGapi.h"
 #include "IBuffer.h"
 #include "IShaderProgram.h"
 #include "IInputLayout.h"
@@ -46,13 +46,13 @@ public:
 
 	/// Create texture.
 	/// \return nullptr is returned of failure.
-	virtual ITexture*		createTexture(const rTexture& data) = 0;
+	virtual ITextureGapi*	createTexture(const rTextureGapi& data) = 0;
 
 
 	///////////////////////////////////////
 	// buffer data manipulation
-	virtual void writeTexture(ITexture* t, const rTextureUpdate& d) = 0;
-	virtual void readTexture(ITexture* t, const rTextureUpdate& d) = 0;
+	virtual void writeTexture(ITextureGapi* t, const rTextureUpdate& d) = 0;
+	virtual void readTexture(ITextureGapi* t, const rTextureUpdate& d) = 0;
 
 	virtual void writeBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) = 0;
 	virtual void readBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) = 0;
@@ -68,7 +68,7 @@ public:
 	virtual void setStencilState(const rStencilState& state) = 0;
 	virtual void setBlendState(const rBlendState& state) = 0;
 	virtual void setRasterizationState(const rRasterizerState& state) = 0;
-	virtual void setSamplerState(const char* slotName, const rSamplerState& smpdata, ITexture* t) = 0;
+	virtual void setSamplerState(const char* slotName, const rSamplerState& smpdata, ITextureGapi* t) = 0;
 
 	virtual void setSRGBWrites(bool val) = 0;
 	virtual void setSeamlessCubeMaps(bool val) = 0;
@@ -86,7 +86,7 @@ public:
 	///////////////////////////////////////
     // set render input
     virtual void setShaderProgram(IShaderProgram* sp) = 0;
-    virtual void setTexture(ITexture* t, u32 idx) = 0;
+    virtual void setTexture(ITextureGapi* t, u32 idx) = 0;
 	virtual void setRenderTargets(const rRenderTargetInfo* render_targets, u32 size) = 0;
     virtual void setUniformBuffer(IUniformBuffer* buf, u32 idx) = 0;
 	virtual void setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers) = 0;

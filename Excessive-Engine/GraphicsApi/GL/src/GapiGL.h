@@ -31,12 +31,12 @@ public:
 	// buffer creationg
 	UniformBufferGL* createUniformBuffer(const rBuffer& data) override;
 	VertexBufferGL*	createVertexBuffer(const rBuffer& data) override;
-	TextureGL*		createTexture(const rTexture& data) override;
+	TextureGL*		createTexture(const rTextureGapi& data) override;
 	IndexBufferGL*	createIndexBuffer(const rBuffer& data) override;
 
 	// buffer data manipulation
-	void writeTexture(ITexture* t, const rTextureUpdate& d) override;
-	void readTexture(ITexture* t, const rTextureUpdate& d) override;
+	void writeTexture(ITextureGapi* t, const rTextureUpdate& d) override;
+	void readTexture(ITextureGapi* t, const rTextureUpdate& d) override;
 
 	void writeBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) override;
 	void readBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) override;
@@ -50,7 +50,7 @@ public:
 	void setStencilState(const rStencilState& state) override;
 	void setBlendState(const rBlendState& state) override;
 	void setRasterizationState(const rRasterizerState& state) override;
-	void setSamplerState(const char* slotName, const rSamplerState& smpdata, ITexture* t) override; // move to setTexture
+	void setSamplerState(const char* slotName, const rSamplerState& smpdata, ITextureGapi* t) override; // move to setTexture
 
 	void setSRGBWrites(bool val) override; // move to texture parameters
 	void setSeamlessCubeMaps(bool val) override; // should be true by default, shouldn't it?  
@@ -68,7 +68,7 @@ public:
 	void setUniformBuffer(IUniformBuffer* buf, u32 index) override;
 	void setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers) override;
 	void setIndexBuffer(IIndexBuffer* ibo) override;
-	void setTexture(ITexture* t, u32 idx) override;
+	void setTexture(ITextureGapi* t, u32 idx) override;
 
 	// draw calls
 	void drawIndexed(u32 num_indices, u32 index_byte_offset = 0) override;

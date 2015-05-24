@@ -41,7 +41,7 @@ int main()
 	// Engine core
 	EngineCore core;
 	rGraphicsEngineRaster gDesc;
-		gDesc.type = eGapiType::OPENGL_4_5;
+		gDesc.gapiType = eGapiType::OPENGL_4_5;
 	graphics::IEngine* gEngine = core.initGraphicsEngineRaster(gDesc);
 
 	gEngine->setResolution(window->getClientW(), window->getClientH());
@@ -62,7 +62,7 @@ int main()
 		web_core->Update();
 
 	// Texture we render awesomium into
-	rTexture texDesc;
+	rTextureGapi texDesc;
 		texDesc.depth = 1;
 		texDesc.format = eTextureFormat::RGBA8;
 		texDesc.height = window->getClientH();
@@ -70,7 +70,7 @@ int main()
 		texDesc.is_cubemap = false;
 		texDesc.is_layered = false;
 		texDesc.num_levels = 1;
-	ITexture* texAwesome = gapi->createTexture(texDesc);
+	ITextureGapi* texAwesome = gapi->createTexture(texDesc);
 
 	void* tmpAwesomiumSurfaceData = malloc(window->getClientW() * window->getClientH() * 4);
 
@@ -113,7 +113,7 @@ int main()
 
 				texAwesome->destroy();
 
-				rTexture texDesc;
+				rTextureGapi texDesc;
 					texDesc.depth = 1;
 					texDesc.format = eTextureFormat::RGBA8;
 					texDesc.height = evt.y;

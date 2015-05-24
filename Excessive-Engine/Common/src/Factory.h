@@ -1,7 +1,6 @@
 ﻿// IWindow, IEngine, etc interfacek mögött levő példányok létrehozására használatos
 #pragma once
 
-#include "../GraphicsApi/GL/src/GapiGL.h"
 #include "../../GraphicsEngine/Raster/src/GraphicsEngineRaster.h"
 #include "../../GraphicsEngine/RT/src/GraphicsEngineRT.h"
 #include "../../PhysicsEngine/Bullet/src/PhysicsEngineBullet.h"
@@ -9,6 +8,8 @@
 #include "../../NetworkEngine/Boost/src/NetworkEngineBoost.h"
 
 #include "IWindow.h"
+class ITimer;
+class IGapi;
 
 class Factory
 {
@@ -20,5 +21,6 @@ public:
 	static sound::IEngine*		createSoundEngine(const rSoundEngine& d);
 
 	static IWindow*				createWindow(const struct rWindow& d);
+	static ITimer*				createTimer();
 	static IGapi*				createGapiGL();
 };

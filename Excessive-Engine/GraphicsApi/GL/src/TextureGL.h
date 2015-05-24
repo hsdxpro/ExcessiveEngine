@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Interfaces/ITexture.h"
+#include "../../Interfaces/ITextureGapi.h"
 #include "GL/glew.h"
 
 #define MAX_TEXTURE_SLOTS 16
@@ -12,16 +12,16 @@ extern GLenum texture_types[69];
 extern u32 texture_sizes[69];
 extern GLenum texture_internal_formats[69];
 
-class TextureGL : public ITexture
+class TextureGL : public ITextureGapi
 {
 public:
 	GLuint ID;
 	GLuint viewID;
 	GLenum target;
 	u32 dim;
-	rTexture desc;
+	rTextureGapi desc;
 
 	void destroy() override;
-	const rTexture& getDesc() override;
+	const rTextureGapi& getDesc() override;
 	void genMipChain() override;
 };

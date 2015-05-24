@@ -2,15 +2,21 @@
 #include <locale>
 #include <codecvt>
 
+#include "../GraphicsApi/GL/src/GapiGL.h"
+
 #ifdef	WIN
 	#include "../CommonWin/src/Window.h"
+	#include "../CommonWin/src/Timer.h"
 #elif	LIN
 	#include "../CommonLin/src/Window.h"
+	#include "../CommonLin/src/Timer.h"
 #elif	MAC
 	#include "../CommonMac/src/Window.h"
+	#include "../CommonMac/src/Timer.h"
 #endif
 
-graphics::IEngine* Factory::createGraphicsEngineRaster(const rGraphicsEngineRaster& d) {
+graphics::IEngine* Factory::createGraphicsEngineRaster(const rGraphicsEngineRaster& d) 
+{
 #ifdef BUILD_DLL
 	using CreateT = graphics::IEngine*(*)(const rGraphicsEngineRaster& d);
 	auto module = Sys::loadDLL(L"GraphicsEngineRaster");
@@ -27,7 +33,8 @@ graphics::IEngine* Factory::createGraphicsEngineRaster(const rGraphicsEngineRast
 #endif
 }
 
-graphics::IEngine* Factory::createGraphicsEngineRT(const rGraphicsEngineRT& d) {
+graphics::IEngine* Factory::createGraphicsEngineRT(const rGraphicsEngineRT& d) 
+{
 #ifdef BUILD_DLL
 	using CreateT = graphics::IEngine*(*)(const rGraphicsEngineRT& d);
 	auto module = Sys::loadDLL(L"GraphicsEngineRasterRT");
@@ -44,7 +51,8 @@ graphics::IEngine* Factory::createGraphicsEngineRT(const rGraphicsEngineRT& d) {
 #endif
 }
 
-physics::IEngine* Factory::createPhysicsEngineBullet(const rPhysicsEngineBullet& d) {
+physics::IEngine* Factory::createPhysicsEngineBullet(const rPhysicsEngineBullet& d) 
+{
 #ifdef BUILD_DLL
 	using CreateT = physics::IEngine*(*)(const rPhysicsEngineBullet& d);
 	auto module = Sys::loadDLL(L"PhysicsEngineBullet");
@@ -61,7 +69,8 @@ physics::IEngine* Factory::createPhysicsEngineBullet(const rPhysicsEngineBullet&
 #endif
 }
 
-network::IEngine* Factory::createNetworkEngine(const rNetworkEngine& d) {
+network::IEngine* Factory::createNetworkEngine(const rNetworkEngine& d) 
+{
 #ifdef BUILD_DLL
 	using CreateT = network::IEngine*(*)(const rNetworkEngine& d);
 	auto module = Sys::loadDLL(L"NetworkEngineBoost");
@@ -78,7 +87,8 @@ network::IEngine* Factory::createNetworkEngine(const rNetworkEngine& d) {
 #endif
 }
 
-sound::IEngine* Factory::createSoundEngine(const rSoundEngine& d) {
+sound::IEngine* Factory::createSoundEngine(const rSoundEngine& d) 
+{
 #ifdef BUILD_DLL
 	using CreateT = sound::IEngine*(*)(const rSoundEngine& d);
 	auto module = Sys::loadDLL(L"SoundEngineSFML");
@@ -95,7 +105,8 @@ sound::IEngine* Factory::createSoundEngine(const rSoundEngine& d) {
 #endif
 }
 
-IGapi* Factory::createGapiGL() {
+IGapi* Factory::createGapiGL() 
+{
 #ifdef BUILD_DLL
 	return ((IGapi*(*)())Sys::getDllProcAddress(Sys::loadDLL((Sys::getWorkDir() + L"GraphicsApiGL").c_str()), "createGraphicsApi"))();
 #elif BUILD_STATIC
@@ -103,6 +114,12 @@ IGapi* Factory::createGapiGL() {
 #endif
 }
 
-IWindow* Factory::createWindow(const rWindow& d) {
+IWindow* Factory::createWindow(const rWindow& d) 
+{
 	return new Window(d);
+}
+
+ITimer* Factory::createTimer()
+{
+	return new Timer();
 }

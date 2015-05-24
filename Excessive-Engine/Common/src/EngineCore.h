@@ -10,25 +10,6 @@
 #include "../NetworkEngine/Boost/src/NetworkEngineBoost.h"
 #include "../SoundEngine/SFML/src/SoundEngineSFML.h"
 
-enum class ePhysicsCore {
-	BULLET,
-	//PHYSX,
-};
-
-enum class eGraphicsCore {
-	RASTER,
-	RAYTRACER,
-};
-
-enum class eSoundCore {
-	SFML,
-};
-
-enum class eNetworCore {
-	SFML,
-	//RAKNET,
-};
-
 class EngineCore
 {
 public:
@@ -69,4 +50,7 @@ protected:
 	sound::IEngine*		soundEngine;
 
 	std::vector<Actor*> actors;
+
+	// Error diffuse texture for failed texture loads
+	graphics::ITexture* texError;
 };

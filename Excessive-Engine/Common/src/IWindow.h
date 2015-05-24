@@ -8,11 +8,11 @@
 
 enum class eWindowStyle
 {
-	NO_BORDER_NO_TITLE = 0,      ///< No border / title bar (this flag and all others are mutually exclusive)
-	TITLE__FIXEDBORDER = 1 << 0, ///< Title bar + fixed border
-	TITLE__RESIZABLE__MAXIMIZEBUTTON = 1 << 1, ///< Titlebar + resizable border + maximize button
-	TITLE__CLOSE = 1 << 2, ///< Titlebar + close button
-	FULLSCREEN = 1 << 3, ///< Fullscreen mode (this flag and all others are mutually exclusive)
+	NO_BORDER_NO_TITLE = 0,						///< No border / title bar (this flag and all others are mutually exclusive)
+	TITLE__FIXEDBORDER = 1 << 0,				///< Title bar + fixed border
+	TITLE__RESIZABLE__MAXIMIZEBUTTON = 1 << 1,	///< Titlebar + resizable border + maximize button
+	TITLE__CLOSE = 1 << 2,						///< Titlebar + close button
+	FULLSCREEN = 1 << 3,						///< Fullscreen mode (this flag and all others are mutually exclusive)
 
 	TITLE__RESIZE__CLOSE = TITLE__FIXEDBORDER | TITLE__RESIZABLE__MAXIMIZEBUTTON | TITLE__CLOSE ///< Default window style
 };
@@ -42,7 +42,7 @@ enum class eWindowMsg
 
 struct rWindowEvent 
 {
-	rWindowEvent() : msg(eWindowMsg::COUNT), key(eKey::COUNT), deltaX(0), deltaY(0), x(0), y(0) {}
+	rWindowEvent() : msg(eWindowMsg::COUNT), key(eKey::COUNT), deltaX(0), deltaY(0), x(0), y(0){}
 
 	eWindowMsg msg;
 	eKey key;
@@ -56,7 +56,7 @@ struct rWindowEvent
 // Descriptor of window
 struct rWindow
 {
-	rWindow() : clientW(0), clientH(0){}
+	rWindow() : clientW(0), clientH(0), style(eWindowStyle::TITLE__RESIZABLE__MAXIMIZEBUTTON){}
 
 	u16 clientW;
 	u16 clientH;
@@ -70,7 +70,7 @@ public:
 	// Simply closes the window so you will not need it
 	virtual void close() = 0;
 
-	// This will give you the next event in the queue that Operating System transmitted to the window, and remove it from the queue
+	// This will give you the next event in the queue that Operating System transmitted to the window, and will be removed from queue (pop)
 	virtual bool popEvent(rWindowEvent* evt_out) = 0;
 
 	// U need to call that function after some DrawingAPI finishe s draw on window client region, this will BLIT the content to your monitor where client region is defined
@@ -85,7 +85,7 @@ public:
 	// (client surface width / client surface height)
 	virtual float getClientAspectRatio() const = 0;
 
-	// Returns true if the window is currently opened, else (false) closed
+	// Returns true if the window is currently opened
 	virtual bool isOpen() const = 0;
 
 	/// Set window title

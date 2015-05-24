@@ -387,7 +387,7 @@ void GraphicsEngineRaster::update(float deltaTime) {
 		auto& matGroups = mesh->getMaterialIds();
 		for (auto& matGroup : matGroups) {
 			// get corresponding material id
-			::ITexture* texture = nullptr; // gapi resource
+			ITextureGapi* texture = nullptr; // gapi resource
 
 			// if has mtl
 			if (mtl && mtl->getNumSubMaterials() > matGroup.id) {

@@ -114,12 +114,18 @@ bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, r
 			size_t nConvertedChar;
 			mbstowcs_s(&nConvertedChar, unicodePath, diffusePath.C_Str(), 256);
 
+			std::wstring unicodePathStr = unicodePath;
+			auto pos = unicodePathStr.rfind('\\');
+
+			if (pos != std::wstring::npos)
+				unicodePathStr = unicodePathStr.substr(pos + 1, unicodePathStr.size());
+
 			std::wstring modelDirectory = path;
 			auto chIdx = modelDirectory.rfind('/');
 			modelDirectory = modelDirectory.substr(0, chIdx + 1);
 
 			// Really fucking absolute path
-			mesh_out.materials[i].texPathDiffuse = modelDirectory + unicodePath;
+			mesh_out.materials[i].texPathDiffuse = modelDirectory + unicodePathStr;
 		}
 
 		// Get Normal texture path

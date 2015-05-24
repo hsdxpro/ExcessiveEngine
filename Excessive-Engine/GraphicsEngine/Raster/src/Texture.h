@@ -1,7 +1,7 @@
 #pragma once
 #include "../../Interfaces/ITexture.h"
 
-class ITexture;
+class ITextureGapi;
 class IGapi;
 
 
@@ -14,15 +14,16 @@ public:
 	void acquire();
 	void release() override;
 
-	bool load(const wchar_t* file_path) override;
+	bool load(const std::wstring& file_path) override;
 
 	void reset() override;
 
-	::ITexture* getTexture();
+	ITextureGapi* getTexture();
+
 private:
 	size_t refcount;
 
 	// gpu resource
 	IGapi* gapi;
-	::ITexture* tex;
+	ITextureGapi* tex;
 };

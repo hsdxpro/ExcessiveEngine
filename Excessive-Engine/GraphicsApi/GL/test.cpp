@@ -123,7 +123,7 @@ int main(int argc, char** args)
 	sf::Image im;
 	im.loadFromFile(image_path);
 
-	rTexture texdata;
+	rTextureGapi texdata;
 	texdata.width = im.getSize().x;
 	texdata.height = im.getSize().y;
 	texdata.depth = 1;
