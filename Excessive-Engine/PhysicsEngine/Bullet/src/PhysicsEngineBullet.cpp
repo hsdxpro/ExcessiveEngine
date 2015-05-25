@@ -52,9 +52,6 @@ void PhysicsEngineBullet::update(float deltaTime)
 {
 	world->stepSimulation(deltaTime);
 
-	for (auto& rigid : entities)
-		((EntityRigid*)rigid)->updateAfterSimulate();
-
 	// Contact mainfolds for debugging
 	//auto overlappingPairCache = world->getBroadphase()->getOverlappingPairCache();
 	//auto nPairs = overlappingPairCache->getNumOverlappingPairs();

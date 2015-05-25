@@ -85,10 +85,6 @@ public:
 	virtual IGapi* getGapi() = 0;
 
 	///////////////////////////////////////
-	// states
-	virtual void setResolution(u32 width, u32 height) = 0;
-
-	///////////////////////////////////////
 	// interact
 	virtual void update(float deltaTime) = 0;
 };

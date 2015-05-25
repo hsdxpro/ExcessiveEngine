@@ -4,7 +4,6 @@
 #include "..\PhysicsEngine\Interfaces\IEntityRigid.h"
 
 Actor::Actor()
-:WorldComponent(EMPTY)
 {
 }
 

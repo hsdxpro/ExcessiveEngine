@@ -28,8 +28,17 @@ enum class eGapiType
 
 struct rGraphicsEngineRaster 
 {
-	eGapiType	gapiType;
+	struct rRectNormed
+	{
+		rRectNormed() :bottomLeftPercentNormed(0, 0), topRightPercentNormed(1, 1){}
+
+		mm::vec2 bottomLeftPercentNormed;
+		mm::vec2 topRightPercentNormed;
+	};
+
+	eGapiType		gapiType;
 	IWindow*		targetWindow;
+	rRectNormed		renderRegion;
 };
 
 class GraphicsEngineRaster : public graphics::IEngine
@@ -55,9 +64,6 @@ public:
 	size_t getNumLayers() const override;
 	void setNumLayers(size_t num_layers) override;
 	Layer& getLayer(size_t index) override;
-
-	// states
-	void setResolution(u32 width, u32 height) override;
 
 	// interact
 	void update(float deltaTime) override;

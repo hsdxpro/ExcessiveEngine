@@ -123,7 +123,13 @@ GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRaster& d) {
 	shader = gapi->createShaderSource(vertexShaderCode, pixelShaderCode);
 	isValid = shader != nullptr;
 
-	gapi->setViewport(0, 0, d.targetWindow->getClientW(), d.targetWindow->getClientH());
+	u32 windowWidth = d.targetWindow->getClientW();
+	u32 windowHeight = d.targetWindow->getClientH();
+	gapi->setViewport(	windowWidth * d.renderRegion.bottomLeftPercentNormed.x,
+						windowHeight * d.renderRegion.bottomLeftPercentNormed.y,
+						windowWidth * (d.renderRegion.topRightPercentNormed.x - d.renderRegion.bottomLeftPercentNormed.x),
+						windowHeight * (d.renderRegion.topRightPercentNormed.y - d.renderRegion.bottomLeftPercentNormed.y));
+
 	gapi->setDebugOutput(true);
 	gapi->setSeamlessCubeMaps(true);
 	gapi->setSyncDebugOutput(true);
@@ -186,18 +192,6 @@ void GraphicsEngineRaster::setNumLayers(size_t num_layers) {
 auto GraphicsEngineRaster::getLayer(size_t index) -> Layer& {
 	assert(index < getNumLayers());
 	return layers[index];
-}
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-// state
-
-void GraphicsEngineRaster::setResolution(u32 width, u32 height) {
-	if (width < 1 && height < 1) {
-		return;
-	}
-	gapi->setViewport(0, 0, width, height);
 }
 
 

@@ -7,17 +7,8 @@ EntityRigid::EntityRigid(btRigidBody* body)
 :body(body) {
 }
 
-void EntityRigid::updateAfterSimulate()
-{
-	// Okay so after physics simulation done we need the simulation of WorldComponent transform, with calling setPos, setRot
-	WorldComponent::setPos(getPos());
-	WorldComponent::setRot(getRot());	
-}
-
 void EntityRigid::setPos(const mm::vec3& v) 
 {
-	WorldComponent::setPos(v);
-
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
 	trans.setOrigin(btVector3( v.x, v.y, v.z ));
@@ -28,8 +19,6 @@ void EntityRigid::setPos(const mm::vec3& v)
 
 void EntityRigid::setRot(const mm::quat& q)
 {
-	WorldComponent::setRot(q);
-
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
 	btQuaternion btQuat;
@@ -45,8 +34,6 @@ void EntityRigid::setRot(const mm::quat& q)
 
 void EntityRigid::setScale(const mm::vec3& v)
 {
-	WorldComponent::setScale(v);
-
 	btCollisionShape* colShape = body->getCollisionShape();
 
 	if (colShape)
@@ -65,42 +52,37 @@ void EntityRigid::setScale(const mm::vec3& v)
 	}
 }
 
-const mm::vec3& EntityRigid::getPos() 
+mm::vec3 EntityRigid::getPos()
 {
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
-
-	pos.x = trans.getOrigin().x();
-	pos.y = trans.getOrigin().y();
-	pos.z = trans.getOrigin().z();
-
-	return pos;
+	return{ trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z() };
 }
 
-const mm::quat& EntityRigid::getRot()
+mm::quat EntityRigid::getRot()
 {
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
 
-	rot.value.x = trans.getRotation().x();
-	rot.value.y = trans.getRotation().y();
-	rot.value.z = trans.getRotation().z();
-	rot.value.w = trans.getRotation().w();
-
+	mm::quat rot;
+		rot.value.x = trans.getRotation().x();
+		rot.value.y = trans.getRotation().y();
+		rot.value.z = trans.getRotation().z();
+		rot.value.w = trans.getRotation().w();
 	return rot;
 }
 
-const mm::vec3& EntityRigid::getScale()
+ mm::vec3 EntityRigid::getScale()
 {
 	btCollisionShape* shape = body->getCollisionShape();
 
 	if (shape)
-	{
-		scale.x = shape->getLocalScaling().x();
-		scale.y = shape->getLocalScaling().y();
-		scale.z = shape->getLocalScaling().z();
-		return scale;
-	}
+		return{ shape->getLocalScaling().x(), shape->getLocalScaling().y(), shape->getLocalScaling().z() };
 
-	return WorldComponent::getScale();
+	return{ 1.f, 1.f, 1.f };
 }
+
+ btRigidBody* EntityRigid::getBody()
+ {
+	 return body;
+ }

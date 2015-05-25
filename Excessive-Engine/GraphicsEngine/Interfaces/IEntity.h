@@ -15,10 +15,16 @@ class IMaterial;
 ////////////////////////////////////////////////////////////////////////////////
 
 
-class IEntity : public WorldComponent
+class IEntity
 {
 public:
-	IEntity():WorldComponent(GRAPHICS){}
+	virtual void setPos(const mm::vec3& v) = 0;
+	virtual void setRot(const mm::quat& q) = 0;
+	virtual void setScale(const mm::vec3& v) = 0;
+
+	virtual const mm::vec3& getPos() = 0;
+	virtual const mm::quat& getRot() = 0;
+	virtual const mm::vec3& getScale() = 0;
 
 	virtual void setMesh(IMesh* mesh) = 0;
 	virtual void setMaterial(IMaterial* material) = 0;

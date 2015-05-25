@@ -1,54 +1,103 @@
 #include "WorldComponent.h"
 #include <assert.h>
 #include "Sys.h"
+#include "..\GraphicsEngine\Interfaces\IEntity.h"
+#include "..\PhysicsEngine\Interfaces\IEntityRigid.h"
 
-WorldComponent::WorldComponent(eCompType type)
-:type(type), pos(0, 0, 0), rot(0, mm::vec3(1, 0, 0)), scale(1, 1, 1)
+// Update this when u add new component type !
+enum eTypeID
 {
-	componentTypeContainer.resize(eCompType::COUNT);
+	_0,
+	_1,
+	_2,
+
+	COUNT,
+};
+
+// Update this when u add new component type !
+u8 ComponentGraphics::componentTypeID = eTypeID::_0;
+u8 ComponentRigidBody::componentTypeID = eTypeID::_1;
+u8 ComponentSoftBody::componentTypeID = eTypeID::_2;
+
+
+Transform::Transform()
+	:scale(1, 1, 1) {
 }
 
-WorldComponent::~WorldComponent()
+void Transform::setPos(const mm::vec3& v)
 {
-	// Recursive delete of worldComponents
-	for (auto& type : componentTypeContainer)
-		for (auto& comp : type)
-			delete comp;
+	pos = v;
 }
 
-void WorldComponent::addChild(WorldComponent* comp)
+void Transform::setScale(const mm::vec3& v)
 {
-	componentTypeContainer[(u8)comp->getType()].push_back(comp);
+	scale = v;
 }
 
+void Transform::setRot(const mm::quat& q)
+{
+	rot = q;
+}
+
+const mm::vec3& Transform::getPos()
+{
+	return pos;
+}
+
+const mm::quat& Transform::getRot()
+{
+	return rot;
+}
+
+const mm::vec3& Transform::getScale()
+{
+	return scale;
+}
+
+
+
+
+
+
+
+
+
+WorldComponent::WorldComponent()
+{
+	componentTypeContainer.resize(eTypeID::COUNT);
+}
+
+void WorldComponent::updateAfterPhysicsSimulate()
+{
+
+}
+
+// World component graphics
 void WorldComponent::setPos(const mm::vec3& v)
 {
 	pos = v;
 
-	//TODO:REMOVE !! TMP CODE Recursively set position
-	for (u32 i = 0; i < eCompType::COUNT; i++)
-		for (auto& comp : componentTypeContainer[i])
-			comp->setPos(pos);
-}
-
-void WorldComponent::setScale(const mm::vec3& v)
-{
-	scale = v;
-
-	//TODO:REMOVE !! TMP CODE Recursively set position
-	for (u32 i = 0; i < eCompType::COUNT; i++)
-		for (auto& comp : componentTypeContainer[i])
-			comp->setScale(scale); // TODO, JUST CURRENTLY SAFE TO CAST TO WorldComponent, ... check eComType
+	for (auto& compTypes : componentTypeContainer)
+		for (auto& comp : compTypes)
+			comp->setPos(v);
 }
 
 void WorldComponent::setRot(const mm::quat& q)
 {
 	rot = q;
 
-	//TODO:REMOVE !! TMP CODE Recursively set position
-	for (u32 i = 0; i < eCompType::COUNT; i++)
-		for (auto& comp : componentTypeContainer[i])
-			comp->setRot(rot); 
+	for (auto& compTypes : componentTypeContainer)
+		for (auto& comp : compTypes)
+			comp->setRot(q);
+}
+
+void WorldComponent::setScale(const mm::vec3& v)
+{
+	scale = v;
+
+	for (auto& compTypes : componentTypeContainer)
+		for (auto& comp : compTypes)
+			comp->setScale(v);
 }
 
 const mm::vec3& WorldComponent::getPos()
@@ -66,22 +115,78 @@ const mm::vec3& WorldComponent::getScale()
 	return scale;
 }
 
-graphics::IEntity* WorldComponent::getCompGraphics(u32 index /*= 0*/)
+// Component graphics
+void ComponentGraphics::setPos(const mm::vec3& v)
 {
-	return (graphics::IEntity*)(componentTypeContainer[eCompType::GRAPHICS][index]);
+	entityGraphics->setPos(v);
+	WorldComponent::setPos(v);
 }
 
-physics::IEntityRigid* WorldComponent::getCompRigid(u32 index /*= 0*/)
+void ComponentGraphics::setRot(const mm::quat& q)
 {
-	return (physics::IEntityRigid*)(componentTypeContainer[eCompType::RIGID][index]);
+	entityGraphics->setRot(q);
+	WorldComponent::setRot(q);
+}
+void ComponentGraphics::setScale(const mm::vec3& v)
+{
+	entityGraphics->setScale(v);
+	WorldComponent::setScale(v);
 }
 
-physics::IEntitySoft* WorldComponent::getCompSoft(u32 index /*= 0*/)
+const mm::vec3& ComponentGraphics::getPos()
 {
-	return (physics::IEntitySoft*)(componentTypeContainer[eCompType::SOFT][index]);
+	return entityGraphics->getPos();
 }
 
-eCompType WorldComponent::getType() const
+const mm::quat& ComponentGraphics::getRot()
 {
-	return type;
+	return entityGraphics->getRot();
+}
+
+const mm::vec3& ComponentGraphics::getScale()
+{
+	return entityGraphics->getScale();
+}
+
+
+
+// Component rigidBody
+void ComponentRigidBody::updateAfterPhysicsSimulate()
+{
+	WorldComponent::setPos(entityRigid->getPos());
+	WorldComponent::setRot(entityRigid->getRot());
+	WorldComponent::setScale(entityRigid->getScale());
+}
+
+void ComponentRigidBody::setPos(const mm::vec3& v)
+{
+	entityRigid->setPos(v);
+	WorldComponent::setPos(v);
+}
+
+void ComponentRigidBody::setRot(const mm::quat& q)
+{
+	entityRigid->setRot(q);
+	WorldComponent::setRot(q);
+}
+
+void ComponentRigidBody::setScale(const mm::vec3& v)
+{
+	entityRigid->setScale(v);
+	WorldComponent::setScale(v);
+}
+
+const mm::vec3& ComponentRigidBody::getPos()
+{
+	return entityRigid->getPos();
+}
+
+const mm::quat& ComponentRigidBody::getRot()
+{
+	return entityRigid->getRot();
+}
+
+const mm::vec3& ComponentRigidBody::getScale()
+{
+	return entityRigid->getScale();
 }

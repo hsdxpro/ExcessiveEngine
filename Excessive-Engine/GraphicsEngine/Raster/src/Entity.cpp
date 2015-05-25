@@ -7,12 +7,41 @@ using namespace graphics;
 // Ctor & Dtor + Misc
 
 Entity::Entity()
+:scale(1,1,1)
 {
-
 }
 
 Entity::~Entity() {
 	return;
+}
+
+void Entity::setPos(const mm::vec3& v)
+{
+	pos = v;
+}
+
+void Entity::setRot(const mm::quat& q)
+{
+	rot = q;
+}
+
+void Entity::setScale(const mm::vec3& v)
+{
+	scale = v;
+}
+
+const mm::vec3& Entity::getPos()
+{
+	return pos;
+}
+const mm::quat& Entity::getRot()
+{
+	return rot;
+}
+
+const mm::vec3& Entity::getScale()
+{
+	return scale;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -29,6 +29,8 @@ static const char pixelShaderCode[] =
 "} \n"
 ;
 
+EngineCore gEngineCore;
+
 int main() 
 {
 	// Window
@@ -39,12 +41,10 @@ int main()
 	IWindow* window = Factory::createWindow(d);
 
 	// Engine core
-	EngineCore core;
 	rGraphicsEngineRaster gDesc;
 		gDesc.gapiType = eGapiType::OPENGL_4_5;
-	graphics::IEngine* gEngine = core.initGraphicsEngineRaster(gDesc);
-
-	gEngine->setResolution(window->getClientW(), window->getClientH());
+		gDesc.targetWindow = window;
+	graphics::IEngine* gEngine = gEngineCore.initGraphicsEngineRaster(gDesc);
 
 // GAPI HACKED THINGS
 	auto gapi = gEngine->getGapi();

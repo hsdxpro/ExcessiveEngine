@@ -4,14 +4,8 @@
 #include "..\Common\src\EngineCore.h"
 #include "..\Common\src\ITimer.h"
 
-// TMP
-#include <array>
-
 // Spirit of the engine
-EngineCore*			gEngineCore;
-graphics::IEngine*	gEngineGraphics;
-physics::IEngine*	gEnginePhysics;
-sound::IEngine*		gEngineSound;
+EngineCore gEngineCore;
 
 // Window for our game
 IWindow* gWindow;
@@ -26,45 +20,28 @@ int main()
 		d.clientH = 600;// Sys::getScreenSize().y;
 	gWindow = Factory::createWindow(d);
 
-	gEngineCore = new EngineCore();
-		rGraphicsEngineRaster graphicsDesc;
-			graphicsDesc.gapiType = eGapiType::OPENGL_4_5;
-			graphicsDesc.targetWindow = gWindow;
-		gEngineGraphics = gEngineCore->initGraphicsEngineRaster(graphicsDesc);
-		gEnginePhysics = gEngineCore->initPhysicsEngineBullet();
-		gEngineSound = gEngineCore->initSoundEngine();
+	// Init Engine core
+	rGraphicsEngineRaster graphicsDesc;
+		graphicsDesc.gapiType = eGapiType::OPENGL_4_5;
+		graphicsDesc.targetWindow = gWindow;
+	gEngineCore.initGraphicsEngineRaster(graphicsDesc);
+	gEngineCore.initPhysicsEngineBullet();
+	gEngineCore.initSoundEngine();
 
 	ITimer* timer = Factory::createTimer();
 	timer->start();
 
-	// EZ A BULLSHIT RÉSZ AMIT ÁTKÉNE GONDOLNI HOGY LEGYEN
-	//{
+	// Create camera
+	auto cam = gEngineCore.getGraphicsEngine()->createCam();
+		cam->setAspectRatio(gWindow->getClientAspectRatio());
+		cam->setPos(mm::vec3(0, -3, 10));
+	gEngineCore.getDefaultGraphicsScene()->setCamera(cam);
 
-		// Grafikus motor használatának nincs értelme 1 scene 1 layer nélkül, EngineCore majd elintézi
-		auto mainScene = gEngineGraphics->createScene();
-		graphics::IEngine::Layer layer;
-		layer.scene = mainScene;
-		gEngineGraphics->addLayer(layer);
-
-
-		// Oké létrehozok kamerát, de azt majd core - n keresztül állítom be ????
-		auto mainCam = gEngineGraphics->createCam();
-		mainCam->setAspectRatio(gWindow->getClientAspectRatio());
-		mainCam->setPos(mm::vec3(0, -3, 10));
-
-		mainScene->setCamera(mainCam);
-
-	//}
-
-	// Add ground to world
-	Actor* ground = gEngineCore->addActor();
-		gEngineCore->addCompGraphicsFromFile(ground, Sys::getWorkDir() + L"../Assets/demo_ground.dae", mainScene);
-		gEngineCore->addCompRigidBodyFromFile(ground, Sys::getWorkDir() + L"../Assets/demo_ground.dae", 0);
-	
-	// Add sky to world
-	Actor* sky = gEngineCore->addActor();
-		gEngineCore->addCompGraphicsFromFile(sky, Sys::getWorkDir() + L"../Assets/skybox.dae", mainScene);
-	sky->setScale({ 1000, 1000, 1000 });
+	// Add some actors
+	auto& groundModelPath = Sys::getWorkDir() + L"../Assets/demo_ground.dae";
+	auto& skyModelPath = Sys::getWorkDir() + L"../Assets/skybox.dae";
+	gEngineCore.addCompRigidBodyFromFile(groundModelPath, 0)->addCompGraphicsFromFile(groundModelPath);
+	gEngineCore.addCompGraphicsFromFile(skyModelPath)->getRootComp<ComponentGraphics>()->setScale({ 1000, 1000, 1000 });
 
 	while (gWindow->isOpen())
 	{
@@ -74,7 +51,7 @@ int main()
 		float deltaSeconds = timer->getSecondsPassed();
 		timer->reset();
 
-		gEngineCore->update(deltaSeconds);
+		gEngineCore.update(deltaSeconds);
 		gWindow->present();
 	}
 	return 0;

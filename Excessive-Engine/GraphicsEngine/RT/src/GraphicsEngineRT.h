@@ -40,9 +40,6 @@ public:
 	void setNumLayers(size_t num_layers) override;
 	Layer& getLayer(size_t index) override;
 
-	// state
-	void setResolution(u32 width, u32 height) override {}
-
 	// interact
 	void update(float deltaTime) override;
 

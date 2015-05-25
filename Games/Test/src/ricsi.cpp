@@ -45,12 +45,12 @@ int Ricsi()
 	cam->setPos(mm::vec3(0, -3, 1));
 
 	// Create scene, plug camera
-	graphics::IScene* scene = gEngine->createScene();
+	graphics::IScene* scene = core.getDefaultGraphicsScene();
 	scene->setCamera(cam);
 
-	graphics::IEngine::Layer layer;
-	layer.scene = scene;
-	gEngine->addLayer(layer);
+	//graphics::IEngine::Layer layer;
+	//layer.scene = scene;
+	//gEngine->addLayer(layer);
 
 	//*/
 	static const wchar_t assetName[] = L"../Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
@@ -58,13 +58,10 @@ int Ricsi()
 	/*/
 	static const wchar_t assetName[] = L"../Assets/teapot.dae";
 	//*/
-	Actor* simpleEntity = core.addActor();
-		auto rigidComp = core.addCompRigidBodyFromFile(simpleEntity, Sys::getWorkDir() + assetName, 0);
-			core.addCompGraphicsFromFile(rigidComp, Sys::getWorkDir() + assetName, scene);
-
-	Actor* skyBox = core.addActor();
-		core.addCompGraphicsFromFile(skyBox, Sys::getWorkDir() + L"../Assets/skybox.dae", scene);
-	skyBox->setScale({ 1000, 1000, 1000 });
+	//Actor* simpleEntity = core.addActor();
+	core.addCompRigidBodyFromFile(Sys::getWorkDir() + assetName, 0)->addCompGraphicsFromFile(Sys::getWorkDir() + assetName);
+	
+	core.addCompGraphicsFromFile(Sys::getWorkDir() + L"../Assets/skybox.dae")->getRootComp<ComponentGraphics>()->setScale({ 1000, 1000, 1000 });
 
 	// Run the main loop
 	rWindowEvent ev;
@@ -114,12 +111,12 @@ int Ricsi()
 					bRMBDown = true;
 				else if (ev.mouseBtn == eMouseBtn::LEFT)
 				{
-					Actor* e = core.addActor();
-						auto comp = core.addCompRigidBodyFromFile(e, Sys::getWorkDir() + teapotModelPath, 10);
-							core.addCompGraphicsFromFile(comp, Sys::getWorkDir() + teapotModelPath, scene);
-					
-					e->setPos(cam->getPos() + cam->getDirFront() * 3); // 3 méterrel elénk
-					e->setScale(mm::vec3( 1.f / 20, 1.f / 20, 1.f / 20 ));
+					auto box = core.addCompRigidBodyFromFile(Sys::getWorkDir() + teapotModelPath, 10)
+								  ->addCompGraphicsFromFile(Sys::getWorkDir() + teapotModelPath)
+								  ->getRootComp<ComponentRigidBody>();
+
+					box->setPos(cam->getPos() + cam->getDirFront() * 3); // 3 méterrel elénk
+					box->setScale(mm::vec3( 1.f / 20, 1.f / 20, 1.f / 20 ));
 				}
 				break;
 			case eWindowMsg::MOUSE_RELEASE:
@@ -186,7 +183,6 @@ int Ricsi()
 				} break;
 
 			case eWindowMsg::RESIZE:
-				gEngine->setResolution(ev.x, ev.y);
 				cam->setAspectRatio((float)ev.x / (float)ev.y);
 				break;
 		}
