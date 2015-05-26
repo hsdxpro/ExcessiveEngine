@@ -1,6 +1,8 @@
 #include "SoundEngineSFML.h"
 #include <iostream>
 
+#include "SFML\Audio.hpp"
+
 using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -16,10 +18,11 @@ using namespace std;
 
 extern "C"
 EXPORT sound::IEngine* CreateSoundEngine(const rSoundEngine& d) {
-	return nullptr;// new SoundEngineSFML(d);
+	return new SoundEngineSFML(d);
 }
 
-SoundEngineSFML::SoundEngineSFML(const rSoundEngine& d) {
+SoundEngineSFML::SoundEngineSFML(const rSoundEngine& d):masterVolume(1) {
+	sf::Listener::setGlobalVolume(masterVolume * 100);
 }
 
 SoundEngineSFML::~SoundEngineSFML() {
@@ -31,26 +34,25 @@ void SoundEngineSFML::release() {
 }
 
 SoundScene* SoundEngineSFML::createScene(){
-	return nullptr;
+	return new SoundScene;
 }
 
 SoundData* SoundEngineSFML::createSoundData() {
-	return nullptr;
+	return new SoundData;
 }
 
 Listener* SoundEngineSFML::createListener() {
-	return nullptr;
+	return new Listener;
 }
 
 void SoundEngineSFML::setMasterVolume(float volume) {
+	masterVolume = volume;
 }
 
 float SoundEngineSFML::getMasterVolume() const {
-	//TODO
-	return 0;
+	return masterVolume;
 }
 
-
 void SoundEngineSFML::update(float deltaTime) {
-	//TODO commit, push audio engine!!
+
 }
