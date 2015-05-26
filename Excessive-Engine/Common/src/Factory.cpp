@@ -101,7 +101,7 @@ sound::IEngine* Factory::createSoundEngine(const rSoundEngine& d)
 	}
 	return creator(d);
 #elif BUILD_STATIC	
-	return nullptr;// new SoundEngineSFML(d);
+	return new SoundEngineSFML(d);
 #endif
 }
 
