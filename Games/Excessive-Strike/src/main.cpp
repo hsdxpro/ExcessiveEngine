@@ -40,8 +40,8 @@ int main()
 	// Add some actors
 	auto& groundModelPath = Sys::getWorkDir() + L"../Assets/demo_ground.dae";
 	auto& skyModelPath = Sys::getWorkDir() + L"../Assets/skybox.dae";
-	gEngineCore.addCompRigidBodyFromFile(groundModelPath, 0)->addCompGraphicsFromFile(groundModelPath);
-	gEngineCore.addCompGraphicsFromFile(skyModelPath)->getRootComp<ComponentGraphics>()->setScale({ 1000, 1000, 1000 });
+	gEngineCore.addActor()->addChild(gEngineCore.addCompRigidBodyFromFile(groundModelPath, 0))->addChild(gEngineCore.addCompGraphicsFromFile(groundModelPath));
+	gEngineCore.addActor()->addChild(gEngineCore.addCompGraphicsFromFile(skyModelPath))->setScale({ 1000, 1000, 1000 });
 
 	while (gWindow->isOpen())
 	{

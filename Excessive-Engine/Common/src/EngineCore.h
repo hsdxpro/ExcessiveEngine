@@ -13,56 +13,11 @@
 
 // These includes are for ComponentConstructor
 #include "Importer3D.h"
+#include "Actor.h"
+#include "ComponentGraphics.h"
+#include "ComponentRigidBody.h"
 
-struct rImporter3DData;
-
-class EngineCore;
-
-template<class ConstructedType>
-class ComponentConstructor;
-
-class EngineCoreBaseConstructor
-{
-public:
-	EngineCoreBaseConstructor(EngineCore* e, WorldComponent* comp = nullptr, WorldComponent* parentComp = nullptr, WorldComponent* rootComponent = nullptr)
-	:engineCore(e), constructedComp(comp), rootComponent(rootComponent)
-	{
-	}
-
-	EngineCoreBaseConstructor* addCompGraphicsFromFile(const std::wstring& modelFilePath, graphics::IScene* scene = nullptr);
-	EngineCoreBaseConstructor* addCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass);
-
-
-	template<class T>
-	T* getRootComp() { return static_cast<T*>(rootComponent); }
-
-protected:
-	EngineCore*			engineCore;
-	WorldComponent*		constructedComp;
-	WorldComponent*		rootComponent;
-};
-
-template<class ConstructedType>
-class ComponentConstructor : public EngineCoreBaseConstructor
-{
-public:
-	ComponentConstructor(EngineCore* e, ConstructedType* comp = nullptr, WorldComponent* parentComp = nullptr, WorldComponent* rootComponent = nullptr)
-	:EngineCoreBaseConstructor(e,comp,parentComp, rootComponent)
-	{
-		if (comp)
-		{
-			// Root component !
-			if (!parentComp)
-			{
-				engineCore->GetRootComponents().push_back(comp);
-			}
-			else
-				parentComp->addChild(comp);
-		}
-	}
-};
-
-class EngineCore : public EngineCoreBaseConstructor
+class EngineCore
 {
 public:
 	// Nearly do nothing, null out vars
@@ -84,8 +39,10 @@ public:
 	// Init network engine, if one already exists will be destroyed, then instantiate it
 	sound::IEngine* initSoundEngine(const rSoundEngine& d = rSoundEngine());
 	
-	// DEPRECATED !!!!
-	//Actor* addActor();
+	Actor* addActor();
+
+	ComponentGraphics* addCompGraphicsFromFile(const std::wstring& modelFilePath, graphics::IScene* scene = nullptr);
+	ComponentRigidBody* addCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass);
 
 	void update(float deltaTime/*, graphics::IScene* scene*/);
 
@@ -94,10 +51,7 @@ public:
 	network::IEngine*	getNetworkEngine();
 	sound::IEngine*		getSoundEngine();
 
-	graphics::ITexture* getTexError();
 	graphics::IScene*	getDefaultGraphicsScene();
-
-	std::unordered_map<std::wstring, rImporter3DData*>& getImportedModels();
 
 	std::vector<WorldComponent*>& GetRootComponents();
 
@@ -109,7 +63,8 @@ protected:
 
 	graphics::IScene*	defaultGraphicsScene;
 
-	std::vector<WorldComponent*> rootComponents;
+	std::vector<Actor*> actors;
+	std::vector<WorldComponent*> worldComponents;
 
 	std::unordered_map<std::wstring, rImporter3DData*> importedModels;
 

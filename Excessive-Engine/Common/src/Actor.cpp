@@ -3,26 +3,30 @@
 #include "..\GraphicsEngine\Interfaces\IEntity.h"
 #include "..\PhysicsEngine\Interfaces\IEntityRigid.h"
 
-Actor::Actor()
+Actor::~Actor()
 {
+	for (auto& a : components)
+		delete a;
 }
 
-//void Actor::setPos(const mm::vec3& p)
-//{
-//	// TEMPORARY CODE !!! REMOVE
-//	for (auto& rigid : componentTypeContainer[(u32)eCompType::RIGID].childComponents)
-//		rigid->setPos(p);
-//
-//	for (auto& rigid : componentTypeContainer[(u32)eCompType::RIGID].childComponents)
-//		rigid->setPos(p);
-//}
-//
-//void Actor::setScale(const mm::vec3& s)
-//{
-//	// TEMPORARY CODE !!! REMOVE
-//	for (auto& rigid : childComponents->componentsRigid)
-//		rigid->setScale(s);
-//
-//	for (auto& rigid : childComponents->componentsGraphics)
-//		rigid->setScale(s);
-//}
+WorldComponent* Actor::addChild(WorldComponent* c)
+{
+	worldComponents.push_back(c);
+	return c;
+}
+
+Component* Actor::addChild(Component* c)
+{
+	components.push_back(c);
+	return c;
+}
+
+const std::vector<WorldComponent*>& Actor::getWorldComponents() const
+{
+	return worldComponents;
+}
+
+const std::vector<Component*>& Actor::getComponents() const
+{
+	return components;
+}

@@ -39,13 +39,16 @@
 
 
 EngineCore::EngineCore() 
-:EngineCoreBaseConstructor(this, 0, 0), graphicsEngine(0), physicsEngine(0), soundEngine(0), networkEngine(0)
+:graphicsEngine(0), physicsEngine(0), soundEngine(0), networkEngine(0)
 {
 }
 
 EngineCore::~EngineCore() 
 {
-	for (auto& a : rootComponents)
+	for (auto& a : actors)
+		delete a;
+
+	for (auto& a : worldComponents)
 		delete a;
 
 	for (auto& a : importedModels)
@@ -111,6 +114,176 @@ sound::IEngine* EngineCore::initSoundEngine(const rSoundEngine& d /*= rSoundEngi
 	return soundEngine = Factory::createSoundEngine(d);
 }
 
+Actor* EngineCore::addActor()
+{
+	auto a = new Actor();
+		actors.push_back(a);
+	return a;
+}
+
+ComponentGraphics* EngineCore::addCompGraphicsFromFile(const std::wstring& modelFilePath, graphics::IScene* scene /*= nullptr*/)
+{
+	// Check if model already loaded somehow
+	rImporter3DData* modelDesc;
+	auto it = importedModels.find(modelFilePath);
+	if (it != importedModels.end())
+	{
+		modelDesc = it->second;
+	}
+	else // Not found, import it...
+	{
+		// Config for importing
+		rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED,
+			eImporter3DFlag::VERT_ATTR_POS,
+			eImporter3DFlag::VERT_ATTR_NORM,
+			eImporter3DFlag::VERT_ATTR_TEX0,
+			eImporter3DFlag::PIVOT_RECENTER });
+
+		modelDesc = new rImporter3DData();
+		Importer3D::loadFile(modelFilePath, cfg, *modelDesc);
+
+		importedModels[modelFilePath] = modelDesc;
+	}
+
+	graphics::IEntity* compGraphics;
+
+	// We will feed meshes to that graphics entity
+	if (!scene)
+		compGraphics = defaultGraphicsScene->addEntity();
+	else
+		compGraphics = scene->addEntity();
+
+	// Material for entity
+	graphics::IMaterial* material = graphicsEngine->createMaterial();
+	compGraphics->setMaterial(material);
+
+	// For each mesh imported, create graphics mesh
+	for (auto& importedMesh : modelDesc->meshes)
+	{
+		graphics::IMesh* graphicsMesh = graphicsEngine->createMesh();
+		compGraphics->setMesh(graphicsMesh);
+
+		// Materials
+		for (auto& importedMaterial : importedMesh.materials)
+		{
+			auto& subMat = material->addSubMaterial();
+			subMat.base = mm::vec4(1, 1, 1, 1);
+
+			if (importedMaterial.texPathDiffuse != L"")
+			{
+				subMat.t_diffuse = graphicsEngine->createTexture();
+
+				std::wstring finalPath;
+
+				// TODO:
+				// turn .bmp references into .jpg (UGLY TMP)
+				if (importedMaterial.texPathDiffuse.rfind(L".bmp"))
+				{
+					auto idx = importedMaterial.texPathDiffuse.rfind('.');
+					auto jpgExtension = importedMaterial.texPathDiffuse.substr(0, idx + 1) + L"jpg";
+					finalPath = jpgExtension;
+				}
+				else
+				{
+					finalPath = importedMaterial.texPathDiffuse;
+				}
+
+				// Try Load texture
+				if (!subMat.t_diffuse->load(finalPath.c_str()))
+				{
+					// Texture load fail...
+					subMat.t_diffuse = texError;
+				}
+			}
+		}
+
+		// Material groups (face assignment)
+		std::vector<graphics::IMesh::MaterialGroup> matIDs;
+		matIDs.resize(importedMesh.materials.size());
+		for (u32 i = 0; i < matIDs.size(); i++) {
+			matIDs[i].beginFace = importedMesh.materials[i].faceStartIdx;
+			matIDs[i].endFace = importedMesh.materials[i].faceEndIdx;
+			matIDs[i].id = i;
+		}
+
+		graphics::IMesh::MeshData meshData;
+		meshData.index_data = (u32*)importedMesh.indices;
+		meshData.index_num = importedMesh.nIndices;
+		meshData.mat_ids = matIDs.data();
+		meshData.mat_ids_num = matIDs.size();
+		meshData.vertex_bytes = importedMesh.nVertices * importedMesh.vertexSize;
+		meshData.vertex_data = importedMesh.vertexBuffers[0];
+
+		graphics::IMesh::ElementDesc elements[] = {
+			graphics::IMesh::POSITION, 3,
+			graphics::IMesh::NORMAL, 3,
+			graphics::IMesh::TEX0, 2,
+		};
+		meshData.vertex_elements = elements;
+		meshData.vertex_elements_num = sizeof(elements) / sizeof(elements[0]);
+
+		// Feed data to mesh
+		graphicsMesh->update(meshData);
+	}
+
+	auto c = new ComponentGraphics(compGraphics);
+		worldComponents.push_back(c);
+	return c;
+}
+
+ComponentRigidBody* EngineCore::addCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass)
+{
+	// Check if model already loaded somehow
+	rImporter3DData* modelDesc;
+	auto it = importedModels.find(modelFilePath);
+	if (it != importedModels.end())
+	{
+		modelDesc = it->second;
+	}
+	else // Not found, import it...
+	{
+		// Config for importing
+		rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED,
+			eImporter3DFlag::VERT_ATTR_POS,
+			eImporter3DFlag::VERT_ATTR_NORM,
+			eImporter3DFlag::VERT_ATTR_TEX0,
+			eImporter3DFlag::PIVOT_RECENTER });
+
+		modelDesc = new rImporter3DData();
+		Importer3D::loadFile(modelFilePath, cfg, *modelDesc);
+
+		importedModels[modelFilePath] = modelDesc;
+	}
+
+	physics::IEntityRigid* compRigidBody = nullptr;
+
+	auto mesh = modelDesc->meshes[0];
+
+	mm::vec3* vertices;
+	// Little hekk, we know it's INTERLEAVED, cuz  addCompRigidBodyFromFile and addCompGraphicsFromFile implementation
+	//if (cfg.isContain(eImporter3DFlag::VERT_BUFF_INTERLEAVED)) // Interleaved buffer? Okay gather positions from vertices stepping with vertex stride
+	{
+		vertices = new mm::vec3[mesh.nVertices];
+		for (u32 i = 0; i < mesh.nVertices; i++)
+			vertices[i] = *(mm::vec3*)((u8*)mesh.vertexBuffers[0] + i * mesh.vertexSize);
+	}
+	//else
+	//{
+	//	vertices = (mm::vec3*)mesh.vertexBuffers[0]; // Non interleaved buffers, cool 0.th buffer will be position
+	//}
+
+	if (mass == 0)
+		compRigidBody = physicsEngine->addEntityRigidStatic(vertices, mesh.nVertices, mesh.indices, mesh.indexSize, mesh.nIndices);
+	else
+		compRigidBody = physicsEngine->addEntityRigidDynamic(vertices, mesh.nVertices, mass);
+
+	delete vertices;
+	vertices = nullptr; // Important
+
+	auto c = new ComponentRigidBody(compRigidBody);
+		worldComponents.push_back(c);
+	return c;
+}
 
 void EngineCore::update(float deltaTime/*, graphics::IScene* scene*/)
 {
@@ -156,16 +329,17 @@ void EngineCore::update(float deltaTime/*, graphics::IScene* scene*/)
 
 
 	// Okay physics simulation done, move high level physics component's attached WorldComponents
-	for (auto a : rootComponents)
+	// TODO, ez kibaszottul nem mukodik jol es redundans tree call - t csinál WorldComponent - eken belül
+	for (auto a : worldComponents)
 		a->updateAfterPhysicsSimulate();
 
-	if (graphicsEngine) 
+	if (graphicsEngine)
 		graphicsEngine->update(deltaTime);
 
 	if (soundEngine)
 		soundEngine->update(deltaTime);
 
-	if (networkEngine)	
+	if (networkEngine)
 		networkEngine->update(deltaTime);
 }
 
@@ -189,202 +363,7 @@ sound::IEngine*	EngineCore::getSoundEngine()
 	return soundEngine; 
 }
 
-graphics::ITexture* EngineCore::getTexError()
-{
-	return texError;
-}
-
 graphics::IScene* EngineCore::getDefaultGraphicsScene()
 {
 	return defaultGraphicsScene;
-}
-
-std::unordered_map<std::wstring, rImporter3DData*>& EngineCore::getImportedModels()
-{
-	return importedModels;
-}
-
-std::vector<WorldComponent*>& EngineCore::GetRootComponents()
-{
-	return rootComponents;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-EngineCoreBaseConstructor* EngineCoreBaseConstructor::addCompGraphicsFromFile(const std::wstring& modelFilePath, graphics::IScene* scene /*= nullptr*/)
-{
-	auto& importedModels = engineCore->getImportedModels();
-
-	// Check if model already loaded somehow
-	rImporter3DData* modelDesc;
-	auto it = importedModels.find(modelFilePath);
-	if (it != importedModels.end())
-	{
-		modelDesc = it->second;
-	}
-	else // Not found, import it...
-	{
-		// Config for importing
-		rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED,
-			eImporter3DFlag::VERT_ATTR_POS,
-			eImporter3DFlag::VERT_ATTR_NORM,
-			eImporter3DFlag::VERT_ATTR_TEX0,
-			eImporter3DFlag::PIVOT_RECENTER });
-
-		modelDesc = new rImporter3DData();
-		Importer3D::loadFile(modelFilePath, cfg, *modelDesc);
-
-		importedModels[modelFilePath] = modelDesc;
-	}
-
-	graphics::IEntity* compGraphics;
-
-	// We will feed meshes to that graphics entity
-	if (!scene)
-		compGraphics = engineCore->getDefaultGraphicsScene()->addEntity();
-	else
-		compGraphics = scene->addEntity();
-
-	// Material for entity
-	graphics::IMaterial* material = engineCore->getGraphicsEngine()->createMaterial();
-	compGraphics->setMaterial(material);
-
-	// For each mesh imported, create graphics mesh
-	for (auto& importedMesh : modelDesc->meshes)
-	{
-		graphics::IMesh* graphicsMesh = engineCore->getGraphicsEngine()->createMesh();
-		compGraphics->setMesh(graphicsMesh);
-
-		// Materials
-		for (auto& importedMaterial : importedMesh.materials)
-		{
-			auto& subMat = material->addSubMaterial();
-			subMat.base = mm::vec4(1, 1, 1, 1);
-
-			if (importedMaterial.texPathDiffuse != L"")
-			{
-				subMat.t_diffuse = engineCore->getGraphicsEngine()->createTexture();
-
-				std::wstring finalPath;
-
-				// TODO:
-				// turn .bmp references into .jpg (UGLY TMP)
-				if (importedMaterial.texPathDiffuse.rfind(L".bmp"))
-				{
-					auto idx = importedMaterial.texPathDiffuse.rfind('.');
-					auto jpgExtension = importedMaterial.texPathDiffuse.substr(0, idx + 1) + L"jpg";
-					finalPath = jpgExtension;
-				}
-				else
-				{
-					finalPath = importedMaterial.texPathDiffuse;
-				}
-
-				// Try Load texture
-				if (!subMat.t_diffuse->load(finalPath.c_str()))
-				{
-					// Texture load fail...
-					subMat.t_diffuse = engineCore->getTexError();
-				}
-			}
-		}
-
-		// Material groups (face assignment)
-		std::vector<graphics::IMesh::MaterialGroup> matIDs;
-		matIDs.resize(importedMesh.materials.size());
-		for (u32 i = 0; i < matIDs.size(); i++) {
-			matIDs[i].beginFace = importedMesh.materials[i].faceStartIdx;
-			matIDs[i].endFace = importedMesh.materials[i].faceEndIdx;
-			matIDs[i].id = i;
-		}
-
-		graphics::IMesh::MeshData meshData;
-		meshData.index_data = (u32*)importedMesh.indices;
-		meshData.index_num = importedMesh.nIndices;
-		meshData.mat_ids = matIDs.data();
-		meshData.mat_ids_num = matIDs.size();
-		meshData.vertex_bytes = importedMesh.nVertices * importedMesh.vertexSize;
-		meshData.vertex_data = importedMesh.vertexBuffers[0];
-
-		graphics::IMesh::ElementDesc elements[] = {
-			graphics::IMesh::POSITION, 3,
-			graphics::IMesh::NORMAL, 3,
-			graphics::IMesh::TEX0, 2,
-		};
-		meshData.vertex_elements = elements;
-		meshData.vertex_elements_num = sizeof(elements) / sizeof(elements[0]);
-
-		// Feed data to mesh
-		graphicsMesh->update(meshData);
-	}
-
-	ComponentGraphics* comp = new ComponentGraphics(compGraphics);
-	return new ComponentConstructor<ComponentGraphics>(engineCore, comp, constructedComp, !constructedComp ? comp : rootComponent);
-}
-
-EngineCoreBaseConstructor* EngineCoreBaseConstructor::addCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass)
-{
-	auto& importedModels = engineCore->getImportedModels();
-
-	// Check if model already loaded somehow
-	rImporter3DData* modelDesc;
-	auto it = importedModels.find(modelFilePath);
-	if (it != importedModels.end())
-	{
-		modelDesc = it->second;
-	}
-	else // Not found, import it...
-	{
-		// Config for importing
-		rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED,
-			eImporter3DFlag::VERT_ATTR_POS,
-			eImporter3DFlag::VERT_ATTR_NORM,
-			eImporter3DFlag::VERT_ATTR_TEX0,
-			eImporter3DFlag::PIVOT_RECENTER });
-
-		modelDesc = new rImporter3DData();
-		Importer3D::loadFile(modelFilePath, cfg, *modelDesc);
-
-		importedModels[modelFilePath] = modelDesc;
-	}
-
-	physics::IEntityRigid* compRigidBody = nullptr;
-
-	auto mesh = modelDesc->meshes[0];
-
-	mm::vec3* vertices;
-	// Little hekk, we know it's INTERLEAVED, cuz  addCompRigidBodyFromFile and addCompGraphicsFromFile implementation
-	//if (cfg.isContain(eImporter3DFlag::VERT_BUFF_INTERLEAVED)) // Interleaved buffer? Okay gather positions from vertices stepping with vertex stride
-	{
-		vertices = new mm::vec3[mesh.nVertices];
-		for (u32 i = 0; i < mesh.nVertices; i++)
-			vertices[i] = *(mm::vec3*)((u8*)mesh.vertexBuffers[0] + i * mesh.vertexSize);
-	}
-	//else
-	//{
-	//	vertices = (mm::vec3*)mesh.vertexBuffers[0]; // Non interleaved buffers, cool 0.th buffer will be position
-	//}
-
-	if (mass == 0)
-		compRigidBody = engineCore->getPhysicsEngine()->addEntityRigidStatic(vertices, mesh.nVertices, mesh.indices, mesh.indexSize, mesh.nIndices);
-	else
-		compRigidBody = engineCore->getPhysicsEngine()->addEntityRigidDynamic(vertices, mesh.nVertices, mass);
-
-	delete vertices;
-	vertices = nullptr; // Important
-
-	ComponentRigidBody* comp = new ComponentRigidBody(compRigidBody);
-	return new ComponentConstructor<ComponentRigidBody>(engineCore, comp, constructedComp, !constructedComp ? comp : rootComponent);
 }

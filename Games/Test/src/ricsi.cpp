@@ -59,9 +59,9 @@ int Ricsi()
 	static const wchar_t assetName[] = L"../Assets/teapot.dae";
 	//*/
 	//Actor* simpleEntity = core.addActor();
-	core.addCompRigidBodyFromFile(Sys::getWorkDir() + assetName, 0)->addCompGraphicsFromFile(Sys::getWorkDir() + assetName);
+	core.addCompRigidBodyFromFile(Sys::getWorkDir() + assetName, 0)->addChild(core.addCompGraphicsFromFile(Sys::getWorkDir() + assetName));
 	
-	core.addCompGraphicsFromFile(Sys::getWorkDir() + L"../Assets/skybox.dae")->getRootComp<ComponentGraphics>()->setScale({ 1000, 1000, 1000 });
+	core.addCompGraphicsFromFile(Sys::getWorkDir() + L"../Assets/skybox.dae")->setScale({ 1000, 1000, 1000 });
 
 	// Run the main loop
 	rWindowEvent ev;
@@ -111,9 +111,9 @@ int Ricsi()
 					bRMBDown = true;
 				else if (ev.mouseBtn == eMouseBtn::LEFT)
 				{
-					auto box = core.addCompRigidBodyFromFile(Sys::getWorkDir() + teapotModelPath, 10)
-								  ->addCompGraphicsFromFile(Sys::getWorkDir() + teapotModelPath)
-								  ->getRootComp<ComponentRigidBody>();
+					auto box = core.addCompRigidBodyFromFile(Sys::getWorkDir() + teapotModelPath, 10);
+					box->addChild(core.addCompGraphicsFromFile(Sys::getWorkDir() + teapotModelPath));
+					
 
 					box->setPos(cam->getPos() + cam->getDirFront() * 3); // 3 méterrel elénk
 					box->setScale(mm::vec3( 1.f / 20, 1.f / 20, 1.f / 20 ));
