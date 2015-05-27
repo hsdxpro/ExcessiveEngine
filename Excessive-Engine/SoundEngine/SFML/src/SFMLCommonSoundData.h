@@ -2,12 +2,12 @@
 
 #include "SFML\Audio.hpp"
 
-#include "SFMLCommonSoundEmitter.h"
+class SFMLCommonSoundEmitter;
 
 class SFMLCommonSoundData
 {
 public:
-	virtual ~SFMLCommonSoundData() = 0;
+	virtual ~SFMLCommonSoundData();
 
 	virtual SFMLCommonSoundEmitter* createSFMLSoundSource() const = 0;
 };

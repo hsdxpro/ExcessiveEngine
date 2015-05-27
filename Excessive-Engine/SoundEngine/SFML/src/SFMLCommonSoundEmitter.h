@@ -7,7 +7,7 @@
 class SFMLCommonSoundEmitter
 {
 public:
-	virtual ~SFMLCommonSoundEmitter() = 0;
+	virtual ~SFMLCommonSoundEmitter();
 	virtual void setPitch(float pitch) = 0;
 	//volume is real number 0 meaning muted, and 1 meaning original volume
 	virtual void setVolume(float volume) = 0;

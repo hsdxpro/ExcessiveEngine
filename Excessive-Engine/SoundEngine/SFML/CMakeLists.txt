@@ -22,6 +22,7 @@ src/Emitter.cpp
 src/Listener.h
 src/Listener.cpp
 src/SFMLCommonSoundEmitter.h
+src/SFMLCommonSoundEmitter.cpp
 src/SFMLSoundWrapper.h
 src/SFMLSoundWrapper.cpp
 src/SFMLMusicWrapper.h
@@ -33,6 +34,7 @@ SOURCE_GROUP(Resources FILES
 src/SoundData.h
 src/SoundData.cpp
 src/SFMLCommonSoundData.h
+src/SFMLCommonSoundData.cpp
 src/SFMLMusicData.h
 src/SFMLMusicData.cpp
 src/SFMLSoundData.h
