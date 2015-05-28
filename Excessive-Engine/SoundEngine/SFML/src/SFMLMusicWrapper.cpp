@@ -1,6 +1,11 @@
 #include "SFMLMusicWrapper.h"
 
-#include "SFML\Audio.hpp"
+#include "SFML/Audio.hpp"
+
+SFMLMusicWrapper::SFMLMusicWrapper() {
+	music.setVolume(100);
+	music.setAttenuation(0.5);
+}
 
 bool SFMLMusicWrapper::loadFromFile(const std::string& filename){
 	return music.openFromFile(filename);
@@ -16,6 +21,10 @@ void SFMLMusicWrapper::setVolume(float volume) {
 
 void SFMLMusicWrapper::setPosition(const mm::vec3& newPos) {
 	music.setPosition(newPos.x, newPos.y, newPos.z);
+}
+
+void SFMLMusicWrapper::setLooped(bool looped) {
+	music.setLoop(looped);
 }
 
 void SFMLMusicWrapper::start() {
@@ -43,3 +52,6 @@ mm::vec3 SFMLMusicWrapper::getPosition() const {
 	return mm::vec3(pos.x, pos.y, pos.z);
 }
 
+bool SFMLMusicWrapper::getLooped() const {
+	return music.getLoop();
+}

@@ -6,6 +6,7 @@
 // namespace
 namespace sound {
 
+//TODO move handedness to engine class
 enum class eHandedness : u32 {
 	LEFT,
 	RIGHT,

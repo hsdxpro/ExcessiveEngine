@@ -15,6 +15,10 @@ void SFMLSoundWrapper::setPosition(const mm::vec3& newPos) {
 	sound.setPosition(newPos.x, newPos.y, newPos.z);
 }
 
+void SFMLSoundWrapper::setLooped(bool looped) {
+	sound.setLoop(looped);
+}
+
 void SFMLSoundWrapper::start() {
 	sound.play();
 }
@@ -38,5 +42,9 @@ float SFMLSoundWrapper::getVolume() const {
 mm::vec3 SFMLSoundWrapper::getPosition() const {
 	sf::Vector3f pos = sound.getPosition();
 	return mm::vec3(pos.x, pos.y, pos.z);
+}
+
+bool SFMLSoundWrapper::getLooped() const {
+	return sound.getLoop();
 }
 

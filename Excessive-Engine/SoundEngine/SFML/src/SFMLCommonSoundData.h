@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SFML\Audio.hpp"
+#include "SFML/Audio.hpp"
 
 class SFMLCommonSoundEmitter;
 

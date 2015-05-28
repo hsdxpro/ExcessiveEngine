@@ -9,6 +9,9 @@ public:
 	SoundData();
 	~SoundData();
 	
+	SoundData(const SoundData&) = delete;
+	SoundData& operator=(const SoundData&) = delete;
+
 	void acquire();
 	void release() override;
 	

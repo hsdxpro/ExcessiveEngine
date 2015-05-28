@@ -27,7 +27,7 @@ public:
 	
 	///////////////////////////////////////
 	// states
-	
+
 	/// Set the volume. Will affect every sound that comes from this sound engine.
 	/// volume should be a positive real number.
 	/// If volume is 0 the engine is muted,

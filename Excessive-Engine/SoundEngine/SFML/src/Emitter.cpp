@@ -5,8 +5,9 @@
 
 #include <mymath/mymath.h>
 
-//initialize sound source to a valid, but meaningless instance, so that it doesnt have to check for null pointer every time
-Emitter::Emitter() : pSFMLSoundSource(new SFMLMusicWrapper) {
+Emitter::Emitter() {
+	//TODO initialize sound source to a valid, but meaningless instance, so that it doesnt have to check for null pointer every time
+	pSFMLSoundSource = nullptr;
 }
 
 Emitter::~Emitter() {
@@ -20,6 +21,14 @@ void Emitter::setPos(const mm::vec3& newPos) {
 
 void Emitter::setVel(const mm::vec3& newVel) {
 	vel = newVel;
+}
+
+void Emitter::setLooped(bool looped) {
+	pSFMLSoundSource->setLooped(looped);
+}
+
+void Emitter::setVolume(float volume) {
+	pSFMLSoundSource->setVolume(volume);
 }
 
 void Emitter::start() {
@@ -42,9 +51,19 @@ mm::vec3 Emitter::getVel() const {
 	return vel;
 }
 
+float Emitter::getVolume() const {
+	return pSFMLSoundSource->getVolume() / 100.f;
+}
+
+bool Emitter::getLooped() const {
+	return pSFMLSoundSource->getLooped();
+}
+
 void Emitter::setSoundData(sound::ISoundData* data)  {
+	//FIXME error occurs in this function!
 	SoundData* SFMLData = static_cast<SoundData*>(data);
-	delete pSFMLSoundSource;
+	assert(pSFMLSoundSource == 0);
+	delete pSFMLSoundSource; //FIXME error occurs at this deletion (virtual destructor used)
 	pSFMLSoundSource = SFMLData->getSFMLSoundData()->createSFMLSoundSource();
 
 	soundData.reset(SFMLData);

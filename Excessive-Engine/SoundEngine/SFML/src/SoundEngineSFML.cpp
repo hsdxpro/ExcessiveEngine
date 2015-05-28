@@ -21,8 +21,8 @@ EXPORT sound::IEngine* CreateSoundEngine(const rSoundEngine& d) {
 	return new SoundEngineSFML(d);
 }
 
-SoundEngineSFML::SoundEngineSFML(const rSoundEngine& d):masterVolume(1) {
-	sf::Listener::setGlobalVolume(masterVolume * 100);
+SoundEngineSFML::SoundEngineSFML(const rSoundEngine& d) {
+	sf::Listener::setGlobalVolume(100);
 }
 
 SoundEngineSFML::~SoundEngineSFML() {
@@ -46,13 +46,13 @@ Listener* SoundEngineSFML::createListener() {
 }
 
 void SoundEngineSFML::setMasterVolume(float volume) {
-	masterVolume = volume;
+	sf::Listener::setGlobalVolume(volume * 100);
 }
 
 float SoundEngineSFML::getMasterVolume() const {
-	return masterVolume;
+	return sf::Listener::getGlobalVolume() / 100.f;
 }
 
 void SoundEngineSFML::update(float deltaTime) {
-
+	//TODO maybe update active scenes here
 }

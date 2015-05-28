@@ -1,13 +1,14 @@
 #include "SoundScene.h"
 
-SoundScene::SoundScene():listener(nullptr) {
+SoundScene::SoundScene() :activeListener(nullptr) {
 
 }
 
 SoundScene::~SoundScene() {
-
+	for (auto current : emitters) {
+		delete current;
+	}
 }
-
 
 void SoundScene::release() {
 	delete this;
@@ -35,9 +36,19 @@ void SoundScene::clear() {
 }
 
 void SoundScene::setListener(sound::IListener* newListener) {
-	listener = newListener;
+	activeListener = static_cast<Listener*>(newListener);
 }
 
 sound::IListener* SoundScene::getListener() const {
-	return listener;
+	return activeListener;
+}
+
+void SoundScene::update(float deltaTime) {
+	if (activeListener != nullptr) {
+		//TODO convert position according to current handedness
+		mm::vec3 listenerPos = activeListener->getPos();
+		sf::Listener::setPosition(listenerPos.x, listenerPos.y, listenerPos.z);
+		mm::vec3 listenerDir = activeListener->getDir();
+		sf::Listener::setDirection(listenerDir.x, listenerDir.y, listenerDir.z);
+	}
 }

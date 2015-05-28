@@ -16,8 +16,13 @@ public:
 	Emitter();
 	~Emitter();
 
+	Emitter(const Emitter& other) = delete;
+	Emitter& operator=(const Emitter& other) = delete;
+
 	void setPos(const mm::vec3& newPos) override;
 	void setVel(const mm::vec3& newVel) override;
+	void setVolume(float volume) override;
+	void setLooped(bool looped) override;
 
 	void start() override;
 	void pause() override;
@@ -25,6 +30,8 @@ public:
 	
 	mm::vec3 getPos() const override;
 	mm::vec3 getVel() const override;
+	float getVolume() const override;
+	bool getLooped() const override;
 
 	void setSoundData(sound::ISoundData* data) override;
 	
