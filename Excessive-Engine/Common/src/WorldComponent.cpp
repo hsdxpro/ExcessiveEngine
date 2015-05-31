@@ -26,10 +26,6 @@ WorldComponent::WorldComponent()
 
 WorldComponent::~WorldComponent()
 {
-	// Recursively delete hierarchy
-	for (auto compTypes : childsTypeContainer)
-		for (auto child : compTypes)
-			delete child;
 }
 
 void WorldComponent::updateAfterPhysicsSimulate()

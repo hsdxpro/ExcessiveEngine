@@ -56,7 +56,7 @@ struct rWindowEvent
 // Descriptor of window
 struct rWindow
 {
-	rWindow() : clientW(0), clientH(0), style(eWindowStyle::TITLE__RESIZABLE__MAXIMIZEBUTTON){}
+	rWindow() : clientW(0), clientH(0), style(eWindowStyle::TITLE__RESIZE__CLOSE){}
 
 	u16 clientW;
 	u16 clientH;

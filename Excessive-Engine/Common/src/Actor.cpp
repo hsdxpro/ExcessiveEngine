@@ -5,8 +5,6 @@
 
 Actor::~Actor()
 {
-	for (auto& a : components)
-		delete a;
 }
 
 WorldComponent* Actor::addChild(WorldComponent* c)
@@ -15,18 +13,7 @@ WorldComponent* Actor::addChild(WorldComponent* c)
 	return c;
 }
 
-Component* Actor::addChild(Component* c)
-{
-	components.push_back(c);
-	return c;
-}
-
 const std::vector<WorldComponent*>& Actor::getWorldComponents() const
 {
 	return worldComponents;
-}
-
-const std::vector<Component*>& Actor::getComponents() const
-{
-	return components;
 }

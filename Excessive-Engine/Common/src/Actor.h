@@ -12,12 +12,9 @@ public:
 	~Actor();
 
 	WorldComponent* addChild(WorldComponent* c);
-	Component* addChild(Component* c);
 
 	const std::vector<WorldComponent*>& getWorldComponents() const;
-	const std::vector<Component*>& getComponents() const;
 
 protected:
 	std::vector<WorldComponent*> worldComponents;
-	std::vector<Component*> components;
 };

@@ -55,6 +55,8 @@ int Ricsi()
 	//*/
 	static const wchar_t assetName[] = L"../Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
 	static const wchar_t teapotModelPath[] = L"../Assets/box.dae"; // Assets/teapot.dae
+	static const wchar_t ak47ModelPath[] = L"../Assets/ak47/ak.obj"; // Assets/teapot.dae
+
 	/*/
 	static const wchar_t assetName[] = L"../Assets/teapot.dae";
 	//*/
@@ -113,10 +115,9 @@ int Ricsi()
 				{
 					auto box = core.addCompRigidBodyFromFile(Sys::getWorkDir() + teapotModelPath, 10);
 					box->addChild(core.addCompGraphicsFromFile(Sys::getWorkDir() + teapotModelPath));
-					
 
 					box->setPos(cam->getPos() + cam->getDirFront() * 3); // 3 méterrel elénk
-					box->setScale(mm::vec3( 1.f / 20, 1.f / 20, 1.f / 20 ));
+					box->setScale(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
 				}
 				break;
 			case eWindowMsg::MOUSE_RELEASE:

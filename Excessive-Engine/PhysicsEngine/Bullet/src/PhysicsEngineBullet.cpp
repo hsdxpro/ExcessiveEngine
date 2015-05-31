@@ -32,7 +32,8 @@ EXPORT physics::IEngine* CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d
 PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d) 
 {
 	world = new btDiscreteDynamicsWorld(new	btCollisionDispatcher(new btDefaultCollisionConfiguration),
-										new btDbvtBroadphase,
+										//new btDbvtBroadphase,
+										new btAxisSweep3({ -1000, -1000, -1000 }, { 1000, 1000, 1000 }),
 										new btSequentialImpulseConstraintSolver,
 										new btDefaultCollisionConfiguration);
 
@@ -43,7 +44,7 @@ PhysicsEngineBullet::~PhysicsEngineBullet()
 {
 }
 
-void PhysicsEngineBullet::release() 
+void PhysicsEngineBullet::release()
 {
 	delete this;
 }
