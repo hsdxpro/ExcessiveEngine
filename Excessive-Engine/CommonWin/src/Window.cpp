@@ -30,7 +30,8 @@ bool Window::popEvent(rWindowEvent* evt_out)
 	assert(evt_out);
 
 	sf::Event evt;
-	bool b = w.pollEvent(evt);
+	if (!w.pollEvent(evt))
+		return false;
 
 	evt_out->msg = (eWindowMsg)(evt.type);
 
@@ -86,17 +87,17 @@ bool Window::popEvent(rWindowEvent* evt_out)
 	{
 		evt_out->deltaY = evt.mouseWheel.delta;
 	}
-	else if (evt_out->msg == eWindowMsg::CLOSE) 
+	else if (evt.type == sf::Event::EventType::Closed) 
 	{
 		close();
 	}
-	else if (evt_out->msg == eWindowMsg::RESIZE) 
+	else if (evt.type == sf::Event::EventType::Resized) 
 	{
 		evt_out->x = evt.size.width;
 		evt_out->y = evt.size.height;
 	}
 
-	return b;
+	return true;
 }
 
 void Window::close() 
@@ -106,7 +107,7 @@ void Window::close()
 
 void Window::present() 
 {
-	w.setActive(true);
+	//w.setActive(true);
 
 	// TODO: REFACTOR, REPLACE...
 	glBindVertexArray(0);
@@ -134,9 +135,8 @@ void Window::present()
 	text->setStyle(sf::Text::Bold);
 	text->setColor(sf::Color::White);
 	text->setPosition(100, 100);
-
+	
 	w.draw(*text);
-
 
 	w.display();
 }
