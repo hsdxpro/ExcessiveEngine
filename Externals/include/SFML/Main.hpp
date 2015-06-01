@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,56 +22,22 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_OPENGL_HPP
-#define SFML_OPENGL_HPP
-
+#ifndef SFML_MAIN_HPP
+#define SFML_MAIN_HPP
 
 ////////////////////////////////////////////////////////////
-/// Headers
+// Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 
 
-////////////////////////////////////////////////////////////
-/// This file just includes the OpenGL (GL and GLU) headers,
-/// which have actually different paths on each system
-////////////////////////////////////////////////////////////
-#if defined(SFML_SYSTEM_WINDOWS)
+#if defined(SFML_SYSTEM_IOS)
 
-    // The Visual C++ version of gl.h uses WINGDIAPI and APIENTRY but doesn't define them
-    #ifdef _MSC_VER
-        #include <windows.h>
-    #endif
-
-    #include <GL/gl.h>
-    #include <GL/glu.h>
-
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
-
-    #if defined(SFML_OPENGL_ES)
-        #include <GLES/gl.h>
-        #include <GLES/glext.h>
-    #else
-        #include <GL/gl.h>
-        #include <GL/glu.h>
-    #endif
-
-#elif defined(SFML_SYSTEM_MACOS)
-
-    #include <OpenGL/gl.h>
-    #include <OpenGL/glu.h>
-
-#elif defined (SFML_SYSTEM_IOS)
-
-    #include <OpenGLES/ES1/gl.h>
-    #include <OpenGLES/ES1/glext.h>
-
-#elif defined (SFML_SYSTEM_ANDROID)
-
-    #include <GLES/gl.h>
-    #include <GLES/glext.h>
+    // On iOS, we have no choice but to have our own main,
+    // so we need to rename the user one and call it later
+    #define main sfmlMain
 
 #endif
 
 
-#endif // SFML_OPENGL_HPP
+#endif // SFML_MAIN_HPP

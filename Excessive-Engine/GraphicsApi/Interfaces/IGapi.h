@@ -64,6 +64,7 @@ public:
 
 	///////////////////////////////////////
 	// render states
+	virtual void resetStatesToDefault() = 0;
 	virtual void setDepthState(const rDepthState& state) = 0;
 	virtual void setStencilState(const rStencilState& state) = 0;
 	virtual void setBlendState(const rBlendState& state) = 0;

@@ -46,6 +46,7 @@ public:
 	void readBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t offset) override;
 
 	// rendereing states
+	void resetStatesToDefault() override;
 	void setDepthState(const rDepthState& state) override;
 	void setStencilState(const rStencilState& state) override;
 	void setBlendState(const rBlendState& state) override;

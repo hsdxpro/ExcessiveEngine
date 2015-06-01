@@ -199,6 +199,10 @@ auto GraphicsEngineRaster::getLayer(size_t index) -> Layer& {
 ////////////////////////////////////////////////////////////////////////////////
 // update
 void GraphicsEngineRaster::update(float deltaTime) {
+
+	//TODO: REMOVE  Jesus that only needed cuz sf::renderWindow OpenGL shits
+	gapi->resetStatesToDefault();
+
 	//cout << "Updating frame..." << endl;
 
 	gapi->clearFrameBuffer(eClearFlag::COLOR_DEPTH, mm::vec4(0, 0, 0, 0), 0, 0);
@@ -286,7 +290,8 @@ void GraphicsEngineRaster::update(float deltaTime) {
 		elements[1].stream_index = attribInfos[1].buffer_index;
 		elements[2].stream_index = attribInfos[2].buffer_index;
 		
-		IInputLayout* input_layout = gapi->createInputLayout(elements, 3);
+		// Yes static, cuz we know the only shader working need that layout, and models also in that format...
+		static IInputLayout* input_layout = gapi->createInputLayout(elements, 3);
 		gapi->setInputLayout(input_layout);
 
 		// old vertex attribs
@@ -331,8 +336,8 @@ void GraphicsEngineRaster::update(float deltaTime) {
 			ubo_alloc_data.is_writable = true;
 			ubo_alloc_data.prefer_cpu_storage = false;
 			ubo_alloc_data.size = 1 * sizeof(mm::mat4);
-		auto ubo_buf = gapi->createUniformBuffer(ubo_alloc_data);
-		auto index_vs = shader->getUniformBlockIndex("constant_data");
+		static auto ubo_buf = gapi->createUniformBuffer(ubo_alloc_data);
+		static auto index_vs = shader->getUniformBlockIndex("constant_data");
 
 		gapi->writeBuffer(ubo_buf, &wvp, sizeof(mm::mat4), 0);
 		gapi->setUniformBuffer(ubo_buf, index_vs);
@@ -374,8 +379,8 @@ void GraphicsEngineRaster::update(float deltaTime) {
 			pc_const_desc.is_writable = true;
 			pc_const_desc.prefer_cpu_storage = false;
 			pc_const_desc.size = sizeof(ps_const);
-		auto ps_const_buf = gapi->createUniformBuffer(pc_const_desc);
-		auto index_ps = shader->getUniformBlockIndex("ps_const");
+		static auto ps_const_buf = gapi->createUniformBuffer(pc_const_desc);
+		static auto index_ps = shader->getUniformBlockIndex("ps_const");
 
 		// draw each mesh mat id group
 		auto& matGroups = mesh->getMaterialIds();
@@ -410,9 +415,9 @@ void GraphicsEngineRaster::update(float deltaTime) {
 			gapi->drawIndexed((matGroup.endFace - matGroup.beginFace) * 3, matGroup.beginFace * 3 * sizeof(u32));
 		}
 
-		input_layout->release();
-		ps_const_buf->destroy();
-		ubo_buf->destroy();
+		//input_layout->release();
+		//ps_const_buf->destroy();
+		//ubo_buf->destroy();
 	}
 }
 

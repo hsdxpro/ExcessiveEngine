@@ -49,9 +49,7 @@ GapiGL::GapiGL() {
 	cout << "OpenGL version: " << glGetString(GL_VERSION) << endl;
 	cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
 
-	//use a single global vao
-	glGenVertexArrays(1, &global_vao);
-	glBindVertexArray(global_vao);
+	resetStatesToDefault();
 
 	// set initial bindings
 	active_shader = nullptr;
@@ -531,6 +529,17 @@ void GapiGL::readBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t 
   glBufferSubData( GL_UNIFORM_BUFFER, offset, size, data );
 }
 
+void GapiGL::resetStatesToDefault()
+{
+	//use a single global vao
+	glGenVertexArrays(1, &global_vao);
+	glBindVertexArray(global_vao);
+
+	rBlendState d;
+		d.enable = false;
+	setBlendState(d);
+}
+
 void GapiGL::setDepthState(const rDepthState& state)
 {
 	if (state.enable_test)
@@ -574,17 +583,15 @@ void GapiGL::setBlendState(const rBlendState& state)
 	if (state.enable)
 	{
 		glEnable(GL_BLEND);
+
+		glBlendColor(state.blend_color.x, state.blend_color.y, state.blend_color.z, state.blend_color.w);
+		glBlendEquation(blend_eq_data[(u32)state.equation]);
+		glBlendFunc(blend_func_data[(u32)state.src_func], blend_func_data[(u32)state.dst_func]);
 	}
 	else
 	{
 		glDisable(GL_BLEND);
 	}
-
-	glBlendColor(state.blend_color.x, state.blend_color.y, state.blend_color.z, state.blend_color.w);
-
-	glBlendEquation(blend_eq_data[(u32)state.equation]);
-
-	glBlendFunc(blend_func_data[(u32)state.src_func], blend_func_data[(u32)state.dst_func]);
 }
 
 void GapiGL::setSamplerState(const char* slotName, const rSamplerState& smpdata, ITextureGapi* t)

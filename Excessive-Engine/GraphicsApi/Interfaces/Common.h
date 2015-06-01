@@ -75,6 +75,8 @@ enum class eBlendFunc : u32
 
 struct rBlendState
 {
+	rBlendState():enable(false), blend_color(1,1,1,1), equation(eBlendEquation::SRC_PLUS_DEST), src_func(eBlendFunc::ONE_MINUS_DST_ALPHA), dst_func(eBlendFunc::ONE_MINUS_SRC_ALPHA){}
+
 	bool enable;
 	mm::vec4 blend_color;
 	eBlendEquation equation;
