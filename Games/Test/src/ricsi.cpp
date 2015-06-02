@@ -17,8 +17,6 @@ IGapi* gGapi;
 
 int Ricsi() 
 {
-	mm::mat4 asd = mm::quat();
-
 	// Init window
 	rWindow d;
 		d.clientW = 800;

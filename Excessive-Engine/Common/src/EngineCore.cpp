@@ -1,6 +1,7 @@
 #include "EngineCore.h"
 #include "Factory.h"
 #include "Importer3D.h"
+#include "EngineCpuProfiler.h"
 
 #include "../GraphicsEngine/Raster/src/GraphicsEngineRaster.h"
 #include "../GraphicsEngine/RT/src/GraphicsEngineRT.h"
@@ -9,7 +10,7 @@
 #include "../SoundEngine/SFML/src/SoundEngineSFML.h"
 
 #include <assert.h>
-#include "Sys.h"
+
 
 //////////////////////////////////////////////////
 //                                              //
@@ -37,10 +38,10 @@
 //                                              //
 //////////////////////////////////////////////////
 
-
 EngineCore::EngineCore() 
 :graphicsEngine(0), physicsEngine(0), soundEngine(0), networkEngine(0)
 {
+
 }
 
 EngineCore::~EngineCore() 
@@ -341,6 +342,10 @@ void EngineCore::update(float deltaTime/*, graphics::IScene* scene*/)
 
 	if (networkEngine)
 		networkEngine->update(deltaTime);
+
+#ifdef DEBUG_BUILD
+	EngineCpuProfiler::updateAndPresent();
+#endif
 }
 
 graphics::IEngine* EngineCore::getGraphicsEngine() 

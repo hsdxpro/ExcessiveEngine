@@ -2,27 +2,12 @@
 
 #include <cassert>
 #include <limits>
-#include "SFML\Graphics\Text.hpp"
-#include "SFML\Graphics\Font.hpp"
-#include "GL\glew.h"
-
-sf::Font* font;
-sf::Text* text;
-sf::String* str;
 
 Window::Window(const rWindow& d)
 :lastMousePos(0, 0)
 {
 	w.create(sf::VideoMode(d.clientW, d.clientH), d.capText.c_str(), (u32)d.style);
 	w.setVerticalSyncEnabled(true);
-
-	text = new sf::Text();
-	str = new sf::String("BAZDMEG");
-	font = new sf::Font();
-	if (!font->loadFromFile(Sys::getWorkDir() + sf::String("arial.ttf")))
-	{
-		assert(0);
-	}
 }
 
 bool Window::popEvent(rWindowEvent* evt_out)
@@ -107,37 +92,6 @@ void Window::close()
 
 void Window::present() 
 {
-	//w.setActive(true);
-
-	// TODO: REFACTOR, REPLACE...
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glBindTexture(0, 0);
-	
-	glBindVertexBuffers(0, 16, nullptr, nullptr, nullptr);
-	
-	for (uint8_t i = 0; i < 16; i++)
-	{
-		glBindBufferBase(GL_UNIFORM_BUFFER, i, 0);	
-		glBindVertexBuffer(i, 0, 0, 0);
-	}
-	
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glVertexPointer(0, GL_FLOAT, 0, 0);
-
-	w.resetGLStates();
-
-	text->setString(*str);
-	text->setFont(*font);
-	text->setCharacterSize(30);
-	text->setStyle(sf::Text::Bold);
-	text->setColor(sf::Color::White);
-	text->setPosition(100, 100);
-	
-	w.draw(*text);
-
 	w.display();
 }
 
