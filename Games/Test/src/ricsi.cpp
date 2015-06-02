@@ -113,13 +113,29 @@ int Ricsi()
 					bRMBDown = true;
 				else if (ev.mouseBtn == eMouseBtn::LEFT)
 				{
-					for (uint32_t i = 0; i < 10; i++)
+					//for (uint32_t i = 0; i < 3; i++)
 					{
 						auto box = core.addCompRigidBodyFromFile(Sys::getWorkDir() + teapotModelPath, 10);
 						box->addChild(core.addCompGraphicsFromFile(Sys::getWorkDir() + teapotModelPath));
 
 						box->setPos(cam->getPos() + cam->getDirFront() * 3); // 3 méterrel elénk
 						box->setScale(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
+
+						//if (i == 0)
+						//{
+						//	box->setPos({ 20, 0, 0 }); // 3 méterrel elénk
+						//	box->setScale(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
+						//}
+						//else if (i == 1)
+						//{
+						//	box->setPos({ 0, 20, 0 }); // 3 méterrel elénk
+						//	box->setScale(mm::vec3(1.f / 10, 1.f / 10, 1.f / 10));
+						//}
+						//else
+						//{
+						//	box->setPos({ 0, 0, 20 }); // 3 méterrel elénk
+						//	box->setScale(mm::vec3(1.f / 5, 1.f / 5, 1.f / 5));
+						//}
 					}
 				}
 				break;
@@ -152,9 +168,9 @@ int Ricsi()
 										0, cos(angleX), -sin(angleX),
 										0, sin(angleX),  cos(angleX));
 
-					mm::mat3 rotAroundZ(cos(angleZ), -sin(angleZ),	0,
-										sin(angleZ),  cos(angleZ),	0,
-											0,			0,			1);
+					mm::mat3 rotAroundZ(cos(-angleZ), -sin(-angleZ),	0,
+										sin(-angleZ),  cos(-angleZ),	0,
+											0,			0,				1);
 
 					newViewDir *= rotAroundX;
 					newViewDir *= rotAroundZ;

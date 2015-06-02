@@ -95,8 +95,8 @@ mm::mat4 Matrix44ViewRH(const mm::vec3& eye, const mm::vec3& target, const mm::v
 {
 	// Negate cuz of OpenGL -z front...
 	mm::vec3 baseFront = normalize(-(target - eye));		// The "look-at" vector.
-	mm::vec3 baseRight = normalize(cross(baseFront, up));	// The "right" vector.
-	mm::vec3 baseUp = cross(baseRight, baseFront);			// The "up" vector.
+	mm::vec3 baseRight = normalize(cross(up, baseFront));	// The "right" vector.
+	mm::vec3 baseUp = cross(baseFront, baseRight);			// The "up" vector.
 	
 	// Create a 4x4 orientation matrix from the right, up, and at vectors
 	// TRANPOSE of ROT
@@ -174,12 +174,12 @@ mm::vec3 Camera::getDirDown() const
 
 mm::vec3 Camera::getDirRight() const
 {
-	return cross(mm::vec3(0.0f, 0.0f, 1.0f), getDirFront());
+	return cross(getDirFront(), mm::vec3(0.0f, 0.0f, 1.0f));
 }
 
 mm::vec3 Camera::getDirLeft() const
 {
-	return cross(getDirFront(), mm::vec3(0.0f, 0.0f, 1.0f));
+	return cross(mm::vec3(0.0f, 0.0f, 1.0f), getDirFront());
 }
 
 const mm::vec3& Camera::getPos() const
