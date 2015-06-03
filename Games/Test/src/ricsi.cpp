@@ -66,10 +66,13 @@ int Ricsi()
 	// Run the main loop
 	rWindowEvent ev;
 	double elapsed;
-	std::chrono::time_point<std::chrono::high_resolution_clock> last_frame;
+	double last_frame;
 
 	// Timer for dT frame calc
-	//ITimer* t = Factory::createTimer();
+	ITimer* timer = Factory::createTimer();
+	timer->start();
+	last_frame = 0;
+	elapsed = 0;
 
 	bool bWDown = false;
 	bool bSDown = false;
@@ -86,14 +89,14 @@ int Ricsi()
 		//t->reset();
 
 		// keep 60 fps
-		auto now = std::chrono::high_resolution_clock::now();
+		double now = timer->getSecondsPassed();
 
 		if (bFirstRun) 
 		{
 			bFirstRun = false;
 			last_frame = now;
 		}
-		elapsed = std::chrono::duration_cast<std::chrono::microseconds>(now - last_frame).count() / 1.0e6;
+		elapsed = now - last_frame;
 		last_frame = now;
 
 		int fps = 1 / elapsed + 0.5;

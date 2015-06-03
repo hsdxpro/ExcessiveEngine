@@ -6,6 +6,9 @@
 
 class Timer : public ITimer
 {
+public:
+	Timer();
+
 	void start() override;
 	void reset() override;
 
@@ -13,5 +16,7 @@ class Timer : public ITimer
 	size_t getMicroSecondsPassed() override;
 
 private:
-	std::chrono::system_clock::time_point startTime;
+	// std::chrono::system_clock::time_point startTime;
+	unsigned long long frequency;
+	unsigned long long startTime;
 };
