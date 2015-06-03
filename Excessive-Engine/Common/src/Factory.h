@@ -8,8 +8,8 @@
 #include "../../NetworkEngine/Boost/src/NetworkEngineBoost.h"
 
 #include "IWindow.h"
-class ITimer;
-class IGapi;
+#include "ITimer.h"
+#include "../GraphicsApi/Interfaces/IGapi.h"
 
 class Factory
 {

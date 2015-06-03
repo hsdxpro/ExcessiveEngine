@@ -12,4 +12,7 @@ public:
 
 	// get seconds passed since start() or reset()
 	virtual double getSecondsPassed() = 0;
+
+	// get micro seconds passed since start() or reset()
+	virtual size_t getMicroSecondsPassed() = 0;
 };

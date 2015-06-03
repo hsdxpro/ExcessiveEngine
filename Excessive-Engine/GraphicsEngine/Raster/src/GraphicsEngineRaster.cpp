@@ -5,6 +5,7 @@
 #include <map>
 #include "..\Common\src\Factory.h"
 #include "mymath\mm_quat_func.h"
+#include "..\Common\src\EngineCpuProfiler.h"
 using std::cout;
 using std::endl;
 
@@ -199,13 +200,13 @@ auto GraphicsEngineRaster::getLayer(size_t index) -> Layer& {
 ////////////////////////////////////////////////////////////////////////////////
 // update
 void GraphicsEngineRaster::update(float deltaTime) {
-
-	//TODO: REMOVE  Jesus that only needed cuz sf::renderWindow OpenGL shits
-	gapi->resetStatesToDefault();
-
 	//cout << "Updating frame..." << endl;
 
-	gapi->clearFrameBuffer(eClearFlag::COLOR_DEPTH, mm::vec4(0, 0, 0, 0), 0, 0);
+	{
+		PROFILER("FrameBufferClear");
+		gapi->clearFrameBuffer(eClearFlag::COLOR_DEPTH, mm::vec4(0, 0, 0, 0), 0, 0);
+	}
+	
 
 	rDepthState ds;
 		ds.enable_test = true;
@@ -233,6 +234,8 @@ void GraphicsEngineRaster::update(float deltaTime) {
 	// for each entity
 	int num_drawn = 0;
 	for (auto entity : entities) {
+		PROFILER("Entity Draw");
+
 		// get mesh
 		Mesh* mesh = entity->getMesh();
 		if (!mesh) {

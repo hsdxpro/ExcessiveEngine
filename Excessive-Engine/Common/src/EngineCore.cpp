@@ -326,24 +326,43 @@ void EngineCore::update(float deltaTime/*, graphics::IScene* scene*/)
 	*/
 
 	if (physicsEngine)
+	{
+		PROFILER("PhysicsEngine");
 		physicsEngine->update(deltaTime);
-
+	}
 
 	// Okay physics simulation done, move high level physics component's attached WorldComponents
 	// TODO, ez kibaszottul nem mukodik jol es redundans tree call - t csinál WorldComponent - eken belül
-	for (auto a : worldComponents)
-		a->updateAfterPhysicsSimulate();
+	{
+		PROFILER("EngineCore -> Component Updates");
+		for (auto a : worldComponents)
+			a->updateAfterPhysicsSimulate();
+	}
 
 	if (graphicsEngine)
+	{
+		PROFILER("GraphicsEngine");
+
+#ifdef PROFILE_ENGINE
+		graphicsEngine->getGapi()->resetStatesToDefault(); // Jesus the profiler also uses OpenGL temporarily, and mess up the binds etc...
+#endif
 		graphicsEngine->update(deltaTime);
+	}
 
 	if (soundEngine)
+	{
+		PROFILER("SoundEngine");
 		soundEngine->update(deltaTime);
+	}
+		
 
 	if (networkEngine)
+	{
+		PROFILER("NetworkEngine");
 		networkEngine->update(deltaTime);
+	}
 
-#ifdef DEBUG_BUILD
+#ifdef PROFILE_ENGINE
 	EngineCpuProfiler::updateAndPresent();
 #endif
 }
