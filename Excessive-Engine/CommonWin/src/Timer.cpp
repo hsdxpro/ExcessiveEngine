@@ -1,4 +1,7 @@
 #include "Timer.h"
+
+#include <cassert>
+
 #define _WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -6,9 +9,7 @@
 
 Timer::Timer() {
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
-	if (frequency == 0) {
-		frequency = 100; // at least it won't crash, can't happen on XP or later
-	}
+	assert(frequency > 0);
 }
 
 void Timer::start()
