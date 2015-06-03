@@ -24,7 +24,7 @@ public:
 	virtual bool getLooped() const = 0;
 
 	virtual void setSoundData(ISoundData* data) = 0;
-	virtual ISoundData* getSoundData() const = 0;
+	virtual ISoundData* getSoundData()  = 0;
 };
 
 } // namespace

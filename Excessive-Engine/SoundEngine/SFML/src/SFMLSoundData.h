@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SFMLCommonSoundData.h"
-#include "SFML\Audio.hpp"
+#include "SFML/Audio.hpp"
 
 class SFMLSoundData : public SFMLCommonSoundData
 {

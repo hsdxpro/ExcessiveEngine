@@ -69,20 +69,32 @@ namespace testartur
 		pMusicSourceRepresenterModel->setPos(musicPosition);
 
 		sound::IListener* listener = sEngine->createListener();
+		listener->setUpwards(mm::vec3(0, 0, 1));
+		listener->setDir(mm::vec3(0, 1, 0));
 		sound::IScene* soundScene = sEngine->createScene();
 		soundScene->setListener(listener);
 		sound::IEmitter* pMusicSource = soundScene->addEmitter();
 		sound::ISoundData* pMusicData = sEngine->createSoundData();
 		auto musicFilePath = Sys::getWorkDir() + L"../Assets/PurgatorysMansion-mono.ogg";
 		if (!pMusicData->load(musicFilePath.c_str(), sound::StoreMode::STREAMED)) {
-			std::cout << "Failed to load music! (" << musicFilePath.c_str() << ")";
+			std::cout << "Failed to load: " << musicFilePath.c_str() << std::endl;
 			return 1;
 		}
 		pMusicSource->setSoundData(pMusicData);
 		pMusicSource->setPos(musicPosition);
 		pMusicSource->setLooped(true);
 		pMusicSource->start();
-		sEngine->setMasterVolume(1);
+		sound::IEmitter* pFireSound = soundScene->addEmitter();
+		sound::ISoundData* pFireSoundData = sEngine->createSoundData();
+		auto fireSoundFilePath = Sys::getWorkDir() + L"../Assets/GUN_FIRE-stereo.ogg";
+		if (!pFireSoundData->load(fireSoundFilePath.c_str(), sound::StoreMode::BUFFERED)) {
+			std::cout << "Failed to load: " << fireSoundFilePath.c_str() << std::endl;
+			return 1;
+		}
+		pFireSound->setSoundData(pFireSoundData);
+		pFireSound->setVolume(0.3);
+		//NOTE: FIRE SOUND IS STEREO, SFML IMPLEMENTATION CAN ONLY SPATIALIZE MONO SOUND. SO SETTING ITS POSITION IS MEANINGLESS.
+
 		// Run the main loop
 		rWindowEvent ev;
 		double elapsed;
@@ -98,9 +110,6 @@ namespace testartur
 
 		bool bRMBDown = false;
 
-		// Jesus, just because we dont want garbage for last_frame variable at first run
-		//static bool bFirstRun = true;
-		//HERES A SOLUTION FOR YOU :D (Artur)
 		last_frame = std::chrono::high_resolution_clock::now();
 
 		while (window->isOpen())
@@ -110,11 +119,6 @@ namespace testartur
 			// keep 60 fps
 			auto now = std::chrono::high_resolution_clock::now();
 
-			//if (bFirstRun)
-			//{
-			//	bFirstRun = false;
-			//	last_frame = now;
-			//}
 			elapsed = std::chrono::duration_cast<std::chrono::microseconds>(now - last_frame).count() / 1.0e6;
 			last_frame = now;
 
@@ -133,15 +137,7 @@ namespace testartur
 						bRMBDown = true;
 					else if (ev.mouseBtn == eMouseBtn::LEFT)
 					{
-						//auto box = core.addCompRigidBodyFromFile(Sys::getWorkDir() + teapotModelPath, 10);
-						//box->addChild(core.addCompGraphicsFromFile(Sys::getWorkDir() + teapotModelPath));
-
-						musicPosition = cam->getPos() + cam->getDirFront() * 3;
-						pMusicSourceRepresenterModel->setPos(musicPosition);
-						pMusicSource->setPos(musicPosition);
-
-						//box->setPos(cam->getPos() + cam->getDirFront() * 3); // 3 méterrel elénk
-						//box->setScale(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
+						pFireSound->start();
 					}
 					break;
 				case eWindowMsg::MOUSE_RELEASE:
@@ -173,8 +169,8 @@ namespace testartur
 							0, cos(angleX), -sin(angleX),
 							0, sin(angleX), cos(angleX));
 
-						mm::mat3 rotAroundZ(cos(angleZ), -sin(angleZ), 0,
-							sin(angleZ), cos(angleZ), 0,
+						mm::mat3 rotAroundZ(cos(-angleZ), -sin(-angleZ), 0,
+							sin(-angleZ), cos(-angleZ), 0,
 							0, 0, 1);
 
 						newViewDir *= rotAroundX;
@@ -197,6 +193,12 @@ namespace testartur
 					case eKey::A: bADown = true; break;
 					case eKey::D: bDDown = true; break;
 					case eKey::LSHIFT: gCamSpeedMultiplier = 5; break;
+					case eKey::SPACE: {
+						musicPosition = cam->getPos() + cam->getDirFront() * 3;
+						pMusicSourceRepresenterModel->setPos(musicPosition);
+						pMusicSource->setPos(musicPosition);
+					} break;
+
 					} break;
 				case eWindowMsg::KEY_RELEASE:
 					switch (ev.key)
