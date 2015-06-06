@@ -7,57 +7,98 @@
 #include "GL\glew.h"
 
 EngineCpuProfiler* EngineCpuProfiler::instance = nullptr;
-size_t EngineCpuProfiler::sectionIDGenerator = 0;
+EngineCpuProfiler::ProfilerNode* EngineCpuProfiler::lastConstructedTreeNode = nullptr;
+size_t EngineCpuProfiler::IDGenerator = 0;
 
-// "Profiler" section
-EngineCpuProfiler::Section::Section(const std::string& name)
+// Scope profiling
+EngineCpuProfiler::Scope::Scope(const std::string& name)
 :name(name)
 {
+	IDGenerator++;
+
 	timer = Factory::createTimer();
-
+	
 	// Add that Section to tree
-	sectionNode* node = new sectionNode();
+	ProfilerNode* node = new ProfilerNode();
 		node->name = name;
-		node->ID = sectionIDGenerator++;
-		node->bLiving = true;
+	
+	// This is a root node !
+	if (lastConstructedTreeNode == nullptr)
+	{
 		node->parent = nullptr;
-	EngineCpuProfiler::GetSingletonInstance()->sectionTree.push_back(node);
-
-	ID = node->ID;
+		EngineCpuProfiler::GetSingletonInstance()->treeRootComponents.push_back(node);
+	}
+	else // This is a child node
+	{
+		node->parent = lastConstructedTreeNode;
+		lastConstructedTreeNode->childs.push_back(node);
+	}
+	
+	lastConstructedTreeNode = node;
 
 	timer->start();
 }
 
-EngineCpuProfiler::Section::~Section()
+EngineCpuProfiler::Scope::~Scope()
 {
-	size_t profiledMicroSeconds = timer->getMicroSecondsPassed();
+	// Save profiled time
+	lastConstructedTreeNode->profiledSeconds = timer->getSecondsPassed();
+	
+	// Go up 1 on tree
+	lastConstructedTreeNode = lastConstructedTreeNode->parent;
+	
+	delete timer;
+}
 
-	auto sectionNodes = EngineCpuProfiler::GetSingletonInstance()->sectionTree;
-	sectionNode* us = nullptr;
-	for (int32_t i = (int32_t)sectionNodes.size() - 1; i >= 0; i--)
+// Scope sum profiling
+EngineCpuProfiler::ScopeSum::LifeCycleHelper::LifeCycleHelper(ScopeSum* scopeSumProfiler)
+:scopeSumProfiler(scopeSumProfiler)
+{
+	auto& treeRootComponents = EngineCpuProfiler::GetSingletonInstance()->treeRootComponents;
+	if (!lastConstructedTreeNode)
 	{
-		assert(i >= 0);
+		scopeSumProfiler->profilerNode->parent = nullptr;
+		EngineCpuProfiler::GetSingletonInstance()->treeRootComponents.push_back(scopeSumProfiler->profilerNode);
+	}
+	else if (scopeSumProfiler->ID == IDGenerator++)
+	{
+		// scopeSumProfiler static who made "new profilerNode()", so we need to clear it
+		scopeSumProfiler->profilerNode->profiledSeconds = 0;
+		scopeSumProfiler->profilerNode->childs.clear();
+		scopeSumProfiler->profilerNode->parent = nullptr;
 
-		if (sectionNodes[i]->ID == ID) // Search ourselves
-		{
-			us = sectionNodes[i];
-			us->bLiving = false;
-			us->profiledMicroSeconds = profiledMicroSeconds;
-
-			if (i == 0) // We are super parent (roots)
-				return;
-		}
-
-		if (sectionNodes[i]->ID != ID && sectionNodes[i]->bLiving) // Search parent... -> Living so between a construction and destruction...
-		{
-			assert(us);
-			sectionNodes[i]->childs.push_back(us);
-			us->parent = sectionNodes[i];
-			break;
-		}
+		scopeSumProfiler->profilerNode->parent = lastConstructedTreeNode;
+		lastConstructedTreeNode->childs.push_back(scopeSumProfiler->profilerNode);
 	}
 
-	delete timer;
+	lastConstructedTreeNode = scopeSumProfiler->profilerNode;
+
+	scopeSumProfiler->timer->reset();
+}
+
+EngineCpuProfiler::ScopeSum::LifeCycleHelper::~LifeCycleHelper()
+{
+	scopeSumProfiler->profilerNode->profiledSeconds += scopeSumProfiler->timer->getSecondsPassed();
+
+	// Go up 1 on tree
+	lastConstructedTreeNode = lastConstructedTreeNode->parent;
+}
+
+EngineCpuProfiler::ScopeSum::ScopeSum(const std::string& name)
+:name(name)
+{
+	// Itt a baj, DLL - nél IDGenerator 0 ad vissza, static lib - nél meg 3 - at
+	ID = IDGenerator;
+
+	timer = Factory::createTimer();
+
+	profilerNode = new ProfilerNode();
+		profilerNode->name = name;
+}
+
+EngineCpuProfiler::ScopeSum::~ScopeSum()
+{
+
 }
 
 EngineCpuProfiler::EngineCpuProfiler()
@@ -65,16 +106,27 @@ EngineCpuProfiler::EngineCpuProfiler()
 	window.create(sf::VideoMode(600, 600), "Engine - CpuProfiler");
 	window.setPosition({ 0, 0 });
 
-	assert(fontArial.loadFromFile(Sys::getWorkDir() + sf::String("arial.ttf")));
+	bool b = fontArial.loadFromFile(Sys::getWorkDir() + sf::String("arial.ttf"));
+	assert(b);
 }
 
 void EngineCpuProfiler::_internalupdateAndPresent()
 {
+	IDGenerator = 0;
+
 	sf::Event evt;
 	while (window.pollEvent(evt))
 	{
 		if (evt.type == sf::Event::Closed)
 			window.close();
+		else if (evt.type == sf::Event::Resized)
+		{
+			sf::View view;
+				view.setCenter(sf::Vector2f((float)evt.size.width * 0.5, (float)evt.size.height * 0.5));
+				view.setSize(sf::Vector2f((float)evt.size.width, (float)evt.size.height));
+				view.setViewport(sf::FloatRect(0, 0, 1, 1));
+			window.setView(view);
+		}
 	}
 
 	if (window.isOpen())
@@ -103,33 +155,32 @@ void EngineCpuProfiler::_internalupdateAndPresent()
 		window.clear(sf::Color::Black);	
 
 		// Search for lowest perf node
-		size_t lowestPerfMicroSec = 0;
+		double lowestPerfSec = 0;
 		lowestPerfSectionNode = nullptr;
-		for (auto& a : sectionTree)
+		for (auto& a : treeRootComponents)
 		{
-			if (lowestPerfMicroSec <= a->profiledMicroSeconds)
+			if (lowestPerfSec <= a->profiledSeconds)
 			{
-				lowestPerfMicroSec = a->profiledMicroSeconds;
+				lowestPerfSec = a->profiledSeconds;
 				lowestPerfSectionNode = a;
 			}
 		}
 
 		size_t curNodePosY = 0;
-		for (auto& a : sectionTree)
-			if (a->parent == nullptr) // root Component
-				_internalDrawSectionTreeRecursively(a, curNodePosY, 0);
+		for (auto& a : treeRootComponents)
+			_internalDrawSectionTreeRecursively(a, curNodePosY, 0);
 		
 		window.display();
 		window.setActive(false);
 	}
 
-	for (auto& a : sectionTree)
+	for (auto& a : treeRootComponents)
 		delete a;
 
-	sectionTree.clear();
+	treeRootComponents.clear();
 }
 
-void EngineCpuProfiler::_internalDrawSectionTreeRecursively(sectionNode* node, size_t& curNodePosY_inout, size_t depth)
+void EngineCpuProfiler::_internalDrawSectionTreeRecursively(ProfilerNode* node, size_t& curNodePosY_inout, size_t depth)
 {
 	// Draw that node...
 	sf::Text text;
@@ -138,7 +189,7 @@ void EngineCpuProfiler::_internalDrawSectionTreeRecursively(sectionNode* node, s
 	ss.str("");
 	ss << std::setprecision(2);
 	ss << std::fixed;
-	ss << (double)node->profiledMicroSeconds / 1000.0;
+	ss << (double)node->profiledSeconds * 1000;
 
 	std::string printThat = "- " + node->name + ": " + ss.str() + " ms";
 	sf::String str(printThat.c_str());
@@ -149,8 +200,8 @@ void EngineCpuProfiler::_internalDrawSectionTreeRecursively(sectionNode* node, s
 
 	float interp = 0.f;
 	
-	if (lowestPerfSectionNode->profiledMicroSeconds != 0)
-		interp = (float)((double)node->profiledMicroSeconds / lowestPerfSectionNode->profiledMicroSeconds);
+	if (lowestPerfSectionNode->profiledSeconds != 0)
+		interp = (float)((double)node->profiledSeconds / lowestPerfSectionNode->profiledSeconds);
 
 	sf::Color hybridColor;
 		hybridColor.r = round(255.f * interp);
@@ -170,15 +221,14 @@ void EngineCpuProfiler::_internalDrawSectionTreeRecursively(sectionNode* node, s
 
 void EngineCpuProfiler::updateAndPresent()
 {
-	if (!EngineCpuProfiler::instance)
-		EngineCpuProfiler::instance = new EngineCpuProfiler();
-
-	EngineCpuProfiler::instance->_internalupdateAndPresent();
+	GetSingletonInstance();
+	instance->_internalupdateAndPresent();
 }
 
 EngineCpuProfiler* EngineCpuProfiler::GetSingletonInstance()
 {
-	if (!EngineCpuProfiler::instance)
-		EngineCpuProfiler::instance = new EngineCpuProfiler();
-	return EngineCpuProfiler::instance;
+	if (!instance)
+		instance = new EngineCpuProfiler();
+
+	return instance;
 }

@@ -5,7 +5,6 @@
 #include <map>
 #include "..\Common\src\Factory.h"
 #include "mymath\mm_quat_func.h"
-#include "..\Common\src\EngineCpuProfiler.h"
 using std::cout;
 using std::endl;
 
@@ -200,14 +199,9 @@ auto GraphicsEngineRaster::getLayer(size_t index) -> Layer& {
 ////////////////////////////////////////////////////////////////////////////////
 // update
 void GraphicsEngineRaster::update(float deltaTime) {
-	//cout << "Updating frame..." << endl;
 
-	{
-		PROFILER("FrameBufferClear");
-		gapi->clearFrameBuffer(eClearFlag::COLOR_DEPTH, mm::vec4(0, 0, 0, 0), 0, 0);
-	}
+	gapi->clearFrameBuffer(eClearFlag::COLOR_DEPTH, mm::vec4(0, 0, 0, 0), 0, 0);
 	
-
 	rDepthState ds;
 		ds.enable_test = true;
 		ds.enable_write = true;
@@ -230,11 +224,11 @@ void GraphicsEngineRaster::update(float deltaTime) {
 	auto entities = scene.getEntities();
 	auto lights = scene.getLights();
 
+	//PROFILE_SCOPE("All Entity Draw");
 
 	// for each entity
 	int num_drawn = 0;
 	for (auto entity : entities) {
-		PROFILER("Entity Draw");
 
 		// get mesh
 		Mesh* mesh = entity->getMesh();
@@ -292,7 +286,7 @@ void GraphicsEngineRaster::update(float deltaTime) {
 		elements[0].stream_index = attribInfos[0].buffer_index;
 		elements[1].stream_index = attribInfos[1].buffer_index;
 		elements[2].stream_index = attribInfos[2].buffer_index;
-		
+
 		// Yes static, cuz we know the only shader working need that layout, and models also in that format...
 		static IInputLayout* input_layout = gapi->createInputLayout(elements, 3);
 		gapi->setInputLayout(input_layout);

@@ -1,16 +1,15 @@
 #include "EngineCore.h"
 #include "Factory.h"
 #include "Importer3D.h"
-#include "EngineCpuProfiler.h"
 
 #include "../GraphicsEngine/Raster/src/GraphicsEngineRaster.h"
 #include "../GraphicsEngine/RT/src/GraphicsEngineRT.h"
 #include "../PhysicsEngine/Bullet/src/PhysicsEngineBullet.h"
 #include "../NetworkEngine/Boost/src/NetworkEngineBoost.h"
 #include "../SoundEngine/SFML/src/SoundEngineSFML.h"
+#include "EngineCpuProfiler.h"
 
 #include <assert.h>
-
 
 //////////////////////////////////////////////////
 //                                              //
@@ -63,8 +62,8 @@ EngineCore::~EngineCore()
 
 graphics::IEngine* EngineCore::initGraphicsEngineRaster(const rGraphicsEngineRaster& d /*= rGraphicsEngineRaster()*/) 
 {
-	if (graphicsEngine) 
-		graphicsEngine->release(); 
+	if (graphicsEngine)
+		graphicsEngine->release();
 
 	graphicsEngine = Factory::createGraphicsEngineRaster(d);
 
@@ -327,21 +326,26 @@ void EngineCore::update(float deltaTime/*, graphics::IScene* scene*/)
 
 	if (physicsEngine)
 	{
-		PROFILER("PhysicsEngine");
+		PROFILE_SCOPE("PhysicsEngine");
 		physicsEngine->update(deltaTime);
 	}
 
 	// Okay physics simulation done, move high level physics component's attached WorldComponents
 	// TODO, ez kibaszottul nem mukodik jol es redundans tree call - t csinál WorldComponent - eken belül
+
+	// TODO
+	//PROFILE_SECTION_BEGIN("EngineCore Component Update After Physics");
 	{
-		PROFILER("EngineCore -> Component Updates");
+		PROFILE_SCOPE("EngineCore Component Update After Physics");
 		for (auto a : worldComponents)
 			a->updateAfterPhysicsSimulate();
 	}
+	//PROFILE_SECTION_END();
+	
 
 	if (graphicsEngine)
 	{
-		PROFILER("GraphicsEngine");
+		PROFILE_SCOPE("GraphicsEngine");
 
 #ifdef PROFILE_ENGINE
 		graphicsEngine->getGapi()->resetStatesToDefault(); // Jesus the profiler also uses OpenGL temporarily, and mess up the binds etc...
@@ -351,14 +355,14 @@ void EngineCore::update(float deltaTime/*, graphics::IScene* scene*/)
 
 	if (soundEngine)
 	{
-		PROFILER("SoundEngine");
+		PROFILE_SCOPE("SoundEngine");
 		soundEngine->update(deltaTime);
 	}
 		
 
 	if (networkEngine)
 	{
-		PROFILER("NetworkEngine");
+		PROFILE_SCOPE("NetworkEngine");
 		networkEngine->update(deltaTime);
 	}
 

@@ -28,7 +28,7 @@ public:
 	void setText(const wchar_t* text) override;
 
 protected:
-	sf::RenderWindow w;
+	sf::Window w;
 
 	mm::ivec2 lastMousePos;
 };
