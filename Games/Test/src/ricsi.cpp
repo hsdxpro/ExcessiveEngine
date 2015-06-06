@@ -114,7 +114,7 @@ int Ricsi()
 					bRMBDown = true;
 				else if (ev.mouseBtn == eMouseBtn::LEFT)
 				{
-					//for (uint32_t i = 0; i < 3; i++)
+					for (uint32_t i = 0; i < 10; i++)
 					{
 						auto box = core.addCompRigidBodyFromFile(Sys::getWorkDir() + teapotModelPath, 10);
 						box->addChild(core.addCompGraphicsFromFile(Sys::getWorkDir() + teapotModelPath));

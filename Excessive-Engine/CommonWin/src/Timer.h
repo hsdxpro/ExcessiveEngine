@@ -13,10 +13,9 @@ public:
 	void reset() override;
 
 	double getSecondsPassed() override;
-	size_t getMicroSecondsPassed() override;
+	double getMicroSecondsPassed() override;
 
 private:
 	// std::chrono::system_clock::time_point startTime;
-	unsigned long long frequency;
 	unsigned long long startTime;
 };

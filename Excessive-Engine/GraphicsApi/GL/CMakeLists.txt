@@ -11,6 +11,7 @@ else()
 endif()
 
 target_link_libraries( GraphicsApiGL glew32 opengl32 )
+target_link_libraries( GraphicsApiGL Common )
 
 add_executable( GLGapiTest test.cpp )
 add_dependencies( GLGapiTest GraphicsApiGL )

@@ -6,6 +6,7 @@
 #define NOMINMAX
 #include <windows.h>
 
+static unsigned long long frequency;
 
 Timer::Timer() {
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
@@ -35,7 +36,7 @@ double Timer::getSecondsPassed()
 	return (double)(currentTime - startTime) / (double)frequency;
 }
 
-size_t Timer::getMicroSecondsPassed()
+double Timer::getMicroSecondsPassed()
 {
 	// auto currTime = std::chrono::high_resolution_clock::now();
 	// return std::chrono::duration_cast<std::chrono::microseconds>(currTime - startTime).count();
