@@ -21,7 +21,7 @@ public:
 	
 	sound::IListener* getListener() const override;
 
-	void update(float deltaTime) override;
+	void update(float deltaTime);
 	
 private:
 	//Get the transformation that moves an Emitter from the current listener coordinate system to the corresponding SFML coordinate system
