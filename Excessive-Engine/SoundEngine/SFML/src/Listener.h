@@ -4,6 +4,8 @@
 
 class Listener : public sound::IListener {
 public:
+	Listener();
+
 	void setHandedness(sound::eHandedness handedness) override;
 	void setUpwards(const mm::vec3&) override;
 	void setTarget(const mm::vec3&) override;
@@ -16,6 +18,9 @@ public:
 	mm::vec3 getDir() const override;
 	mm::vec3 getPos() const override;
 	mm::vec3 getVel() const override;
+
+	//Get the transformation that moves an Emitter from the current listener coordinate system to the corresponding SFML coordinate system
+	//mm::mat4 getSFMLViewTransform() const;
 
 private:
 	sound::eHandedness handedness;

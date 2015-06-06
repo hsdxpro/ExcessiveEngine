@@ -16,7 +16,6 @@ Emitter::~Emitter() {
 
 void Emitter::setPos(const mm::vec3& newPos) {
 	pos = newPos;
-	pSFMLSoundSource->setPosition(pos); //TODO convert to match handedness (not sure if it is needed)
 }
 
 void Emitter::setVel(const mm::vec3& newVel) {
@@ -69,6 +68,10 @@ void Emitter::setSoundData(sound::ISoundData* data)  {
 	soundData.reset(SFMLData);
 }
 
-SoundData* Emitter::getSoundData() const {
+SoundData* Emitter::getSoundData() {
 	return soundData.get();
+}
+
+SFMLCommonSoundEmitter* Emitter::getSFMLSoundSource() {
+	return pSFMLSoundSource;
 }

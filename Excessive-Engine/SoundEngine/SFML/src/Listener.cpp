@@ -2,13 +2,18 @@
 
 #include "SFML/Audio/Listener.hpp"
 
+#include <cmath>
+
+Listener::Listener() : dir(0, 0, -1), upwards(0, 1, 0){
+}
+
 void Listener::setHandedness(sound::eHandedness newHandedness)  {
 	//TODO move handedness to engine class
 	handedness = handedness;
 }
 
 void Listener::setUpwards(const mm::vec3& newUp) {
-	upwards = newUp;
+	upwards = mm::normalize(newUp);
 }
 
 void Listener::setTarget(const mm::vec3& newTargetPos) {
@@ -46,3 +51,35 @@ mm::vec3 Listener::getPos() const {
 mm::vec3 Listener::getVel() const {
 	return vel;
 }
+
+/*
+mm::mat4 Listener::getSFMLViewTransform() const {
+
+	//SFML has a right handed coordinate system where +Y is always up
+
+	//lets say that listener is always at origo
+	mm::mat4 result = mm::create_translation(-pos);
+
+	mm::vec3 left = mm::cross(upwards, dir);
+	mm::vec3 actualUpwards = mm::cross(dir, left);
+
+	float angleFromUpToY = std::acos(mm::dot(actualUpwards, mm::vec3(0, 1, 0)));
+
+	//rotate everything so that Y will be UP
+	//TODO check if create rotation really takes angle in radians
+	result *= mm::create_rotation(angleFromUpToY, mm::cross(actualUpwards, mm::vec3(0, 1, 0)));
+
+	//at this point "listener direction" is on the x z pane, because the actual up direction was used for rotation.
+	//now rotate everything to make -Z forward (OpenGL style and i dont care)
+
+	mm::vec3 currentDir = mm::normalize(mm::vec3(dir.x, 0, dir.z));
+
+	float angleFromDirToNegZ = std::acos(mm::dot(currentDir, mm::vec3(0, 0, -1)));
+
+	result *= mm::create_rotation(angleFromDirToNegZ, mm::cross(currentDir, mm::vec3(0, 0, -1)));
+
+	//TODO handle handedness (what a good pun :D)
+
+	return result;
+}
+*/

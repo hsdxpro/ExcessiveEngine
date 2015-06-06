@@ -35,7 +35,9 @@ public:
 
 	void setSoundData(sound::ISoundData* data) override;
 	
-	SoundData* getSoundData() const override;
+	SoundData* getSoundData() override;
+
+	SFMLCommonSoundEmitter* getSFMLSoundSource();
 	
 protected:
 	mm::vec3 pos;
