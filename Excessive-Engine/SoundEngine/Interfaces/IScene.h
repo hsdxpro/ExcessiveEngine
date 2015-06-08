@@ -18,8 +18,6 @@ public:
 	virtual void setListener(IListener* listener) = 0;
 	
 	virtual IListener* getListener() const = 0;
-
-	virtual void update(float deltaTime) = 0;
 };
 
 

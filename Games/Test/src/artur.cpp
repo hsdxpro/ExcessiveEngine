@@ -228,10 +228,6 @@ namespace testartur
 			listener->setPos(cam->getPos());
 			// Update everything
 
-			//sound needs to be updated manually for now
-			sEngine->update(elapsed);
-			soundScene->update(elapsed);
-
 			//float deltaT = t->getElapsedSinceReset();
 
 			// Update core

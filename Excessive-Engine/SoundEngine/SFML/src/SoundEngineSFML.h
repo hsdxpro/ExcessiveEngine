@@ -23,6 +23,8 @@ public:
 	SoundData* createSoundData() override;
 	
 	Listener* createListener() override;
+
+	void setScene(sound::IScene* scene) override;
 	
 	void setMasterVolume(float volume) override;
 	
@@ -30,5 +32,12 @@ public:
 
 	// interact
 	void update(float deltaTime) override;
+
+private:
+	std::unordered_set<SoundScene*> scenes;
+	std::unordered_set<SoundData*> soundDataObjects;
+	std::unordered_set<Listener*> listeners;
+
+	SoundScene* activeScene;
 };
 
