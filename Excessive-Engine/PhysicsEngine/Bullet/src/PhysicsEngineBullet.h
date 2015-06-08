@@ -29,6 +29,9 @@ public:
 	// Create, add STATIC rigid body to physics world
 	physics::IEntityRigid* addEntityRigidStatic(mm::vec3* vertices, u32 nVertices, void* indices, u32 indexStride, u32 nIndices) override;
 
+	// Create, add capsule rigid body to physics world
+	physics::IEntityRigid* addEntityRigidCapsule(float height, float radius, float mass);
+
 	void GetDebugData(mm::vec3* nonIndexedVertices, uint32_t vertsByteSize, uint32_t& nVertices) override;
 
 private:

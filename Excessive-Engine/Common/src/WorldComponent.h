@@ -4,6 +4,7 @@
 #include "BasicTypes.h"
 #include "mymath\mymath.h"
 #include "Component.h"
+#include "Transform3D.h"
 
 class WorldComponent : public Component
 {
@@ -11,57 +12,55 @@ public:
 	WorldComponent();
 	~WorldComponent();
 
+public:
 	virtual void updateAfterPhysicsSimulate();
 
-	template<class T>
-	T* addChild(T* c)
-	{
-		static_assert(std::is_base_of<Component, T>::value, "");
+	WorldComponent* attachTo(WorldComponent* c);
+	WorldComponent* attach(WorldComponent* c);
+	WorldComponent* detach();
 
-		//c->setParent(this);
-		childsTypeContainer[c->componentTypeID].push_back(c);
-		return c;
-	}
+	WorldComponent* setParent(WorldComponent* c);
 
-	//template<class T>
-	//T* setParent(T* c)
-	//{
-	//	//parent->childsTypeContainer[FAILL__].push_back(c);
-	//	//parent = c;
-	//	//return c;
-	//}
+	void setTransform(const Transform3D& t);
 
 	virtual void setPos(const mm::vec3& v);
 	virtual void setRot(const mm::quat& q);
 	virtual void setScale(const mm::vec3& v);
 
-	virtual const mm::vec3& getPos();
-	virtual const mm::quat& getRot();
-	virtual const mm::vec3& getScale();
+	void move(const mm::vec3& v);
+	void rot(const mm::quat& q);
+	void scale(const mm::vec3& v);
 
-	template<class T>
-	T*	getComp(u32 index = 0)
-	{
-		static_assert(std::is_base_of<Component, T>::value, "");
+	void moveRel(const mm::vec3& v);
+	void rotRel(const mm::quat& q);
+	void scaleRel(const mm::vec3& v);
 
-		assert(childsTypeContainer[T::componentTypeID].size() > index);
-		return static_cast<T*>(childsTypeContainer[T::componentTypeID][index]);
-	}
+	__inline WorldComponent* getParent() const { return parent; }
 
-	template<class T>
-	u32 getNComp()
-	{
-		static_assert(std::is_base_of<Component, T>::value, "");
+	__inline virtual const mm::vec3 getPos() const { return worldTransform.getPos(); }
+	__inline virtual const mm::quat getRot() const { return worldTransform.getRot(); }
+	__inline virtual const mm::vec3 getScale() const { return worldTransform.getScale(); }
 
-		return childsTypeContainer[T::componentTypeID].size();
-	}
+	__inline const mm::vec3& getRelPos() const { return relativeTransform.getPos(); }
+	__inline const mm::quat& getRelRot() const { return relativeTransform.getRot(); }
+	__inline const mm::vec3& getRelScale() const { return relativeTransform.getScale(); }
+
+	__inline const Transform3D& getRelativeTransform() const { return relativeTransform; }
+	const Transform3D getTransform() const;
 
 protected:
-	std::vector<std::vector<WorldComponent*>> childsTypeContainer;
+	virtual void _innerUpdatePos() = 0;
+	virtual void _innerUpdateRot() = 0;
+	virtual void _innerUpdateScale() = 0;
+
+	//void _innerSetRelPos(const mm::vec3& relPos, const mm::vec3& worldDeltaMove);
+	void _innerRefreshTransform(const mm::quat& relRot, const mm::quat& worldDeltaRot, const mm::vec3& worldDeltaScale);
+	//void _innerSetRelScale(const mm::vec3& relScale, const mm::vec3& worldDeltaScale);
+
+protected:
+	std::vector<WorldComponent*> childs;
 	WorldComponent* parent;
 
-	// World Transform
-	mm::vec3 pos;
-	mm::vec3 scale;
-	mm::quat rot;
+	Transform3D worldTransform;
+	Transform3D relativeTransform;
 };

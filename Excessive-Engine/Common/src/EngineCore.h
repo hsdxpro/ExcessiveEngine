@@ -16,6 +16,7 @@
 #include "Actor.h"
 #include "ComponentGraphics.h"
 #include "ComponentRigidBody.h"
+#include "ComponentCamera.h"
 
 class EngineCore
 {
@@ -41,10 +42,16 @@ public:
 	
 	Actor* addActor();
 
-	ComponentGraphics* addCompGraphicsFromFile(const std::wstring& modelFilePath, graphics::IScene* scene = nullptr);
+	ComponentGraphics*  addCompGraphicsFromFile(const std::wstring& modelFilePath);
 	ComponentRigidBody* addCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass);
+	ComponentRigidBody* addCompRigidBodyCapsule(float height, float radius, float mass = 0);
+	ComponentCamera*	addCompCamera();
 
-	void update(float deltaTime/*, graphics::IScene* scene*/);
+	graphics::IMaterial* createGraphicsMaterial();
+
+	void update(float deltaTime);
+
+	void setCam(ComponentCamera* c);
 
 	graphics::IEngine*	getGraphicsEngine();
 	physics::IEngine*	getPhysicsEngine();
@@ -52,8 +59,6 @@ public:
 	sound::IEngine*		getSoundEngine();
 
 	graphics::IScene*	getDefaultGraphicsScene();
-
-	std::vector<WorldComponent*>& GetRootComponents();
 
 protected:
 	graphics::IEngine*	graphicsEngine;

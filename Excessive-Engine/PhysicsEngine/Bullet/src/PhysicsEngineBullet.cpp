@@ -83,9 +83,10 @@ physics::IEntityRigid* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vert
 	// Create rigid body
 	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), colShape, localInertia);
 	world->addRigidBody(body);
-	
+		body->setFriction(1);
+
 	EntityRigid* e = new EntityRigid(body);
-	entities.push_back(e);
+		entities.push_back(e);
 	return e;
 }
 
@@ -119,7 +120,25 @@ physics::IEntityRigid* PhysicsEngineBullet::addEntityRigidStatic(mm::vec3* verti
 	world->addRigidBody(body);
 
 	EntityRigid* e = new EntityRigid(body);
-	entities.push_back(e);
+		entities.push_back(e);
+	return e;
+}
+
+physics::IEntityRigid* PhysicsEngineBullet::addEntityRigidCapsule(float height, float radius, float mass)
+{
+	btCapsuleShape* capsuleShape = new btCapsuleShape(radius, height);
+	capsuleShape->setSafeMargin(0, 0); // Thanks convex hull for your imprecision...
+
+	btVector3 localInertia(0, 0, 0);
+	if (mass != 0)
+		capsuleShape->calculateLocalInertia(mass, localInertia);
+
+	// Create rigid body
+	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), capsuleShape, localInertia);
+	world->addRigidBody(body);
+
+	EntityRigid* e = new EntityRigid(body);
+		entities.push_back(e);
 	return e;
 }
 
@@ -133,6 +152,30 @@ void PhysicsEngineBullet::GetDebugData(mm::vec3* nonIndexedVertices, uint32_t ve
 	{
 		btCollisionShape* colShape = colObjArray[i]->getCollisionShape();
 		btTransform worldTrans = colObjArray[i]->getWorldTransform();
+
+		if (colShape->isPolyhedral())
+		{
+			int asd = 5;
+			asd++;
+		}
+
+		if (colShape->isCompound())
+		{
+			int asd = 5;
+			asd++;
+		}
+
+		if (colShape->isConcave())
+		{
+			int asd = 5;
+			asd++;
+		}
+
+		if (colShape->isInfinite())
+		{
+			int asd = 5;
+			asd++;
+		}
 
 		// Add each edge from convex Shape to the list
 		if (colShape->isConvex())

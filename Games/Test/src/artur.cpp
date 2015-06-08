@@ -40,7 +40,7 @@ namespace testartur
 		// Create camera
 		graphics::ICamera* cam = gEngine->createCam();
 		cam->setFOV(70 / 180.f*3.1415926f);
-		cam->setAspectRatio(window->getClientAspectRatio());
+		//cam->setAspectRatio(window->getClientAspectRatio());
 		cam->setNearPlane(0.2f);
 		cam->setFarPlane(2000);
 		cam->setPos(mm::vec3(0, -3, 1));
@@ -194,7 +194,7 @@ namespace testartur
 					case eKey::D: bDDown = true; break;
 					case eKey::LSHIFT: gCamSpeedMultiplier = 5; break;
 					case eKey::SPACE: {
-						musicPosition = cam->getPos() + cam->getDirFront() * 3;
+						musicPosition = cam->getPos() + cam->getDirNormedFront() * 3;
 						pMusicSourceRepresenterModel->setPos(musicPosition);
 						pMusicSource->setPos(musicPosition);
 					} break;
@@ -211,19 +211,19 @@ namespace testartur
 					} break;
 
 				case eWindowMsg::RESIZE:
-					cam->setAspectRatio((float)ev.x / (float)ev.y);
+					//cam->setAspectRatio((float)ev.x / (float)ev.y);
 					break;
 			}
 
 			// Camera move
 			if (bWDown) // W
-				cam->setPos(cam->getPos() + cam->getDirFront() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+				cam->setPos(cam->getPos() + cam->getDirNormedFront() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 			if (bSDown) // S									 
-				cam->setPos(cam->getPos() + cam->getDirBack()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+				cam->setPos(cam->getPos() + cam->getDirNormedBack()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 			if (bADown) // A									 
-				cam->setPos(cam->getPos() + cam->getDirLeft()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+				cam->setPos(cam->getPos() + cam->getDirNormedLeft()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 			if (bDDown) // D									 
-				cam->setPos(cam->getPos() + cam->getDirRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+				cam->setPos(cam->getPos() + cam->getDirNormedRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 
 			listener->setPos(cam->getPos());
 			// Update everything

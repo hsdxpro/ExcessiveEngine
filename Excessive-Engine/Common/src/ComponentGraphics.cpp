@@ -12,6 +12,7 @@ void ComponentGraphics::setRot(const mm::quat& q)
 	entityGraphics->setRot(q);
 	WorldComponent::setRot(q);
 }
+
 void ComponentGraphics::setScale(const mm::vec3& v)
 {
 	entityGraphics->setScale(v);
@@ -31,4 +32,19 @@ const mm::quat& ComponentGraphics::getRot()
 const mm::vec3& ComponentGraphics::getScale()
 {
 	return entityGraphics->getScale();
+}
+
+void ComponentGraphics::_innerUpdatePos()
+{
+	entityGraphics->setPos(worldTransform.getPos());
+}
+
+void ComponentGraphics::_innerUpdateRot()
+{
+	entityGraphics->setRot(worldTransform.getRot());
+}
+
+void ComponentGraphics::_innerUpdateScale()
+{
+	entityGraphics->setScale(worldTransform.getScale());
 }

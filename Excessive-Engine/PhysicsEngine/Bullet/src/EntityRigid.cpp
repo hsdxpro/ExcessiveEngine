@@ -7,7 +7,7 @@ EntityRigid::EntityRigid(btRigidBody* body)
 :body(body) {
 }
 
-void EntityRigid::setPos(const mm::vec3& v) 
+void EntityRigid::setPos(const mm::vec3& v)
 {
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);

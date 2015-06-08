@@ -35,9 +35,9 @@ int Ricsi()
 		graphics::IEngine* gEngine = core.initGraphicsEngineRaster(gDesc);
 
 	// Create camera
-	graphics::ICamera* cam = gEngine->createCam();
+	graphics::ICamera* cam = core.addCompCamera()->getCam();
 	cam->setFOV(70 / 180.f*3.1415926f);
-	cam->setAspectRatio(window->getClientAspectRatio());
+	//cam->setAspectRatio(window->getClientAspectRatio());
 	cam->setNearPlane(0.2f);
 	cam->setFarPlane(2000);
 	cam->setPos(mm::vec3(0, -3, 1));
@@ -46,21 +46,11 @@ int Ricsi()
 	graphics::IScene* scene = core.getDefaultGraphicsScene();
 	scene->setCamera(cam);
 
-	//graphics::IEngine::Layer layer;
-	//layer.scene = scene;
-	//gEngine->addLayer(layer);
-
-	//*/
 	static const wchar_t assetName[] = L"../Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
 	static const wchar_t teapotModelPath[] = L"../Assets/box.dae"; // Assets/teapot.dae
 	static const wchar_t ak47ModelPath[] = L"../Assets/ak47/ak.obj"; // Assets/teapot.dae
 
-	/*/
-	static const wchar_t assetName[] = L"../Assets/teapot.dae";
-	//*/
-	//Actor* simpleEntity = core.addActor();
 	core.addCompRigidBodyFromFile(Sys::getWorkDir() + assetName, 0)->addChild(core.addCompGraphicsFromFile(Sys::getWorkDir() + assetName));
-	//core.addCompGraphicsFromFile(Sys::getWorkDir() + assetName);
 	core.addCompGraphicsFromFile(Sys::getWorkDir() + L"../Assets/skybox.dae")->setScale({ 1000, 1000, 1000 });
 
 	// Run the main loop
@@ -86,8 +76,6 @@ int Ricsi()
 
 	while (window->isOpen())
 	{
-		//t->reset();
-
 		// keep 60 fps
 		double now = timer->getSecondsPassed();
 
@@ -114,30 +102,11 @@ int Ricsi()
 					bRMBDown = true;
 				else if (ev.mouseBtn == eMouseBtn::LEFT)
 				{
-					for (uint32_t i = 0; i < 10; i++)
-					{
-						auto box = core.addCompRigidBodyFromFile(Sys::getWorkDir() + teapotModelPath, 10);
-						box->addChild(core.addCompGraphicsFromFile(Sys::getWorkDir() + teapotModelPath));
+					auto box = core.addCompRigidBodyFromFile(Sys::getWorkDir() + teapotModelPath, 10);
+					box->addChild(core.addCompGraphicsFromFile(Sys::getWorkDir() + teapotModelPath));
 
-						box->setPos(cam->getPos() + cam->getDirFront() * 3); // 3 méterrel elénk
-						box->setScale(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
-
-						//if (i == 0)
-						//{
-						//	box->setPos({ 20, 0, 0 }); // 3 méterrel elénk
-						//	box->setScale(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
-						//}
-						//else if (i == 1)
-						//{
-						//	box->setPos({ 0, 20, 0 }); // 3 méterrel elénk
-						//	box->setScale(mm::vec3(1.f / 10, 1.f / 10, 1.f / 10));
-						//}
-						//else
-						//{
-						//	box->setPos({ 0, 0, 20 }); // 3 méterrel elénk
-						//	box->setScale(mm::vec3(1.f / 5, 1.f / 5, 1.f / 5));
-						//}
-					}
+					box->setPos(cam->getPos() + cam->getDirNormedFront() * 3); // 3 méterrel elénk
+					box->setScale(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
 				}
 				break;
 			case eWindowMsg::MOUSE_RELEASE:
@@ -165,6 +134,9 @@ int Ricsi()
 
 					mm::vec3 newViewDir(0, 1, 0);
 
+					// MY HEKK
+					angleZ = 3.1415 / 2;
+
 					mm::mat3 rotAroundX(1,		0,			0,
 										0, cos(angleX), -sin(angleX),
 										0, sin(angleX),  cos(angleX));
@@ -173,7 +145,7 @@ int Ricsi()
 										sin(-angleZ),  cos(-angleZ),	0,
 											0,			0,				1);
 
-					newViewDir *= rotAroundX;
+					//newViewDir *= rotAroundX;
 					newViewDir *= rotAroundZ;
 
 					camAngleX = angleX;
@@ -204,34 +176,24 @@ int Ricsi()
 				} break;
 
 			case eWindowMsg::RESIZE:
-				cam->setAspectRatio((float)ev.x / (float)ev.y);
+				//cam->setAspectRatio((float)ev.x / (float)ev.y);
 				break;
 		}
 
 		// Camera move
 		if (bWDown) // W
-			cam->setPos(cam->getPos() + cam->getDirFront() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+			cam->setPos(cam->getPos() + cam->getDirNormedFront() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 		if (bSDown) // S									 
-			cam->setPos(cam->getPos() + cam->getDirBack()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+			cam->setPos(cam->getPos() + cam->getDirNormedBack()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 		if (bADown) // A									 
-			cam->setPos(cam->getPos() + cam->getDirLeft()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+			cam->setPos(cam->getPos() + cam->getDirNormedLeft()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 		if (bDDown) // D									 
-			cam->setPos(cam->getPos() + cam->getDirRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
-
-		// Update everything
-
-		//float deltaT = t->getElapsedSinceReset();
+			cam->setPos(cam->getPos() + cam->getDirNormedRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 
 		// Update core
 		core.update(elapsed/*, scene*/);
 
-		// Call that after OpenGL "finish" all of it's rendering
 		window->present();
-
-		// keep 60 fps
-		//std::chrono::time_point<std::chrono::high_resolution_clock> now = std::chrono::high_resolution_clock::now();
-		//std::chrono::microseconds sleep_time = std::chrono::microseconds(16667) - std::chrono::duration_cast<std::chrono::microseconds>(now - last_frame);
-		//this_thread::sleep_for(sleep_time);
 	}
 	std::cout << std::endl;
 

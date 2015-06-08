@@ -121,7 +121,7 @@ Actor* EngineCore::addActor()
 	return a;
 }
 
-ComponentGraphics* EngineCore::addCompGraphicsFromFile(const std::wstring& modelFilePath, graphics::IScene* scene /*= nullptr*/)
+ComponentGraphics* EngineCore::addCompGraphicsFromFile(const std::wstring& modelFilePath)
 {
 	// Check if model already loaded somehow
 	rImporter3DData* modelDesc;
@@ -145,23 +145,20 @@ ComponentGraphics* EngineCore::addCompGraphicsFromFile(const std::wstring& model
 		importedModels[modelFilePath] = modelDesc;
 	}
 
-	graphics::IEntity* compGraphics;
+	graphics::IEntity* graphicsEntity;
 
 	// We will feed meshes to that graphics entity
-	if (!scene)
-		compGraphics = defaultGraphicsScene->addEntity();
-	else
-		compGraphics = scene->addEntity();
+	graphicsEntity = defaultGraphicsScene->addEntity();
 
 	// Material for entity
 	graphics::IMaterial* material = graphicsEngine->createMaterial();
-	compGraphics->setMaterial(material);
+	graphicsEntity->setMaterial(material);
 
 	// For each mesh imported, create graphics mesh
 	for (auto& importedMesh : modelDesc->meshes)
 	{
 		graphics::IMesh* graphicsMesh = graphicsEngine->createMesh();
-		compGraphics->setMesh(graphicsMesh);
+		graphicsEntity->setMesh(graphicsMesh);
 
 		// Materials
 		for (auto& importedMaterial : importedMesh.materials)
@@ -226,7 +223,7 @@ ComponentGraphics* EngineCore::addCompGraphicsFromFile(const std::wstring& model
 		graphicsMesh->update(meshData);
 	}
 
-	auto c = new ComponentGraphics(compGraphics);
+	auto c = new ComponentGraphics(graphicsEntity);
 		worldComponents.push_back(c);
 	return c;
 }
@@ -255,7 +252,7 @@ ComponentRigidBody* EngineCore::addCompRigidBodyFromFile(const std::wstring& mod
 		importedModels[modelFilePath] = modelDesc;
 	}
 
-	physics::IEntityRigid* compRigidBody = nullptr;
+	physics::IEntityRigid* rigidEntity = nullptr;
 
 	auto mesh = modelDesc->meshes[0];
 
@@ -273,19 +270,40 @@ ComponentRigidBody* EngineCore::addCompRigidBodyFromFile(const std::wstring& mod
 	//}
 
 	if (mass == 0)
-		compRigidBody = physicsEngine->addEntityRigidStatic(vertices, mesh.nVertices, mesh.indices, mesh.indexSize, mesh.nIndices);
+		rigidEntity = physicsEngine->addEntityRigidStatic(vertices, mesh.nVertices, mesh.indices, mesh.indexSize, mesh.nIndices);
 	else
-		compRigidBody = physicsEngine->addEntityRigidDynamic(vertices, mesh.nVertices, mass);
+		rigidEntity = physicsEngine->addEntityRigidDynamic(vertices, mesh.nVertices, mass);
 
 	delete vertices;
 	vertices = nullptr; // Important
 
-	auto c = new ComponentRigidBody(compRigidBody);
+	auto c = new ComponentRigidBody(rigidEntity);
 		worldComponents.push_back(c);
 	return c;
 }
 
-void EngineCore::update(float deltaTime/*, graphics::IScene* scene*/)
+ComponentRigidBody* EngineCore::addCompRigidBodyCapsule(float height, float radius, float mass /* = 0*/)
+{
+	auto capsuleEntity = physicsEngine->addEntityRigidCapsule(height, radius, mass);
+
+	auto c = new ComponentRigidBody(capsuleEntity);
+		worldComponents.push_back(c);
+	return c;
+}
+
+ComponentCamera* EngineCore::addCompCamera()
+{
+	auto c = new ComponentCamera(graphicsEngine->createCam());
+		worldComponents.push_back(c);
+	return c;
+}
+
+graphics::IMaterial* EngineCore::createGraphicsMaterial()
+{
+	return graphicsEngine->createMaterial();
+}
+
+void EngineCore::update(float deltaTime)
 {
 	/*
 	// Debugging fcking bullet physics
@@ -317,7 +335,7 @@ void EngineCore::update(float deltaTime/*, graphics::IScene* scene*/)
 		data.mat_ids = &matGroup;
 	debugRenderMesh->update(data);
 	
-	static graphics::IEntity* entity = scene->addEntity();
+	static graphics::IEntity* entity = defaultGraphicsScene->addEntity();
 	entity->setMesh(debugRenderMesh);
 
 	delete[] nonIndexedVertices;
@@ -371,7 +389,12 @@ void EngineCore::update(float deltaTime/*, graphics::IScene* scene*/)
 #endif
 }
 
-graphics::IEngine* EngineCore::getGraphicsEngine() 
+void EngineCore::setCam(ComponentCamera* c)
+{
+	defaultGraphicsScene->setCamera(c->getCam());
+}
+
+graphics::IEngine* EngineCore::getGraphicsEngine()
 { 
 	return graphicsEngine; 
 }

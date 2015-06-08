@@ -7,7 +7,7 @@
 #include <assert.h>
 #include <string>
 
-#ifdef DEBUG_BUILD
+#ifndef BUILD_DLL
 	#define PROFILE_ENGINE
 #endif
 

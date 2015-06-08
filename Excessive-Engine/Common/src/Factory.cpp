@@ -114,7 +114,7 @@ IGapi* Factory::createGapiGL()
 #endif
 }
 
-IWindow* Factory::createWindow(const rWindow& d) 
+IWindow* Factory::createWindow(const rWindow& d)
 {
 	return new Window(d);
 }

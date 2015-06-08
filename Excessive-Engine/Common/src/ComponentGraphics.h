@@ -6,7 +6,6 @@ namespace graphics { class IEntity; }
 class ComponentGraphics : public WorldComponent
 {
 public:
-	static u8 componentTypeID;
 	ComponentGraphics(graphics::IEntity* e) :entityGraphics(e){}
 
 	void setPos(const mm::vec3& v);
@@ -16,6 +15,11 @@ public:
 	const mm::vec3& getPos();
 	const mm::quat& getRot();
 	const mm::vec3& getScale();
+
+protected:
+	void _innerUpdatePos() override;
+	void _innerUpdateRot() override;
+	void _innerUpdateScale() override;
 
 protected:
 	graphics::IEntity* entityGraphics;

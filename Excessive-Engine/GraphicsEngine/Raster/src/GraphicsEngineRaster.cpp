@@ -118,6 +118,9 @@ EXPORT graphics::IEngine* CreateGraphicsEngineRaster(const rGraphicsEngineRaster
 GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRaster& d) {
 	gapi = Factory::createGapiGL();
 
+	targetWindow = d.targetWindow;
+	renderRegion = renderRegion;
+
 	// WARNING: temporary testing code
 	// create shaders
 	shader = gapi->createShaderSource(vertexShaderCode, pixelShaderCode);
@@ -125,10 +128,11 @@ GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRaster& d) {
 
 	u32 windowWidth = d.targetWindow->getClientW();
 	u32 windowHeight = d.targetWindow->getClientH();
-	gapi->setViewport(	windowWidth * d.renderRegion.bottomLeftPercentNormed.x,
-						windowHeight * d.renderRegion.bottomLeftPercentNormed.y,
-						windowWidth * (d.renderRegion.topRightPercentNormed.x - d.renderRegion.bottomLeftPercentNormed.x),
-						windowHeight * (d.renderRegion.topRightPercentNormed.y - d.renderRegion.bottomLeftPercentNormed.y));
+
+	gapi->setViewport(	windowWidth  *  renderRegion.bottomLeftPercentNormed.x,
+						windowHeight *  renderRegion.bottomLeftPercentNormed.y,
+						windowWidth  * (renderRegion.topRightPercentNormed.x - renderRegion.bottomLeftPercentNormed.x),
+						windowHeight * (renderRegion.topRightPercentNormed.y - renderRegion.bottomLeftPercentNormed.y));
 
 	gapi->setDebugOutput(true);
 	gapi->setSeamlessCubeMaps(true);
@@ -199,6 +203,12 @@ auto GraphicsEngineRaster::getLayer(size_t index) -> Layer& {
 ////////////////////////////////////////////////////////////////////////////////
 // update
 void GraphicsEngineRaster::update(float deltaTime) {
+
+	// TODO Improve performance
+	gapi->setViewport(	targetWindow->getClientW() *  renderRegion.bottomLeftPercentNormed.x,
+						targetWindow->getClientH() *  renderRegion.bottomLeftPercentNormed.y,
+						targetWindow->getClientW() * (renderRegion.topRightPercentNormed.x - renderRegion.bottomLeftPercentNormed.x),
+						targetWindow->getClientH() * (renderRegion.topRightPercentNormed.y - renderRegion.bottomLeftPercentNormed.y));
 
 	gapi->clearFrameBuffer(eClearFlag::COLOR_DEPTH, mm::vec4(0, 0, 0, 0), 0, 0);
 	
@@ -325,7 +335,7 @@ void GraphicsEngineRaster::update(float deltaTime) {
 			*mm::mat4(entity->getRot())
 			*mm::create_scale(entity->getScale());
 
-		mm::mat4 wvp = scene.getCamera()->getProjMatrix() * scene.getCamera()->getViewMatrix() * prs;
+		mm::mat4 wvp = scene.getCamera()->getProjMatrix((float)targetWindow->getClientW() / targetWindow->getClientH()) * scene.getCamera()->getViewMatrix() * prs;
 
 		rBuffer ubo_alloc_data;
 			ubo_alloc_data.is_persistent = false;

@@ -6,7 +6,6 @@ namespace physics { class IEntityRigid;  }
 class ComponentRigidBody : public WorldComponent
 {
 public:
-	static u8 componentTypeID;
 	ComponentRigidBody(physics::IEntityRigid* e) :entityRigid(e){}
 
 	void updateAfterPhysicsSimulate(); // After physics simulation done, we transforms all WorldComponent child also
@@ -18,6 +17,11 @@ public:
 	const mm::vec3& getPos();
 	const mm::quat& getRot();
 	const mm::vec3& getScale();
+
+public:
+	void _innerUpdatePos() override;
+	void _innerUpdateRot() override;
+	void _innerUpdateScale() override;
 
 protected:
 	physics::IEntityRigid* entityRigid;

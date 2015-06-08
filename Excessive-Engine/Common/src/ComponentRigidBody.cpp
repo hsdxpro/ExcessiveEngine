@@ -3,9 +3,7 @@
 
 void ComponentRigidBody::updateAfterPhysicsSimulate()
 {
-	WorldComponent::setPos(entityRigid->getPos());
-	WorldComponent::setRot(entityRigid->getRot());
-	WorldComponent::setScale(entityRigid->getScale());
+	WorldComponent::setTransform(Transform3D(entityRigid->getPos(), entityRigid->getRot(), entityRigid->getScale()));
 }
 
 void ComponentRigidBody::setPos(const mm::vec3& v)
@@ -39,4 +37,22 @@ const mm::quat& ComponentRigidBody::getRot()
 const mm::vec3& ComponentRigidBody::getScale()
 {
 	return entityRigid->getScale();
+}
+
+void ComponentRigidBody::_innerUpdatePos()
+{
+	// If mass = 0 maybe
+	//entityRigid->setPos(worldTransform.getPos());
+}
+
+void ComponentRigidBody::_innerUpdateRot()
+{
+	// If mass = 0 maybe
+	//entityRigid->setRot(worldTransform.getRot());
+}
+
+void ComponentRigidBody::_innerUpdateScale()
+{
+	// If mass = 0 maybe
+	//entityRigid->setScale(worldTransform.getScale());
 }

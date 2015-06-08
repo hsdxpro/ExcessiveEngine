@@ -6,8 +6,12 @@ namespace physics { class IEntitySoft; }
 class ComponentSoftBody : public WorldComponent
 {
 public:
-	static u8 componentTypeID;
 	ComponentSoftBody(physics::IEntitySoft* e) :entitySoft(e){}
+
+protected:
+	void _innerUpdatePos() override;
+	void _innerUpdateRot() override;
+	void _innerUpdateScale() override;
 
 protected:
 	physics::IEntitySoft* entitySoft;

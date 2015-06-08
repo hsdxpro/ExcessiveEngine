@@ -26,16 +26,17 @@ enum class eGapiType
 	OPENGL_4_5,
 };
 
+// TODO move to better place
+struct rRectNormed
+{
+	rRectNormed() :bottomLeftPercentNormed(0, 0), topRightPercentNormed(1, 1){}
+
+	mm::vec2 bottomLeftPercentNormed;
+	mm::vec2 topRightPercentNormed;
+};
+
 struct rGraphicsEngineRaster 
 {
-	struct rRectNormed
-	{
-		rRectNormed() :bottomLeftPercentNormed(0, 0), topRightPercentNormed(1, 1){}
-
-		mm::vec2 bottomLeftPercentNormed;
-		mm::vec2 topRightPercentNormed;
-	};
-
 	eGapiType		gapiType;
 	IWindow*		targetWindow;
 	rRectNormed		renderRegion;
@@ -73,6 +74,10 @@ public:
 private:
 	IGapi* gapi;
 	std::vector<Layer> layers;
+
+	// ? TMP
+	IWindow* targetWindow;
+	rRectNormed	renderRegion;
 
 	// WARNING: temporary code
 	IShaderProgram* shader;
