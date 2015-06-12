@@ -1,6 +1,7 @@
 #include "Awesomium/WebCore.h"
 #include "Awesomium/BitmapSurface.h"
 #include "Awesomium/STLHelpers.h"
+#include "../Common/src/EngineCore.h"
 
 #include "../Common/src/IWindow.h"
 #include "../Common/src/Factory.h"
@@ -74,10 +75,10 @@ int main()
 
 	void* tmpAwesomiumSurfaceData = malloc(window->GetClientW() * window->GetClientH() * 4);
 
-	while (window->isOpen())
+	while (window->IsOpen())
 	{
 		rWindowEvent evt;
-		while (window->popEvent(&evt))
+		while (window->PopEvent(&evt))
 		{
 			if (evt.msg == eWindowMsg::MOUSE_MOVE)
 			{
@@ -155,7 +156,7 @@ int main()
 
 		gapi->Draw(3);
 
-		window->present();
+		window->Present();
 	}
 
 	Awesomium::BitmapSurface* surface = (Awesomium::BitmapSurface*)view->surface();

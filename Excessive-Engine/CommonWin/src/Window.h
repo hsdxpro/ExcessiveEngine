@@ -29,6 +29,5 @@ public:
 
 protected:
 	sf::Window w;
-
-	mm::ivec2 lastMousePos;
+	mm::ivec3 lastMousePos;
 };

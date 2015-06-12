@@ -4,8 +4,10 @@
 #include <limits>
 
 Window::Window(const rWindow& d)
-:lastMousePos(0, 0)
 {
+	lastMousePos.x = std::numeric_limits<int>::min();
+	lastMousePos.y = std::numeric_limits<int>::min();
+
 	w.create(sf::VideoMode(d.clientW, d.clientH), d.capText.c_str(), (u32)d.style);
 	w.setVerticalSyncEnabled(true);
 }
@@ -37,14 +39,15 @@ bool Window::PopEvent(rWindowEvent* evt_out)
 		evt_out->mouseBtn = eMouseBtn::INVALID;
 
 		// TODO: worst idea ever
-		if (lastMousePos.x == std::numeric_limits<int>::min()) {
-			evt_out->deltaX = 0;
-			evt_out->deltaY = 0;
+		if (lastMousePos.x == std::numeric_limits<int>::min()) 
+		{
+			lastMousePos.x = evt.mouseMove.x;
+			lastMousePos.y = evt.mouseMove.y;
 		}
-		else {
-			evt_out->deltaX = evt.mouseMove.x - lastMousePos.x;
-			evt_out->deltaY = evt.mouseMove.y - lastMousePos.y;
-		}
+
+		evt_out->deltaX = evt.mouseMove.x - lastMousePos.x;
+		evt_out->deltaY = evt.mouseMove.y - lastMousePos.y;
+		
 		evt_out->x = evt.mouseMove.x;
 		evt_out->y = evt.mouseMove.y;
 
@@ -55,7 +58,7 @@ bool Window::PopEvent(rWindowEvent* evt_out)
 	{
 		// TODO: This sign was used, to ensure 0 dx, dy delta mouse move when gain focus
 		// BAD IDEA
-		lastMousePos.x = std::numeric_limits<int>::min();
+		//lastMousePos.x = std::numeric_limits<int>::min();
 		//lastMousePos.y = std::numeric_limits<int>.min();
 	}
 	else if (evt.type == sf::Event::EventType::MouseButtonPressed || evt.type == sf::Event::EventType::MouseButtonReleased)	

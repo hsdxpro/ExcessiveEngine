@@ -20,7 +20,7 @@ public:
 	static network::IEngine*	CreateNetworkEngine(const rNetworkEngine& d);
 	static sound::IEngine*		CreateSoundEngine(const rSoundEngine& d);
 
-	static IWindow*				CreateWindow(const struct rWindow& d);
+	static IWindow*				CreateWindow(const rWindow& d);
 	static ITimer*				CreateTimer();
 	static IGapi*				CreateGapiGL();
 };

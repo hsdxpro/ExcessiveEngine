@@ -71,7 +71,7 @@ graphics::IEngine* EngineCore::InitGraphicsEngineRaster(const rGraphicsEngineRas
 	texError = graphicsEngine->CreateTexture();
 	
 	bool bSuccess = texError->Load(Sys::GetWorkDir() + L"../Assets/error.jpg");
-	assert(bSuccess);
+	//assert(bSuccess);
 
 	// Default scene and layer for GraphicsEngine
 	defaultGraphicsScene = graphicsEngine->CreateScene();
