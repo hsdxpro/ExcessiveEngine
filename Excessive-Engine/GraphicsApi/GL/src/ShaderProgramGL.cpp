@@ -9,26 +9,26 @@ using namespace std;
 ShaderProgramGL::ShaderProgramGL(GLuint program_id)
 	: program(program_id)
 {
-	// get all attributes
+	// Get all attributes
 	GLint count = 0;
 	GLint attrib_name_len = 512;
 	glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &count);
 	glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &attrib_name_len);
 	vector<GLchar> attrib_name(attrib_name_len + 1);
 	for (GLint i = 0; i < count; i++) {
-		// get name
+		// Get name
 		GLint array_size = 0;
 		GLenum type = 0;
 		GLsizei name_len = 0;
 		glGetActiveAttrib(program, i, attrib_name.size(), &name_len, &array_size, &type, attrib_name.data());
 		string name(attrib_name.data(), attrib_name.data() + name_len);
 
-		// get location
+		// Get location
 		auto location = glGetAttribLocation(program, name.c_str());
 
 		if (location >= 0)
 		{
-			// add to cache
+			// Add to cache
 			attrib_loc_cache.insert(pair<string, int>(name, location));
 		}
 		else
@@ -63,8 +63,8 @@ void ShaderProgramGL::destroy()
 }
 
 /*
-// TODO: I could not get it working with the new signature (Peti)
-size_t ShaderProgramGL::getBinary(void* data, size_t max_size)
+// TODO: I could not Get it working with the new signature (Peti)
+size_t ShaderProgramGL::GetBinary(void* data, size_t max_size)
 {
 // well, it ain't gonna work out that way
 /*
@@ -95,8 +95,8 @@ return 0;
 //*/
 
 /*
-// TODO: I could not get it working with the new signature (Peti)
-bool ShaderProgramGL::loadBinary(void* data, size_t size)
+// TODO: I could not Get it working with the new signature (Peti)
+bool ShaderProgramGL::LoadBinary(void* data, size_t size)
 {
 // neither will this
 /*
@@ -120,17 +120,17 @@ glProgramBinary(id, format, ptr, size);
 
 // May only be kept for internal stuff.
 // Depracated API
-int ShaderProgramGL::getUniformBlockIndex(const char* str)
+int ShaderProgramGL::GetUniformBlockIndex(const char* str)
 {
 	ASSERT(str);
 	auto index = glGetUniformBlockIndex(program, str);
-	// ugly hack to get uniform blocks working...
+	// ugly hack to Get uniform blocks working...
 	// delete this as soon as you can
 	glUniformBlockBinding(program, index, index);
 	return index;
 }
 
-int ShaderProgramGL::getAttributeIndex(const char* str)
+int ShaderProgramGL::GetAttributeIndex(const char* str)
 {
 	ASSERT(str);
 	auto it = attrib_loc_cache.find(str);
@@ -142,7 +142,7 @@ int ShaderProgramGL::getAttributeIndex(const char* str)
 	}
 }
 
-int ShaderProgramGL::getSamplerIndex(const char* str)
+int ShaderProgramGL::GetSamplerIndex(const char* str)
 {
 	ASSERT(str);
 	int loc = glGetUniformLocation(program, str);
@@ -151,7 +151,7 @@ int ShaderProgramGL::getSamplerIndex(const char* str)
 	return idx;
 }
 
-int ShaderProgramGL::getRenderTargetIndex(const char* str)
+int ShaderProgramGL::GetRenderTargetIndex(const char* str)
 {
 	ASSERT(str);
 	return glGetFragDataLocation(program, str);

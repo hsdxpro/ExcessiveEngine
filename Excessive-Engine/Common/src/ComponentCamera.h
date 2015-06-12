@@ -8,20 +8,21 @@ class ComponentCamera : public WorldComponent
 public:
 	ComponentCamera(graphics::ICamera* cam);
 
-	void setDirNormed(const mm::vec3& dir);
+	void SetDirNormed(const mm::vec3& dir);
 
-	void setPos(const mm::vec3& v);
-	void setRot(const mm::quat& q);
+	void SetPos(const mm::vec3& v);
+	void SetRot(const mm::quat& q);
 
-	const mm::vec3 getPos() const;
-	const mm::quat getRot() const;
+	const mm::vec3 GetPos() const;
+	const mm::quat GetRot() const;
 
-	graphics::ICamera* getCam();
+	graphics::ICamera* GetCam();
 
 protected:
-	void _innerUpdatePos() override;
-	void _innerUpdateRot() override;
-	void _innerUpdateScale() override;
+	void _InnerUpdatePos() override;
+	void _InnerUpdateRot() override;
+	void _InnerUpdateScale() override;
+	void _InnerUpdateSkew() override;
 
 protected:
 	graphics::ICamera* cam;

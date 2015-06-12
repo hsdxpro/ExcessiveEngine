@@ -77,7 +77,7 @@ namespace om
         return objects[indices[id & INDEX_MASK].idx].second;
       }
 
-      id_type add( const t& d )
+      id_type Add( const t& d )
       {
         //no indices stored, or no space left for more indices
         if( freelist_dequeue == INNER_MASK || freelist_dequeue == indices.size() )
@@ -97,7 +97,7 @@ namespace om
         return in.id;
       }
 
-      void remove( id_type id )
+      void Remove( id_type id )
       {
         index& in = indices[id & INDEX_MASK];
 
@@ -117,7 +117,7 @@ namespace om
         freelist_enqueue = id & INDEX_MASK;
       }
 
-      std::vector< stored_type >& getObjects()
+      std::vector< stored_type >& GetObjects()
       {
         return objects;
       }

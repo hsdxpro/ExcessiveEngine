@@ -25,25 +25,25 @@ public:
 	GraphicsEngineRT(const rGraphicsEngineRT& d);
 	~GraphicsEngineRT();
 
-	void release() override;
+	void Release() override;
 
-	// create stuff
-	graphics::IScene*	createScene() override;
-	graphics::IMesh*	 createMesh() override;
-	graphics::IMaterial* createMaterial() override;
-	graphics::ITexture*  createTexture() override;
-	Camera* createCam() override;
+	// Create stuff
+	graphics::IScene*	CreateScene() override;
+	graphics::IMesh*	 CreateMesh() override;
+	graphics::IMaterial* CreateMaterial() override;
+	graphics::ITexture*  CreateTexture() override;
+	Camera* CreateCam() override;
 
-	void addLayer(const Layer& layer) override;
-	void removeLayer(size_t index) override;
-	size_t getNumLayers() const override;
-	void setNumLayers(size_t num_layers) override;
-	Layer& getLayer(size_t index) override;
+	void AddLayer(const Layer& layer) override;
+	void RemoveLayer(size_t index) override;
+	size_t GetNumLayers() const override;
+	void SetNumLayers(size_t num_layers) override;
+	Layer& GetLayer(size_t index) override;
 
 	// interact
-	void update(float deltaTime) override;
+	void Update(float deltaTime) override;
 
-	IGapi* getGapi() override { return nullptr;  }
+	IGapi* GetGapi() override { return nullptr;  }
 
 private:
 };

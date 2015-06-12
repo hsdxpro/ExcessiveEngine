@@ -7,53 +7,53 @@
 Listener::Listener() : dir(0, 0, -1), upwards(0, 1, 0){
 }
 
-void Listener::setHandedness(sound::eHandedness newHandedness)  {
+void Listener::SetHandedness(sound::eHandedness newHandedness)  {
 	//TODO move handedness to engine class
 	handedness = handedness;
 }
 
-void Listener::setUpwards(const mm::vec3& newUp) {
+void Listener::SetUpwards(const mm::vec3& newUp) {
 	upwards = mm::normalize(newUp);
 }
 
-void Listener::setTarget(const mm::vec3& newTargetPos) {
+void Listener::SetTarget(const mm::vec3& newTargetPos) {
 	dir = mm::normalize(newTargetPos - this->pos);
 }
 
-void Listener::setDir(const mm::vec3& newDir) {
+void Listener::SetDir(const mm::vec3& newDir) {
 	dir = mm::normalize(newDir);
 }
 
-void Listener::setPos(const mm::vec3& newPos) {
+void Listener::SetPos(const mm::vec3& newPos) {
 	pos = newPos;
 }
 
-void Listener::setVel(const mm::vec3& newVel) {
+void Listener::SetVel(const mm::vec3& newVel) {
 	vel = newVel;
 }
 
-sound::eHandedness Listener::getHandedness() const {
+sound::eHandedness Listener::GetHandedness() const {
 	return handedness;
 }
 
-mm::vec3 Listener::getUpwards() const {
+mm::vec3 Listener::GetUpwards() const {
 	return upwards;
 }
 
-mm::vec3 Listener::getDir() const {
+mm::vec3 Listener::GetDir() const {
 	return dir;
 }
 
-mm::vec3 Listener::getPos() const {
+mm::vec3 Listener::GetPos() const {
 	return pos;
 }
 
-mm::vec3 Listener::getVel() const {
+mm::vec3 Listener::GetVel() const {
 	return vel;
 }
 
 /*
-mm::mat4 Listener::getSFMLViewTransform() const {
+mm::mat4 Listener::GetSFMLViewTransform() const {
 
 	//SFML has a right handed coordinate system where +Y is always up
 
@@ -66,7 +66,7 @@ mm::mat4 Listener::getSFMLViewTransform() const {
 	float angleFromUpToY = std::acos(mm::dot(actualUpwards, mm::vec3(0, 1, 0)));
 
 	//rotate everything so that Y will be UP
-	//TODO check if create rotation really takes angle in radians
+	//TODO check if Create rotation really takes angle in radians
 	result *= mm::create_rotation(angleFromUpToY, mm::cross(actualUpwards, mm::vec3(0, 1, 0)));
 
 	//at this point "listener direction" is on the x z pane, because the actual up direction was used for rotation.

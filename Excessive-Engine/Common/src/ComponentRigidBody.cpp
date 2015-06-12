@@ -1,58 +1,63 @@
 #include "ComponentRigidBody.h"
 #include "..\PhysicsEngine\Interfaces\IEntityRigid.h"
 
-void ComponentRigidBody::updateAfterPhysicsSimulate()
+void ComponentRigidBody::UpdateAfterPhysicsSimulate()
 {
-	WorldComponent::setTransform(Transform3D(entityRigid->getPos(), entityRigid->getRot(), entityRigid->getScale()));
+	WorldComponent::SetTransform(Transform3D(entityRigid->GetPos(), entityRigid->GetRot(), entityRigid->GetScale()));
 }
 
-void ComponentRigidBody::setPos(const mm::vec3& v)
+void ComponentRigidBody::SetPos(const mm::vec3& v)
 {
-	entityRigid->setPos(v);
-	WorldComponent::setPos(v);
+	entityRigid->SetPos(v);
+	WorldComponent::SetPos(v);
 }
 
-void ComponentRigidBody::setRot(const mm::quat& q)
+void ComponentRigidBody::SetRot(const mm::quat& q)
 {
-	entityRigid->setRot(q);
-	WorldComponent::setRot(q);
+	entityRigid->SetRot(q);
+	WorldComponent::SetRot(q);
 }
 
-void ComponentRigidBody::setScale(const mm::vec3& v)
+void ComponentRigidBody::SetScale(const mm::vec3& v)
 {
-	entityRigid->setScale(v);
-	WorldComponent::setScale(v);
+	entityRigid->SetScale(v);
+	WorldComponent::SetScale(v);
 }
 
-const mm::vec3& ComponentRigidBody::getPos()
+const mm::vec3& ComponentRigidBody::GetPos()
 {
-	return entityRigid->getPos();
+	return entityRigid->GetPos();
 }
 
-const mm::quat& ComponentRigidBody::getRot()
+const mm::quat& ComponentRigidBody::GetRot()
 {
-	return entityRigid->getRot();
+	return entityRigid->GetRot();
 }
 
-const mm::vec3& ComponentRigidBody::getScale()
+const mm::vec3& ComponentRigidBody::GetScale()
 {
-	return entityRigid->getScale();
+	return entityRigid->GetScale();
 }
 
-void ComponentRigidBody::_innerUpdatePos()
+void ComponentRigidBody::_InnerUpdatePos()
 {
 	// If mass = 0 maybe
-	//entityRigid->setPos(worldTransform.getPos());
+	//entityRigid->SetPos(worldTransform.GetPos());
 }
 
-void ComponentRigidBody::_innerUpdateRot()
+void ComponentRigidBody::_InnerUpdateRot()
 {
 	// If mass = 0 maybe
-	//entityRigid->setRot(worldTransform.getRot());
+	//entityRigid->SetRot(worldTransform.GetRot());
 }
 
-void ComponentRigidBody::_innerUpdateScale()
+void ComponentRigidBody::_InnerUpdateScale()
 {
 	// If mass = 0 maybe
-	//entityRigid->setScale(worldTransform.getScale());
+	//entityRigid->SetScale(worldTransform.GetScale());
+}
+
+void ComponentRigidBody::_InnerUpdateSkew()
+{
+
 }

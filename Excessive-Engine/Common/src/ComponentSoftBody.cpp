@@ -1,14 +1,19 @@
 #include "ComponentSoftBody.h"
 
 
-void ComponentSoftBody::_innerUpdatePos()
+void ComponentSoftBody::_InnerUpdatePos()
 {
 }
 
-void ComponentSoftBody::_innerUpdateRot()
+void ComponentSoftBody::_InnerUpdateRot()
 {
 }
 
-void ComponentSoftBody::_innerUpdateScale()
+void ComponentSoftBody::_InnerUpdateScale()
 {
+}
+
+void ComponentSoftBody::_InnerUpdateSkew()
+{
+
 }

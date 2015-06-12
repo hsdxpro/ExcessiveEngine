@@ -300,7 +300,7 @@ void TextureGL::destroy()
   ID = 0;
 }
 
-const rTextureGapi& TextureGL::getDesc()
+const rTextureGapi& TextureGL::GetDesc()
 {
 	return desc;
 }

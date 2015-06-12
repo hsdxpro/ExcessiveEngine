@@ -32,7 +32,7 @@
 // Original author: Jim Blandy <jimb@mozilla.com> <jimb@red-bean.com>
 
 // dwarf_cfi_to_module.h: Define the DwarfCFIToModule class, which
-// accepts parsed DWARF call frame info and adds it to a
+// accepts parsed DWARF call frame info and Adds it to a
 // google_breakpad::Module object, which can write that information to
 // a Breakpad symbol file.
 
@@ -54,7 +54,7 @@ namespace google_breakpad {
 
 using dwarf2reader::CallFrameInfo;
 using google_breakpad::Module;
-using std::set;
+using std::Set;
 using std::vector;
 
 // A class that accepts parsed call frame information from the DWARF
@@ -78,7 +78,7 @@ class DwarfCFIToModule: public CallFrameInfo::Handler {
     // The DWARF CFI entry at OFFSET cites register REG, but REG is not
     // covered by the vector of register names passed to the
     // DwarfCFIToModule constructor, nor does it match the return
-    // address column number for this entry.
+    // Address column number for this entry.
     virtual void UnnamedRegister(size_t offset, int reg);
 
     // The DWARF CFI entry at OFFSET says that REG is undefined, but the
@@ -137,19 +137,19 @@ class DwarfCFIToModule: public CallFrameInfo::Handler {
   }
   virtual ~DwarfCFIToModule() { delete entry_; }
 
-  virtual bool Entry(size_t offset, uint64 address, uint64 length,
+  virtual bool Entry(size_t offset, uint64 Address, uint64 length,
                      uint8 version, const string &augmentation,
                      unsigned return_address);
-  virtual bool UndefinedRule(uint64 address, int reg);
-  virtual bool SameValueRule(uint64 address, int reg);
-  virtual bool OffsetRule(uint64 address, int reg,
+  virtual bool UndefinedRule(uint64 Address, int reg);
+  virtual bool SameValueRule(uint64 Address, int reg);
+  virtual bool OffsetRule(uint64 Address, int reg,
                           int base_register, long offset);
-  virtual bool ValOffsetRule(uint64 address, int reg,
+  virtual bool ValOffsetRule(uint64 Address, int reg,
                              int base_register, long offset);
-  virtual bool RegisterRule(uint64 address, int reg, int base_register);
-  virtual bool ExpressionRule(uint64 address, int reg,
+  virtual bool RegisterRule(uint64 Address, int reg, int base_register);
+  virtual bool ExpressionRule(uint64 Address, int reg,
                               const string &expression);
-  virtual bool ValExpressionRule(uint64 address, int reg,
+  virtual bool ValExpressionRule(uint64 Address, int reg,
                                  const string &expression);
   virtual bool End();
 
@@ -158,9 +158,9 @@ class DwarfCFIToModule: public CallFrameInfo::Handler {
   string RegisterName(int i);
 
   // Record RULE for register REG at ADDRESS.
-  void Record(Module::Address address, int reg, const string &rule);
+  void Record(Module::Address Address, int reg, const string &rule);
 
-  // The module to which we should add entries.
+  // The module to which we should Add entries.
   Module *module_;
 
   // Map from register numbers to register names.
@@ -176,25 +176,25 @@ class DwarfCFIToModule: public CallFrameInfo::Handler {
   // use in error messages.
   size_t entry_offset_;
 
-  // The return address column for that entry.
+  // The return Address column for that entry.
   unsigned return_address_;
 
-  // The names of the return address and canonical frame address. Putting
+  // The names of the return Address and canonical frame Address. Putting
   // these here instead of using string literals allows us to share their
   // texts in reference-counted std::string implementations (all the
   // popular ones). Many, many rules cite these strings.
   string cfa_name_, ra_name_;
 
-  // A set of strings used by this CFI. Before storing a string in one of
-  // our data structures, insert it into this set, and then use the string
-  // from the set.
+  // A Set of strings used by this CFI. Before storing a string in one of
+  // our data structures, insert it into this Set, and then use the string
+  // from the Set.
   //
   // Because std::string uses reference counting internally, simply using
-  // strings from this set, even if passed by value, assigned, or held
+  // strings from this Set, even if passed by value, assigned, or held
   // directly in structures and containers (map<string, ...>, for example),
   // causes those strings to share a single instance of each distinct piece
   // of text.
-  set<string> common_strings_;
+  Set<string> common_strings_;
 };
 
 } // namespace google_breakpad

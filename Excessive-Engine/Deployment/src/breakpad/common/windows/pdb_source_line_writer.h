@@ -137,10 +137,10 @@ class PDBSourceLineWriter {
   // Returns true on success.
   bool PrintLines(IDiaEnumLineNumbers *lines);
 
-  // Outputs a function address and name, followed by its source line list.
+  // Outputs a function Address and name, followed by its source line list.
   // block can be the same object as function, or it can be a reference
   // to a code block that is lexically part of this function, but
-  // resides at a separate address.
+  // resides at a separate Address.
   // Returns true on success.
   bool PrintFunction(IDiaSymbol *function, IDiaSymbol *block);
 
@@ -165,8 +165,8 @@ class PDBSourceLineWriter {
   // backtraces in the absence of frame pointers.  Returns true on success.
   bool PrintFrameData();
 
-  // Outputs a single public symbol address and name, if the symbol corresponds
-  // to a code address.  Returns true on success.  If symbol is does not
+  // Outputs a single public symbol Address and name, if the symbol corresponds
+  // to a code Address.  Returns true on success.  If symbol is does not
   // correspond to code, returns true without outputting anything.
   bool PrintCodePublicSymbol(IDiaSymbol *symbol);
 
@@ -211,14 +211,14 @@ class PDBSourceLineWriter {
   }
 
   // Find the PE file corresponding to the loaded PDB file, and
-  // set the code_file_ member. Returns false on failure.
+  // Set the code_file_ member. Returns false on failure.
   bool FindPEFile();
 
   // Returns the function name for a symbol.  If possible, the name is
   // undecorated.  If the symbol's decorated form indicates the size of
   // parameters on the stack, this information is returned in stack_param_size.
   // Returns true on success.  If the symbol doesn't encode parameter size
-  // information, stack_param_size is set to -1.
+  // information, stack_param_size is Set to -1.
   static bool GetSymbolFunctionName(IDiaSymbol *function, BSTR *name,
                                     int *stack_param_size);
 
@@ -244,7 +244,7 @@ class PDBSourceLineWriter {
   // This maps unique filenames to file IDs.
   unordered_map<wstring, DWORD> unique_files_;
 
-  // This is used for calculating post-transform symbol addresses and lengths.
+  // This is used for calculating post-transform symbol Addresses and lengths.
   ImageMap image_map_;
 
   // Disallow copy ctor and operator=

@@ -39,21 +39,21 @@ class KochanekBartelsSpline
     mm::vec3 vstart, vend;
 
   public:
-    void setStartVelocity( const mm::vec3& vs )
+    void SetStartVelocity( const mm::vec3& vs )
     {
       vstart = vs;
     }
 
-    void setEndVelocity( const mm::vec3& ve )
+    void SetEndVelocity( const mm::vec3& ve )
     {
       vend = ve;
     };
 
-    void addKey( const SplineKey& newkey );
-    float getFullTime() const;
+    void AddKey( const SplineKey& newkey );
+    float GetFullTime() const;
     void recalc();
-    bool removeKey( const SplineKey& rkey );
-    bool removeKeyById( int id );
+    bool RemoveKey( const SplineKey& rkey );
+    bool RemoveKeyById( int id );
     mm::vec3 value( float t ); //interpolated value
 
     KochanekBartelsSpline() : fullTime( 0 ), vstart( 0 ), vend( 0 ) {}

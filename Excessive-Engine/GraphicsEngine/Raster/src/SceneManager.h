@@ -24,13 +24,13 @@ public:
 	SceneManager();
 	~SceneManager();
 
-	void add(PlaneEntity* entity);
-	void add(MeshEntity* entity);
-	void add(Light* light);
+	void Add(PlaneEntity* entity);
+	void Add(MeshEntity* entity);
+	void Add(Light* light);
 
-	void remove(PlaneEntity* entity);
-	void remove(MeshEntity* entity);
-	void remove(Light* light);
+	void Remove(PlaneEntity* entity);
+	void Remove(MeshEntity* entity);
+	void Remove(Light* light);
 
 	void clear();
 private:

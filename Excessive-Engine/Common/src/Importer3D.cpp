@@ -9,7 +9,7 @@
 #include <fstream>
 #include <map>
 
-bool Importer3D::loadFile(const std::wstring& path, const rImporter3DCfg& cfg, rImporter3DData& data_out) {
+bool Importer3D::LoadModelFromFile(const std::wstring& path, const rImporter3DCfg& cfg, rImporter3DData& data_out) {
 	Assimp::Importer importer;
 
 	std::ifstream is(path, std::ios::ate);

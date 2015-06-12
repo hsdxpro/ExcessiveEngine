@@ -51,16 +51,16 @@ void json_example()
      //loadPlugIn( plugins[index].asString() );
      my::log << my::lock << plugins[index].asString() << my::endl << my::unlock;
    
-  //setIndentLength( root["indent"].get("length", 3).asInt() );
-  //setIndentUseSpace( root["indent"].get("use_space", true).asBool() );
+  //setIndentLength( root["indent"].Get("length", 3).asInt() );
+  //setIndentUseSpace( root["indent"].Get("use_space", true).asBool() );
 
   // ...
   // At application shutdown to make the new configuration document:
   // Since Json::Value has implicit constructor for all value types, it is not
   // necessary to explicitly construct the Json::Value object:
-  //root["encoding"] = getCurrentEncoding();
-  //root["indent"]["length"] = getCurrentIndentLength();
-  //root["indent"]["use_space"] = getCurrentIndentUseSpace();
+  //root["encoding"] = GetCurrentEncoding();
+  //root["indent"]["length"] = GetCurrentIndentLength();
+  //root["indent"]["use_space"] = GetCurrentIndentUseSpace();
 
   Json::StyledWriter writer;
   // Make a new JSON document for the configuration. Preserve original comments.
@@ -80,7 +80,7 @@ int CommonTest()
   stringID id = HashedString::hash( "hello" );
   my::log << my::lock << 
   std::hex << id << my::endl <<
-  HashedString::getStr( id ) << my::endl <<
+  HashedString::GetStr( id ) << my::endl <<
   my::unlock;
   ASSERT( true );
   //ASSERT( false );
@@ -89,20 +89,20 @@ int CommonTest()
 
   splinetype();
 
-  Shape::setUpIntersection();
+  Shape::SetUpIntersection();
 
   om::ObjectManager<int> objman;
   om::id_type ids[5];
   for( int c = 0; c < 5; ++c )
-    ids[c] = objman.add( c );
+    ids[c] = objman.Add( c );
 
-  objman.remove( ids[2] );
+  objman.Remove( ids[2] );
 
-  objman.add( 12 );
+  objman.Add( 12 );
 
   typedef RandomWrapper<MersenneTwister> random_type;
   random_type::init();
-  my::log << my::lock << random_type::get( 0.1, 0.9 ) << my::endl << my::unlock;
+  my::log << my::lock << random_type::Get( 0.1, 0.9 ) << my::endl << my::unlock;
 
   AlignedAllocator<char, 16> aa;
   u32 base_size = 1024 * 1024 * 1024;
@@ -117,7 +117,7 @@ int CommonTest()
   StackAllocator<16> stack( (char*)stack_mem, stack_size );
 
   void* mem = stack.alloc( 255 ); //allocate 256 bytes
-  marker mark = stack.getMarker();
+  marker mark = stack.GetMarker();
   stack.alloc( 254 );
   stack.alloc( 253 );
   stack.alloc( 252 );
@@ -142,7 +142,7 @@ int CommonTest()
   DoubleEndedStackAllocator<16> destack( (char*)destack_mem, stack_size );
 
   void* demem = destack.allocTop( 255 ); //allocate 256 bytes
-  marker mark2 = stack.getMarker();
+  marker mark2 = stack.GetMarker();
   destack.allocTop( 254 );
   destack.allocTop( 253 );
   destack.allocBottom( 252 );

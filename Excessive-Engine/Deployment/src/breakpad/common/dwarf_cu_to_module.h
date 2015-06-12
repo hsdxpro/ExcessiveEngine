@@ -161,14 +161,14 @@ class DwarfCUToModule: public dwarf2reader::RootDIEHandler {
     // Set the name of the compilation unit we're processing to NAME.
     virtual void SetCUName(const string &name) { cu_name_ = name; }
 
-    // Accessor and setter for uncovered_warnings_enabled_.
+    // Accessor and Setter for uncovered_warnings_enabled_.
     // UncoveredFunction and UncoveredLine only report a problem if that is
     // true. By default, these warnings are disabled, because those
     // conditions occur occasionally in healthy code.
     virtual bool uncovered_warnings_enabled() const {
       return uncovered_warnings_enabled_;
     }
-    virtual void set_uncovered_warnings_enabled(bool value) {
+    virtual void Set_uncovered_warnings_enabled(bool value) {
       uncovered_warnings_enabled_ = value;
     }
 
@@ -249,10 +249,10 @@ class DwarfCUToModule: public dwarf2reader::RootDIEHandler {
   DIEHandler *FindChildHandler(uint64 offset, enum DwarfTag tag);
 
   // Assign all our source Lines to the Functions that cover their
-  // addresses, and then add them to module_.
+  // Addresses, and then Add them to module_.
   void Finish();
 
-  bool StartCompilationUnit(uint64 offset, uint8 address_size,
+  bool StartCompilationUnit(uint64 offset, uint8 Address_size,
                             uint8 offset_size, uint64 cu_length,
                             uint8 dwarf_version);
   bool StartRootDIE(uint64 offset, enum DwarfTag tag);
@@ -282,13 +282,13 @@ class DwarfCUToModule: public dwarf2reader::RootDIEHandler {
   // Assign the lines in lines_ to the individual line lists of the
   // functions in functions_.  (DWARF line information maps an entire
   // compilation unit at a time, and gives no indication of which
-  // lines belong to which functions, beyond their addresses.)
+  // lines belong to which functions, beyond their Addresses.)
   void AssignLinesToFunctions();
 
   // The only reason cu_context_ and child_context_ are pointers is
   // that we want to keep their definitions private to
   // dwarf_cu_to_module.cc, instead of listing them all here. They are
-  // owned by this DwarfCUToModule: the constructor sets them, and the
+  // owned by this DwarfCUToModule: the constructor Sets them, and the
   // destructor deletes them.
 
   // The handler to use to handle line number data.

@@ -10,7 +10,7 @@ Window::Window(const rWindow& d)
 	w.setVerticalSyncEnabled(true);
 }
 
-bool Window::popEvent(rWindowEvent* evt_out)
+bool Window::PopEvent(rWindowEvent* evt_out)
 {
 	assert(evt_out);
 
@@ -74,7 +74,7 @@ bool Window::popEvent(rWindowEvent* evt_out)
 	}
 	else if (evt.type == sf::Event::EventType::Closed) 
 	{
-		close();
+		Close();
 	}
 	else if (evt.type == sf::Event::EventType::Resized) 
 	{
@@ -85,38 +85,38 @@ bool Window::popEvent(rWindowEvent* evt_out)
 	return true;
 }
 
-void Window::close() 
+void Window::Close() 
 {
 	w.close();
 }
 
-void Window::present() 
+void Window::Present() 
 {
 	w.display();
 }
 
-bool Window::isOpen() const
+bool Window::IsOpen() const
 {
 	return w.isOpen();
 }
 
-u16 Window::getClientW() const 
+u16 Window::GetClientW() const 
 {
 	return w.getSize().x;
 }
 
-u16 Window::getClientH() const 
+u16 Window::GetClientH() const 
 {
 	return w.getSize().y;
 }
 
-float Window::getClientAspectRatio() const 
+float Window::GetClientAspectRatio() const 
 {
 	const sf::Vector2u size = w.getSize();
 	return (float)size.x / size.y;
 }
 
-void Window::setText(const wchar_t* text)
+void Window::SetText(const wchar_t* text)
 {
 	w.setTitle(text);
 }

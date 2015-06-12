@@ -12,17 +12,17 @@ SoundScene::~SoundScene() {
 	}
 }
 
-void SoundScene::release() {
+void SoundScene::Release() {
 	delete this;
 }
 
-Emitter* SoundScene::addEmitter() {
+Emitter* SoundScene::AddEmitter() {
 	Emitter* newEmitter = new Emitter;
 	emitters.insert(newEmitter);
 	return newEmitter;
 }
 
-void SoundScene::remove(sound::IEmitter* emitter) {
+void SoundScene::Remove(sound::IEmitter* emitter) {
 	auto it = emitters.find(static_cast<Emitter*>(emitter));
 	if (it != emitters.end()){
 		delete *it;
@@ -37,33 +37,33 @@ void SoundScene::clear() {
 	emitters.clear();
 }
 
-void SoundScene::setListener(sound::IListener* newListener) {
+void SoundScene::SetListener(sound::IListener* newListener) {
 	activeListener = static_cast<Listener*>(newListener);
 }
 
-sound::IListener* SoundScene::getListener() const {
+sound::IListener* SoundScene::GetListener() const {
 	return activeListener;
 }
 
-void SoundScene::update(float deltaTime) {
+void SoundScene::Update(float deltaTime) {
 
 	if (activeListener != nullptr){
-		//TODO iterate through all the emitters and set their position according to the current listener setup
+		//TODO iterate through all the emitters and Set their position according to the current listener Setup
 		//(note: this is necesarry because SFML alway interprets +y as up, so it is not compatible with all coordinate system out of the box (not even with right handed wich is what sfml uses))
-		mm::mat4 listenerTransform = getSFMLViewTransform();
+		mm::mat4 listenerTransform = GetSFMLViewTransform();
 		for (auto current : emitters) {
-			mm::vec3 transformedPos = (listenerTransform * mm::vec4(current->getPos(), 1)).xyz;
-			current->getSFMLSoundSource()->setPosition(transformedPos);
+			mm::vec3 transformedPos = (listenerTransform * mm::vec4(current->GetPos(), 1)).xyz;
+			current->GetSFMLSoundSource()->SetPosition(transformedPos);
 		}
 
 		sf::Listener::setPosition(0, 0, 0);
-		mm::vec3 forwards = mm::transpose(mm::inverse(listenerTransform)) * activeListener->getDir();
+		mm::vec3 forwards = mm::transpose(mm::inverse(listenerTransform)) * activeListener->GetDir();
 		sf::Listener::setDirection(forwards.x, forwards.y, forwards.z);
-		//sf::Listener::setDirection(SFMLforwards.x, SFMLforwards.y, SFMLforwards.z);
+		//sf::Listener::SetDirection(SFMLforwards.x, SFMLforwards.y, SFMLforwards.z);
 	}
 }
 
-mm::mat4 SoundScene::getSFMLViewTransform() const {
+mm::mat4 SoundScene::GetSFMLViewTransform() const {
 	mm::mat4 result;
 
 	if (activeListener != nullptr){
@@ -71,8 +71,8 @@ mm::mat4 SoundScene::getSFMLViewTransform() const {
 
 		mm::mat4 upwardsRotation;
 
-		mm::vec3 left = mm::normalize(mm::cross(activeListener->getUpwards(), activeListener->getDir()));
-		mm::vec3 actualUpwards = mm::cross(activeListener->getDir(), left);
+		mm::vec3 left = mm::normalize(mm::cross(activeListener->GetUpwards(), activeListener->GetDir()));
+		mm::vec3 actualUpwards = mm::cross(activeListener->GetDir(), left);
 
 		float angleFromUpToSFMLUp = std::acos(mm::dot(actualUpwards, SFMLupwards));
 
@@ -93,7 +93,7 @@ mm::mat4 SoundScene::getSFMLViewTransform() const {
 		//now rotate everything to make -Z forward (OpenGL style and i dont care)
 
 		//NOTE dont need the inverse transposed of the matrix, cause it does not contain scaling,
-		mm::vec3 directionWithSFMLUp = upwardsRotation * activeListener->getDir();
+		mm::vec3 directionWithSFMLUp = upwardsRotation * activeListener->GetDir();
 
 		float angleFromDirToSFMLForward = std::acos(mm::dot(directionWithSFMLUp, SFMLforwards));
 
@@ -110,8 +110,8 @@ mm::mat4 SoundScene::getSFMLViewTransform() const {
 		*/
 
 		//lets say that listener is always at origo
-		//result = directionRotation * upwardsRotation * mm::create_translation(activeListener->getPos()*-1);
-		result = upwardsRotation * mm::create_translation(activeListener->getPos()*-1);
+		//result = directionRotation * upwardsRotation * mm::create_translation(activeListener->GetPos()*-1);
+		result = upwardsRotation * mm::create_translation(activeListener->GetPos()*-1);
 
 		//TODO handle handedness (what a good pun :D)
 	}

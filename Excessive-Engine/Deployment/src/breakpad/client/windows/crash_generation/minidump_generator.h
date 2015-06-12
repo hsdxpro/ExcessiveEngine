@@ -72,18 +72,18 @@ class MinidumpGenerator {
 
   // Generate the name for the dump file that will be written to once
   // WriteMinidump() is called. Can only be called once and cannot be called
-  // if the dump file is set via SetDumpFile().
+  // if the dump file is Set via SetDumpFile().
   bool GenerateDumpFile(std::wstring* dump_path);
 
   // Generate the name for the full dump file that will be written to once
   // WriteMinidump() is called. Cannot be called unless the minidump type
   // includes MiniDumpWithFullMemory. Can only be called once and cannot be
-  // called if the dump file is set via SetFullDumpFile().
+  // called if the dump file is Set via SetFullDumpFile().
   bool GenerateFullDumpFile(std::wstring* full_dump_path);
 
   void SetAdditionalStreams(
-      MINIDUMP_USER_STREAM_INFORMATION* additional_streams) {
-    additional_streams_ = additional_streams;
+      MINIDUMP_USER_STREAM_INFORMATION* Additional_streams) {
+    Additional_streams_ = Additional_streams;
   }
 
   void SetCallback(MINIDUMP_CALLBACK_INFORMATION* callback_info) {
@@ -113,14 +113,14 @@ class MinidumpGenerator {
   // Loads the appropriate DLL lazily in a thread safe way.
   HMODULE GetDbghelpModule();
 
-  // Loads the appropriate DLL and gets a pointer to the MiniDumpWriteDump
+  // Loads the appropriate DLL and Gets a pointer to the MiniDumpWriteDump
   // function lazily and in a thread-safe manner.
   MiniDumpWriteDumpType GetWriteDump();
 
   // Loads the appropriate DLL lazily in a thread safe way.
   HMODULE GetRpcrt4Module();
 
-  // Loads the appropriate DLL and gets a pointer to the UuidCreate
+  // Loads the appropriate DLL and Gets a pointer to the UuidCreate
   // function lazily and in a thread-safe manner.
   UuidCreateType GetCreateUuid();
 
@@ -137,7 +137,7 @@ class MinidumpGenerator {
   HMODULE rpcrt4_module_;
 
   // Pointer to the UuidCreate function.
-  UuidCreateType create_uuid_;
+  UuidCreateType Create_uuid_;
 
   // Handle for the process to dump.
   HANDLE process_handle_;
@@ -152,7 +152,7 @@ class MinidumpGenerator {
   DWORD requesting_thread_id_;
 
   // Pointer to the exception information for the crash. This may point to an
-  // address in the crashing process so it should not be dereferenced.
+  // Address in the crashing process so it should not be dereferenced.
   EXCEPTION_POINTERS* exception_pointers_;
 
   // Assertion info for the report.
@@ -181,7 +181,7 @@ class MinidumpGenerator {
   bool full_dump_file_is_internal_;
 
   // Additional streams to be written to the dump.
-  MINIDUMP_USER_STREAM_INFORMATION* additional_streams_;
+  MINIDUMP_USER_STREAM_INFORMATION* Additional_streams_;
 
   // The user defined callback for the various stages of the dump process.
   MINIDUMP_CALLBACK_INFORMATION* callback_info_;
@@ -189,9 +189,9 @@ class MinidumpGenerator {
   // Critical section to sychronize action of loading modules dynamically.
   CRITICAL_SECTION module_load_sync_;
 
-  // Critical section to synchronize action of dynamically getting function
-  // addresses from modules.
-  CRITICAL_SECTION get_proc_address_sync_;
+  // Critical section to synchronize action of dynamically Getting function
+  // Addresses from modules.
+  CRITICAL_SECTION Get_proc_address_sync_;
 };
 
 }  // namespace google_breakpad

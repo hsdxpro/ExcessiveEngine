@@ -11,14 +11,14 @@ public:
 	Texture(IGapi* gapi);
 	~Texture();
 
-	void acquire();
-	void release() override;
+	void Acquire();
+	void Release() override;
 
-	bool load(const std::wstring& file_path) override;
+	bool Load(const std::wstring& file_path) override;
 
-	void reset() override;
+	void Reset() override;
 
-	ITextureGapi* getTexture();
+	ITextureGapi* GetTexture();
 
 private:
 	size_t refcount;

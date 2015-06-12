@@ -11,35 +11,35 @@ class IEngine
 {
 public:
 	// interface
-	virtual void release() = 0;
+	virtual void Release() = 0;
 
 	///////////////////////////////////////
 	// creators
 	
 	/// Create a new scene.
-	virtual IScene* createScene() = 0;
+	virtual IScene* CreateScene() = 0;
 	
 	/// Create a new sound resource.
-	virtual ISoundData* createSoundData() = 0;
+	virtual ISoundData* CreateSoundData() = 0;
 	
 	/// Create a new listener.
-	virtual IListener* createListener() = 0;
+	virtual IListener* CreateListener() = 0;
 	
 	///////////////////////////////////////
 	// states
 
-	virtual void setScene(IScene* scene) = 0;
+	virtual void SetScene(IScene* scene) = 0;
 
 	/// Set the volume. Will affect every sound that comes from this sound engine.
 	/// volume should be a positive real number.
 	/// If volume is 0 the engine is muted,
 	/// if it's 1 than the engine is at maximum unampified volume (100%).
-	virtual void setMasterVolume(float volume) = 0;
+	virtual void SetMasterVolume(float volume) = 0;
 	
-	virtual float getMasterVolume() const = 0;
+	virtual float GetMasterVolume() const = 0;
 	
 	// interact
-	virtual void update(float deltaTime) = 0;
+	virtual void Update(float deltaTime) = 0;
 };
 
 

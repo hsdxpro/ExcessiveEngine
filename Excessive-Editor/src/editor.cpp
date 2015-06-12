@@ -38,23 +38,23 @@ int main()
 		d.clientW = 800;
 		d.clientH = 600;
 		d.capText = "Excessive Awesome Editor";
-	IWindow* window = Factory::createWindow(d);
+	IWindow* window = Factory::CreateWindow(d);
 
 	// Engine core
 	rGraphicsEngineRaster gDesc;
 		gDesc.gapiType = eGapiType::OPENGL_4_5;
 		gDesc.targetWindow = window;
-	graphics::IEngine* gEngine = gEngineCore.initGraphicsEngineRaster(gDesc);
+	graphics::IEngine* gEngine = gEngineCore.InitGraphicsEngineRaster(gDesc);
 
 // GAPI HACKED THINGS
-	auto gapi = gEngine->getGapi();
+	auto gapi = gEngine->GetGapi();
 
 	// Shader for fsq render
-	auto shaderAwesomium = gapi->createShaderSource(vertexShaderCode, pixelShaderCode);
+	auto shaderAwesomium = gapi->CreateShaderSource(vertexShaderCode, pixelShaderCode);
 
 // Awesome...
 	Awesomium::WebCore* web_core = Awesomium::WebCore::Initialize(Awesomium::WebConfig());
-	Awesomium::WebView* view = web_core->CreateWebView(window->getClientW(), window->getClientH());
+	Awesomium::WebView* view = web_core->CreateWebView(window->GetClientW(), window->GetClientH());
 	Awesomium::WebURL url(Awesomium::WSLit("http://www.google.com"));
 	view->LoadURL(url);
 	
@@ -65,14 +65,14 @@ int main()
 	rTextureGapi texDesc;
 		texDesc.depth = 1;
 		texDesc.format = eTextureFormat::RGBA8;
-		texDesc.height = window->getClientH();
-		texDesc.width = window->getClientW();
+		texDesc.height = window->GetClientH();
+		texDesc.width = window->GetClientW();
 		texDesc.is_cubemap = false;
 		texDesc.is_layered = false;
 		texDesc.num_levels = 1;
-	ITextureGapi* texAwesome = gapi->createTexture(texDesc);
+	ITextureGapi* texAwesome = gapi->CreateTexture(texDesc);
 
-	void* tmpAwesomiumSurfaceData = malloc(window->getClientW() * window->getClientH() * 4);
+	void* tmpAwesomiumSurfaceData = malloc(window->GetClientW() * window->GetClientH() * 4);
 
 	while (window->isOpen())
 	{
@@ -109,7 +109,7 @@ int main()
 			{
 				tmpAwesomiumSurfaceData = realloc(tmpAwesomiumSurfaceData, evt.x * evt.y * 4);
 				view->Resize(evt.x, evt.y);
-				gapi->setViewport(0, 0, evt.x, evt.y);
+				gapi->SetViewport(0, 0, evt.x, evt.y);
 
 				texAwesome->destroy();
 
@@ -121,7 +121,7 @@ int main()
 					texDesc.is_cubemap = false;
 					texDesc.is_layered = false;
 					texDesc.num_levels = 1;
-				texAwesome = gapi->createTexture(texDesc);
+				texAwesome = gapi->CreateTexture(texDesc);
 			}
 		}
 
@@ -131,29 +131,29 @@ int main()
 		
 		if (surface->is_dirty())
 		{
-			surface->CopyTo((u8*)tmpAwesomiumSurfaceData, window->getClientW() * 4, 4, false, false);
+			surface->CopyTo((u8*)tmpAwesomiumSurfaceData, window->GetClientW() * 4, 4, false, false);
 			rTextureUpdate texUpdate;
 				texUpdate.data = tmpAwesomiumSurfaceData;
 				texUpdate.depth = 1;
 				texUpdate.format = eTextureFormat::RGBA8;
-				texUpdate.height = window->getClientH();
-				texUpdate.width = window->getClientW();
+				texUpdate.height = window->GetClientH();
+				texUpdate.width = window->GetClientW();
 				texUpdate.level = 0;
-			gapi->writeTexture(texAwesome, texUpdate);
+			gapi->WriteTexture(texAwesome, texUpdate);
 		}
 
-		gapi->setTexture(texAwesome, shaderAwesomium->getSamplerIndex("tex"));
+		gapi->SetTexture(texAwesome, shaderAwesomium->GetSamplerIndex("tex"));
 
-		gapi->clearFrameBuffer(eClearFlag::COLOR_DEPTH_STENCIL, mm::vec4(0, 1, 0, 1), 1);
+		gapi->ClearFrameBuffer(eClearFlag::COLOR_DEPTH_STENCIL, mm::vec4(0, 1, 0, 1), 1);
 
 		rDepthState ds;
 			ds.enable_test = false;
-		gapi->setDepthState(ds);
+		gapi->SetDepthState(ds);
 
-		gapi->setShaderProgram(shaderAwesomium);
-		gapi->setRenderTargets(0, 0);
+		gapi->SetShaderProgram(shaderAwesomium);
+		gapi->SetRenderTargets(0, 0);
 
-		gapi->draw(3);
+		gapi->Draw(3);
 
 		window->present();
 	}

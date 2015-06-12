@@ -1,50 +1,55 @@
 #include "ComponentGraphics.h"
 #include "..\GraphicsEngine\Interfaces\IEntity.h"
 
-void ComponentGraphics::setPos(const mm::vec3& v)
+void ComponentGraphics::SetPos(const mm::vec3& v)
 {
-	entityGraphics->setPos(v);
-	WorldComponent::setPos(v);
+	entityGraphics->SetPos(v);
+	WorldComponent::SetPos(v);
 }
 
-void ComponentGraphics::setRot(const mm::quat& q)
+void ComponentGraphics::SetRot(const mm::quat& q)
 {
-	entityGraphics->setRot(q);
-	WorldComponent::setRot(q);
+	entityGraphics->SetRot(q);
+	WorldComponent::SetRot(q);
 }
 
-void ComponentGraphics::setScale(const mm::vec3& v)
+void ComponentGraphics::SetScale(const mm::vec3& v)
 {
-	entityGraphics->setScale(v);
-	WorldComponent::setScale(v);
+	entityGraphics->SetScale(v);
+	WorldComponent::SetScale(v);
 }
 
-const mm::vec3& ComponentGraphics::getPos()
+const mm::vec3& ComponentGraphics::GetPos()
 {
-	return entityGraphics->getPos();
+	return entityGraphics->GetPos();
 }
 
-const mm::quat& ComponentGraphics::getRot()
+const mm::quat& ComponentGraphics::GetRot()
 {
-	return entityGraphics->getRot();
+	return entityGraphics->GetRot();
 }
 
-const mm::vec3& ComponentGraphics::getScale()
+const mm::vec3& ComponentGraphics::GetScale()
 {
-	return entityGraphics->getScale();
+	return entityGraphics->GetScale();
 }
 
-void ComponentGraphics::_innerUpdatePos()
+void ComponentGraphics::_InnerUpdatePos()
 {
-	entityGraphics->setPos(worldTransform.getPos());
+	entityGraphics->SetPos(worldTransform.GetPos());
 }
 
-void ComponentGraphics::_innerUpdateRot()
+void ComponentGraphics::_InnerUpdateRot()
 {
-	entityGraphics->setRot(worldTransform.getRot());
+	entityGraphics->SetRot(worldTransform.GetRot());
 }
 
-void ComponentGraphics::_innerUpdateScale()
+void ComponentGraphics::_InnerUpdateScale()
 {
-	entityGraphics->setScale(worldTransform.getScale());
+	entityGraphics->SetScale(worldTransform.GetScale());
+}
+
+void ComponentGraphics::_InnerUpdateSkew()
+{
+	entityGraphics->SetSkew(worldTransform.GetSkew());
 }

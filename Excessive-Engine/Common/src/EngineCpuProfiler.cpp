@@ -16,7 +16,7 @@ EngineCpuProfiler::Scope::Scope(const std::string& name)
 {
 	IDGenerator++;
 
-	timer = Factory::createTimer();
+	timer = Factory::CreateTimer();
 	
 	// Add that Section to tree
 	ProfilerNode* node = new ProfilerNode();
@@ -36,13 +36,13 @@ EngineCpuProfiler::Scope::Scope(const std::string& name)
 	
 	lastConstructedTreeNode = node;
 
-	timer->start();
+	timer->Start();
 }
 
 EngineCpuProfiler::Scope::~Scope()
 {
 	// Save profiled time
-	lastConstructedTreeNode->profiledSeconds = timer->getSecondsPassed();
+	lastConstructedTreeNode->profiledSeconds = timer->GetSecondsPassed();
 	
 	// Go up 1 on tree
 	lastConstructedTreeNode = lastConstructedTreeNode->parent;
@@ -73,12 +73,12 @@ EngineCpuProfiler::ScopeSum::LifeCycleHelper::LifeCycleHelper(ScopeSum* scopeSum
 
 	lastConstructedTreeNode = scopeSumProfiler->profilerNode;
 
-	scopeSumProfiler->timer->reset();
+	scopeSumProfiler->timer->Reset();
 }
 
 EngineCpuProfiler::ScopeSum::LifeCycleHelper::~LifeCycleHelper()
 {
-	scopeSumProfiler->profilerNode->profiledSeconds += scopeSumProfiler->timer->getSecondsPassed();
+	scopeSumProfiler->profilerNode->profiledSeconds += scopeSumProfiler->timer->GetSecondsPassed();
 
 	// Go up 1 on tree
 	lastConstructedTreeNode = lastConstructedTreeNode->parent;
@@ -90,7 +90,7 @@ EngineCpuProfiler::ScopeSum::ScopeSum(const std::string& name)
 	// Itt a baj, DLL - nél IDGenerator 0 ad vissza, static lib - nél meg 3 - at
 	ID = IDGenerator;
 
-	timer = Factory::createTimer();
+	timer = Factory::CreateTimer();
 
 	profilerNode = new ProfilerNode();
 		profilerNode->name = name;
@@ -106,7 +106,7 @@ EngineCpuProfiler::EngineCpuProfiler()
 	window.create(sf::VideoMode(600, 600), "Engine - CpuProfiler");
 	window.setPosition({ 0, 0 });
 
-	bool b = fontArial.loadFromFile(Sys::getWorkDir() + sf::String("arial.ttf"));
+	bool b = fontArial.loadFromFile(Sys::GetWorkDir() + sf::String("arial.ttf"));
 	assert(b);
 }
 
@@ -219,7 +219,7 @@ void EngineCpuProfiler::_internalDrawSectionTreeRecursively(ProfilerNode* node, 
 		_internalDrawSectionTreeRecursively(n, curNodePosY_inout, depth + 1);
 }
 
-void EngineCpuProfiler::updateAndPresent()
+void EngineCpuProfiler::UpdateAndPresent()
 {
 	GetSingletonInstance();
 	instance->_internalupdateAndPresent();

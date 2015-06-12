@@ -38,15 +38,15 @@
 //
 //   {
 //     scoped_ptr<Foo> foo;          // No pointer managed.
-//     foo.reset(new Foo("wee"));    // Now a pointer is managed.
-//     foo.reset(new Foo("wee2"));   // Foo("wee") was destroyed.
-//     foo.reset(new Foo("wee3"));   // Foo("wee2") was destroyed.
+//     foo.Reset(new Foo("wee"));    // Now a pointer is managed.
+//     foo.Reset(new Foo("wee2"));   // Foo("wee") was destroyed.
+//     foo.Reset(new Foo("wee3"));   // Foo("wee2") was destroyed.
 //     foo->Method();                // Foo::Method() called.
 //     foo.get()->Method();          // Foo::Method() called.
 //     SomeFunc(foo.release());      // SomeFunc takes ownership, foo no longer
 //                                   // manages a pointer.
-//     foo.reset(new Foo("wee4"));   // foo manages a pointer again.
-//     foo.reset();                  // Foo("wee4") destroyed, foo no longer
+//     foo.Reset(new Foo("wee4"));   // foo manages a pointer again.
+//     foo.Reset();                  // Foo("wee4") destroyed, foo no longer
 //                                   // manages a pointer.
 //   }  // foo wasn't managing a pointer, so nothing was destroyed.
 //
@@ -75,7 +75,7 @@ namespace google_breakpad {
 // That is, scoped_ptr<T> owns the T object that it points to.
 // Like a T*, a scoped_ptr<T> may hold either NULL or a pointer to a T object.
 // Also like T*, scoped_ptr<T> is thread-compatible, and once you
-// dereference it, you get the threadsafety guarantees of T.
+// dereference it, you Get the threadsafety guarantees of T.
 //
 // The size of a scoped_ptr is small:
 // sizeof(scoped_ptr<C>) == sizeof(C*)
@@ -87,7 +87,7 @@ class scoped_ptr {
   typedef C element_type;
 
   // Constructor.  Defaults to initializing with NULL.
-  // There is no way to create an uninitialized scoped_ptr.
+  // There is no way to Create an uninitialized scoped_ptr.
   // The input parameter must be allocated with new.
   explicit scoped_ptr(C* p = NULL) : ptr_(p) { }
 
@@ -100,7 +100,7 @@ class scoped_ptr {
 
   // Reset.  Deletes the current owned object, if any.
   // Then takes ownership of a new object, if given.
-  // this->reset(this->get()) works.
+  // this->Reset(this->get()) works.
   void reset(C* p = NULL) {
     if (p != ptr_) {
       enum { type_must_be_complete = sizeof(C) };
@@ -109,7 +109,7 @@ class scoped_ptr {
     }
   }
 
-  // Accessors to get the owned object.
+  // Accessors to Get the owned object.
   // operator* and operator-> will assert() if there is no current object.
   C& operator*() const {
     assert(ptr_ != NULL);
@@ -192,7 +192,7 @@ class scoped_array {
   typedef C element_type;
 
   // Constructor.  Defaults to intializing with NULL.
-  // There is no way to create an uninitialized scoped_array.
+  // There is no way to Create an uninitialized scoped_array.
   // The input parameter must be allocated with new [].
   explicit scoped_array(C* p = NULL) : array_(p) { }
 
@@ -205,7 +205,7 @@ class scoped_array {
 
   // Reset.  Deletes the current owned object, if any.
   // Then takes ownership of a new object, if given.
-  // this->reset(this->get()) works.
+  // this->Reset(this->get()) works.
   void reset(C* p = NULL) {
     if (p != array_) {
       enum { type_must_be_complete = sizeof(C) };
@@ -300,7 +300,7 @@ class scoped_ptr_malloc {
   typedef C element_type;
 
   // Constructor.  Defaults to initializing with NULL.
-  // There is no way to create an uninitialized scoped_ptr.
+  // There is no way to Create an uninitialized scoped_ptr.
   // The input parameter must be allocated with an allocator that matches the
   // Free functor.  For the default Free functor, this is malloc, calloc, or
   // realloc.
@@ -308,12 +308,12 @@ class scoped_ptr_malloc {
 
   // Destructor.  If there is a C object, call the Free functor.
   ~scoped_ptr_malloc() {
-    reset();
+    Reset();
   }
 
   // Reset.  Calls the Free functor on the current owned object, if any.
   // Then takes ownership of a new object, if given.
-  // this->reset(this->get()) works.
+  // this->Reset(this->get()) works.
   void reset(C* p = NULL) {
     if (ptr_ != p) {
       FreeProc free_proc;

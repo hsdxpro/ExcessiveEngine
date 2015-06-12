@@ -47,7 +47,7 @@
 // #define HAS_GLOBAL_STRING somewhere in a global header file and then
 // globally replace std::string with string.  Then include this header
 // file everywhere where string is used.  If you want to revert back to
-// using std::string, simply remove the #define (HAS_GLOBAL_STRING).
+// using std::string, simply Remove the #define (HAS_GLOBAL_STRING).
 
 #ifndef THIRD_PARTY_BREAKPAD_SRC_COMMON_USING_STD_STRING_H_
 #define THIRD_PARTY_BREAKPAD_SRC_COMMON_USING_STD_STRING_H_

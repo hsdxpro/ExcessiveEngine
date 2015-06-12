@@ -57,7 +57,7 @@ struct CustomClientInfo;
 //   and the other in case of assertion failures
 //
 // Note that it is the responsibility of the client code of
-// this class to set the unhandled exception filter with the
+// this class to Set the unhandled exception filter with the
 // system by calling the SetUnhandledExceptionFilter function
 // and the client code should explicitly request dump generation.
 class CrashGenerationClient {
@@ -109,7 +109,7 @@ class CrashGenerationClient {
                                              HANDLE hProcess);
 
  private:
-  // Connects to the appropriate pipe and sets the pipe handle state.
+  // Connects to the appropriate pipe and Sets the pipe handle state.
   //
   // Returns the pipe handle if everything goes well; otherwise Returns NULL.
   HANDLE ConnectToServer();

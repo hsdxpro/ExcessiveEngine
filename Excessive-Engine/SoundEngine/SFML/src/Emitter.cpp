@@ -14,64 +14,64 @@ Emitter::~Emitter() {
 	delete pSFMLSoundSource;
 }
 
-void Emitter::setPos(const mm::vec3& newPos) {
+void Emitter::SetPos(const mm::vec3& newPos) {
 	pos = newPos;
 }
 
-void Emitter::setVel(const mm::vec3& newVel) {
+void Emitter::SetVel(const mm::vec3& newVel) {
 	vel = newVel;
 }
 
-void Emitter::setLooped(bool looped) {
-	pSFMLSoundSource->setLooped(looped);
+void Emitter::SetLooped(bool looped) {
+	pSFMLSoundSource->SetLooped(looped);
 }
 
-void Emitter::setVolume(float volume) {
-	pSFMLSoundSource->setVolume(volume);
+void Emitter::SetVolume(float volume) {
+	pSFMLSoundSource->SetVolume(volume);
 }
 
-void Emitter::start() {
-	pSFMLSoundSource->start();
+void Emitter::Start() {
+	pSFMLSoundSource->Start();
 }
 
-void Emitter::pause() {
-	pSFMLSoundSource->pause();
+void Emitter::Pause() {
+	pSFMLSoundSource->Pause();
 }
 
-void Emitter::stop() {
-	pSFMLSoundSource->stop();
+void Emitter::Stop() {
+	pSFMLSoundSource->Stop();
 }
 
-mm::vec3 Emitter::getPos() const {
+mm::vec3 Emitter::GetPos() const {
 	return pos;
 }
 
-mm::vec3 Emitter::getVel() const {
+mm::vec3 Emitter::GetVel() const {
 	return vel;
 }
 
-float Emitter::getVolume() const {
-	return pSFMLSoundSource->getVolume() / 100.f;
+float Emitter::GetVolume() const {
+	return pSFMLSoundSource->GetVolume() / 100.f;
 }
 
-bool Emitter::getLooped() const {
-	return pSFMLSoundSource->getLooped();
+bool Emitter::GetLooped() const {
+	return pSFMLSoundSource->GetLooped();
 }
 
-void Emitter::setSoundData(sound::ISoundData* data)  {
+void Emitter::SetSoundData(sound::ISoundData* data)  {
 	//FIXME error occurs in this function!
 	SoundData* SFMLData = static_cast<SoundData*>(data);
 	assert(pSFMLSoundSource == 0);
 	delete pSFMLSoundSource; //FIXME error occurs at this deletion (virtual destructor used)
-	pSFMLSoundSource = SFMLData->getSFMLSoundData()->createSFMLSoundSource();
+	pSFMLSoundSource = SFMLData->GetSFMLSoundData()->CreateSFMLSoundSource();
 
-	soundData.reset(SFMLData);
+	soundData.Reset(SFMLData);
 }
 
-SoundData* Emitter::getSoundData() {
+SoundData* Emitter::GetSoundData() {
 	return soundData.get();
 }
 
-SFMLCommonSoundEmitter* Emitter::getSFMLSoundSource() {
+SFMLCommonSoundEmitter* Emitter::GetSFMLSoundSource() {
 	return pSFMLSoundSource;
 }

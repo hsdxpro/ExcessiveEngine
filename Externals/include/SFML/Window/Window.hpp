@@ -575,7 +575,7 @@ private:
 ///    // Activate the window for OpenGL rendering
 ///    window.setActive();
 ///
-///    // OpenGL drawing commands go here...
+///    // OpenGL Drawing commands go here...
 ///
 ///    // End the current frame and display its contents on screen
 ///    window.display();

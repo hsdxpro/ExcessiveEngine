@@ -7,50 +7,55 @@ ComponentCamera::ComponentCamera(graphics::ICamera* cam)
 
 }
 
-void ComponentCamera::setDirNormed(const mm::vec3& dir)
+void ComponentCamera::SetDirNormed(const mm::vec3& dir)
 {
-	cam->setDirNormed(dir);
-	setRot(cam->getRot());
+	cam->SetDirNormed(dir);
+	SetRot(cam->GetRot());
 }
 
-void ComponentCamera::setPos(const mm::vec3& v)
+void ComponentCamera::SetPos(const mm::vec3& v)
 {
-	cam->setPos(v);
-	WorldComponent::setPos(v);
+	cam->SetPos(v);
+	WorldComponent::SetPos(v);
 }
 
-void ComponentCamera::setRot(const mm::quat& q)
+void ComponentCamera::SetRot(const mm::quat& q)
 {
-	cam->setRot(q);
-	WorldComponent::setRot(q);
+	cam->SetRot(q);
+	WorldComponent::SetRot(q);
 }
 
-const mm::vec3 ComponentCamera::getPos() const
+const mm::vec3 ComponentCamera::GetPos() const
 {
-	return cam->getPos();
+	return cam->GetPos();
 }
 
-const mm::quat ComponentCamera::getRot() const
+const mm::quat ComponentCamera::GetRot() const
 {
-	return cam->getRot();
+	return cam->GetRot();
 }
 
-graphics::ICamera* ComponentCamera::getCam()
+graphics::ICamera* ComponentCamera::GetCam()
 {
 	return cam;
 }
 
-void ComponentCamera::_innerUpdatePos()
+void ComponentCamera::_InnerUpdatePos()
 {
-	cam->setPos(worldTransform.getPos());
+	cam->SetPos(worldTransform.GetPos());
 }
 
-void ComponentCamera::_innerUpdateRot()
+void ComponentCamera::_InnerUpdateRot()
 {
-	cam->setRot(worldTransform.getRot());
+	cam->SetRot(worldTransform.GetRot());
 }
 
-void ComponentCamera::_innerUpdateScale()
+void ComponentCamera::_InnerUpdateScale()
+{
+
+}
+
+void ComponentCamera::_InnerUpdateSkew()
 {
 
 }

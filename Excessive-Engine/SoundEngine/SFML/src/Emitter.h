@@ -19,25 +19,25 @@ public:
 	Emitter(const Emitter& other) = delete;
 	Emitter& operator=(const Emitter& other) = delete;
 
-	void setPos(const mm::vec3& newPos) override;
-	void setVel(const mm::vec3& newVel) override;
-	void setVolume(float volume) override;
-	void setLooped(bool looped) override;
+	void SetPos(const mm::vec3& newPos) override;
+	void SetVel(const mm::vec3& newVel) override;
+	void SetVolume(float volume) override;
+	void SetLooped(bool looped) override;
 
-	void start() override;
-	void pause() override;
-	void stop() override;
+	void Start() override;
+	void Pause() override;
+	void Stop() override;
 	
-	mm::vec3 getPos() const override;
-	mm::vec3 getVel() const override;
-	float getVolume() const override;
-	bool getLooped() const override;
+	mm::vec3 GetPos() const override;
+	mm::vec3 GetVel() const override;
+	float GetVolume() const override;
+	bool GetLooped() const override;
 
-	void setSoundData(sound::ISoundData* data) override;
+	void SetSoundData(sound::ISoundData* data) override;
 	
-	SoundData* getSoundData() override;
+	SoundData* GetSoundData() override;
 
-	SFMLCommonSoundEmitter* getSFMLSoundSource();
+	SFMLCommonSoundEmitter* GetSFMLSoundSource();
 	
 protected:
 	mm::vec3 pos;

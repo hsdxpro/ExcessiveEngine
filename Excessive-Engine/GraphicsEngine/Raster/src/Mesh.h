@@ -60,17 +60,17 @@ public:
 	// interface
 
 	// refcount / release
-	void acquire();
-	void release() override;
+	void Acquire();
+	void Release() override;
 
 	// load
-	void load(const wchar_t* file_path) override; // it is supposed to return an error code
+	void Load(const wchar_t* file_path) override; // it is supposed to return an error code
 
 	// new modify
-	bool update(MeshData data) override;
-	bool updateVertexData(const void* data, u32 offset, u32 size) override; // both params in bytes, format and total size considered the same
+	bool Update(MeshData data) override;
+	bool UpdateVertexData(const void* data, u32 offset, u32 size) override; // both params in bytes, format and total size considered the same
 
-	void reset() override;
+	void Reset() override;
 
 	// interface end
 	////////////////////////////////////
@@ -114,21 +114,21 @@ public:
 		u32 offset;
 	};
 
-	// getters
-	bool getElementBySemantic(ElementInfo& info, ElementSemantic semantic) const;
-	int getElementsNum() const;
-	const ElementInfo* getElements() const;
-	u64 getElementConfigId() const;
+	// Getters
+	bool GetElementBySemantic(ElementInfo& info, ElementSemantic semantic) const;
+	int GetElementsNum() const;
+	const ElementInfo* GetElements() const;
+	u64 GetElementConfigId() const;
 
-	int getNumVertexBuffers() { return num_streams; }
-	const VertexStream* getVertexBuffers() { return vertex_streams; }
+	int GetNumVertexBuffers() { return num_streams; }
+	const VertexStream* GetVertexBuffers() { return vertex_streams; }
 
-	IIndexBuffer* getIndexBuffer() { return index_buffer; }
-	const std::vector<MaterialGroup>& getMaterialIds() { return mat_ids; }
+	IIndexBuffer* GetIndexBuffer() { return index_buffer; }
+	const std::vector<MaterialGroup>& GetMaterialIds() { return mat_ids; }
 
 // internal mechanics
 protected:
-	// optimize data for gpu drawing
+	// optimize data for gpu Drawing
 	void optimize(void* vertex_data, u32 num_verts, int vertex_stride,
 		u32* index_data, u32 num_indices,
 		MaterialGroup* mat_ids, u32 num_mat_ids);
@@ -145,21 +145,21 @@ protected:
 	void packVertices(ElementDesc* input_format, ElementInfo* output_format, int input_count, int output_count, void* input, void* output, u32 num_verts); // required size assumed
 
 	// helpers with the format
-	inline int getFormatStrideInput(ElementDesc* elements, int num_elements) {
+	inline int GetFormatStrideInput(ElementDesc* elements, int num_elements) {
 		int s = 0;
 		for (int i = 0; i < num_elements; i++) {
 			s += elements[i].num_components * sizeof(float);
 		}
 		return s;
 	}
-	inline int getFormatStrideInternal(ElementInfo* elements, int num_elements) {
+	inline int GetFormatStrideInternal(ElementInfo* elements, int num_elements) {
 		int s = 0;
 		for (int i = 0; i < num_elements; i++) {
-			s += elements[i].num_components * getElementTypeSize(elements[i].type);
+			s += elements[i].num_components * GetElementTypeSize(elements[i].type);
 		}
 		return s;
 	}
-	inline int getElementTypeSize(ElementType type) {
+	inline int GetElementTypeSize(ElementType type) {
 		switch (type) {
 			case Mesh::FLOAT:
 				return 4;
@@ -188,7 +188,7 @@ protected:
 		}
 
 	}
-	ElementInfo getBaseInfo(ElementDesc desc) {
+	ElementInfo GetBaseInfo(ElementDesc desc) {
 		ElementSemantic semantic = desc.semantic;
 
 		ElementInfo info;

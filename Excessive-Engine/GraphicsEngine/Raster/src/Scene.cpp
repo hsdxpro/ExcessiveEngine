@@ -14,27 +14,27 @@ Scene::~Scene() {
 	clear();
 }
 
-void Scene::release() {
+void Scene::Release() {
 	delete this;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// scene content add/erase
+// scene content Add/erase
 
-Entity* Scene::addEntity() {
+Entity* Scene::AddEntity() {
 	Entity* e = new Entity;
 	entities.insert(e);
 	return e;
 }
 
-Light* Scene::addLight() {
+Light* Scene::AddLight() {
 	Light* l = new Light;
 	lights.insert(l);
 	return l;
 }
 
 
-void Scene::remove(graphics::IEntity* entity) {
+void Scene::Remove(graphics::IEntity* entity) {
 	auto it = entities.find((Entity*)entity);
 	if (it != entities.end()) {
 		delete *it;
@@ -42,7 +42,7 @@ void Scene::remove(graphics::IEntity* entity) {
 	}
 }
 
-void Scene::remove(graphics::ILight* light) {
+void Scene::Remove(graphics::ILight* light) {
 	auto it = lights.find((Light*)light);
 	if (it != lights.end()) {
 		delete *it;
@@ -63,17 +63,17 @@ void Scene::clear()
 	lights.clear();
 }
 
-void Scene::setCamera(graphics::ICamera* c) {
+void Scene::SetCamera(graphics::ICamera* c) {
 	cam = c;
 }
 
-graphics::ICamera* Scene::getCamera() {
+graphics::ICamera* Scene::GetCamera() {
 	return cam;
 }
 
-const std::unordered_set<Entity*>& Scene::getEntities() {
+const std::unordered_set<Entity*>& Scene::GetEntities() {
 	return entities;
 }
-const std::unordered_set<Light*>& Scene::getLights() {
+const std::unordered_set<Light*>& Scene::GetLights() {
 	return lights;
 }

@@ -8,18 +8,18 @@ class SFMLCommonSoundEmitter
 {
 public:
 	virtual ~SFMLCommonSoundEmitter();
-	virtual void setPitch(float pitch) = 0;
+	virtual void SetPitch(float pitch) = 0;
 	//volume is real number 0 meaning muted, and 1 meaning original volume
-	virtual void setVolume(float volume) = 0;
-	virtual void setPosition(const mm::vec3& newPos) = 0;
-	virtual void setLooped(bool loop) = 0;
+	virtual void SetVolume(float volume) = 0;
+	virtual void SetPosition(const mm::vec3& newPos) = 0;
+	virtual void SetLooped(bool loop) = 0;
 
-	virtual void start() = 0;
-	virtual void pause() = 0;
-	virtual void stop() = 0;
+	virtual void Start() = 0;
+	virtual void Pause() = 0;
+	virtual void Stop() = 0;
 	
-	virtual float getPitch() const = 0;
-	virtual float getVolume() const = 0;
-	virtual mm::vec3 getPosition() const = 0;
-	virtual bool getLooped() const = 0;
+	virtual float GetPitch() const = 0;
+	virtual float GetVolume() const = 0;
+	virtual mm::vec3 GetPosition() const = 0;
+	virtual bool GetLooped() const = 0;
 };

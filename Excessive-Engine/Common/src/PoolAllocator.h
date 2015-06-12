@@ -7,7 +7,7 @@
 template< class t >
 class PoolAllocator
 {
-  char* pool; //we assume this address is aligned
+  char* pool; //we assume this Address is aligned
   u32 size; //size of the whole pool
   u32 first_free_element;
 

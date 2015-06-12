@@ -8,32 +8,32 @@
 class Camera : public graphics::ICamera 
 {
 public:
-	void setFOV(float rad) override;
-	void setNearPlane(float nP) override;
-	void setFarPlane(float fP) override;
+	void SetFOV(float rad) override;
+	void SetNearPlane(float nP) override;
+	void SetFarPlane(float fP) override;
 
-	void setPos(const mm::vec3& p) override;
-	void setTarget(const mm::vec3& p) override;
-	void setDirNormed(const mm::vec3& p) override;
-	void setRot(const mm::quat& q) override;
+	void SetPos(const mm::vec3& p) override;
+	void SetTarget(const mm::vec3& p) override;
+	void SetDirNormed(const mm::vec3& p) override;
+	void SetRot(const mm::quat& q) override;
 
-	float getFOVRad() const override;
-	float getNearPlane() const override;
-	float getFarPlane() const override;
+	float GetFOVRad() const override;
+	float GetNearPlane() const override;
+	float GetFarPlane() const override;
 
-	mm::mat4 getViewMatrix() const override;
-	mm::mat4 getProjMatrix(float aspectRatio) const override;
+	mm::mat4 GetViewMatrix() const override;
+	mm::mat4 GetProjMatrix(float aspectRatio) const override;
 
-	mm::vec3 getDirNormedFront() const override;
-	mm::vec3 getDirNormedBack() const override;
-	mm::vec3 getDirNormedUp() const override;
-	mm::vec3 getDirNormedDown() const override;
-	mm::vec3 getDirNormedRight() const override;
-	mm::vec3 getDirNormedLeft() const override;
+	mm::vec3 GetDirNormedFront() const override;
+	mm::vec3 GetDirNormedBack() const override;
+	mm::vec3 GetDirNormedUp() const override;
+	mm::vec3 GetDirNormedDown() const override;
+	mm::vec3 GetDirNormedRight() const override;
+	mm::vec3 GetDirNormedLeft() const override;
 
-	const mm::vec3& getPos() const override;
-	const mm::quat& getRot() const override;
-	const mm::vec3 getTargetPos() const override;
+	const mm::vec3& GetPos() const override;
+	const mm::quat& GetRot() const override;
+	const mm::vec3 GetTarGetPos() const override;
 
 	Camera(graphics::rProjOrtho proj, float nearPlane, float farPlane);
 	Camera(graphics::rProjPersp proj, float nearPlane, float farPlane);

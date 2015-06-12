@@ -5,6 +5,6 @@
 SFMLSoundData::SFMLSoundData(const sf::SoundBuffer& buffer) : buffer(buffer) {
 }
 
-SFMLCommonSoundEmitter* SFMLSoundData::createSFMLSoundSource() const {
+SFMLCommonSoundEmitter* SFMLSoundData::CreateSFMLSoundSource() const {
 	return new SFMLSoundWrapper(buffer);
 }

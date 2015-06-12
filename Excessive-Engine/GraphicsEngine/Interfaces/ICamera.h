@@ -35,32 +35,32 @@ struct rProjPersp
 class ICamera
 {
 public:
-	virtual void setFOV(float rad) = 0;
-	virtual void setNearPlane(float nP) = 0;
-	virtual void setFarPlane(float fP) = 0;
+	virtual void SetFOV(float rad) = 0;
+	virtual void SetNearPlane(float nP) = 0;
+	virtual void SetFarPlane(float fP) = 0;
 	
-	virtual void setPos(const mm::vec3& p) = 0;
-	virtual void setTarget(const mm::vec3& p) = 0;
-	virtual void setDirNormed(const mm::vec3& p) = 0;
-	virtual void setRot(const mm::quat& q) = 0;
+	virtual void SetPos(const mm::vec3& p) = 0;
+	virtual void SetTarget(const mm::vec3& p) = 0;
+	virtual void SetDirNormed(const mm::vec3& p) = 0;
+	virtual void SetRot(const mm::quat& q) = 0;
 	
-	virtual float getFOVRad() const = 0;
-	virtual float getNearPlane() const = 0;
-	virtual float getFarPlane() const = 0;
+	virtual float GetFOVRad() const = 0;
+	virtual float GetNearPlane() const = 0;
+	virtual float GetFarPlane() const = 0;
 	
-	virtual mm::mat4 getViewMatrix() const = 0;
-	virtual mm::mat4 getProjMatrix(float aspectRatio) const = 0;
+	virtual mm::mat4 GetViewMatrix() const = 0;
+	virtual mm::mat4 GetProjMatrix(float aspectRatio) const = 0;
 	
-	virtual mm::vec3 getDirNormedFront() const = 0;
-	virtual mm::vec3 getDirNormedBack() const = 0;
-	virtual mm::vec3 getDirNormedUp() const = 0;
-	virtual mm::vec3 getDirNormedDown() const = 0;
-	virtual mm::vec3 getDirNormedRight() const = 0;
-	virtual mm::vec3 getDirNormedLeft() const = 0;
+	virtual mm::vec3 GetDirNormedFront() const = 0;
+	virtual mm::vec3 GetDirNormedBack() const = 0;
+	virtual mm::vec3 GetDirNormedUp() const = 0;
+	virtual mm::vec3 GetDirNormedDown() const = 0;
+	virtual mm::vec3 GetDirNormedRight() const = 0;
+	virtual mm::vec3 GetDirNormedLeft() const = 0;
 	
-	virtual const mm::vec3& getPos() const = 0;
-	virtual const mm::quat& getRot() const = 0;
-	virtual const mm::vec3 getTargetPos() const = 0;
+	virtual const mm::vec3& GetPos() const = 0;
+	virtual const mm::quat& GetRot() const = 0;
+	virtual const mm::vec3 GetTarGetPos() const = 0;
 };
 
 

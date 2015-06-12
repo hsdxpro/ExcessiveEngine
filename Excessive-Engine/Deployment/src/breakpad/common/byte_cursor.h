@@ -52,8 +52,8 @@ namespace google_breakpad {
 // A buffer holding a series of bytes.
 struct ByteBuffer {
   ByteBuffer() : start(0), end(0) { }
-  ByteBuffer(const uint8_t *set_start, size_t set_size)
-      : start(set_start), end(set_start + set_size) { }
+  ByteBuffer(const uint8_t *set_start, size_t Set_size)
+      : start(set_start), end(set_start + Set_size) { }
   ~ByteBuffer() { };
 
   // Equality operators. Useful in unit tests, and when we're using
@@ -86,11 +86,11 @@ class ByteCursor {
       : buffer_(buffer), here_(buffer->start), 
         big_endian_(big_endian), complete_(true) { }
 
-  // Accessor and setter for this cursor's endianness flag.
+  // Accessor and Setter for this cursor's endianness flag.
   bool big_endian() const { return big_endian_; }
-  void set_big_endian(bool big_endian) { big_endian_ = big_endian; }
+  void Set_big_endian(bool big_endian) { big_endian_ = big_endian; }
 
-  // Accessor and setter for this cursor's current position. The setter
+  // Accessor and Setter for this cursor's current position. The Setter
   // returns a reference to this cursor.
   const uint8_t *here() const { return here_; }
   ByteCursor &set_here(const uint8_t *here) {
@@ -111,7 +111,7 @@ class ByteCursor {
   operator bool() const { return complete_; }
 
   // Read a SIZE-byte integer at this cursor, signed if IS_SIGNED is true,
-  // unsigned otherwise, using the cursor's established endianness, and set
+  // unsigned otherwise, using the cursor's established endianness, and Set
   // *RESULT to the number. If we read off the end of our buffer, clear
   // this cursor's complete_ flag, and store a dummy value in *RESULT.
   // Return a reference to this cursor.
@@ -141,7 +141,7 @@ class ByteCursor {
   }
 
   // Read an integer, using the cursor's established endianness and
-  // *RESULT's size and signedness, and set *RESULT to the number. If we
+  // *RESULT's size and signedness, and Set *RESULT to the number. If we
   // read off the end of our buffer, clear this cursor's complete_ flag.
   // Return a reference to this cursor.
   template<typename T>
@@ -152,7 +152,7 @@ class ByteCursor {
 
   // Copy the SIZE bytes at the cursor to BUFFER, and advance this
   // cursor to the end of them. If we read off the end of our buffer,
-  // clear this cursor's complete_ flag, and set *POINTER to NULL.
+  // clear this cursor's complete_ flag, and Set *POINTER to NULL.
   // Return a reference to this cursor.
   ByteCursor &Read(uint8_t *buffer, size_t size) {
     if (CheckAvailable(size)) {
@@ -164,7 +164,7 @@ class ByteCursor {
 
   // Set STR to a copy of the '\0'-terminated string at the cursor. If the
   // byte buffer does not contain a terminating zero, clear this cursor's
-  // complete_ flag, and set STR to the empty string. Return a reference to
+  // complete_ flag, and Set STR to the empty string. Return a reference to
   // this cursor.
   ByteCursor &CString(string *str) {
     const uint8_t *end
@@ -185,13 +185,13 @@ class ByteCursor {
   // byte. Specifically:
   //
   // - If there are not LIMIT bytes available at the cursor, clear the
-  //   cursor's complete_ flag and set STR to the empty string.
+  //   cursor's complete_ flag and Set STR to the empty string.
   //
   // - Otherwise, if the LIMIT bytes at the cursor contain any '\0'
-  //   characters, set *STR to a copy of the bytes before the first '\0',
+  //   characters, Set *STR to a copy of the bytes before the first '\0',
   //   and advance the cursor by LIMIT bytes.
   //   
-  // - Otherwise, set *STR to a copy of those LIMIT bytes, and advance the
+  // - Otherwise, Set *STR to a copy of those LIMIT bytes, and advance the
   //   cursor by LIMIT bytes.
   ByteCursor &CString(string *str, size_t limit) {
     if (CheckAvailable(limit)) {
@@ -211,7 +211,7 @@ class ByteCursor {
   // Set *POINTER to point to the SIZE bytes at the cursor, and advance
   // this cursor to the end of them. If SIZE is omitted, don't move the
   // cursor. If we read off the end of our buffer, clear this cursor's
-  // complete_ flag, and set *POINTER to NULL. Return a reference to this
+  // complete_ flag, and Set *POINTER to NULL. Return a reference to this
   // cursor.
   ByteCursor &PointTo(const uint8_t **pointer, size_t size = 0) {
     if (CheckAvailable(size)) {
@@ -225,7 +225,7 @@ class ByteCursor {
 
   // Skip SIZE bytes at the cursor. If doing so would advance us off
   // the end of our buffer, clear this cursor's complete_ flag, and
-  // set *POINTER to NULL. Return a reference to this cursor.
+  // Set *POINTER to NULL. Return a reference to this cursor.
   ByteCursor &Skip(size_t size) {
     if (CheckAvailable(size))
       here_ += size;
@@ -234,7 +234,7 @@ class ByteCursor {
 
  private:
   // If there are at least SIZE bytes available to read from the buffer,
-  // return true. Otherwise, set here_ to the end of the buffer, set
+  // return true. Otherwise, Set here_ to the end of the buffer, Set
   // complete_ to false, and return false.
   bool CheckAvailable(size_t size) {
     if (Available() >= size) {

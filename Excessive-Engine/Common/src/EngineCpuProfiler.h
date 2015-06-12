@@ -86,7 +86,7 @@ protected:
 
 public:
 	static void init();
-	static void updateAndPresent();
+	static void UpdateAndPresent();
 	static EngineCpuProfiler* GetSingletonInstance();
 
 protected:

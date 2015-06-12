@@ -46,7 +46,7 @@ Mesh::Mesh(IGapi* gapi) : gapi(gapi) {
 }
 
 Mesh::~Mesh() {
-	reset();
+	Reset();
 	std::cout << "Mesh @" << this << ": kthxbai";
 }
 
@@ -54,11 +54,11 @@ Mesh::~Mesh() {
 ////////////////////////////////////////////////////////////////////////////////
 // lifecycle // GOOD
 
-void Mesh::acquire() {
+void Mesh::Acquire() {
 	refcount++;
 }
 
-void Mesh::release() {
+void Mesh::Release() {
 	refcount--;
 	if (refcount == 0) {
 		delete this;
@@ -69,7 +69,7 @@ void Mesh::release() {
 ////////////////////////////////////////////////////////////////////////////////
 // load
 
-void Mesh::load(const wchar_t* file_path) {
+void Mesh::Load(const wchar_t* file_path) {
 	// TODO: implement this
 }
 
@@ -78,12 +78,12 @@ void Mesh::load(const wchar_t* file_path) {
 ////////////////////////////////////////////////////////////////////////////////
 // new modify
 
-// update whole mesh
-bool Mesh::update(MeshData data) {
+// Update whole mesh
+bool Mesh::Update(MeshData data) {
 	auto Deleter = [](void* ptr) {operator delete(ptr); };
 	using RawUniquePtr = std::unique_ptr < void, decltype(Deleter) > ;
 
-	reset();
+	Reset();
 
 	// a little utility for cleaning up half-baked mesh if an error occurs
 	// no way I can track like 10 return statements
@@ -92,7 +92,7 @@ bool Mesh::update(MeshData data) {
 		bool perform_cleanup;
 		~ScopeGuardT() {
 			if (perform_cleanup) {
-				parent->reset();
+				parent->Reset();
 			}
 		}
 	} scope_guard{this, true};
@@ -135,8 +135,8 @@ bool Mesh::update(MeshData data) {
 			is_bitangent = true;
 		}
 
-		// add element to internals
-		elements[i] = getBaseInfo(data.vertex_elements[i]);
+		// Add element to internals
+		elements[i] = GetBaseInfo(data.vertex_elements[i]);
 		num_elements++;
 	}
 
@@ -149,7 +149,7 @@ bool Mesh::update(MeshData data) {
 
 	// sort internal elements
 	if (is_tangent) {
-		elements[data.vertex_elements_num] = getBaseInfo(ElementDesc{BITANGENT, 3});
+		elements[data.vertex_elements_num] = GetBaseInfo(ElementDesc{BITANGENT, 3});
 		num_elements++;
 	}
 	std::sort(elements, elements + num_elements, [](const ElementInfo& o1, const ElementInfo& o2){ return o1.semantic < o2.semantic; });
@@ -157,8 +157,8 @@ bool Mesh::update(MeshData data) {
 
 
 	// calculate input stride, internal stride, vertex count
-	int input_stride = getFormatStrideInput(data.vertex_elements, data.vertex_elements_num);
-	int internal_stride = getFormatStrideInternal(elements, num_elements);
+	int input_stride = GetFormatStrideInput(data.vertex_elements, data.vertex_elements_num);
+	int internal_stride = GetFormatStrideInternal(elements, num_elements);
 	u32 num_vertices = data.vertex_bytes / (u32)input_stride;
 
 
@@ -212,8 +212,8 @@ bool Mesh::update(MeshData data) {
 	ib_desc.prefer_cpu_storage = false;
 	ib_desc.size = data.index_num * sizeof(u32);
 
-	IIndexBuffer* _ib = gapi->createIndexBuffer(ib_desc);
-	gapi->writeBuffer(_ib, data.index_data, ib_desc.size, 0);
+	IIndexBuffer* _ib = gapi->CreateIndexBuffer(ib_desc);
+	gapi->WriteBuffer(_ib, data.index_data, ib_desc.size, 0);
 
 	if (!_ib) {
 		return false;
@@ -236,20 +236,20 @@ bool Mesh::update(MeshData data) {
 		// copy relevant stuff from packed_vertex_data
 		size_t input_ptr = (size_t)packed_vertex_data.get() + offset;
 		size_t output_ptr = (size_t)vb_data.get();
-		size_t chunk_size = elements[i].num_components * getElementTypeSize(elements[i].type);
+		size_t chunk_size = elements[i].num_components * GetElementTypeSize(elements[i].type);
 		offset += chunk_size;
 		for (size_t j = 0; j < num_vertices; j++) {
 			memcpy((void*)output_ptr, (void*)input_ptr, chunk_size);
 			input_ptr += internal_stride;
 			output_ptr += chunk_size;
 		}
-		// create and fill vertex buffer
+		// Create and fill vertex buffer
 		vb_desc.size = chunk_size * num_vertices;  
-		_vb = gapi->createVertexBuffer(vb_desc);
+		_vb = gapi->CreateVertexBuffer(vb_desc);
 		if (!_vb) {
 			return false;
 		}
-		gapi->writeBuffer(_vb, vb_data.get(), vb_desc.size, 0);
+		gapi->WriteBuffer(_vb, vb_data.get(), vb_desc.size, 0);
 		vertex_streams[i].vb = _vb;
 		vertex_streams[i].stride = chunk_size;
 		vertex_streams[i].offset = 0;
@@ -263,7 +263,7 @@ bool Mesh::update(MeshData data) {
 
 
 
-	// set elements (vb and offset, as other params are set)
+	// Set elements (vb and offset, as other params are Set)
 	// int offset = 0;
 	for (int i = 0; i < num_elements; i++) {
 		vertex_stream_content[i] = elements[i].semantic;
@@ -275,8 +275,8 @@ bool Mesh::update(MeshData data) {
 	return true;
 }
 
-// update vertex data
-bool Mesh::updateVertexData(const void* data, u32 offset, u32 size) {
+// Update vertex data
+bool Mesh::UpdateVertexData(const void* data, u32 offset, u32 size) {
 	std::cout << "[WARNING] updating vertex data does not work at the moment" << std::endl;
 	return false;
 }
@@ -284,7 +284,7 @@ bool Mesh::updateVertexData(const void* data, u32 offset, u32 size) {
 
 // reset
 //	- delete all underlying resources
-void Mesh::reset() {
+void Mesh::Reset() {
 	// delete and nullify buffers
 	for (auto& stream : vertex_streams) {
 		if (stream.vb) {
@@ -320,7 +320,7 @@ void Mesh::reset() {
 ////////////////////////////////////////////////////////////////////////////////
 // helper
 
-// optimize data for gpu drawing
+// optimize data for gpu Drawing
 void Mesh::optimize(void* vertex_data, u32 num_verts, int vertex_stride,
 	u32* index_data, u32 num_indices,
 	MaterialGroup* mat_ids, u32 num_mat_ids)
@@ -398,7 +398,7 @@ void PackColor(void* input, void* output, int num_components) { // copies n byte
 }
 
 void Mesh::packVertices(ElementDesc* input_format, ElementInfo* output_format, int input_count, int output_count, void* input, void* output, u32 num_verts) {
-	// create a function that can pack 1 vertex
+	// Create a function that can pack 1 vertex
 
 	// compute offsets by semantics, that is, where a semantic is found
 	// semantic's index is log2(semantic)
@@ -417,7 +417,7 @@ void Mesh::packVertices(ElementDesc* input_format, ElementInfo* output_format, i
 		offset += size;
 	}
 	for (int i = 0, offset = 0; i < output_count; i++) {
-		int size = output_format[i].num_components * getElementTypeSize(output_format[i].type);
+		int size = output_format[i].num_components * GetElementTypeSize(output_format[i].type);
 		offset_output[fast_log2(output_format[i].semantic)] = offset;
 		offset += size;
 	}
@@ -435,10 +435,10 @@ void Mesh::packVertices(ElementDesc* input_format, ElementInfo* output_format, i
 
 		// pack each semantic
 		for (auto semantic : semantics) {
-			// get attribute's offset in vertex from LUT
+			// Get attribute's offset in vertex from LUT
 			int offseti = offset_input[fast_log2(semantic)]; 
 			int offseto = offset_output[fast_log2(semantic)];
-			// calc attribute's absolute address
+			// calc attribute's absolute Address
 			void* off_in = (void*)(size_t(input) + offseti);
 			void* off_out = (void*)(size_t(output) + offseto);
 
@@ -492,8 +492,8 @@ void Mesh::packVertices(ElementDesc* input_format, ElementInfo* output_format, i
 	// go through and pack all vertices
 	size_t input_raw = (size_t)input;
 	size_t output_raw = (size_t)output;
-	size_t input_stride = getFormatStrideInput(input_format, input_count);
-	size_t output_stride = getFormatStrideInternal(output_format, output_count);
+	size_t input_stride = GetFormatStrideInput(input_format, input_count);
+	size_t output_stride = GetFormatStrideInternal(output_format, output_count);
 	for (size_t vertex = 0; vertex < num_verts; vertex++) {
 		PackVertex((void*)(input_raw + input_stride*vertex), (void*)(output_raw + output_stride*vertex));
 	}
@@ -503,7 +503,7 @@ void Mesh::packVertices(ElementDesc* input_format, ElementInfo* output_format, i
 ////////////////////////////////////////////////////////////////////////////////
 // vertex format
 
-bool Mesh::getElementBySemantic(ElementInfo& info, ElementSemantic semantic) const {
+bool Mesh::GetElementBySemantic(ElementInfo& info, ElementSemantic semantic) const {
 	for (int i = 0; i < num_elements; i++) {
 		if (semantic == elements[i].semantic) {
 			info = elements[i];
@@ -513,16 +513,16 @@ bool Mesh::getElementBySemantic(ElementInfo& info, ElementSemantic semantic) con
 	return false;
 }
 
-int Mesh::getElementsNum() const {
+int Mesh::GetElementsNum() const {
 	return num_elements;
 }
 
-const Mesh::ElementInfo* Mesh::getElements() const {
+const Mesh::ElementInfo* Mesh::GetElements() const {
 	return elements;
 }
 
 
-// get a unique identifier corresponding to the mesh's layout
+// Get a unique identifier corresponding to the mesh's layout
 // the ID is 64 bits wide:
 //	bits 0-18: streams (a 'composition' of N, where N={number of elements} )
 //	bits 18-57: number of components for each element, 2 bit/element
@@ -535,12 +535,12 @@ static inline int NumBitsSet(u32 v) {
 	return ((v + (v >> 4) & 0xF0F0F0F) * 0x1010101) >> 24;
 }
 
-u64 Mesh::getElementConfigId() const {
+u64 Mesh::GetElementConfigId() const {
 	u64 id = 0;
 	u32 comp = 0;
 
 	// calculate composition
-	// see http://en.wikipedia.org/wiki/Composition_(combinatorics) for nice drawing about binary representation
+	// see http://en.wikipedia.org/wiki/Composition_(combinatorics) for nice Drawing about binary representation
 	for (int i = 0, j = 0; i < num_streams; i++) {
 		int weight = NumBitsSet(vertex_stream_content[i]); // how many elements does that stream have?
 		for (int k = 1; k < weight; k++) {
@@ -548,7 +548,7 @@ u64 Mesh::getElementConfigId() const {
 			j++;
 		}
 		j++;
-		assert(j <= num_elements); // indicates the streams' elements are not set correctly
+		assert(j <= num_elements); // indicates the streams' elements are not Set correctly
 	}
 
 	// calculate num_components

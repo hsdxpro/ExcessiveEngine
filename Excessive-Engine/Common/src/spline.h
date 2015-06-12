@@ -8,34 +8,34 @@ class Spline
 {
     t s;
   public:
-    void setStartSelocity( const mm::vec3& vstart )
+    void SetStartSelocity( const mm::vec3& vstart )
     {
-      s.setStartVelocity( vstart );
+      s.SetStartVelocity( vstart );
     }
 
-    void setEndVelocity( const mm::vec3& vend )
+    void SetEndVelocity( const mm::vec3& vend )
     {
-      s.setEndVelocity( vend );
+      s.SetEndVelocity( vend );
     }
 
-    void addKey( const SplineKey& newkey )
+    void AddKey( const SplineKey& newkey )
     {
-      s.addKey( newkey );
+      s.AddKey( newkey );
     }
 
-    bool removeKey( const SplineKey& rkey )
+    bool RemoveKey( const SplineKey& rkey )
     {
-      return s.removeKey( rkey );
+      return s.RemoveKey( rkey );
     }
 
-    bool removeKeyById( int id )
+    bool RemoveKeyById( int id )
     {
-      return s.removeKeyById( id );
+      return s.RemoveKeyById( id );
     }
 
-    float getFullTime() const
+    float GetFullTime() const
     {
-      return s.getFullTime();
+      return s.GetFullTime();
     }
 
     void recalc()

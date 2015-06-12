@@ -104,7 +104,7 @@ namespace test_assembler {
 //
 // Label objects' lifetimes are unconstrained: notice that, in the
 // above example, even though a and b are only related through c, and
-// c goes out of scope, the assignment to a sets b's value as well. In
+// c goes out of scope, the assignment to a Sets b's value as well. In
 // particular, it's not necessary to ensure that a Label lives beyond
 // Sections that refer to it.
 class Label {
@@ -126,7 +126,7 @@ class Label {
 
   Label &operator=(uint64_t value);
   Label &operator=(const Label &value);
-  Label operator+(uint64_t addend) const;
+  Label operator+(uint64_t Addend) const;
   Label operator-(uint64_t subtrahend) const;
   uint64_t operator-(const Label &subtrahend) const;
 
@@ -134,11 +134,11 @@ class Label {
   // related, labels.
 
   // Return true if this label's value is known. If VALUE_P is given,
-  // set *VALUE_P to the known value if returning true.
+  // Set *VALUE_P to the known value if returning true.
   bool IsKnownConstant(uint64_t *value_p = NULL) const;
 
   // Return true if the offset from LABEL to this label is known. If
-  // OFFSET_P is given, set *OFFSET_P to the offset when returning true.
+  // OFFSET_P is given, Set *OFFSET_P to the offset when returning true.
   //
   // You can think of l.KnownOffsetFrom(m, &d) as being like 'd = l-m',
   // except that it also returns a value indicating whether the
@@ -151,7 +151,7 @@ class Label {
   //   l.IsKnownConstant();             // false
   //   m.IsKnownConstant();             // false
   //   uint64_t d;                     
-  //   l.IsKnownOffsetFrom(m, &d);      // true, and sets d to -10.
+  //   l.IsKnownOffsetFrom(m, &d);      // true, and Sets d to -10.
   //   l-m                              // -10
   //   m-l                              // 10
   //   m.Value()                        // error: m's value is not known
@@ -173,7 +173,7 @@ class Label {
   class Binding {
    public:
     Binding();
-    Binding(uint64_t addend);
+    Binding(uint64_t Addend);
     ~Binding();
 
     // Increment our reference count.
@@ -182,21 +182,21 @@ class Label {
     bool Release() { return --reference_count_ == 0; }
 
     // Set this binding to be equal to BINDING + ADDEND. If BINDING is
-    // NULL, then set this binding to the known constant ADDEND.
+    // NULL, then Set this binding to the known constant ADDEND.
     // Update every binding on this binding's chain to point directly
-    // to BINDING, or to be a constant, with addends adjusted
+    // to BINDING, or to be a constant, with Addends adjusted
     // appropriately.
     void Set(Binding *binding, uint64_t value);
 
     // Return what we know about the value of this binding.
-    // - If this binding's value is a known constant, set BASE to
-    //   NULL, and set ADDEND to its value.
+    // - If this binding's value is a known constant, Set BASE to
+    //   NULL, and Set ADDEND to its value.
     // - If this binding is not a known constant but related to other
-    //   bindings, set BASE to the binding at the end of the relation
-    //   chain (which will always be unconstrained), and set ADDEND to the
-    //   value to add to that binding's value to get this binding's
+    //   bindings, Set BASE to the binding at the end of the relation
+    //   chain (which will always be unconstrained), and Set ADDEND to the
+    //   value to Add to that binding's value to Get this binding's
     //   value.
-    // - If this binding is unconstrained, set BASE to this, and leave
+    // - If this binding is unconstrained, Set BASE to this, and leave
     //   ADDEND unchanged.
     void Get(Binding **base, uint64_t *addend);
 
@@ -204,14 +204,14 @@ class Label {
     // There are three cases:
     //
     // - A binding representing a known constant value has base_ NULL,
-    //   and addend_ equal to the value.
+    //   and Addend_ equal to the value.
     //
     // - A binding representing a completely unconstrained value has
-    //   base_ pointing to this; addend_ is unused.
+    //   base_ pointing to this; Addend_ is unused.
     //
     // - A binding whose value is related to some other binding's
-    //   value has base_ pointing to that other binding, and addend_
-    //   set to the amount to add to that binding's value to get this
+    //   value has base_ pointing to that other binding, and Addend_
+    //   Set to the amount to Add to that binding's value to Get this
     //   binding's value. We only represent relationships of the form
     //   x = y+c.
     //
@@ -219,9 +219,9 @@ class Label {
     // known constant value or a completely unconstrained value. Most
     // operations on bindings do path compression: they change every
     // binding on the chain to point directly to the final value,
-    // adjusting addends as appropriate.
+    // adjusting Addends as appropriate.
     Binding *base_;
-    uint64_t addend_;
+    uint64_t Addend_;
 
     // The number of Labels and Bindings pointing to this binding.
     // (When a binding points to itself, indicating a completely
@@ -245,26 +245,26 @@ enum Endianness {
 };
  
 // A section is a sequence of bytes, constructed by appending bytes
-// to the end. Sections have a convenient and flexible set of member
+// to the end. Sections have a convenient and flexible Set of member
 // functions for appending data in various formats: big-endian and
 // little-endian signed and unsigned values of different sizes;
 // LEB128 and ULEB128 values (see below), and raw blocks of bytes.
 //
 // If you need to append a value to a section that is not convenient
-// to compute immediately, you can create a label, append the
-// label's value to the section, and then set the label's value
+// to compute immediately, you can Create a label, append the
+// label's value to the section, and then Set the label's value
 // later, when it's convenient to do so. Once a label's value is
 // known, the section class takes care of updating all previously
 // appended references to it.
 //
 // Once all the labels to which a section refers have had their
-// values determined, you can get a copy of the section's contents
+// values determined, you can Get a copy of the section's contents
 // as a string.
 //
 // Note that there is no specified "start of section" label. This is
 // because there are typically several different meanings for "the
 // start of a section": the offset of the section within an object
-// file, the address in memory at which the section's content appear,
+// file, the Address in memory at which the section's content appear,
 // and so on. It's up to the code that uses the Section class to 
 // keep track of these explicitly, as they depend on the application.
 class Section {
@@ -277,9 +277,9 @@ class Section {
   virtual ~Section() { };
 
   // Set the default endianness of this section to ENDIANNESS. This
-  // sets the behavior of the D<N> appending functions. If the
-  // assembler's default endianness was set, this is the 
-  void set_endianness(Endianness endianness) {
+  // Sets the behavior of the D<N> appending functions. If the
+  // assembler's default endianness was Set, this is the 
+  void Set_endianness(Endianness endianness) {
     endianness_ = endianness;
   }
 
@@ -416,7 +416,7 @@ class Section {
   // Return a label representing the start of the section.
   // 
   // It is up to the user whether this label represents the section's
-  // position in an object file, the section's address in memory, or
+  // position in an object file, the section's Address in memory, or
   // what have you; some applications may need both, in which case
   // this simple-minded interface won't be enough. This class only
   // provides a single start label, for use with the Here and Mark
@@ -439,7 +439,7 @@ class Section {
   Section &Mark(Label *label) { *label = Here(); return *this; }
 
   // If there are no undefined label references left in this
-  // section, set CONTENTS to the contents of this section, as a
+  // section, Set CONTENTS to the contents of this section, as a
   // string, and clear this section. Return true on success, or false
   // if there were still undefined labels.
   bool GetContents(string *contents);
@@ -447,7 +447,7 @@ class Section {
  private:
   // Used internally. A reference to a label's value.
   struct Reference {
-    Reference(size_t set_offset, Endianness set_endianness,  size_t set_size,
+    Reference(size_t Set_offset, Endianness Set_endianness,  size_t Set_size,
               const Label &set_label)
         : offset(set_offset), endianness(set_endianness), size(set_size),
           label(set_label) { }

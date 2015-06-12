@@ -7,10 +7,10 @@ class IEngine
 {
 public:
 	// interface
-	virtual void release() = 0;
+	virtual void Release() = 0;
 
 	// interact
-	virtual void update(float deltaTime) = 0;
+	virtual void Update(float deltaTime) = 0;
 };
 
 

@@ -43,7 +43,7 @@ class ClientInfo;
 // generation protocol for Windows platform only. It generates Windows
 // minidump files for client processes that request dump generation. When
 // the server is requested to start listening for clients (by calling the
-// Start method), it creates a named pipe and waits for the clients to
+// Start method), it Creates a named pipe and waits for the clients to
 // register. In response, it hands them event handles that the client can
 // signal to request dump generation. When the clients request dump
 // generation in this way, the server generates Windows minidump files.
@@ -65,8 +65,8 @@ class CrashGenerationServer {
   // Creates an instance with the given parameters.
   //
   // Parameter pipe_name: Name of the Windows named pipe
-  // Parameter pipe_sec_attrs Security attributes to set on the pipe. Pass
-  //     NULL to use default security on the pipe. By default, the pipe created
+  // Parameter pipe_sec_attrs Security attributes to Set on the pipe. Pass
+  //     NULL to use default security on the pipe. By default, the pipe Created
   //     allows Local System, Administrators and the Creator full control and
   //     the Everyone group read access on the pipe.
   // Parameter connect_callback: Callback for a new client connection.
@@ -170,7 +170,7 @@ class CrashGenerationServer {
   // Duplicates various handles in the ClientInfo object for the client
   // process and stores them in the given ProtocolMessage instance. If
   // creating any handle fails, ProtocolMessage will contain the handles
-  // already created successfully, which should be closed by the caller.
+  // already Created successfully, which should be closed by the caller.
   bool CreateClientHandles(const ClientInfo& client_info,
                            ProtocolMessage* reply) const;
 
@@ -202,17 +202,17 @@ class CrashGenerationServer {
   // Generates dump for the given client.
   bool GenerateDump(const ClientInfo& client, std::wstring* dump_path);
 
-  // Puts the server in a permanent error state and sets a signal such that
+  // Puts the server in a permanent error state and Sets a signal such that
   // the state will be immediately entered after the current state transition
   // is complete.
   void EnterErrorState();
 
-  // Puts the server in the specified state and sets a signal such that the
+  // Puts the server in the specified state and Sets a signal such that the
   // state is immediately entered after the current state transition is
   // complete.
   void EnterStateImmediately(IPCServerState state);
 
-  // Puts the server in the specified state. No signal will be set, so the state
+  // Puts the server in the specified state. No signal will be Set, so the state
   // transition will only occur when signaled manually or by completion of an
   // asynchronous IO operation.
   void EnterStateWhenSignaled(IPCServerState state);

@@ -21,7 +21,7 @@ public:
 	/// Get compiled binary shader code.
 	/// \param max_size Write no more bytes to data.
 	/// \return Number of bytes written. If data is null, then the binary's size.
-	//virtual size_t getBinary(void* data, size_t max_size) = 0;
+	//virtual size_t GetBinary(void* data, size_t max_size) = 0;
 
 	/// Load this shader from binary code.
 	/// \param data The shader's binary code.
@@ -33,8 +33,8 @@ public:
 	// Remove this unless really necessary.
 	// Reason: OpenGL specific.
 	// Functionality to be replaced by string based calls elsewhere.
-	virtual int getUniformBlockIndex(const char* str) = 0;
-	virtual int getAttributeIndex(const char* str) = 0;
-	virtual int getSamplerIndex(const char* str) = 0;
-	virtual int getRenderTargetIndex(const char* str) = 0;
+	virtual int GetUniformBlockIndex(const char* str) = 0;
+	virtual int GetAttributeIndex(const char* str) = 0;
+	virtual int GetSamplerIndex(const char* str) = 0;
+	virtual int GetRenderTargetIndex(const char* str) = 0;
 };

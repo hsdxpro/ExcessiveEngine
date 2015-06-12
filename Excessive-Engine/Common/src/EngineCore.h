@@ -26,39 +26,39 @@ public:
 	~EngineCore();
 
 	// Init raster graphics engine, if one already exists will be destroyed, then instantiate it
-	graphics::IEngine* initGraphicsEngineRaster(const rGraphicsEngineRaster& d = rGraphicsEngineRaster());
+	graphics::IEngine* InitGraphicsEngineRaster(const rGraphicsEngineRaster& d = rGraphicsEngineRaster());
 
 	// Init raytracer graphics engine, if one already exists will be destroyed, then instantiate it
-	graphics::IEngine* initGraphicsEngineRT(const rGraphicsEngineRT& d = rGraphicsEngineRT());
+	graphics::IEngine* InitGraphicsEngineRT(const rGraphicsEngineRT& d = rGraphicsEngineRT());
 
 	// Init physics engine, if one already exists will be destroyed, then instantiate it
-	physics::IEngine* initPhysicsEngineBullet(const rPhysicsEngineBullet& d = rPhysicsEngineBullet());
+	physics::IEngine* InitPhysicsEngineBullet(const rPhysicsEngineBullet& d = rPhysicsEngineBullet());
 
 	// Init network engine, if one already exists will be destroyed, then instantiate it
-	network::IEngine* initNetworkEngine(const rNetworkEngine& d = rNetworkEngine());
+	network::IEngine* InitNetworkEngine(const rNetworkEngine& d = rNetworkEngine());
 
 	// Init network engine, if one already exists will be destroyed, then instantiate it
-	sound::IEngine* initSoundEngine(const rSoundEngine& d = rSoundEngine());
+	sound::IEngine* InitSoundEngine(const rSoundEngine& d = rSoundEngine());
 	
-	Actor* addActor();
+	Actor* AddActor();
 
-	ComponentGraphics*  addCompGraphicsFromFile(const std::wstring& modelFilePath);
-	ComponentRigidBody* addCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass);
-	ComponentRigidBody* addCompRigidBodyCapsule(float height, float radius, float mass = 0);
-	ComponentCamera*	addCompCamera();
+	ComponentGraphics*  AddCompGraphicsFromFile(const std::wstring& modelFilePath);
+	ComponentRigidBody* AddCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass);
+	ComponentRigidBody* AddCompRigidBodyCapsule(float height, float radius, float mass = 0);
+	ComponentCamera*	AddCompCamera();
 
-	graphics::IMaterial* createGraphicsMaterial();
+	graphics::IMaterial* CreateGraphicsMaterial();
 
-	void update(float deltaTime);
+	void Update(float deltaTime);
 
-	void setCam(ComponentCamera* c);
+	void SetCam(ComponentCamera* c);
 
-	graphics::IEngine*	getGraphicsEngine();
-	physics::IEngine*	getPhysicsEngine();
-	network::IEngine*	getNetworkEngine();
-	sound::IEngine*		getSoundEngine();
+	graphics::IEngine*	GetGraphicsEngine();
+	physics::IEngine*	GetPhysicsEngine();
+	network::IEngine*	GetNetworkEngine();
+	sound::IEngine*		GetSoundEngine();
 
-	graphics::IScene*	getDefaultGraphicsScene();
+	graphics::IScene*	GetDefaultGraphicsScene();
 
 protected:
 	graphics::IEngine*	graphicsEngine;

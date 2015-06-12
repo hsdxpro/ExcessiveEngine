@@ -9,11 +9,11 @@ class Timer : public ITimer
 public:
 	Timer();
 
-	void start() override;
-	void reset() override;
+	void Start() override;
+	void Reset() override;
 
-	double getSecondsPassed() override;
-	double getMicroSecondsPassed() override;
+	double GetSecondsPassed() override;
+	double GetMicroSecondsPassed() override;
 
 private:
 	// std::chrono::system_clock::time_point startTime;

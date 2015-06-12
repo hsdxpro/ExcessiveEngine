@@ -40,47 +40,47 @@ SoundEngineSFML::~SoundEngineSFML() {
 }
 
 
-void SoundEngineSFML::release() {
+void SoundEngineSFML::Release() {
 	delete this;
 }
 
-SoundScene* SoundEngineSFML::createScene(){
+SoundScene* SoundEngineSFML::CreateScene(){
 	SoundScene* newScene = new SoundScene;
 	scenes.insert(newScene);
 
-	//TODO is it a good idea to have active scene automatically set?
+	//TODO is it a good idea to have active scene automatically Set?
 	if (activeScene == nullptr) {
 		activeScene = newScene;
 	}
 	return newScene;
 }
 
-SoundData* SoundEngineSFML::createSoundData() {
+SoundData* SoundEngineSFML::CreateSoundData() {
 	SoundData* newData = new SoundData;
 	soundDataObjects.insert(newData);
 	return newData;
 }
 
-Listener* SoundEngineSFML::createListener() {
+Listener* SoundEngineSFML::CreateListener() {
 	Listener* newListener = new Listener;
 	listeners.insert(newListener);
 	return newListener;
 }
 
-void SoundEngineSFML::setScene(sound::IScene* scene) {
+void SoundEngineSFML::SetScene(sound::IScene* scene) {
 	activeScene = static_cast<SoundScene*>(scene);
 }
 
-void SoundEngineSFML::setMasterVolume(float volume) {
+void SoundEngineSFML::SetMasterVolume(float volume) {
 	sf::Listener::setGlobalVolume(volume * 100);
 }
 
-float SoundEngineSFML::getMasterVolume() const {
+float SoundEngineSFML::GetMasterVolume() const {
 	return sf::Listener::getGlobalVolume() / 100.f;
 }
 
-void SoundEngineSFML::update(float deltaTime) {
+void SoundEngineSFML::Update(float deltaTime) {
 	if (activeScene != nullptr) {
-		activeScene->update(deltaTime);
+		activeScene->Update(deltaTime);
 	}
 }

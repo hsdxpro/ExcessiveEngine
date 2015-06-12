@@ -11,8 +11,8 @@ public:
 		BufferGL::destroy();
 	}
 
-	rBuffer getDesc()
+	rBuffer GetDesc()
 	{
-		return BufferGL::getDesc();
+		return BufferGL::GetDesc();
 	}
 };

@@ -15,10 +15,10 @@ class IMesh
 {
 public:
 	// release
-	virtual void release() = 0;
+	virtual void Release() = 0;
 
 	// load
-	virtual void load(const wchar_t* file_path) = 0;
+	virtual void Load(const wchar_t* file_path) = 0;
 
 	// vertex format
 	enum ElementSemantic : u32 {
@@ -71,9 +71,9 @@ public:
 		u32 mat_ids_num; // only beginning of each group, ending calculated, in order
 	};
 
-	virtual bool update(MeshData data) = 0;
-	virtual bool updateVertexData(const void* data, u32 offset, u32 size) = 0; // both params in bytes, format and total size considered the same
-	virtual void reset() = 0;
+	virtual bool Update(MeshData data) = 0;
+	virtual bool UpdateVertexData(const void* data, u32 offset, u32 size) = 0; // both params in bytes, format and total size considered the same
+	virtual void Reset() = 0;
 };
 
 

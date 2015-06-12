@@ -6,15 +6,8 @@
 
 // The class which has graphical, physical, etc representation in the game world
 // That you can transform, iteract with it.
-class Actor// : public WorldComponent
+class Actor
 {
 public:
 	~Actor();
-
-	WorldComponent* addChild(WorldComponent* c);
-
-	const std::vector<WorldComponent*>& getWorldComponents() const;
-
-protected:
-	std::vector<WorldComponent*> worldComponents;
 };

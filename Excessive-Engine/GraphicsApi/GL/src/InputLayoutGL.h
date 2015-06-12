@@ -9,9 +9,9 @@ public:
 	InputLayoutGL(rInputElement* elements, size_t num_elements);
 	~InputLayoutGL();
 
-	size_t getNumElements() override;
-	const rInputElement& getElement(size_t index) override;
-	void release();
+	size_t GetNumElements() override;
+	const rInputElement& GetElement(size_t index) override;
+	void Release();
 private:
 	std::vector<rInputElement> elements;
 };

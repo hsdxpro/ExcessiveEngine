@@ -5,9 +5,9 @@
 SFMLMusicData::SFMLMusicData(const std::string& filePath) :filePath(filePath) {
 }
 
-SFMLCommonSoundEmitter* SFMLMusicData::createSFMLSoundSource() const {
+SFMLCommonSoundEmitter* SFMLMusicData::CreateSFMLSoundSource() const {
 	SFMLMusicWrapper* newMusic = new SFMLMusicWrapper;
-	newMusic->loadFromFile(filePath);
+	newMusic->LoadFromFile(filePath);
 
 	return newMusic;
 }

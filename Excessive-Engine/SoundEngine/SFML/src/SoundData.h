@@ -12,12 +12,12 @@ public:
 	SoundData(const SoundData&) = delete;
 	SoundData& operator=(const SoundData&) = delete;
 
-	void acquire();
-	void release() override;
+	void Acquire();
+	void Release() override;
 	
-	bool load(const wchar_t* file_path, sound::StoreMode mode = sound::StoreMode::AUTOMATIC) override;
+	bool Load(const wchar_t* file_path, sound::StoreMode mode = sound::StoreMode::AUTOMATIC) override;
 
-	const SFMLCommonSoundData* getSFMLSoundData() const;
+	const SFMLCommonSoundData* GetSFMLSoundData() const;
 	
 private:
 	size_t refcount;

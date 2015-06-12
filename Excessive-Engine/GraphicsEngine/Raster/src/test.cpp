@@ -50,7 +50,7 @@ __declspec(dllexport) void TestGraphicsEngine() {
 		indices[i] = i;
 	}
 
-	// setup
+	// Setup
 	data.vertex_data = vertices;
 	data.vertex_bytes = sizeof(vertices);
 	data.vertex_elements = vertex_elements;
@@ -62,18 +62,18 @@ __declspec(dllexport) void TestGraphicsEngine() {
 	data.mat_ids = nullptr;
 	data.mat_ids_num = 0;
 
-	bool result = m.update(data);
+	bool result = m.Update(data);
  	cout << (result ? "success" : "invalid data") << endl;
-	m.reset();
-	m.update(data);
+	m.Reset();
+	m.Update(data);
 
-	// get results
+	// Get results
 	Mesh::ElementInfo info;
-	if (m.getElementBySemantic(info, Mesh::NORMAL)) {
+	if (m.GetElementBySemantic(info, Mesh::NORMAL)) {
 		cout << "Normal found!" << endl;
 	}
 
-	u64 id = m.getElementConfigId();
+	u64 id = m.GetElementConfigId();
 	u32 composition = id & 0x7FFFF; // lower 19 bits
 	u64 components = id >> 19;
 	

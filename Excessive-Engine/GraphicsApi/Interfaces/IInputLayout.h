@@ -29,8 +29,8 @@ struct rInputElement
 	u32 offset; ///< this element begins $ bytes offseted from start of vertex
 	u32 stream_index; ///< in which vertex stream
 
-	/// Helper for setting name.
-	void setName(const char* str) { // just to make life easier
+	/// Helper for Setting name.
+	void SetName(const char* str) { // just to make life easier
 		int i = 0;
 		while (str[i] != '\0' && i<65) {
 			name[i] = str[i];
@@ -45,9 +45,9 @@ class IInputLayout
 {
 public:
 	/// Get the number of vertex elements.
-	virtual size_t getNumElements() = 0;
+	virtual size_t GetNumElements() = 0;
 	/// Get the indexth vertex element.
-	virtual const rInputElement& getElement(size_t index) = 0;
+	virtual const rInputElement& GetElement(size_t index) = 0;
 
-	virtual void release() = 0;
+	virtual void Release() = 0;
 };

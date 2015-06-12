@@ -10,22 +10,22 @@ class SoundScene : public sound::IScene {
 public:
 	SoundScene();
 	~SoundScene();
-	void release() override;
+	void Release() override;
 	
-	Emitter* addEmitter() override;
-	void remove(sound::IEmitter* emitter) override;
+	Emitter* AddEmitter() override;
+	void Remove(sound::IEmitter* emitter) override;
 	
 	void clear() override;
 	
-	void setListener(sound::IListener* listener) override;
+	void SetListener(sound::IListener* listener) override;
 	
-	sound::IListener* getListener() const override;
+	sound::IListener* GetListener() const override;
 
-	void update(float deltaTime);
+	void Update(float deltaTime);
 	
 private:
 	//Get the transformation that moves an Emitter from the current listener coordinate system to the corresponding SFML coordinate system
-	mm::mat4 getSFMLViewTransform() const;
+	mm::mat4 GetSFMLViewTransform() const;
 
 	std::unordered_set<Emitter*> emitters;
 	

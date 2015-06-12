@@ -53,7 +53,7 @@
  * These structures are also sufficient to populate minidump files.
  *
  * Because precise data type sizes are crucial for this implementation to
- * function properly and portably, a set of primitive types with known sizes
+ * function properly and portably, a Set of primitive types with known sizes
  * are used as the basis of each structure defined by this file.
  *
  * Author: Colin Blundell

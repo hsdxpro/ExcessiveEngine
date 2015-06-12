@@ -13,19 +13,19 @@ Timer::Timer() {
 	assert(frequency > 0);
 }
 
-void Timer::start()
+void Timer::Start()
 {
 	//startTime = std::chrono::high_resolution_clock::now();
 
 	QueryPerformanceCounter((LARGE_INTEGER*)&startTime);
 }
 
-void Timer::reset()
+void Timer::Reset()
 {
-	start();
+	Start();
 }
 
-double Timer::getSecondsPassed()
+double Timer::GetSecondsPassed()
 {	
 	// auto currTime = std::chrono::high_resolution_clock::now();
 	// return (double)std::chrono::duration_cast<std::chrono::microseconds>(currTime - startTime).count() / 1.0e6;
@@ -36,7 +36,7 @@ double Timer::getSecondsPassed()
 	return (double)(currentTime - startTime) / (double)frequency;
 }
 
-double Timer::getMicroSecondsPassed()
+double Timer::GetMicroSecondsPassed()
 {
 	// auto currTime = std::chrono::high_resolution_clock::now();
 	// return std::chrono::duration_cast<std::chrono::microseconds>(currTime - startTime).count();

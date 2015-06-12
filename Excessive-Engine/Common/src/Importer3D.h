@@ -153,5 +153,5 @@ struct rImporter3DData {
 class Importer3D
 {
 public:
-	static bool loadFile(const std::wstring& path, const rImporter3DCfg& cfg, rImporter3DData& data_out);
+	static bool LoadModelFromFile(const std::wstring& path, const rImporter3DCfg& cfg, rImporter3DData& data_out);
 };

@@ -20,11 +20,11 @@ public:
   Dispatcher() : columns(0){}
 
   template<class _lhs, class _rhs>
-  void add(cbk func)
+  void Add(cbk func)
   {
-    int& idx_lhs = _lhs::getClassIdx();
+    int& idx_lhs = _lhs::GetClassIdx();
 
-    if(idx_lhs < 0) //not set
+    if(idx_lhs < 0) //not Set
     {
       callbacks.push_back(row());
       idx_lhs = callbacks.size() - 1;
@@ -35,9 +35,9 @@ public:
     }
 
     row& cur_row = callbacks[idx_lhs];
-    int& idx_rhs = _rhs::getClassIdx();
+    int& idx_rhs = _rhs::GetClassIdx();
 
-    if(idx_rhs < 0) //not set
+    if(idx_rhs < 0) //not Set
     {
       cur_row.resize(++columns);
       idx_rhs = cur_row.size() - 1;
@@ -52,8 +52,8 @@ public:
 
   ret go(lhs _lhs, rhs _rhs)
   {
-    int idx_lhs = _lhs->getClassIndex();
-    int idx_rhs = _rhs->getClassIndex();
+    int idx_lhs = _lhs->GetClassIndex();
+    int idx_rhs = _rhs->GetClassIndex();
 
     assert( idx_lhs >= 0 || idx_rhs >=  0 || idx_lhs < (int)callbacks.size() || idx_rhs < (int)callbacks.size() );
 
@@ -76,7 +76,7 @@ class Shape
   static Dispatcher<Shape*, Shape*, bool> _intersects;
   static bool is_setup;
 public:
-  static void setUpIntersection();
+  static void SetUpIntersection();
 
   bool isOnRightSide(Shape* s)
   {
@@ -96,7 +96,7 @@ public:
     return _intersects.go(this, s);
   }
 
-  virtual int getClassIndex() = 0;
+  virtual int GetClassIndex() = 0;
 };
 
 Dispatcher<Shape*, Shape*, bool> Shape::_is_on_right_side;
@@ -111,15 +111,15 @@ public:
   mm::vec3 center;
   float radius;
 
-  static int& getClassIdx()
+  static int& GetClassIdx()
   {
     static int idx = -1;
     return idx;
   }
 
-  int getClassIndex()
+  int GetClassIndex()
   {
-    return getClassIdx();
+    return GetClassIdx();
   }
 
   Sphere( mm::vec3 c = mm::vec3(), float r = float() ) : center( c ), radius( r ) {}
@@ -132,19 +132,19 @@ public:
   mm::vec3 normal, point;
   float d; //cache -(normal dot point)
 
-  static int& getClassIdx()
+  static int& GetClassIdx()
   {
     static int idx = -1;
     return idx;
   }
 
-  int getClassIndex()
+  int GetClassIndex()
   {
-    return getClassIdx();
+    return GetClassIdx();
   }
 
   //define a Plane by 3 points
-  void setUp( const mm::vec3& a, const mm::vec3& b, const mm::vec3& c )
+  void SetUp( const mm::vec3& a, const mm::vec3& b, const mm::vec3& c )
   {
     mm::vec3 tmp1, tmp2;
 
@@ -170,7 +170,7 @@ public:
 
   Plane( const mm::vec3& a, const mm::vec3& b, const mm::vec3& c )
   {
-    setUp( a, b, c );
+    SetUp( a, b, c );
   }
 };
 
@@ -181,19 +181,19 @@ public:
   mm::vec3 extents; //half-width/height of the Aabb
   mm::vec3 min, max; //minimum/maximum apex of the Aabb
 
-  static int& getClassIdx()
+  static int& GetClassIdx()
   {
     static int idx = -1;
     return idx;
   }
 
-  int getClassIndex()
+  int GetClassIndex()
   {
-    return getClassIdx();
+    return GetClassIdx();
   }
 
   //returns the vertices of the triangles of the Aabb in counter clockwise order
-  std::vector<mm::vec3> getVertices()
+  std::vector<mm::vec3> GetVertices()
   {
     std::vector<mm::vec3> v;
 
@@ -254,7 +254,7 @@ public:
     return v;
   }
 
-  mm::vec3 getPosVertex( const mm::vec3& n )
+  mm::vec3 GetPosVertex( const mm::vec3& n )
   {
     mm::vec3 res = min;
 
@@ -278,7 +278,7 @@ public:
     pos = min + extents;
   }
 
-  mm::vec3 getNegVertex( const mm::vec3& n )
+  mm::vec3 GetNegVertex( const mm::vec3& n )
   {
     mm::vec3 res = max;
 
@@ -333,15 +333,15 @@ public:
     NTL = 0, NTR, NBL, NBR, FTL, FTR, FBL, FBR
   };
 
-  static int& getClassIdx()
+  static int& GetClassIdx()
   {
     static int idx = -1;
     return idx;
   }
 
-  int getClassIndex()
+  int GetClassIndex()
   {
-    return getClassIdx();
+    return GetClassIdx();
   }
 
   Frustum()
@@ -350,7 +350,7 @@ public:
       planes[c] = new Plane();
   }
 
-  void setUp( const mm::camera<float>& cam )
+  void SetUp( const mm::camera<float>& cam )
   {
     mm::vec3 nc = cam.pos - cam.view_dir * cam.get_frame()->near_ll.z;
     mm::vec3 fc = cam.pos - cam.view_dir * cam.get_frame()->far_ll.z;
@@ -384,12 +384,12 @@ public:
     points[FBL] = fbl;
     points[FBR] = fbr;
 
-    static_cast<Plane*>( planes[TOP] )->setUp( ntr, ntl, ftl );
-    static_cast<Plane*>( planes[BOTTOM] )->setUp( nbl, nbr, fbr );
-    static_cast<Plane*>( planes[LEFT] )->setUp( ntl, nbl, fbl );
-    static_cast<Plane*>( planes[RIGHT] )->setUp( nbr, ntr, fbr );
-    static_cast<Plane*>( planes[NEAR] )->setUp( ntl, ntr, nbr );
-    static_cast<Plane*>( planes[FAR] )->setUp( ftr, ftl, fbl );
+    static_cast<Plane*>( planes[TOP] )->SetUp( ntr, ntl, ftl );
+    static_cast<Plane*>( planes[BOTTOM] )->SetUp( nbl, nbr, fbr );
+    static_cast<Plane*>( planes[LEFT] )->SetUp( ntl, nbl, fbl );
+    static_cast<Plane*>( planes[RIGHT] )->SetUp( nbr, ntr, fbr );
+    static_cast<Plane*>( planes[NEAR] )->SetUp( ntl, ntr, nbr );
+    static_cast<Plane*>( planes[FAR] )->SetUp( ftr, ftl, fbl );
   }
 };
 
@@ -421,7 +421,7 @@ namespace inner
     auto a = static_cast<Aabb*>(aa);
     auto b = static_cast<Plane*>(bb);
 
-    if( b->distance( a->getPosVertex( b->normal ) ) < 0 )
+    if( b->distance( a->GetPosVertex( b->normal ) ) < 0 )
       return false;
 
     return true;
@@ -530,8 +530,8 @@ namespace inner
     auto a = static_cast<Aabb*>(aa);
     auto b = static_cast<Plane*>(bb);
 
-    mm::vec3 p = a->getPosVertex( b->normal );
-    mm::vec3 n = a->getNegVertex( b->normal );
+    mm::vec3 p = a->GetPosVertex( b->normal );
+    mm::vec3 n = a->GetNegVertex( b->normal );
 
     float dist_p = b->distance( p );
     float dist_n = b->distance( n );
@@ -648,33 +648,33 @@ namespace inner
   }
 }
 
-void Shape::setUpIntersection()
+void Shape::SetUpIntersection()
 {
   //order doesnt matter
-  _is_on_right_side.add<Sphere, Plane>(inner::isOnRightSideSP);
-  _is_on_right_side.add<Plane, Sphere>(inner::isOnRightSidePS);
-  _is_on_right_side.add<Aabb, Plane>(inner::isOnRightSideAP);
-  _is_on_right_side.add<Plane, Aabb>(inner::isOnRightSidePA);
+  _is_on_right_side.Add<Sphere, Plane>(inner::isOnRightSideSP);
+  _is_on_right_side.Add<Plane, Sphere>(inner::isOnRightSidePS);
+  _is_on_right_side.Add<Aabb, Plane>(inner::isOnRightSideAP);
+  _is_on_right_side.Add<Plane, Aabb>(inner::isOnRightSidePA);
 
-  _intersects.add<Aabb, Aabb>(inner::intersectAA);
-  _intersects.add<Aabb, Plane>(inner::intersectAP);
-  _intersects.add<Plane, Aabb>(inner::intersectPA);
-  _intersects.add<Aabb, Sphere>(inner::intersectAS);
-  _intersects.add<Sphere, Aabb>(inner::intersectSA);
-  _intersects.add<Plane, Plane>(inner::intersectPP);
-  _intersects.add<Sphere, Plane>(inner::intersectSP);
-  _intersects.add<Plane, Sphere>(inner::intersectPS);
-  _intersects.add<Sphere, Sphere>(inner::intersectSS);
-  _intersects.add<Frustum, Sphere>(inner::intersectFS);
-  _intersects.add<Sphere, Frustum>(inner::intersectSF);
-  _intersects.add<Frustum, Aabb>(inner::intersectFA);
-  _intersects.add<Aabb, Frustum>(inner::intersectAF);
+  _intersects.Add<Aabb, Aabb>(inner::intersectAA);
+  _intersects.Add<Aabb, Plane>(inner::intersectAP);
+  _intersects.Add<Plane, Aabb>(inner::intersectPA);
+  _intersects.Add<Aabb, Sphere>(inner::intersectAS);
+  _intersects.Add<Sphere, Aabb>(inner::intersectSA);
+  _intersects.Add<Plane, Plane>(inner::intersectPP);
+  _intersects.Add<Sphere, Plane>(inner::intersectSP);
+  _intersects.Add<Plane, Sphere>(inner::intersectPS);
+  _intersects.Add<Sphere, Sphere>(inner::intersectSS);
+  _intersects.Add<Frustum, Sphere>(inner::intersectFS);
+  _intersects.Add<Sphere, Frustum>(inner::intersectSF);
+  _intersects.Add<Frustum, Aabb>(inner::intersectFA);
+  _intersects.Add<Aabb, Frustum>(inner::intersectAF);
 
   //order matters
-  _is_inside.add<Aabb, Aabb>(inner::isInsideAA);
-  _is_inside.add<Aabb, Sphere>(inner::isInsideAS);
-  _is_inside.add<Sphere, Aabb>(inner::isInsideSA);
-  _is_inside.add<Sphere, Sphere>(inner::isInsideSS);
+  _is_inside.Add<Aabb, Aabb>(inner::isInsideAA);
+  _is_inside.Add<Aabb, Sphere>(inner::isInsideAS);
+  _is_inside.Add<Sphere, Aabb>(inner::isInsideSA);
+  _is_inside.Add<Sphere, Sphere>(inner::isInsideSS);
 
   //usage
   //is_on_the_right_side.go(new Aabb(), new Sphere());

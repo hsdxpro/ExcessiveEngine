@@ -8,7 +8,7 @@ class SFMLSoundData : public SFMLCommonSoundData
 public:
 	SFMLSoundData(const sf::SoundBuffer& buffer);
 
-	SFMLCommonSoundEmitter* createSFMLSoundSource() const override;
+	SFMLCommonSoundEmitter* CreateSFMLSoundSource() const override;
 
 private:
 	sf::SoundBuffer buffer;

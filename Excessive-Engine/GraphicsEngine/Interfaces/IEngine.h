@@ -30,9 +30,9 @@ public:
 	/// from graphical scenes.
 	struct Layer {
 		enum eBlendMode : u32 {
-			OVERLAY, ///< draw this layer simply onto the layer below.
+			OVERLAY, ///< Draw this layer simply onto the layer below.
 			MULTIPLY, ///< multiply colors componentwise.
-			ADD, ///< add colors componentswise.
+			ADD, ///< Add colors componentswise.
 			SUBTRACT, ///< subtract this from the layer below.
 			MERGE, ///< merge contents with layer below.
 		};
@@ -41,7 +41,7 @@ public:
 
 		IScene* scene; ///< this scene yields the image for this layer.
 		float opacity;
-		bool visible; ///< weather to render and add the layer
+		bool visible; ///< weather to render and Add the layer
 		bool preserve_depth; ///< re-uses the below layer's depth map for rendering.
 		eBlendMode blendMode;
 	};
@@ -49,44 +49,44 @@ public:
 
 	/// Release the interface.
 	/// Don't forget to call this when this object is no longer needed.
-	virtual void release() = 0;
+	virtual void Release() = 0;
 
 
 	///////////////////////////////////////
-	// create stuff
+	// Create stuff
 
 	/// Create a new empty scene.
-	/// You may add objects and other things to the scene.
-	/// The scene can be rendered by the engine. To get it rendered, set it in a Layer.
-	virtual IScene* createScene() = 0;
+	/// You may Add objects and other things to the scene.
+	/// The scene can be rendered by the engine. To Get it rendered, Set it in a Layer.
+	virtual IScene* CreateScene() = 0;
 
 	/// Create a new mesh resource.
-	virtual IMesh* createMesh() = 0;
+	virtual IMesh* CreateMesh() = 0;
 
 	/// Create new material resource.
-	virtual IMaterial* createMaterial() = 0;
+	virtual IMaterial* CreateMaterial() = 0;
 
 	/// Create new texture resource.
-	virtual ITexture* createTexture() = 0;
+	virtual ITexture* CreateTexture() = 0;
 
 	/// Create new virtual camera.
-	virtual ICamera* createCam() = 0;
+	virtual ICamera* CreateCam() = 0;
 
 
 	///////////////////////////////////////
 	// scene & layer system
 
-	virtual void addLayer(const Layer& layer) = 0;
-	virtual void removeLayer(size_t index) = 0;
-	virtual size_t getNumLayers() const = 0;
-	virtual void setNumLayers(size_t num_layers) = 0;
-	virtual Layer& getLayer(size_t index) = 0;
+	virtual void AddLayer(const Layer& layer) = 0;
+	virtual void RemoveLayer(size_t index) = 0;
+	virtual size_t GetNumLayers() const = 0;
+	virtual void SetNumLayers(size_t num_layers) = 0;
+	virtual Layer& GetLayer(size_t index) = 0;
 
-	virtual IGapi* getGapi() = 0;
+	virtual IGapi* GetGapi() = 0;
 
 	///////////////////////////////////////
 	// interact
-	virtual void update(float deltaTime) = 0;
+	virtual void Update(float deltaTime) = 0;
 };
 
 

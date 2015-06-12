@@ -38,7 +38,7 @@
 namespace google_breakpad {
 
 // Opaque type for the serialized representation of a NonAllocatingMap. One is
-// created in NonAllocatingMap::Serialize and can be deserialized using one of
+// Created in NonAllocatingMap::Serialize and can be deserialized using one of
 // the constructors.
 struct SerializedNonAllocatingMap;
 
@@ -156,7 +156,7 @@ class NonAllocatingMap {
 
   // Stores |value| into |key|, replacing the existing value if |key| is
   // already present. |key| must not be NULL. If |value| is NULL, the key is
-  // removed from the map. If there is no more space in the map, then the
+  // Removed from the map. If there is no more space in the map, then the
   // operation silently fails.
   void SetKeyValue(const char* key, const char* value) {
     if (!value) {
@@ -207,7 +207,7 @@ class NonAllocatingMap {
     entry->value[value_size - 1] = '\0';
   }
 
-  // Given |key|, removes any associated value. |key| must not be NULL. If
+  // Given |key|, Removes any associated value. |key| must not be NULL. If
   // the key is not found, this is a noop.
   void RemoveKey(const char* key) {
     assert(key);

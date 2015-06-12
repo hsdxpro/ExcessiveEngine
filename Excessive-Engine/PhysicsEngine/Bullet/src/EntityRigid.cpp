@@ -7,17 +7,16 @@ EntityRigid::EntityRigid(btRigidBody* body)
 :body(body) {
 }
 
-void EntityRigid::setPos(const mm::vec3& v)
+void EntityRigid::SetPos(const mm::vec3& v)
 {
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
 	trans.setOrigin(btVector3( v.x, v.y, v.z ));
-
 	body->setWorldTransform(trans);
 	body->getMotionState()->setWorldTransform(trans);
 }
 
-void EntityRigid::setRot(const mm::quat& q)
+void EntityRigid::SetRot(const mm::quat& q)
 {
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
@@ -32,7 +31,7 @@ void EntityRigid::setRot(const mm::quat& q)
 	body->getMotionState()->setWorldTransform(trans);
 }
 
-void EntityRigid::setScale(const mm::vec3& v)
+void EntityRigid::SetScale(const mm::vec3& v)
 {
 	btCollisionShape* colShape = body->getCollisionShape();
 
@@ -52,14 +51,14 @@ void EntityRigid::setScale(const mm::vec3& v)
 	}
 }
 
-mm::vec3 EntityRigid::getPos()
+mm::vec3 EntityRigid::GetPos()
 {
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
 	return{ trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z() };
 }
 
-mm::quat EntityRigid::getRot()
+mm::quat EntityRigid::GetRot()
 {
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
@@ -72,7 +71,7 @@ mm::quat EntityRigid::getRot()
 	return rot;
 }
 
- mm::vec3 EntityRigid::getScale()
+ mm::vec3 EntityRigid::GetScale()
 {
 	btCollisionShape* shape = body->getCollisionShape();
 
@@ -82,7 +81,7 @@ mm::quat EntityRigid::getRot()
 	return{ 1.f, 1.f, 1.f };
 }
 
- btRigidBody* EntityRigid::getBody()
+ btRigidBody* EntityRigid::GetBody()
  {
 	 return body;
  }

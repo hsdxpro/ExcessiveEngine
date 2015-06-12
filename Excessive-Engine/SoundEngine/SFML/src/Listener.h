@@ -6,21 +6,21 @@ class Listener : public sound::IListener {
 public:
 	Listener();
 
-	void setHandedness(sound::eHandedness handedness) override;
-	void setUpwards(const mm::vec3&) override;
-	void setTarget(const mm::vec3&) override;
-	void setDir(const mm::vec3&) override;
-	void setPos(const mm::vec3&) override;
-	void setVel(const mm::vec3&) override;
+	void SetHandedness(sound::eHandedness handedness) override;
+	void SetUpwards(const mm::vec3&) override;
+	void SetTarget(const mm::vec3&) override;
+	void SetDir(const mm::vec3&) override;
+	void SetPos(const mm::vec3&) override;
+	void SetVel(const mm::vec3&) override;
 
-	sound::eHandedness getHandedness() const override;
-	mm::vec3 getUpwards() const override;
-	mm::vec3 getDir() const override;
-	mm::vec3 getPos() const override;
-	mm::vec3 getVel() const override;
+	sound::eHandedness GetHandedness() const override;
+	mm::vec3 GetUpwards() const override;
+	mm::vec3 GetDir() const override;
+	mm::vec3 GetPos() const override;
+	mm::vec3 GetVel() const override;
 
 	//Get the transformation that moves an Emitter from the current listener coordinate system to the corresponding SFML coordinate system
-	//mm::mat4 getSFMLViewTransform() const;
+	//mm::mat4 GetSFMLViewTransform() const;
 
 private:
 	sound::eHandedness handedness;

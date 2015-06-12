@@ -68,26 +68,26 @@ class IWindow
 {
 public:
 	// Simply closes the window so you will not need it
-	virtual void close() = 0;
+	virtual void Close() = 0;
 
-	// This will give you the next event in the queue that Operating System transmitted to the window, and will be removed from queue (pop)
-	virtual bool popEvent(rWindowEvent* evt_out) = 0;
+	// This will give you the next event in the queue that Operating System transmitted to the window, and will be Removed from queue (pop)
+	virtual bool PopEvent(rWindowEvent* evt_out) = 0;
 
-	// U need to call that function after some DrawingAPI finishe s draw on window client region, this will BLIT the content to your monitor where client region is defined
-	virtual void present() = 0;
+	// U need to call that function after some DrawingAPI finishe s Draw on window client region, this will BLIT the content to your monitor where client region is defined
+	virtual void Present() = 0;
 
 	// Window client surface width
-	virtual u16 getClientW() const = 0;
+	virtual u16 GetClientW() const = 0;
 
 	// Window client surface height
-	virtual u16 getClientH() const = 0;
+	virtual u16 GetClientH() const = 0;
 
 	// (client surface width / client surface height)
-	virtual float getClientAspectRatio() const = 0;
+	virtual float GetClientAspectRatio() const = 0;
 
 	// Returns true if the window is currently opened
-	virtual bool isOpen() const = 0;
+	virtual bool IsOpen() const = 0;
 
 	/// Set window title
-	virtual void setText(const wchar_t* text) = 0;
+	virtual void SetText(const wchar_t* text) = 0;
 };

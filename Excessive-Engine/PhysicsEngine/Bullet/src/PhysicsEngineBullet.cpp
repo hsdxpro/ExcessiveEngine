@@ -44,22 +44,22 @@ PhysicsEngineBullet::~PhysicsEngineBullet()
 {
 }
 
-void PhysicsEngineBullet::release()
+void PhysicsEngineBullet::Release()
 {
 	delete this;
 }
 
-void PhysicsEngineBullet::update(float deltaTime)
+void PhysicsEngineBullet::Update(float deltaTime)
 {
 	world->stepSimulation(deltaTime);
 
 	// Contact mainfolds for debugging
-	//auto overlappingPairCache = world->getBroadphase()->getOverlappingPairCache();
-	//auto nPairs = overlappingPairCache->getNumOverlappingPairs();
+	//auto overlappingPairCache = world->GetBroadphase()->GetOverlappingPairCache();
+	//auto nPairs = overlappingPairCache->GetNumOverlappingPairs();
 	//for (u32 i = 0; i < nPairs; i++)
 	//{
 	//	btManifoldArray array;
-	//	overlappingPairCache->getOverlappingPairArray()[i].m_algorithm->getAllContactManifolds(array);
+	//	overlappingPairCache->GetOverlappingPairArray()[i].m_algorithm->GetAllContactManifolds(array);
 	//	for (u32 j = 0; j < array.size(); j++)
 	//	{
 	//		auto& maniFold = array.at(j);
@@ -67,9 +67,9 @@ void PhysicsEngineBullet::update(float deltaTime)
 	//}
 }
 
-physics::IEntityRigid* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) 
+physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) 
 {
-	// You should call PhysicsEngineBullet::createEntityRigidStatic
+	// You should call PhysicsEngineBullet::CreateEntityRigidStatic
 	assert(mass != 0);
 
 	// Create collision shape for rigid body, based on it's vertices and mass
@@ -90,7 +90,7 @@ physics::IEntityRigid* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vert
 	return e;
 }
 
-physics::IEntityRigid* PhysicsEngineBullet::addEntityRigidStatic(mm::vec3* vertices, u32 nVertices, void* indices, u32 indexSize, u32 nIndices) 
+physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidStatic(mm::vec3* vertices, u32 nVertices, void* indices, u32 indexSize, u32 nIndices) 
 {
 
 	btTriangleIndexVertexArray* VBIB;
@@ -124,7 +124,7 @@ physics::IEntityRigid* PhysicsEngineBullet::addEntityRigidStatic(mm::vec3* verti
 	return e;
 }
 
-physics::IEntityRigid* PhysicsEngineBullet::addEntityRigidCapsule(float height, float radius, float mass)
+physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidCapsule(float height, float radius, float mass)
 {
 	btCapsuleShape* capsuleShape = new btCapsuleShape(radius, height);
 	capsuleShape->setSafeMargin(0, 0); // Thanks convex hull for your imprecision...

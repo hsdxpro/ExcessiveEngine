@@ -58,49 +58,49 @@ mm::mat4 Matrix44ViewRH(const mm::vec3& eye, const mm::vec3& target, const mm::v
 Camera::Camera()
 :nearPlane(0.01), farPlane(4000), pos(0, 0, 0), projType(graphics::eProjType::PERSP)
 {
-	setDirNormed({ 0, 1, 0 });
+	SetDirNormed({ 0, 1, 0 });
 }
 
 Camera::Camera(graphics::rProjOrtho proj, float nearPlane, float farPlane)
 :nearPlane(nearPlane), farPlane(farPlane), pos(0, 0, 0), projOrtho(proj), projType(graphics::eProjType::ORTHO)
 {
-	setDirNormed({ 0, 1, 0 });
+	SetDirNormed({ 0, 1, 0 });
 }
 
 Camera::Camera(graphics::rProjPersp proj, float nearPlane, float farPlane)
 :nearPlane(nearPlane), farPlane(farPlane), pos(0, 0, 0), projPersp(proj), projType(graphics::eProjType::PERSP)
 {
-	setDirNormed({ 0, 1, 0 });
+	SetDirNormed({ 0, 1, 0 });
 }
 
-void Camera::setFOV(float rad)
+void Camera::SetFOV(float rad)
 {
 	assert(projType == graphics::eProjType::PERSP);
 
 	projPersp.fovRad = rad;
 }
 
-void Camera::setNearPlane(float nP)
+void Camera::SetNearPlane(float nP)
 {
 	nearPlane = nP;
 }
 
-void Camera::setFarPlane(float fP)
+void Camera::SetFarPlane(float fP)
 {
 	farPlane = fP;
 }
 
-void Camera::setPos(const mm::vec3& p)
+void Camera::SetPos(const mm::vec3& p)
 {
 	pos = p;
 }
 
-void Camera::setTarget(const mm::vec3& p)
+void Camera::SetTarget(const mm::vec3& p)
 {
-	setDirNormed(mm::normalize(p - pos));
+	SetDirNormed(mm::normalize(p - pos));
 }
 
-void Camera::setDirNormed(const mm::vec3& p)
+void Camera::SetDirNormed(const mm::vec3& p)
 {
 	// Important, roll is 0
 	const mm::vec3 up(0.0f, 0.0f, 1.0f);
@@ -109,27 +109,27 @@ void Camera::setDirNormed(const mm::vec3& p)
 	rot = Matrix44ViewRH(pos, pos + p, up);
 }
 
-void Camera::setRot(const mm::quat& q)
+void Camera::SetRot(const mm::quat& q)
 {
 	rot = q;
 }
 
-float Camera::getFOVRad() const
+float Camera::GetFOVRad() const
 {
 	return projPersp.fovRad;
 }
 
-float Camera::getNearPlane() const
+float Camera::GetNearPlane() const
 {
 	return nearPlane;
 }
 
-float Camera::getFarPlane() const
+float Camera::GetFarPlane() const
 {
 	return farPlane;
 }
 
-mm::mat4 Camera::getViewMatrix() const
+mm::mat4 Camera::GetViewMatrix() const
 {
 	const mm::vec3 up(0.0f, 0.0f, 1.0f);
 	mm::vec3 frontDirNormed = mm::rotate_vector(rot, mm::vec3(0, 1, 0));
@@ -137,7 +137,7 @@ mm::mat4 Camera::getViewMatrix() const
 	return Matrix44ViewRHGL(pos, pos + frontDirNormed, upDirNormed);
 }
 
-mm::mat4 Camera::getProjMatrix(float aspectRatio) const
+mm::mat4 Camera::GetProjMatrix(float aspectRatio) const
 {
 	switch (projType)
 	{
@@ -163,47 +163,47 @@ mm::mat4 Camera::getProjMatrix(float aspectRatio) const
 	}
 }
 
-mm::vec3 Camera::getDirNormedFront() const
+mm::vec3 Camera::GetDirNormedFront() const
 {
 	return mm::rotate_vector(rot, mm::vec3(0, 1, 0));
 }
 
-mm::vec3 Camera::getDirNormedBack() const
+mm::vec3 Camera::GetDirNormedBack() const
 {
 	return mm::rotate_vector(rot, mm::vec3(0, -1, 0));
 }
 
-mm::vec3 Camera::getDirNormedUp() const
+mm::vec3 Camera::GetDirNormedUp() const
 {
 	return mm::rotate_vector(rot, mm::vec3(0, 0, 1));
 }
 
-mm::vec3 Camera::getDirNormedDown() const
+mm::vec3 Camera::GetDirNormedDown() const
 {
 	return mm::rotate_vector(rot, mm::vec3(0, 0, -1));
 }
 
-mm::vec3 Camera::getDirNormedRight() const
+mm::vec3 Camera::GetDirNormedRight() const
 {
 	return mm::rotate_vector(rot, mm::vec3(1, 0, 0));
 }
 
-mm::vec3 Camera::getDirNormedLeft() const
+mm::vec3 Camera::GetDirNormedLeft() const
 {
 	return mm::rotate_vector(rot, mm::vec3(-1, 0, 0));
 }
 
-const mm::vec3& Camera::getPos() const
+const mm::vec3& Camera::GetPos() const
 {
 	return pos;
 }
 
-const mm::quat& Camera::getRot() const
+const mm::quat& Camera::GetRot() const
 {
 	return rot;
 }
 
-const mm::vec3 Camera::getTargetPos() const
+const mm::vec3 Camera::GetTarGetPos() const
 {
 	return pos + mm::rotate_vector(rot, mm::vec3(0, 1, 0));
 }
