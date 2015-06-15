@@ -7,8 +7,8 @@ public:
 	Transform3D();
 	Transform3D(const mm::vec3& pos, const mm::quat& rot, const mm::vec3& scale);
 
-	const Transform3D inverse() const;
-	const mm::mat4 matrix() const;
+	//const Transform3D inverse() const;
+	//const mm::mat4 matrix() const;
 
 	_inline void SetPos(const mm::vec3& v) { pos = v; }
 	_inline void SetRot(const mm::quat& q) { rot = q; }
@@ -24,7 +24,7 @@ public:
 	__inline const mm::vec3& GetScale() const { return scale; }
 	__inline const mm::mat3& GetSkew() const { return skew; }
 
-	const Transform3D operator * (const Transform3D& other) const;
+	//const Transform3D operator * (const Transform3D& other) const;
 
 protected:
 	mm::vec3 pos;

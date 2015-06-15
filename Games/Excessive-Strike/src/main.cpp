@@ -90,76 +90,30 @@ int main()
 				auto c1 = gEngineCore.AddCompGraphicsFromFile(boxModelPath);
 				auto c2 = gEngineCore.AddCompGraphicsFromFile(boxModelPath);
 				
-				gCamComp->SetPos({0,-12, 5});
+				gCamComp->SetPos({0,-25, 5});
 				
 				c0->SetScale({ 1.f / 20, 1.f / 20, 1.f / 20 });
 				c1->SetScale({ 1.f / 20, 1.f / 20, 1.f / 20 });
 				c2->SetScale({ 1.f / 20, 1.f / 20, 1.f / 20 });
-				
-				
+
 				c0->SetPos({ 2, -4, 6 });
 				c1->SetPos({ -1, -4, 6 });
 				c2->SetPos({ -1, -4, 3 });
 
-				c0->SetRot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
 				
-
+				c0->SetRot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
+				c2->SetRot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
+				
+				
 				c0->Attach(c1);
 				c1->Attach(c2);
 
-				c0->Scale({ 2, 1, 2 });
-				//c0->Scale({ 1, 1, 3 });
+				c1->Rot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
 
-				//
-				//c0->attachChild(c1);
-				//
-				//c0->SetScale(c1->GetScale() * 2);
-				//c0->SetRot(mm::quat(3.14159265 / 4, { 0, 0, 1 }));
-
-
-
-				//auto compPhysics = gEngineCore.AddCompRigidBodyFromFile(boxModelPath, 20);
-				//compPhysics->SetScale({ 1.f / 20, 1.f / 20, 1.f / 20 });
-				//compPhysics->SetPos({ 0, 0, 30.f });
-				//
-				//WorldComponent* boxes[1];
-				//for (size_t i = 0; i < 1; i++)
-				//{
-				//	boxes[i] = gEngineCore.AddCompGraphicsFromFile(boxModelPath);
-				//	boxes[i]->SetScale({ 1.f / 20, 1.f / 20, 1.f / 20 });
-				//}
-				//
-				//mm::vec3 pos = compPhysics->GetPos();
-				//const float dist = 2;
-				//boxes[0]->SetPos(pos + mm::vec3(0, 0, 0));
-				////boxes[1]->SetPos(pos + mm::vec3(0, 0, dist));
-				////boxes[2]->SetPos(pos + mm::vec3(0, 0, -dist));
-				////boxes[3]->SetPos(pos + mm::vec3(0, dist, 0));
-				////boxes[4]->SetPos(pos + mm::vec3(0, -dist, 0));
-				////boxes[5]->SetPos(pos + mm::vec3(dist, 0, 0));
-				////boxes[6]->SetPos(pos + mm::vec3(-dist, 0, 0));
-				//
-				//compPhysics->attach(boxes[0]);
-				////compPhysics->attach(boxes[1]);
-				////compPhysics->attach(boxes[2]);
-				////compPhysics->attach(boxes[3]);
-				////compPhysics->attach(boxes[4]);
-				////compPhysics->attach(boxes[5]);
-				////compPhysics->attach(boxes[6]);
-				//
-				////gCamComp->detach();
-				////gCamComp->detach();
-				//gCamComp->detach();
-				//gCamComp->SetPos(pos + mm::vec3(0, -13, 0));
-				//
-				////mm::quat asd = compPhysics->GetRot();
-				////gCamComp->SetRot(asd);
-				//
-				//mm::vec3 dir = boxes[0]->GetPos() - gCamComp->GetPos();
-				//	//dir.z = abs(dir.z + 0.2);
-				//gCamComp->SetDirNormed(mm::normalize(dir));
-				//
-				//compPhysics->attach(gCamComp);
+				c0->Scale({ 1, 1, 2 });
+				
+				c1->Rot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
+				c1->Rot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
 			}
 		}
 

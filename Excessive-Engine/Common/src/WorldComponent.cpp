@@ -67,16 +67,7 @@ WorldComponent* WorldComponent::SetParent(WorldComponent* c)
 
 	if (parent)
 	{
-		// Recalc relative transform...
-		relativeTransform.SetRot(mm::inverse(parent->worldTransform.GetRot()) * worldTransform.GetRot());
-		relativeTransform.SetScale(worldTransform.GetScale() / parent->worldTransform.GetScale());
-		relativeTransform.SetPos(mm::rotate_vector(mm::inverse(parent->worldTransform.GetRot()), (worldTransform.GetPos() - parent->worldTransform.GetPos()) / parent->worldTransform.GetScale()));
-
-		// TODO...
-		mm::mat3 parentRotWithScale = mm::mat4(parent->worldTransform.GetRot()) * mm::create_scale(parent->worldTransform.GetScale()) * mm::mat4(parent->worldTransform.GetSkew());
-		mm::mat3 childRotWithScale = mm::mat4(worldTransform.GetRot()) * mm::create_scale(worldTransform.GetScale())* mm::mat4(worldTransform.GetSkew());;
-		auto rel = mm::inverse(parentRotWithScale) * childRotWithScale;
-		relativeTransform.SetSkew(rel);
+		relativeTransform = _InnerCalcRelTransform();
 
 		parent->childs.push_back(this);
 	}
@@ -90,19 +81,18 @@ WorldComponent* WorldComponent::SetParent(WorldComponent* c)
 
 void WorldComponent::SetTransform(const Transform3D& t)
 {
-	mm::quat q = t.GetRot();
+	mm::quat rot = t.GetRot();
+
+	mm::vec3 dScale = t.GetScale() / worldTransform.GetScale();
 
 	if (GetParent())
 	{
-		mm::vec3 dScale = t.GetScale() / worldTransform.GetScale();
-		_InnerRefreshTransform(q * mm::inverse(GetParent()->GetRot()), q * mm::inverse(worldTransform.GetRot()), dScale, mm::mat4(worldTransform.GetRot()) * mm::create_scale(dScale), dScale);
+		_InnerRefreshTransform(mm::inverse(rot), rot * mm::inverse(GetParent()->GetRot()), rot * mm::inverse(worldTransform.GetRot()), dScale, mm::mat4(worldTransform.GetRot()) * mm::create_scale(dScale), dScale);
 	}
 	else
 	{
-		mm::vec3 dScale = t.GetScale() / worldTransform.GetScale();
-		_InnerRefreshTransform(q, mm::inverse(worldTransform.GetRot()) * q, dScale, mm::mat4(worldTransform.GetRot()) * mm::create_scale(dScale), dScale);
+		_InnerRefreshTransform(mm::inverse(rot), rot, mm::inverse(worldTransform.GetRot()) * rot, dScale, mm::mat4(worldTransform.GetRot()) * mm::create_scale(dScale), dScale);
 	}
-		
 
 	worldTransform = t;
 }
@@ -112,6 +102,8 @@ void WorldComponent::SetPos(const mm::vec3& v)
 	Transform3D tmp = worldTransform;
 		tmp.SetPos(v);
 	SetTransform(tmp);
+
+	relativeTransform = _InnerCalcRelTransform();
 }
 
 void WorldComponent::SetRot(const mm::quat& q)
@@ -119,13 +111,29 @@ void WorldComponent::SetRot(const mm::quat& q)
 	Transform3D tmp = worldTransform;
 		tmp.SetRot(q);
 	SetTransform(tmp);
+
+	relativeTransform = _InnerCalcRelTransform();
 }
 
 void WorldComponent::SetScale(const mm::vec3& v)
 {
+	if (GetParent())
+	{
+		//worldTransform.SetSkew(mm::mat3(mm::inverse(GetRelRot())) * GetParent()->GetSkew() * mm::mat3(mm::inverse(GetRelRot())));
+		worldTransform.SetSkew(GetParent()->GetSkew() * GetRelSkew() * mm::mat3(mm::create_scale(v / worldTransform.GetScale())));
+		_InnerUpdateSkew();
+	}
+	else
+	{
+		worldTransform.SetSkew(worldTransform.GetSkew() * mm::mat3(mm::create_scale(v / worldTransform.GetScale())));
+		_InnerUpdateSkew();
+	}
+
 	Transform3D tmp = worldTransform;
 		tmp.SetScale(v);
 	SetTransform(tmp);
+
+	relativeTransform = _InnerCalcRelTransform();
 }
 
 void WorldComponent::Move(const mm::vec3& v)
@@ -199,50 +207,68 @@ const Transform3D WorldComponent::GetTransform() const
 	return worldTransform;
 }
 
-void WorldComponent::_InnerRefreshTransform(const mm::quat& relRot, const mm::quat& worldDeltaRot, const mm::vec3& worldDeltaScale, const mm::mat4& tmp, mm::vec3 cheat)
+void WorldComponent::_InnerRefreshTransform(const mm::quat& scaledActorRotInverse, const mm::quat& relRot, const mm::quat& worldDeltaRot, const mm::vec3& worldDeltaScale, const mm::mat4& tmp, mm::vec3 cheat)
 {
 	mm::quat inverseRot;
 	if (childs.size() != 0)
 		inverseRot = mm::inverse(relativeTransform.GetRot());
 
-	relativeTransform.SetRot(relRot);
+	//relativeTransform.SetRot(relRot);
 
 	worldTransform.Rot(worldDeltaRot);
 	_InnerUpdateRot();
 
 	for (auto& comp : childs)
 	{ 
-		mm::mat4 par = mm::mat4(worldTransform.GetRot()) * mm::mat4(worldTransform.GetSkew()) * mm::create_scale(cheat);
-		//mm::mat4 par = mm::mat4(worldTransform.GetRot()) * mm::create_scale(relativeTransform.GetScale());
-		mm::mat4 skew = par * mm::mat4(comp->relativeTransform.GetSkew());
-		//comp->worldTransform.SetSkew(mm::mat4(worldTransform.GetSkew()) * mm::mat4(comp->relativeTransform.GetSkew()));
-		comp->worldTransform.SetSkew(skew);
+
+		// Csodás skewDir world space irányba akarjuk elnyújtani a dolgokat..
+		// Lokálisan ez hogy érint minket ?:O
+		//mm::vec3 localSkewDir = mm::rotate_vector(mm::inverse(comp->worldTransform.GetRot()), skewDir);
+		
+		// Ez a localSkewDir szegényes mert tényleg csak lokálisan fog nyújtani, nem world space - ban...
+		// Elkéne érnünk hogy az objektumunkat elõszõr beforgassuk "skewDir bázisra", hogy lokálisan nyújtást érjünk el
+
+		mm::quat deltaRot = comp->GetRot() * scaledActorRotInverse; // comp relative rot to scaledActor
+		comp->worldTransform.SetSkew(comp->worldTransform.GetSkew() * mm::mat3(mm::inverse(deltaRot)) * mm::mat3(mm::create_scale(worldDeltaScale)) * mm::mat3(deltaRot));
+
+		// deltaRot = scaledActorRot * inverse(compRot);
+		// compSkew = deltaRot * mm::create_scale(worldDeltaScale) * deltaRot;
+
+		//comp->worldTransform.SetSkew(comp->worldTransform.GetSkew() * mm::mat3(mm::create_scale(localSkewDir)));
+		// Tehát tudjuk hogy a local scale mi lesz...
+		//comp->worldTransform.SetSkew(comp->worldTransform.GetSkew() * mm::mat3(mm::inverse(comp->GetRelRot())) * mm::mat3(mm::create_scale(localSkewDir)) * mm::mat3(comp->GetRelRot()));
+		//comp->worldTransform.SetSkew(comp->worldTransform.GetSkew() * mm::mat3(mm::inverse(comp->GetRelRot())) * mm::mat3(mm::create_scale(skewDir)) * mm::mat3(comp->GetRelRot()));
+
+		//comp->worldTransform.SetSkew(GetSkew() * comp->GetRelSkew());
 		comp->_InnerUpdateSkew();
 
-		// Gyerek local scale - ja mikor változik??
-		//comp->worldTransform.SetScale(comp->relativeTransform.GetScale() * worldTransform.GetScale() * worldDeltaScale);
-		//comp->_InnerUpdateScale();
-
-		/// PLS
-		// TODO...
-		mm::mat3 parentRotWithScale = mm::mat4(worldTransform.GetRot()) * mm::create_scale(worldTransform.GetScale()) * mm::mat4(worldTransform.GetSkew());
-		mm::mat3 childRotWithScale = mm::mat4(comp->worldTransform.GetRot()) * mm::create_scale(comp->worldTransform.GetScale())* mm::mat4(comp->worldTransform.GetSkew());;
-		auto rel = mm::inverse(parentRotWithScale) * childRotWithScale;
-		comp->relativeTransform.SetSkew(rel);
-
+		mm::vec3 deltaCheat = { 1, 1, 1 };
 
 		
+		comp->worldTransform.SetPos(worldTransform.GetPos() + mm::rotate_vector(worldTransform.GetRot(), (comp->relativeTransform.GetPos()) * GetSkew()));
+		comp->_InnerUpdatePos();
 
-		mm::vec3 deltaCheat = { 1, 1, 1 };
-		//mm::vec3 tt = tmp;
-		//tt /= worldDeltaScale;
-		//if (tt.length() < 1)
-		//	mm::normalize(tt);
 
 		// Elõ kell álítani egy forgást meg scale - t
-		comp->_InnerRefreshTransform(inverseRot * relRot, worldDeltaRot, worldDeltaScale, tmp, deltaCheat); // TODO bad quat multip order
-
-		comp->worldTransform.SetPos(worldTransform.GetPos() + mm::rotate_vector(worldTransform.GetRot(), comp->relativeTransform.GetPos() *  worldTransform.GetScale() * worldDeltaScale));
-		comp->_InnerUpdatePos();
+		comp->_InnerRefreshTransform(scaledActorRotInverse, inverseRot * relRot, worldDeltaRot, worldDeltaScale, tmp, deltaCheat); // TODO bad quat multip order
 	}
+}
+
+Transform3D&& WorldComponent::_InnerCalcRelTransform()
+{
+	Transform3D result;
+	if (parent)
+	{
+		// Recalc relative transform...
+		result.SetRot(mm::inverse(parent->worldTransform.GetRot()) * worldTransform.GetRot());
+		result.SetPos(mm::inverse(parent->GetSkew()) * mm::rotate_vector(mm::inverse(parent->worldTransform.GetRot()), GetPos() - parent->GetPos()));
+		result.SetSkew(mm::inverse(parent->GetSkew()) * GetSkew());
+	}
+	else
+	{
+		result = worldTransform;
+	}
+		
+
+	return std::move(result);
 }

@@ -145,13 +145,14 @@ int Ricsi()
 										sin(-angleZ),  cos(-angleZ),	0,
 											0,			0,				1);
 
-					//newViewDir *= rotAroundX;
+					newViewDir *= rotAroundX;
 					newViewDir *= rotAroundZ;
 
 					camAngleX = angleX;
 					camAngleZ = angleZ;
 
-					cam->SetTarget(cam->GetPos() + newViewDir);
+					cam->SetDirNormed(mm::normalize(newViewDir));
+					//cam->SetTarget(cam->GetPos() + newViewDir);
 				}
 			} break;
 

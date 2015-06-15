@@ -41,11 +41,12 @@ public:
 	__inline virtual const mm::vec3 GetScale() const { return worldTransform.GetScale(); }
 	__inline virtual const mm::mat3 GetSkew() const { return worldTransform.GetSkew(); }
 
+	__inline const mm::mat3  GetRelSkew() const { return relativeTransform.GetSkew(); }
 	__inline const mm::vec3& GetRelPos() const { return relativeTransform.GetPos(); }
 	__inline const mm::quat& GetRelRot() const { return relativeTransform.GetRot(); }
 	__inline const mm::vec3& GetRelScale() const { return relativeTransform.GetScale(); }
 
-	__inline const Transform3D& GetRelativeTransform() const { return relativeTransform; }
+	__inline const Transform3D& GetRelTransform() const { return relativeTransform; }
 	const Transform3D GetTransform() const;
 
 protected:
@@ -55,7 +56,8 @@ protected:
 	virtual void _InnerUpdateSkew() = 0;
 
 	//void _innerSetRelPos(const mm::vec3& relPos, const mm::vec3& worldDeltaMove);
-	void _InnerRefreshTransform(const mm::quat& relRot, const mm::quat& worldDeltaRot, const mm::vec3& worldDeltaScale, const mm::mat4& tmp, mm::vec3 cheat = {1,1,1});
+	Transform3D&& _InnerCalcRelTransform();
+	void _InnerRefreshTransform(const mm::quat& scaledActorRotInverse, const mm::quat& relRot, const mm::quat& worldDeltaRot, const mm::vec3& worldDeltaScale, const mm::mat4& tmp, mm::vec3 cheat = {1,1,1});
 	//void _innerSetRelScale(const mm::vec3& relScale, const mm::vec3& worldDeltaScale);
 
 protected:

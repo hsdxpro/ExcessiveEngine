@@ -333,8 +333,8 @@ void GraphicsEngineRaster::Update(float deltaTime) {
 		mm::mat4 prs =
 			mm::create_translation(entity->GetPos())
 			*mm::mat4(entity->GetRot())
-			*mm::mat4(entity->GetSkew())
-			*mm::create_scale(entity->GetScale());
+			*mm::mat4(entity->GetSkew());
+			//*mm::create_scale(entity->GetScale());
 
 		mm::mat4 wvp = scene.GetCamera()->GetProjMatrix((float)targetWindow->GetClientW() / targetWindow->GetClientH()) * scene.GetCamera()->GetViewMatrix() * prs;
 

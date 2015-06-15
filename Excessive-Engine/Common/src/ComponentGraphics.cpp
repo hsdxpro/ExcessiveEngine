@@ -46,7 +46,7 @@ void ComponentGraphics::_InnerUpdateRot()
 
 void ComponentGraphics::_InnerUpdateScale()
 {
-	entityGraphics->SetScale(worldTransform.GetScale());
+	//entityGraphics->SetScale(worldTransform.GetScale());
 }
 
 void ComponentGraphics::_InnerUpdateSkew()

@@ -53,14 +53,14 @@ int main(int argc, char** args)
 
 	//initialize sfml
 	sf::Window w;
-	w.Create(sf::VideoMode(512, 512), "Graphics Api GL Test");
+	w.create(sf::VideoMode(512, 512), "Graphics Api GL Test");
 
 	if (!w.isOpen())
 	{
 		cerr << "Couldn't initialize SFML." << endl;
 	}
 
-	w.SetVerticalSyncEnabled(true);
+	w.setVerticalSyncEnabled(true);
 
 	//load GL Graphics Api dll
 	string dll_path = app_path + "GraphicsApiGL.dll";
@@ -75,7 +75,7 @@ int main(int argc, char** args)
 
 	std::replace(dll_path.begin(), dll_path.end(), '/', '\\');
 	auto dll = LoadLibrary(dll_path.c_str());
-	GetGapiType CreateGraphicsApi = 0;
+	getGapiType CreateGraphicsApi = 0;
 
 	if (dll)
 	{
@@ -124,8 +124,8 @@ int main(int argc, char** args)
 	im.loadFromFile(image_path);
 
 	rTextureGapi texdata;
-	texdata.width = im.GetSize().x;
-	texdata.height = im.GetSize().y;
+	texdata.width = im.getSize().x;
+	texdata.height = im.getSize().y;
 	texdata.depth = 1;
 	texdata.format = eTextureFormat::RGBA8;
 	texdata.is_cubemap = false;
@@ -135,7 +135,7 @@ int main(int argc, char** args)
 	auto tex = gapi->CreateTexture(texdata);
 
 	rTextureUpdate texupdata;
-	texupdata.data = (char*)im.GetPixelsPtr();
+	texupdata.data = (char*)im.getPixelsPtr();
 	texupdata.depth = texdata.depth;
 	texupdata.format = texdata.format;
 	texupdata.width = texdata.width;
