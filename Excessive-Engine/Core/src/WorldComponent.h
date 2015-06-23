@@ -1,7 +1,7 @@
 #pragma once
 // Represent those components which can be placed in a 3D world (pos, rot, scale), attachable to Actor, and to itself
 #include <vector>
-#include "BasicTypes.h"
+#include "..\..\Common\src\BasicTypes.h"
 #include "mymath\mymath.h"
 #include "Transform3D.h"
 

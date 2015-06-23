@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "BasicTypes.h"
+#include "..\..\Common\src\BasicTypes.h"
 #include "mymath\mymath.h"
 #include "WorldComponent.h"
 

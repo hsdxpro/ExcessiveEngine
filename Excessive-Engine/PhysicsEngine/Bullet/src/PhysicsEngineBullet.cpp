@@ -136,6 +136,7 @@ physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidCapsule(float height, 
 	// Create rigid body
 	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), capsuleShape, localInertia);
 	world->addRigidBody(body);
+	
 
 	EntityRigid* e = new EntityRigid(body);
 		entities.push_back(e);

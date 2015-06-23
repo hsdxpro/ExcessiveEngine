@@ -1,4 +1,4 @@
-﻿#include "EngineCore.h"
+﻿#include "..\Core\src\EngineCore.h"
 #include "Factory.h"
 
 // basic util
@@ -62,10 +62,10 @@ namespace testartur
 		//Actor* simpleEntity = core.AddActor();
 		core.AddCompRigidBodyFromFile(Sys::GetWorkDir() + assetName, 0)->Attach(core.AddCompGraphicsFromFile(Sys::GetWorkDir() + assetName));
 
-		core.AddCompGraphicsFromFile(Sys::GetWorkDir() + L"../Assets/skybox.dae")->SetScale({ 1000, 1000, 1000 });
+		core.AddCompGraphicsFromFile(Sys::GetWorkDir() + L"../Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
 
 		auto pMusicSourceRepresenterModel = core.AddCompGraphicsFromFile(Sys::GetWorkDir() + teapotModelPath);
-		pMusicSourceRepresenterModel->SetScale({ 0.1f, 0.1f, 0.1f });
+		pMusicSourceRepresenterModel->SetScaleLocal({ 0.1f, 0.1f, 0.1f });
 		pMusicSourceRepresenterModel->SetPos(musicPosition);
 
 		sound::IListener* listener = sEngine->CreateListener();

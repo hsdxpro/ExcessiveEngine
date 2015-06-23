@@ -1,4 +1,4 @@
-﻿#include "EngineCore.h"
+﻿#include "..\Core\src\EngineCore.h"
 #include "Factory.h"
 
 // basic util
@@ -51,7 +51,7 @@ int Ricsi()
 	static const wchar_t ak47ModelPath[] = L"../Assets/ak47/ak.obj"; // Assets/teapot.dae
 
 	core.AddCompRigidBodyFromFile(Sys::GetWorkDir() + assetName, 0)->Attach(core.AddCompGraphicsFromFile(Sys::GetWorkDir() + assetName));
-	core.AddCompGraphicsFromFile(Sys::GetWorkDir() + L"../Assets/skybox.dae")->SetScale({ 1000, 1000, 1000 });
+	core.AddCompGraphicsFromFile(Sys::GetWorkDir() + L"../Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
 
 	// Run the main loop
 	rWindowEvent ev;
@@ -106,7 +106,7 @@ int Ricsi()
 					box->Attach(core.AddCompGraphicsFromFile(Sys::GetWorkDir() + teapotModelPath));
 
 					box->SetPos(cam->GetPos() + cam->GetDirNormedFront() * 3); // 3 méterrel elénk
-					box->SetScale(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
+					box->SetScaleLocal(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
 				}
 				break;
 			case eWindowMsg::MOUSE_RELEASE:

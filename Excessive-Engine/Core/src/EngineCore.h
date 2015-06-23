@@ -12,7 +12,7 @@
 #include <unordered_map>
 
 // These includes are for ComponentConstructor
-#include "Importer3D.h"
+#include "../../Common/src/Importer3D.h"
 #include "Actor.h"
 #include "ComponentGraphics.h"
 #include "ComponentRigidBody.h"

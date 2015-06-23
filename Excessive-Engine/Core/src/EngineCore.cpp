@@ -1,13 +1,13 @@
 #include "EngineCore.h"
-#include "Factory.h"
-#include "Importer3D.h"
+#include "../../Common/src/Factory.h"
+#include "../../Common/src/Importer3D.h"
 
 #include "../GraphicsEngine/Raster/src/GraphicsEngineRaster.h"
 #include "../GraphicsEngine/RT/src/GraphicsEngineRT.h"
 #include "../PhysicsEngine/Bullet/src/PhysicsEngineBullet.h"
 #include "../NetworkEngine/Boost/src/NetworkEngineBoost.h"
 #include "../SoundEngine/SFML/src/SoundEngineSFML.h"
-#include "EngineCpuProfiler.h"
+#include "../../Common/src/EngineCpuProfiler.h"
 
 #include <assert.h>
 

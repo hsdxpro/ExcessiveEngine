@@ -3,7 +3,8 @@
 
 void ComponentRigidBody::UpdateAfterPhysicsSimulate()
 {
-	//WorldComponent::SetTransform(Transform3D(entityRigid->GetPos(), entityRigid->GetRot(), entityRigid->GetScale()));
+	WorldComponent::SetPos(entityRigid->GetPos());
+	WorldComponent::SetRot(entityRigid->GetRot());
 }
 
 void ComponentRigidBody::SetPos(const mm::vec3& v)

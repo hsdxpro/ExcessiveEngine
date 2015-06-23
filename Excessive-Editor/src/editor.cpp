@@ -1,11 +1,10 @@
 #include "Awesomium/WebCore.h"
 #include "Awesomium/BitmapSurface.h"
 #include "Awesomium/STLHelpers.h"
-#include "../Common/src/EngineCore.h"
+#include "../Core/src/EngineCore.h"
 
 #include "../Common/src/IWindow.h"
 #include "../Common/src/Factory.h"
-#include "../Common/src/EngineCore.h"
 
 static const char vertexShaderCode[] =
 "#version 440 core \n"

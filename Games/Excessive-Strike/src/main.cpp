@@ -1,9 +1,10 @@
 #include "..\Common\src\Factory.h"
 #include "..\Common\src\IWindow.h"
 #include "..\Common\src\Sys.h"
-#include "..\Common\src\EngineCore.h"
 #include "..\Common\src\ITimer.h"
 #include "..\Common\src\EngineCpuProfiler.h"
+
+#include "..\Core\src\EngineCore.h"
 
 // Spirit of the engine
 EngineCore gEngineCore;
@@ -11,7 +12,7 @@ EngineCore gEngineCore;
 // Window for our game
 IWindow* gWindow;
 
-ComponentCamera* gCamComp;
+ComponentCamera* gMainCam;
 
 int main()
 {
@@ -46,13 +47,16 @@ int main()
 	auto& boxModelPath = Sys::GetWorkDir() + L"../Assets/box.dae";
 
 	// Terrain & Sky
-	//gEngineCore.AddCompRigidBodyFromFile(groundModelPath, 0)->Attach(gEngineCore.AddCompGraphicsFromFile(groundModelPath));
-	//gEngineCore.AddCompGraphicsFromFile(skyModelPath)->SetScale({ 1000, 1000, 1000 });
+	gEngineCore.AddCompRigidBodyFromFile(groundModelPath, 0)->Attach(gEngineCore.AddCompGraphicsFromFile(groundModelPath));
+	gEngineCore.AddCompGraphicsFromFile(skyModelPath)->SetScaleLocal({ 1000, 1000, 1000 });
 
-	//
+
 	// Player components
-	//auto compPhysics = gEngineCore.AddCompRigidBodyCapsule(2, 0.2, 20);
-	gCamComp = gEngineCore.AddCompCamera();
+	auto compPhysics = gEngineCore.AddCompRigidBodyCapsule(2, 0.2, 20);
+	gMainCam = gEngineCore.AddCompCamera();
+	compPhysics->Attach(gMainCam);
+	compPhysics->SetPos({0, 0, 10});
+
 	//auto compGraphics	= gEngineCore.AddCompGraphicsFromFile(ak47ModelPath);
 	//	compGraphics->SetScale({ 1.f / 500, 1.f / 500, 1.f / 500 });
 	//	//compGraphics->SetRot(mm::quat(-0.05, {1,0,0}) * mm::quat(3.1415 - 0.08, { 0, 0, 1 }) * mm::quat(3.1415 / 2, { 1, 0, 0 })); // Need quaternion rework, multiply swapped, mm::quat(angle) rots with -angle, why?
@@ -70,7 +74,7 @@ int main()
 	//
 	//compPhysics->SetPos({ 0.f, 0.f, 10.f });
 	//
-	gEngineCore.SetCam(gCamComp);
+	gEngineCore.SetCam(gMainCam);
 
 	//auto mat = gEngineCore.CreateGraphicsMaterial();
 	//graphics::IMaterial::SubMaterial s;
@@ -86,41 +90,39 @@ int main()
 		{
 			if (evt.msg == eWindowMsg::MOUSE_RELEASE && evt.mouseBtn == eMouseBtn::LEFT)
 			{
+				// Transform hierarchy UNIT TEST
 
-				auto c0 = gEngineCore.AddCompGraphicsFromFile(boxModelPath);
-				auto c1 = gEngineCore.AddCompGraphicsFromFile(boxModelPath);
-				auto c2 = gEngineCore.AddCompGraphicsFromFile(boxModelPath);
-				
-				gCamComp->SetPos({0,-25, 5});
-				
-				c0->SetScaleLocal({ 1.f / 20, 1.f / 20, 1.f / 20 });
-				c1->SetScaleLocal({ 1.f / 20, 1.f / 20, 1.f / 20 });
-				c2->SetScaleLocal({ 1.f / 20, 1.f / 20, 1.f / 20 });
-
-				c0->SetPos({ 2, -4, 6 });
-				c1->SetPos({ -1, -4, 6 });
-				c2->SetPos({ -1, -4, 3 });
-
-
-				c0->SetRot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
-				c2->SetRot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
-				
-				
-				c0->Attach(c1);
-				c1->Attach(c2);
-				
-				c1->Rot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
-				
-				//int asd = 5;
-				//asd++;
-
-				c0->ScaleLocal({ 1, 1, 3 });
-				
-				c1->Rot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
-				c1->Rot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
-				
-				// Ennek semmit se kéne csinálnia
-				c0->ScaleLocal({ 2, 1, 1 });
+				//auto c0 = gEngineCore.AddCompGraphicsFromFile(boxModelPath);
+				//auto c1 = gEngineCore.AddCompGraphicsFromFile(boxModelPath);
+				//auto c2 = gEngineCore.AddCompGraphicsFromFile(boxModelPath);
+				//
+				//gMainCam->SetPos({0,-25, 5});
+				//
+				//c0->SetScaleLocal({ 1.f / 20, 1.f / 20, 1.f / 20 });
+				//c1->SetScaleLocal({ 1.f / 20, 1.f / 20, 1.f / 20 });
+				//c2->SetScaleLocal({ 1.f / 20, 1.f / 20, 1.f / 20 });
+				//
+				//c0->SetPos({ 2, -4, 6 });
+				//c1->SetPos({ -1, -4, 6 });
+				//c2->SetPos({ -1, -4, 3 });
+				//
+				//
+				//c0->SetRot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
+				//c2->SetRot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
+				//
+				//
+				//c0->Attach(c1);
+				//c1->Attach(c2);
+				//
+				//c1->Rot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
+				//
+				//c0->ScaleLocal({ 1, 1, 3 });
+				//
+				//c1->Rot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
+				//c1->Rot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
+				//
+				//// Ennek semmit se kéne csinálnia
+				//c0->ScaleLocal({ 2, 1, 1 });
 			}
 		}
 
