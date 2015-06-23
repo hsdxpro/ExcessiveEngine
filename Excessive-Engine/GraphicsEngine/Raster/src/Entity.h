@@ -21,12 +21,12 @@ public:
 
 	void SetPos(const mm::vec3& v);
 	void SetRot(const mm::quat& q);
-	void SetScale(const mm::vec3& v);
+	void SetScaleLocal(const mm::vec3& v);
 	void SetSkew(const mm::mat3& m);
 
 	const mm::vec3& GetPos();
 	const mm::quat& GetRot();
-	const mm::vec3& GetScale();
+	const mm::vec3& GetScaleLocal();
 	const mm::mat3& GetSkew();
 
 	virtual void SetMesh(graphics::IMesh* mesh) override;

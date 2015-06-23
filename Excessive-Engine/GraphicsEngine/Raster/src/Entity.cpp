@@ -25,7 +25,7 @@ void Entity::SetRot(const mm::quat& q)
 	rot = q;
 }
 
-void Entity::SetScale(const mm::vec3& v)
+void Entity::SetScaleLocal(const mm::vec3& v)
 {
 	scale = v;
 }
@@ -44,7 +44,7 @@ const mm::quat& Entity::GetRot()
 	return rot;
 }
 
-const mm::vec3& Entity::GetScale()
+const mm::vec3& Entity::GetScaleLocal()
 {
 	return scale;
 }

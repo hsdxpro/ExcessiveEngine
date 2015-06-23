@@ -13,10 +13,10 @@ void ComponentGraphics::SetRot(const mm::quat& q)
 	WorldComponent::SetRot(q);
 }
 
-void ComponentGraphics::SetScale(const mm::vec3& v)
+void ComponentGraphics::SetScaleLocal(const mm::vec3& v)
 {
-	entityGraphics->SetScale(v);
-	WorldComponent::SetScale(v);
+	entityGraphics->SetScaleLocal(v);
+	WorldComponent::SetScaleLocal(v);
 }
 
 const mm::vec3& ComponentGraphics::GetPos()
@@ -29,27 +29,22 @@ const mm::quat& ComponentGraphics::GetRot()
 	return entityGraphics->GetRot();
 }
 
-const mm::vec3& ComponentGraphics::GetScale()
+const mm::vec3& ComponentGraphics::GetScaleLocal()
 {
-	return entityGraphics->GetScale();
+	return entityGraphics->GetScaleLocal();
 }
 
-void ComponentGraphics::_InnerUpdatePos()
+void ComponentGraphics::_InnerReflectPos()
 {
 	entityGraphics->SetPos(worldTransform.GetPos());
 }
 
-void ComponentGraphics::_InnerUpdateRot()
+void ComponentGraphics::_InnerReflectRot()
 {
 	entityGraphics->SetRot(worldTransform.GetRot());
 }
 
-void ComponentGraphics::_InnerUpdateScale()
-{
-	//entityGraphics->SetScale(worldTransform.GetScale());
-}
-
-void ComponentGraphics::_InnerUpdateSkew()
+void ComponentGraphics::_InnerReflectSkew()
 {
 	entityGraphics->SetSkew(worldTransform.GetSkew());
 }

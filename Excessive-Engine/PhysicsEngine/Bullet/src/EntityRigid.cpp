@@ -31,7 +31,7 @@ void EntityRigid::SetRot(const mm::quat& q)
 	body->getMotionState()->setWorldTransform(trans);
 }
 
-void EntityRigid::SetScale(const mm::vec3& v)
+void EntityRigid::SetScaleLocal(const mm::vec3& v)
 {
 	btCollisionShape* colShape = body->getCollisionShape();
 
@@ -71,7 +71,7 @@ mm::quat EntityRigid::GetRot()
 	return rot;
 }
 
- mm::vec3 EntityRigid::GetScale()
+ mm::vec3 EntityRigid::GetScaleLocal()
 {
 	btCollisionShape* shape = body->getCollisionShape();
 

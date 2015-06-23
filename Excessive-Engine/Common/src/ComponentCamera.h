@@ -19,10 +19,9 @@ public:
 	graphics::ICamera* GetCam();
 
 protected:
-	void _InnerUpdatePos() override;
-	void _InnerUpdateRot() override;
-	void _InnerUpdateScale() override;
-	void _InnerUpdateSkew() override;
+	void _InnerReflectPos() override;
+	void _InnerReflectRot() override;
+	void _InnerReflectSkew() override;
 
 protected:
 	graphics::ICamera* cam;

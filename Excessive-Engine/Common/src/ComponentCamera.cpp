@@ -40,22 +40,17 @@ graphics::ICamera* ComponentCamera::GetCam()
 	return cam;
 }
 
-void ComponentCamera::_InnerUpdatePos()
+void ComponentCamera::_InnerReflectPos()
 {
 	cam->SetPos(worldTransform.GetPos());
 }
 
-void ComponentCamera::_InnerUpdateRot()
+void ComponentCamera::_InnerReflectRot()
 {
 	cam->SetRot(worldTransform.GetRot());
 }
 
-void ComponentCamera::_InnerUpdateScale()
-{
-
-}
-
-void ComponentCamera::_InnerUpdateSkew()
+void ComponentCamera::_InnerReflectSkew()
 {
 
 }

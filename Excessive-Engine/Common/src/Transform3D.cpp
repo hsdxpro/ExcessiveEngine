@@ -1,7 +1,7 @@
 #include "Transform3D.h"
 
 Transform3D::Transform3D()
-:pos(0, 0, 0), scale(1,1,1)
+:pos(0, 0, 0)
 {
 	skew[0] = {1, 0, 0};
 	skew[1] = {0, 1, 0};
@@ -9,7 +9,7 @@ Transform3D::Transform3D()
 }
 
 Transform3D::Transform3D(const mm::vec3& pos, const mm::quat& rot, const mm::vec3& scale)
-:pos(pos), rot(rot), scale(scale)
+:pos(pos), rot(rot)
 {
 	skew[0] = {scale.x, 0, 0};
 	skew[1] = {0, scale.y, 0};

@@ -9,10 +9,9 @@ public:
 	ComponentSoftBody(physics::IEntitySoft* e) :entitySoft(e){}
 
 protected:
-	void _InnerUpdatePos() override;
-	void _InnerUpdateRot() override;
-	void _InnerUpdateScale() override;
-	void _InnerUpdateSkew() override;
+	void _InnerReflectPos() override;
+	void _InnerReflectRot() override;
+	void _InnerReflectSkew() override;
 
 protected:
 	physics::IEntitySoft* entitySoft;

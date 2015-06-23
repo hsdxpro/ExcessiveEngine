@@ -3,7 +3,7 @@
 
 void ComponentRigidBody::UpdateAfterPhysicsSimulate()
 {
-	WorldComponent::SetTransform(Transform3D(entityRigid->GetPos(), entityRigid->GetRot(), entityRigid->GetScale()));
+	//WorldComponent::SetTransform(Transform3D(entityRigid->GetPos(), entityRigid->GetRot(), entityRigid->GetScale()));
 }
 
 void ComponentRigidBody::SetPos(const mm::vec3& v)
@@ -18,10 +18,10 @@ void ComponentRigidBody::SetRot(const mm::quat& q)
 	WorldComponent::SetRot(q);
 }
 
-void ComponentRigidBody::SetScale(const mm::vec3& v)
+void ComponentRigidBody::SetScaleLocal(const mm::vec3& v)
 {
-	entityRigid->SetScale(v);
-	WorldComponent::SetScale(v);
+	entityRigid->SetScaleLocal(v);
+	WorldComponent::SetScaleLocal(v);
 }
 
 const mm::vec3& ComponentRigidBody::GetPos()
@@ -34,30 +34,24 @@ const mm::quat& ComponentRigidBody::GetRot()
 	return entityRigid->GetRot();
 }
 
-const mm::vec3& ComponentRigidBody::GetScale()
+const mm::vec3& ComponentRigidBody::GetScaleLocal()
 {
-	return entityRigid->GetScale();
+	return entityRigid->GetScaleLocal();
 }
 
-void ComponentRigidBody::_InnerUpdatePos()
+void ComponentRigidBody::_InnerReflectPos()
 {
 	// If mass = 0 maybe
 	//entityRigid->SetPos(worldTransform.GetPos());
 }
 
-void ComponentRigidBody::_InnerUpdateRot()
+void ComponentRigidBody::_InnerReflectRot()
 {
 	// If mass = 0 maybe
 	//entityRigid->SetRot(worldTransform.GetRot());
 }
 
-void ComponentRigidBody::_InnerUpdateScale()
-{
-	// If mass = 0 maybe
-	//entityRigid->SetScale(worldTransform.GetScale());
-}
-
-void ComponentRigidBody::_InnerUpdateSkew()
+void ComponentRigidBody::_InnerReflectSkew()
 {
 
 }

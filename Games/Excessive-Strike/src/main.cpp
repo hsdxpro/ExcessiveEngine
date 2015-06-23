@@ -3,6 +3,7 @@
 #include "..\Common\src\Sys.h"
 #include "..\Common\src\EngineCore.h"
 #include "..\Common\src\ITimer.h"
+#include "..\Common\src\EngineCpuProfiler.h"
 
 // Spirit of the engine
 EngineCore gEngineCore;
@@ -92,28 +93,34 @@ int main()
 				
 				gCamComp->SetPos({0,-25, 5});
 				
-				c0->SetScale({ 1.f / 20, 1.f / 20, 1.f / 20 });
-				c1->SetScale({ 1.f / 20, 1.f / 20, 1.f / 20 });
-				c2->SetScale({ 1.f / 20, 1.f / 20, 1.f / 20 });
+				c0->SetScaleLocal({ 1.f / 20, 1.f / 20, 1.f / 20 });
+				c1->SetScaleLocal({ 1.f / 20, 1.f / 20, 1.f / 20 });
+				c2->SetScaleLocal({ 1.f / 20, 1.f / 20, 1.f / 20 });
 
 				c0->SetPos({ 2, -4, 6 });
 				c1->SetPos({ -1, -4, 6 });
 				c2->SetPos({ -1, -4, 3 });
 
-				
+
 				c0->SetRot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
 				c2->SetRot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
 				
 				
 				c0->Attach(c1);
 				c1->Attach(c2);
-
+				
 				c1->Rot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
+				
+				//int asd = 5;
+				//asd++;
 
-				c0->Scale({ 1, 1, 2 });
+				c0->ScaleLocal({ 1, 1, 3 });
 				
 				c1->Rot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
 				c1->Rot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
+				
+				// Ennek semmit se kéne csinálnia
+				c0->ScaleLocal({ 2, 1, 1 });
 			}
 		}
 

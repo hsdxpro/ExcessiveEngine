@@ -20,12 +20,12 @@ class IEntity
 public:
 	virtual void SetPos(const mm::vec3& v) = 0;
 	virtual void SetRot(const mm::quat& q) = 0;
-	virtual void SetScale(const mm::vec3& v) = 0;
+	virtual void SetScaleLocal(const mm::vec3& v) = 0;
 	virtual void SetSkew(const mm::mat3& m) = 0;
 
 	virtual const mm::vec3& GetPos() = 0;
 	virtual const mm::quat& GetRot() = 0;
-	virtual const mm::vec3& GetScale() = 0;
+	virtual const mm::vec3& GetScaleLocal() = 0;
 	virtual const mm::mat3& GetSkew() = 0;
 
 	virtual void SetMesh(IMesh* mesh) = 0;

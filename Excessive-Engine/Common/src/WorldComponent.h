@@ -17,19 +17,20 @@ public:
 	WorldComponent* AttachTo(WorldComponent* c);
 	WorldComponent* Attach(WorldComponent* c);
 	WorldComponent* Detach();
-
 	WorldComponent* SetParent(WorldComponent* c);
-
-	void SetTransform(const Transform3D& t);
 
 	virtual void SetPos(const mm::vec3& v);
 	virtual void SetRot(const mm::quat& q);
-	virtual void SetScale(const mm::vec3& v);
+	virtual void SetScaleLocal(const mm::vec3& v);
 
 	void Move(const mm::vec3& v);
 	void Rot(const mm::quat& q);
 	void Scale(const mm::vec3& v);
+	void ScaleLocal(const mm::vec3& v);
 
+	virtual void SetRelPos(const mm::vec3& v);
+	virtual void SetRelRot(const mm::quat& q);
+	virtual void SetRelScale(const mm::vec3& v);
 	void MoveRel(const mm::vec3& v);
 	void RotRel(const mm::quat& q);
 	void ScaleRel(const mm::vec3& v);
@@ -38,32 +39,33 @@ public:
 
 	__inline virtual const mm::vec3 GetPos() const { return worldTransform.GetPos(); }
 	__inline virtual const mm::quat GetRot() const { return worldTransform.GetRot(); }
-	__inline virtual const mm::vec3 GetScale() const { return worldTransform.GetScale(); }
+	__inline virtual const mm::vec3 GetScaleLocal() const { return worldTransform.GetScaleLocal(); }
 	__inline virtual const mm::mat3 GetSkew() const { return worldTransform.GetSkew(); }
 
-	__inline const mm::mat3  GetRelSkew() const { return relativeTransform.GetSkew(); }
-	__inline const mm::vec3& GetRelPos() const { return relativeTransform.GetPos(); }
-	__inline const mm::quat& GetRelRot() const { return relativeTransform.GetRot(); }
-	__inline const mm::vec3& GetRelScale() const { return relativeTransform.GetScale(); }
+	__inline const mm::vec3& GetRelPos() const { return relTransform.GetPos(); }
+	__inline const mm::quat& GetRelRot() const { return relTransform.GetRot(); }
+	__inline const mm::vec3& GetRelScaleLocal() const { return relTransform.GetScaleLocal(); }
 
-	__inline const Transform3D& GetRelTransform() const { return relativeTransform; }
+	__inline const Transform3D& GetRelTransform() const { return relTransform; }
 	const Transform3D GetTransform() const;
 
 protected:
-	virtual void _InnerUpdatePos() = 0;
-	virtual void _InnerUpdateRot() = 0;
-	virtual void _InnerUpdateScale() = 0;
-	virtual void _InnerUpdateSkew() = 0;
+	virtual void _InnerReflectPos() = 0;
+	virtual void _InnerReflectRot() = 0;
+	virtual void _InnerReflectSkew() = 0;
 
-	//void _innerSetRelPos(const mm::vec3& relPos, const mm::vec3& worldDeltaMove);
-	Transform3D&& _InnerCalcRelTransform();
-	void _InnerRefreshTransform(const mm::quat& scaledActorRotInverse, const mm::quat& relRot, const mm::quat& worldDeltaRot, const mm::vec3& worldDeltaScale, const mm::mat4& tmp, mm::vec3 cheat = {1,1,1});
-	//void _innerSetRelScale(const mm::vec3& relScale, const mm::vec3& worldDeltaScale);
+	void _InnerMoveChildRecursively(WorldComponent* child, const mm::vec3& dMove);
+	void _InnerRotChildRecursively(WorldComponent* child, const mm::quat& dRot, const mm::vec3& transformRootPos);
+	void _InnerScaleChildRecursively(WorldComponent* child, const mm::vec3& parentPos, const mm::quat& parentRot, const mm::vec3& parentLocalScale,  const mm::mat3& parentSkew, const mm::vec3& dScale, const mm::quat& rootRotInverse);
 
 protected:
+	// Child components in the tree structure
 	std::vector<WorldComponent*> childs;
+
+	// Parent component
 	WorldComponent* parent;
 
+	// World and Relative transformation
 	Transform3D worldTransform;
-	Transform3D relativeTransform;
+	Transform3D relTransform;
 };
