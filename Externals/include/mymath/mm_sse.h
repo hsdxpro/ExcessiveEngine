@@ -81,6 +81,7 @@ namespace mymath
     static const __m128 atanf_p3 = _mm_set_ps1( -3.33329491539e-1f );
     static const __m128 t3pi08 = _mm_set_ps1( 2.414213562373095f );
     static const __m128 tpi08 = _mm_set_ps1( 0.4142135623730950f );
+    static const __m128 exp2_num = _mm_set1_ps( 0.6931472f );
 
     MYMATH_INLINE __m128 sse_fma_ps( __m128 a, __m128 b, __m128 c )
     {
@@ -92,6 +93,19 @@ namespace mymath
       return _mm_fmadd_ps( a, b, c );
 #else
       return _mm_add_ps( _mm_mul_ps( a, b ), c );
+#endif
+    }
+
+    MYMATH_INLINE __m128 sse_fms_ps( __m128 a, __m128 b, __m128 c )
+    {
+#ifdef MYMATH_USE_FMA
+      //fma instruction could be used here, but only recent processors support it
+      //only on haswell+
+      //and piledriver+
+      //and bulldozer+
+      return _mm_fmsub_ps( a, b, c );
+#else
+      return _mm_sub_ps( _mm_mul_ps( a, b ), c );
 #endif
     }
 
@@ -163,12 +177,14 @@ namespace mymath
     MYMATH_INLINE __m128 sse_mix_ps( __m128 v1, __m128 v2, __m128 a )
     {
       //v2 * a + (1 - a) * v1
-      __m128 sub0 = _mm_sub_ps( one, a );
-      __m128 mul0 = _mm_mul_ps( v1, sub0 );
+      //__m128 sub0 = _mm_sub_ps( one, a );
+      //__m128 mul0 = _mm_mul_ps( v1, sub0 );
       //__m128 mul1 = _mm_mul_ps( v2, a );
       //__m128 add0 = _mm_add_ps( mul0, mul1 );
       //return add0;
-      return sse_fma_ps( v2, a, mul0 );
+      //v2 * a + v1 - a * v1
+      __m128 tmp0 = sse_fma_ps( sse_neg_ps( a ), v1, v1 );
+      return sse_fma_ps( v2, a, tmp0 );
     }
 
     //TODO sse_nan_ps
@@ -466,10 +482,10 @@ namespace mymath
       //y = _mm_mul_ps( y, z );
       //y = _mm_add_ps( y, coscof_p2 );
       y = sse_fma_ps( y, z, coscof_p2 );
-      
+
       y = _mm_mul_ps( y, z );
       y = _mm_mul_ps( y, z );
-      
+
       //__m128 tmp = _mm_mul_ps( z, half );
       //y = _mm_sub_ps( y, tmp );
       y = sse_fma_ps( sse_neg_ps(z), half, y );
@@ -485,7 +501,7 @@ namespace mymath
       //y2 = _mm_mul_ps( y2, z );
       //y2 = _mm_add_ps( y2, sincof_p2 );
       y2 = sse_fma_ps( y2, z, sincof_p2 );
-      
+
       y2 = _mm_mul_ps( y2, z );
       y2 = _mm_mul_ps( y2, x );
       y2 = _mm_add_ps( y2, x );
@@ -566,10 +582,10 @@ namespace mymath
       //y = _mm_mul_ps( y, z );
       //y = _mm_add_ps( y, coscof_p2 );
       y = sse_fma_ps( y, z, coscof_p2 );
-      
+
       y = _mm_mul_ps( y, z );
       y = _mm_mul_ps( y, z );
-      
+
       //__m128 tmp = _mm_mul_ps( z, half );
       //y = _mm_sub_ps( y, tmp );
       y = sse_fma_ps( sse_neg_ps(z), half, y );
@@ -585,7 +601,7 @@ namespace mymath
       //y2 = _mm_mul_ps( y2, z );
       //y2 = _mm_add_ps( y2, sincof_p2 );
       y2 = sse_fma_ps( y2, z, sincof_p2 );
-      
+
       y2 = _mm_mul_ps( y2, z );
       y2 = _mm_mul_ps( y2, x );
       y2 = _mm_add_ps( y2, x );
@@ -623,7 +639,7 @@ namespace mymath
       //log( x + sqrt( x^2 - 1 ) )
       //__m128 sqr = _mm_mul_ps( x, x );
       //sqr = _mm_sub_ps( sqr, one );
-      __m128 sqr = sse_fma_ps( x, x, sse_neg_ps(one) ); 
+      __m128 sqr = sse_fms_ps( x, x, one );
       sqr = _mm_sqrt_ps( sqr );
       sqr = _mm_add_ps( sqr, x );
       return sse_log_ps( sqr );
@@ -642,7 +658,7 @@ namespace mymath
     MYMATH_INLINE __m128 sse_exp2_ps( __m128 x )
     {
       //2^x
-      return sse_exp_ps( _mm_mul_ps( _mm_set1_ps( 0.6931472f ), x ) );
+      return sse_exp_ps( _mm_mul_ps( exp2_num, x ) );
     }
 
     MYMATH_INLINE __m128 sse_log2_ps( __m128 x )
@@ -653,7 +669,7 @@ namespace mymath
 
     MYMATH_INLINE __m128 sse_inversesqrt_ps( __m128 x )
     {
-      return _mm_rsqrt_ps( x );
+      return _mm_div_ps(one, _mm_sqrt_ps(x));//the precision of _mm_rsqrt_ps( x ) is not enough...
     }
 
     MYMATH_INLINE __m128 sse_sign_ps( __m128 x )
@@ -694,7 +710,7 @@ namespace mymath
 
     MYMATH_INLINE __m128 sse_fract_ps( __m128 x )
     {
-      return _mm_sub_ps( x, sse_floor_ps( x ) );
+      return _mm_sub_ps( x, sse_trunc_ps( x ) );
     }
 
     MYMATH_INLINE __m128 sse_step_ps( __m128 a, __m128 b )
@@ -711,32 +727,21 @@ namespace mymath
                          _mm_sub_ps( three, _mm_add_ps( cc, cc ) ) );
     }
 
-    //WARNING: it's slow to switch to floats
-    MYMATH_INLINE float sse_dot_ps( __m128 a, __m128 b )
-    {
-      __m128 l = _mm_mul_ps( a, b );
-      l = _mm_add_ps( l, _mm_shufd( l, MYMATH_SHUFFLE(2, 3, 0, 1) ) );
-      return _mm_cvtss_f32( _mm_add_ss( l, _mm_shufd( l, MYMATH_SHUFFLE(1, 0, 1, 0) ) ) );
-    }
-
+    template< int mask >
     MYMATH_INLINE __m128 sse_dot_ps_helper( __m128 a, __m128 b )
     {
-      __m128 l = _mm_mul_ps( a, b );
-      l = _mm_add_ps( l, _mm_shufd( l, MYMATH_SHUFFLE(2, 3, 0, 1) ) );
-      l = _mm_add_ss( l, _mm_shufd( l, MYMATH_SHUFFLE(1, 0, 1, 0) ) );
+      __m128 l = _mm_dp_ps( a, b, mask );
       return _mm_shuffle_ps( l, l, MYMATH_SHUFFLE( 0, 0, 0, 0 ) );
     }
 
     //WARNING: it's slow to switch to floats
-    MYMATH_INLINE float sse_length_ps( __m128 x )
+    template< int mask >
+    MYMATH_INLINE float sse_dot_ps( __m128 a, __m128 b )
     {
-      __m128 l = _mm_mul_ps( x, x );
-      l = _mm_add_ps( l, _mm_shufd( l, MYMATH_SHUFFLE(2, 3, 0, 1) ) );
-      return _mm_cvtss_f32( _mm_sqrt_ss( _mm_add_ss( l,
-                                         _mm_shufd( l, MYMATH_SHUFFLE(1, 0, 1, 0) ) ) ) );
+      return _mm_cvtss_f32( sse_dot_ps_helper<mask>(a,b) );
     }
 
-    MYMATH_INLINE __m128 sse_length_ps_helper( __m128 x )
+    MYMATH_INLINE __m128 sse_length_ps_helper_vec4( __m128 x )
     {
       __m128 l = _mm_mul_ps( x, x );
       l = _mm_add_ps( l, _mm_shufd( l, MYMATH_SHUFFLE(2, 3, 0, 1) ) );
@@ -744,54 +749,105 @@ namespace mymath
       return _mm_shuffle_ps( l, l, MYMATH_SHUFFLE( 0, 0, 0, 0 ) );
     }
 
-    //WARNING: it's slow to switch to floats
-    MYMATH_INLINE float sse_distance_ps( __m128 a, __m128 b )
+    MYMATH_INLINE __m128 sse_length_ps_helper_vec3( __m128 x )
     {
-      __m128 l = _mm_sub_ps( a, b );
-      l = _mm_mul_ps( l, l );
-      l = _mm_add_ps( l, _mm_shufd( l, MYMATH_SHUFFLE(2, 3, 0, 1) ) );
-      return _mm_cvtss_f32( _mm_sqrt_ss( _mm_add_ss( l,
-                                         _mm_shufd( l, MYMATH_SHUFFLE(1, 0, 1, 0) ) ) ) );
-    }
-
-    MYMATH_INLINE __m128 sse_distance_ps_helper( __m128 a, __m128 b )
-    {
-      __m128 l = _mm_sub_ps( a, b );
-      l = _mm_mul_ps( l, l );
-      l = _mm_add_ps( l, _mm_shufd( l, MYMATH_SHUFFLE(2, 3, 0, 1) ) );
-      l = _mm_sqrt_ss( _mm_add_ss( l, _mm_shufd( l, MYMATH_SHUFFLE(1, 0, 1, 0) ) ) );
+      __m128 l = _mm_mul_ps( x, x );
+      __m128 m = _mm_add_ps( l, _mm_shufd( l, MYMATH_SHUFFLE( 1, 0, 0, 0 ) ) );
+      l = _mm_sqrt_ss( _mm_add_ss( m, _mm_shufd( l, MYMATH_SHUFFLE( 2, 0, 0, 0 ) ) ) );
       return _mm_shuffle_ps( l, l, MYMATH_SHUFFLE( 0, 0, 0, 0 ) );
     }
 
-    MYMATH_INLINE __m128 sse_normalize_ps( __m128 x )
+    MYMATH_INLINE __m128 sse_length_ps_helper_vec2( __m128 x )
     {
       __m128 l = _mm_mul_ps( x, x );
-      l = _mm_add_ps( l, _mm_shufd( l, MYMATH_SHUFFLE(2, 3, 0, 1) ) );
-      return _mm_div_ps( x, _mm_sqrt_ps( _mm_add_ps( l,
-                                         _mm_shufd( l, MYMATH_SHUFFLE(1, 0, 1, 0) ) ) ) );
+      l = _mm_add_ps( l, _mm_shufd( l, MYMATH_SHUFFLE( 1, 0, 0, 0 ) ) );
+      l = _mm_sqrt_ss( l );
+      return _mm_shuffle_ps( l, l, MYMATH_SHUFFLE( 0, 0, 0, 0 ) );
     }
 
+    //WARNING: it's slow to switch to floats
+    MYMATH_INLINE float sse_length_ps_vec4( __m128 x )
+    {
+      return _mm_cvtss_f32( sse_length_ps_helper_vec4( x ) );
+    }
+
+    //WARNING: it's slow to switch to floats
+    MYMATH_INLINE float sse_length_ps_vec3( __m128 x )
+    {
+      return _mm_cvtss_f32( sse_length_ps_helper_vec3( x ) );
+    }
+
+    //WARNING: it's slow to switch to floats
+    MYMATH_INLINE float sse_length_ps_vec2( __m128 x )
+    {
+      return _mm_cvtss_f32( sse_length_ps_helper_vec2( x ) );
+    }
+
+    MYMATH_INLINE __m128 sse_distance_ps_helper_vec2( __m128 a, __m128 b )
+    {
+      __m128 l = _mm_sub_ps( a, b );
+      return sse_length_ps_helper_vec2( l );
+    }
+
+    MYMATH_INLINE __m128 sse_distance_ps_helper_vec3( __m128 a, __m128 b )
+    {
+      __m128 l = _mm_sub_ps( a, b );
+      return sse_length_ps_helper_vec3( l );
+    }
+
+    MYMATH_INLINE __m128 sse_distance_ps_helper_vec4( __m128 a, __m128 b )
+    {
+      __m128 l = _mm_sub_ps( a, b );
+      return sse_length_ps_helper_vec4( l );
+    }
+
+    //WARNING: it's slow to switch to floats
+    MYMATH_INLINE float sse_distance_ps_vec2( __m128 a, __m128 b )
+    {
+      return _mm_cvtss_f32( sse_distance_ps_helper_vec2( a, b ) );
+    }
+
+    //WARNING: it's slow to switch to floats
+    MYMATH_INLINE float sse_distance_ps_vec3( __m128 a, __m128 b )
+    {
+      return _mm_cvtss_f32( sse_distance_ps_helper_vec3( a, b ) );
+    }
+
+    //WARNING: it's slow to switch to floats
+    MYMATH_INLINE float sse_distance_ps_vec4( __m128 a, __m128 b )
+    {
+      return _mm_cvtss_f32( sse_distance_ps_helper_vec4( a, b ) );
+    }
+
+    MYMATH_INLINE __m128 sse_normalize_ps_vec4( __m128 x )
+    {
+      return _mm_div_ps( x, sse_length_ps_helper_vec4( x ) );
+    }
+
+    MYMATH_INLINE __m128 sse_normalize_ps_vec3( __m128 x )
+    {
+      return _mm_div_ps( x, sse_length_ps_helper_vec3( x ) );
+    }
+
+    MYMATH_INLINE __m128 sse_normalize_ps_vec2( __m128 x )
+    {
+      return _mm_div_ps( x, sse_length_ps_helper_vec2( x ) );
+    }
+
+    template< int mask >
     MYMATH_INLINE __m128 sse_reflect_ps( __m128 a, __m128 b )
     {
-      __m128 l = _mm_mul_ps( b, a );
-      l = _mm_add_ps( l, _mm_shufd( l, MYMATH_SHUFFLE(2, 3, 0, 1) ) );
-      l = _mm_add_ps( l, _mm_shufd( l, MYMATH_SHUFFLE(1, 0, 1, 0) ) );
+      __m128 l = sse_dot_ps_helper<mask>(a,b);
       return _mm_sub_ps( a, _mm_mul_ps( _mm_add_ps( l, l ), b ) );
     }
 
+    template< int mask >
     MYMATH_INLINE __m128 sse_refract_ps( __m128 a, __m128 b, __m128 c )
     {
-      __m128 o = _mm_set1_ps( 1.0f );
+      __m128 o = one;
       __m128 e = c;
 
-      __m128 d = _mm_mul_ps( b, a );
-
-      //xx + ww
-      //yy + xx
-      //zz + yy
-      //ww + zz
-      d = _mm_add_ps( d, _mm_shuffle_ps( d, d, MYMATH_SHUFFLE( 3, 0, 1, 2 ) ) );
-      d = _mm_add_ps( d, _mm_shuffle_ps( d, d, MYMATH_SHUFFLE( 2, 3, 0, 1 ) ) );
+      __m128 d = sse_dot_ps_helper<mask>(a, b);
 
       // -e* (e * (-d*d + o)) + o
       //__m128 k = _mm_sub_ps( o, _mm_mul_ps( _mm_mul_ps( e, e ), _mm_sub_ps( o, _mm_mul_ps( d, d ) ) ) );
@@ -804,17 +860,17 @@ namespace mymath
       __m128 tmp4 = _mm_mul_ps( b, tmp3 );
       //__m128 tmp5 = _mm_mul_ps( e, a );
       //__m128 tmp6 = _mm_sub_ps( tmp5, tmp4 );
-      __m128 tmp6 = sse_fma_ps( sse_neg_ps(e), a, tmp4 ); 
+      __m128 tmp6 = sse_fma_ps( e, a, sse_neg_ps( tmp4 ) );
 
       return _mm_and_ps( tmp1, tmp6 );
     }
 
+    template< int mask >
     MYMATH_INLINE __m128 sse_faceforward_ps( __m128 a, __m128 b, __m128 c )
     {
-      __m128 l = _mm_mul_ps( c, b );
-      l = _mm_add_ps( l, _mm_shufd( l, MYMATH_SHUFFLE(2, 3, 0, 1) ) );
+      __m128 l = sse_dot_ps_helper<mask>( b, c );
       return _mm_xor_ps( _mm_and_ps( _mm_cmpnlt_ps(
-                                       _mm_add_ps( l, _mm_shufd( l, MYMATH_SHUFFLE(1, 0, 1, 0) ) ),
+                                       l,
                                        _mm_setzero_ps() ), _mm_set1_ps( -0.f ) ), a );
     }
 
@@ -825,7 +881,7 @@ namespace mymath
       //         _mm_mul_ps( _mm_shuffle_ps( a, a, MYMATH_SHUFFLE( 1, 2, 0, 3 ) ), _mm_shuffle_ps( b, b, MYMATH_SHUFFLE( 2, 0, 1, 3 ) ) ),
       //        _mm_mul_ps( _mm_shuffle_ps( a, a, MYMATH_SHUFFLE( 2, 0, 1, 3 ) ), _mm_shuffle_ps( b, b, MYMATH_SHUFFLE( 1, 2, 0, 3 ) ) )
       //       );
-      return sse_fma_ps( sse_neg_ps(_mm_shuffle_ps( a, a, MYMATH_SHUFFLE( 2, 0, 1, 3 ) )), _mm_shuffle_ps( b, b, MYMATH_SHUFFLE( 1, 2, 0, 3 ) ), 
+      return sse_fma_ps( sse_neg_ps(_mm_shuffle_ps( a, a, MYMATH_SHUFFLE( 2, 0, 1, 3 ) )), _mm_shuffle_ps( b, b, MYMATH_SHUFFLE( 1, 2, 0, 3 ) ),
         _mm_mul_ps( _mm_shuffle_ps( a, a, MYMATH_SHUFFLE( 1, 2, 0, 3 ) ), _mm_shuffle_ps( b, b, MYMATH_SHUFFLE( 2, 0, 1, 3 ) ) ) );
     }
 
@@ -866,7 +922,7 @@ namespace mymath
       //z = _mm_mul_ps( z, z0 );
       //z = _mm_add_ps( z, asinf_p4 );
       z = sse_fma_ps( z, z0, asinf_p4 );
-      
+
       z = _mm_mul_ps( z, z0 );
 
       //z = _mm_mul_ps( z, x );
@@ -930,7 +986,7 @@ namespace mymath
       xmm1 = sse_fma_ps( xmm1, z, atanf_p3 );
 
       xmm0 = _mm_mul_ps( xmm1, z );
-      
+
       //xmm0 = _mm_mul_ps( xmm0, x );
       //xmm0 = _mm_add_ps( xmm0, x );
       xmm0 = sse_fma_ps( xmm0, x, x );
@@ -943,4 +999,3 @@ namespace mymath
 }
 
 #endif
-

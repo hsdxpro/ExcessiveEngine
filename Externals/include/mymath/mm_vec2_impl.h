@@ -103,7 +103,10 @@ namespace mymath
         explicit
 #endif
         vec2i( const ty& num ) : x( num ), y( num ) {}
-        vec2i() : x( 0 ), y( 0 ) {}
+        //vec2i() : x( 0 ), y( 0 ) {}
+        vec2i(){}
+        vec2i( const vec2i<int>& v ){ x = v.x; y = v.y; }
+        vec2i( const vec2i<unsigned>& v ){ x = v.x; y = v.y; }
 
         ty& operator[]( const unsigned int& num ) //read-write
         {
@@ -140,45 +143,87 @@ namespace mymath
           return *this;
         }
 
-        const vec2i& operator%= ( const vec2i& vec )
+        const vec2i<int>& operator%= ( const vec2i<int>& vec )
         {
-          x = ( int )x % ( int )vec.x;
-          y = ( int )y % ( int )vec.y;
+          x = x % vec.x;
+          y = y % vec.y;
           return *this;
         }
 
-        const vec2i& operator<<= ( const vec2i& vec )
+        const vec2i<unsigned>& operator%= ( const vec2i<unsigned>& vec )
         {
-          x = ( int )x << ( int )vec.x;
-          y = ( int )y << ( int )vec.y;
+          x = x % vec.x;
+          y = y % vec.y;
           return *this;
         }
 
-        const vec2i& operator>>= ( const vec2i& vec )
+        const vec2i<int>& operator<<= ( const vec2i<int>& vec )
         {
-          x = ( int )x >> ( int )vec.x;
-          y = ( int )y >> ( int )vec.y;
+          x = x << vec.x;
+          y = y << vec.y;
           return *this;
         }
 
-        const vec2i& operator&= ( const vec2i& vec )
+        const vec2i<unsigned>& operator<<= ( const vec2i<unsigned>& vec )
         {
-          x = ( int )x & ( int )vec.x;
-          y = ( int )y & ( int )vec.y;
+          x = x << vec.x;
+          y = y << vec.y;
           return *this;
         }
 
-        const vec2i& operator^= ( const vec2i& vec )
+        const vec2i<int>& operator>>= ( const vec2i<int>& vec )
         {
-          x = ( int )x ^( int )vec.x;
-          y = ( int )y ^( int )vec.y;
+          x = x >> vec.x;
+          y = y >> vec.y;
           return *this;
         }
 
-        const vec2i& operator|= ( const vec2i& vec )
+        const vec2i<unsigned>& operator>>= ( const vec2i<unsigned>& vec )
         {
-          x = ( int )x | ( int )vec.x;
-          y = ( int )y | ( int )vec.y;
+          x = x >> vec.x;
+          y = y >> vec.y;
+          return *this;
+        }
+
+        const vec2i<int>& operator&= ( const vec2i<int>& vec )
+        {
+          x = x & vec.x;
+          y = y & vec.y;
+          return *this;
+        }
+
+        const vec2i<unsigned>& operator&= ( const vec2i<unsigned>& vec )
+        {
+          x = x & vec.x;
+          y = y & vec.y;
+          return *this;
+        }
+
+        const vec2i<int>& operator^= ( const vec2i<int>& vec )
+        {
+          x = x ^vec.x;
+          y = y ^vec.y;
+          return *this;
+        }
+
+        const vec2i<unsigned>& operator^= ( const vec2i<unsigned>& vec )
+        {
+          x = x ^vec.x;
+          y = y ^vec.y;
+          return *this;
+        }
+
+        const vec2i<int>& operator|= ( const vec2i<int>& vec )
+        {
+          x = x | vec.x;
+          y = y | vec.y;
+          return *this;
+        }
+
+        const vec2i<unsigned>& operator|= ( const vec2i<unsigned>& vec )
+        {
+          x = x | vec.x;
+          y = y | vec.y;
           return *this;
         }
 

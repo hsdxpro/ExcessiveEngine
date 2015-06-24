@@ -210,7 +210,10 @@ namespace mymath
         explicit
 #endif
         vec3i( const ty& num ) : x( num ), y( num ), z( num ) {}
-        vec3i() : x( 0 ), y( 0 ), z( 0 ) {}
+        //vec3i() : x( 0 ), y( 0 ), z( 0 ) {}
+        vec3i(){}
+        vec3i( const vec3i<int>& v ){ x = v.x; y = v.y; z = v.z; }
+        vec3i( const vec3i<unsigned>& v ){ x = v.x; y = v.y; z = v.z; }
 
         ty& operator[]( const unsigned int& num )
         {
@@ -250,51 +253,99 @@ namespace mymath
           return *this;
         }
 
-        const vec3i& operator%= ( const vec3i& vec )
+        const vec3i<int>& operator%= ( const vec3i<int>& vec )
         {
-          x = ( int )x % ( int )vec.x;
-          y = ( int )y % ( int )vec.y;
-          z = ( int )z % ( int )vec.z;
+          x = x % vec.x;
+          y = y % vec.y;
+          z = z % vec.z;
           return *this;
         }
 
-        const vec3i& operator<<= ( const vec3i& vec )
+        const vec3i<unsigned>& operator%= ( const vec3i<unsigned>& vec )
         {
-          x = ( int )x << ( int )vec.x;
-          y = ( int )y << ( int )vec.y;
-          z = ( int )z << ( int )vec.z;
+          x = x % vec.x;
+          y = y % vec.y;
+          z = z % vec.z;
           return *this;
         }
 
-        const vec3i& operator>>= ( const vec3i& vec )
+        const vec3i<int>& operator<<= ( const vec3i<int>& vec )
         {
-          x = ( int )x >> ( int )vec.x;
-          y = ( int )y >> ( int )vec.y;
-          z = ( int )z >> ( int )vec.z;
+          x = x << vec.x;
+          y = y << vec.y;
+          z = z << vec.z;
           return *this;
         }
 
-        const vec3i& operator&= ( const vec3i& vec )
+        const vec3i<unsigned>& operator<<= ( const vec3i<unsigned>& vec )
         {
-          x = ( int )x & ( int )vec.x;
-          y = ( int )y & ( int )vec.y;
-          z = ( int )z & ( int )vec.z;
+          x = x << vec.x;
+          y = y << vec.y;
+          z = z << vec.z;
           return *this;
         }
 
-        const vec3i& operator^= ( const vec3i& vec )
+        const vec3i<int>& operator>>= ( const vec3i<int>& vec )
         {
-          x = ( int )x ^( int )vec.x;
-          y = ( int )y ^( int )vec.y;
-          z = ( int )z ^( int )vec.z;
+          x = x >> vec.x;
+          y = y >> vec.y;
+          z = z >> vec.z;
           return *this;
         }
 
-        const vec3i& operator|= ( const vec3i& vec )
+        const vec3i<unsigned>& operator>>= ( const vec3i<unsigned>& vec )
         {
-          x = ( int )x | ( int )vec.x;
-          y = ( int )y | ( int )vec.y;
-          z = ( int )z | ( int )vec.z;
+          x = x >> vec.x;
+          y = y >> vec.y;
+          z = z >> vec.z;
+          return *this;
+        }
+
+        const vec3i<int>& operator&= ( const vec3i<int>& vec )
+        {
+          x = x & vec.x;
+          y = y & vec.y;
+          z = z & vec.z;
+          return *this;
+        }
+
+        const vec3i<unsigned>& operator&= ( const vec3i<unsigned>& vec )
+        {
+          x = x & vec.x;
+          y = y & vec.y;
+          z = z & vec.z;
+          return *this;
+        }
+
+        const vec3i<int>& operator^= ( const vec3i<int>& vec )
+        {
+          x = x ^vec.x;
+          y = y ^vec.y;
+          z = z ^vec.z;
+          return *this;
+        }
+
+        const vec3i<unsigned>& operator^= ( const vec3i<unsigned>& vec )
+        {
+          x = x ^vec.x;
+          y = y ^vec.y;
+          z = z ^vec.z;
+          return *this;
+        }
+
+        const vec3i<int>& operator|= ( const vec3i<int>& vec )
+        {
+          x = x | vec.x;
+          y = y | vec.y;
+          z = z | vec.z;
+          return *this;
+        }
+
+        const vec3i<unsigned>& operator|= ( const vec3i<unsigned>& vec )
+        {
+          x = x | vec.x;
+          y = y | vec.y;
+          z = z | vec.z;
           return *this;
         }
 

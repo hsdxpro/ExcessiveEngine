@@ -37,6 +37,8 @@ namespace mymath
       protected:
 
       public:
+        static mat4i<t> identity;
+
         // 1 column vector per row
         mat4i( const t& m0, const t& m1, const t& m2,  const t& m3,
                const t& m4, const t& m5, const t& m6,  const t& m7,
@@ -51,19 +53,44 @@ namespace mymath
 
         mat4i(const mat3i<t>& mat)
         {
-          m[0] = vec4i<t>(mat[0], 0);
-          m[1] = vec4i<t>(mat[1], 0);
-          m[2] = vec4i<t>(mat[2], 0);
-          m[3] = vec4i<t>(0, 0, 0, 1);
+          /*
+          *this = identity;
+          m[0].xyz = mat[0];
+          m[1].xyz = mat[1];
+          m[2].xyz = mat[2];
+          */
+
+          m[0] = vec4( mat[0], 0 );
+          m[1] = vec4( mat[1], 0 );
+          m[2] = vec4( mat[2], 0 );
+          m[3] = vec4( 0, 0, 0, 1 );
         }
 
-        mat4i(const quati<t>& q)
+        mat4i(const mat2i<t>& m0, const mat2i<t>& m1, const mat2i<t>& m2, const mat2i<t>& m3)
         {
-          const mat4i<t> other = mat4_cast(q);
-          for(int i = 0; i < 4; ++i)
-          {
-            m[i] = other[i];
-          }
+          /*
+          m[0].xy = m0[0];
+          m[1].xy = m0[1];
+
+          m[2].xy = m1[0];
+          m[3].xy = m1[1];
+
+          m[0].zw = m2[0];
+          m[1].zw = m2[1];
+
+          m[2].zw = m3[0];
+          m[3].zw = m3[1];
+          */
+
+          m[0] = vec4( m0[0], m2[0] );
+          m[1] = vec4( m0[1], m2[1] );
+          m[2] = vec4( m1[0], m3[0] );
+          m[3] = vec4( m1[1], m3[1] );
+        }
+
+        explicit mat4i(const quati<t>& q)
+        {
+          *this = mat4_cast(q);
         }
 
         // 1 column per vector
@@ -84,12 +111,7 @@ namespace mymath
         }
 
         mat4i()
-        {
-          m[0] = vec4i<t>( 1, 0, 0, 0 );
-          m[1] = vec4i<t>( 0, 1, 0, 0 );
-          m[2] = vec4i<t>( 0, 0, 1, 0 );
-          m[3] = vec4i<t>( 0, 0, 0, 1 );
-        }
+        {}
 
         vec4i<t>& operator[]( const unsigned int& num )
         {
@@ -158,8 +180,10 @@ namespace mymath
           return tmp;
         }
     };
+
+    template< typename t >
+    mat4i<t> mat4i<t>::identity = mat4(1);
   }
 }
 
 #endif
-

@@ -22,14 +22,16 @@
 #include "mm_mat4_impl.h"
 #include "mm_mat_func.h"
 
+#ifdef MYMATH_USE_SSE2
+#include "mm_fvec_div.h"
+#endif
+
 #include "mm_quat_impl.h"
 #include "mm_quat_func.h"
 
 #include "mm_util.h"
 #include "mm_frame.h"
 #include "mm_camera.h"
-#include "mm_matrix_stack.h"
-#include "mm_pipeline.h"
 
 namespace mymath
 {

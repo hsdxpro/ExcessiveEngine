@@ -22,6 +22,8 @@ namespace mymath
       protected:
 
       public:
+        static mat2i<t> identity;
+
         // 1 column vector per row
         mat2i( const t& m0, const t& m1,
                const t& m2, const t& m3 )
@@ -44,10 +46,7 @@ namespace mymath
         }
 
         mat2i()
-        {
-          m[0] = vec2i<t>( 1, 0 );
-          m[1] = vec2i<t>( 0, 1 );
-        }
+        {}
 
         vec2i<t>& operator[]( const unsigned int& num )
         {
@@ -107,6 +106,9 @@ namespace mymath
         }
 
     };
+
+    template< typename t >
+    mat2i<t> mat2i<t>::identity = mat2(1);
   }
 }
 

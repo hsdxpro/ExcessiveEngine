@@ -4,38 +4,6 @@
 #include "mm_common.h"
 #include "mm_sse.h"
 
-namespace mymath
-{
-  MYMATH_INLINE bool equal( const impl::vec2i<float>& a, const impl::vec2i<float>& b )
-  {
-    impl::vec2i<float> c = _mm_cmpeq_ps( a.d, b.d );
-    return c.x && c.y;
-  }
-  MYMATH_INLINE bool equal( const impl::vec3i<float>& a, const impl::vec3i<float>& b )
-  {
-    impl::vec3i<float> c = _mm_cmpeq_ps( a.d, b.d );
-    return c.x && c.y && c.z;
-  }
-  MYMATH_INLINE bool equal( const impl::vec4i<float>& a, const impl::vec4i<float>& b )
-  {
-    impl::vec4i<float> c = _mm_cmpeq_ps( a.d, b.d );
-    return c.x && c.y && c.z && c.w;
-  }
-
-  MYMATH_INLINE bool notEqual( const impl::vec2i<float>& a, const impl::vec2i<float>& b )
-  {
-    return !equal( a, b );
-  }
-  MYMATH_INLINE bool notEqual( const impl::vec3i<float>& a, const impl::vec3i<float>& b )
-  {
-    return !equal( a, b );
-  }
-  MYMATH_INLINE bool notEqual( const impl::vec4i<float>& a, const impl::vec4i<float>& b )
-  {
-    return !equal( a, b );
-  }
-}
-
 //mul
 MYMATH_INLINE mm::impl::vec2i<float> operator*( const mm::impl::vec2i<float>& a, const mm::impl::vec2i<float>& b )
 {
@@ -186,74 +154,6 @@ MYMATH_INLINE std::ostream& operator<< ( std::ostream& output, const mm::impl::v
 
 namespace mymath
 {
-//less
-  MYMATH_INLINE bool lessThan( const mm::impl::vec2i<float>& a, const mm::impl::vec2i<float>& b )
-  {
-    mm::impl::vec2i<float> v = _mm_cmplt_ps( a.d, b.d );
-    return v.x && v.y;
-  }
-  MYMATH_INLINE bool lessThan( const mm::impl::vec3i<float>& a, const mm::impl::vec3i<float>& b )
-  {
-    mm::impl::vec3i<float> v = _mm_cmplt_ps( a.d, b.d );
-    return v.x && v.y && v.z;
-  }
-  MYMATH_INLINE bool lessThan( const mm::impl::vec4i<float>& a, const mm::impl::vec4i<float>& b )
-  {
-    mm::impl::vec4i<float> v = _mm_cmplt_ps( a.d, b.d );
-    return v.x && v.y && v.z && v.w;
-  }
-
-//greater
-  MYMATH_INLINE bool greaterThan( const mm::impl::vec2i<float>& a, const mm::impl::vec2i<float>& b )
-  {
-    mm::impl::vec2i<float> v = _mm_cmpgt_ps( a.d, b.d );
-    return v.x && v.y;
-  }
-  MYMATH_INLINE bool greaterThan( const mm::impl::vec3i<float>& a, const mm::impl::vec3i<float>& b )
-  {
-    mm::impl::vec3i<float> v = _mm_cmpgt_ps( a.d, b.d );
-    return v.x && v.y && v.z;
-  }
-  MYMATH_INLINE bool greaterThan( const mm::impl::vec4i<float>& a, const mm::impl::vec4i<float>& b )
-  {
-    mm::impl::vec4i<float> v = _mm_cmpgt_ps( a.d, b.d );
-    return v.x && v.y && v.z && v.w;
-  }
-
-//less or equal
-  MYMATH_INLINE bool lessThanEqual( const mm::impl::vec2i<float>& a, const mm::impl::vec2i<float>& b )
-  {
-    mm::impl::vec2i<float> v = _mm_cmple_ps( a.d, b.d );
-    return v.x && v.y;
-  }
-  MYMATH_INLINE bool lessThanEqual( const mm::impl::vec3i<float>& a, const mm::impl::vec3i<float>& b )
-  {
-    mm::impl::vec3i<float> v = _mm_cmple_ps( a.d, b.d );
-    return v.x && v.y && v.z;
-  }
-  MYMATH_INLINE bool lessThanEqual( const mm::impl::vec4i<float>& a, const mm::impl::vec4i<float>& b )
-  {
-    mm::impl::vec4i<float> v = _mm_cmple_ps( a.d, b.d );
-    return v.x && v.y && v.z && v.w;
-  }
-
-//greater or equal
-  MYMATH_INLINE bool greaterThanEqual( const mm::impl::vec2i<float>& a, const mm::impl::vec2i<float>& b )
-  {
-    mm::impl::vec2i<float> v = _mm_cmpge_ps( a.d, b.d );
-    return v.x && v.y;
-  }
-  MYMATH_INLINE bool greaterThanEqual( const mm::impl::vec3i<float>& a, const mm::impl::vec3i<float>& b )
-  {
-    mm::impl::vec3i<float> v = _mm_cmpge_ps( a.d, b.d );
-    return v.x && v.y && v.z;
-  }
-  MYMATH_INLINE bool greaterThanEqual( const mm::impl::vec4i<float>& a, const mm::impl::vec4i<float>& b )
-  {
-    mm::impl::vec4i<float> v = _mm_cmpge_ps( a.d, b.d );
-    return v.x && v.y && v.z && v.w;
-  }
-
 //radians
   MYMATH_INLINE mm::impl::vec2i<float> radians( const mm::impl::vec2i<float>& vec )
   {
@@ -510,143 +410,143 @@ namespace mymath
 //WARNING: it's slow to switch to floats
   MYMATH_INLINE float dot( const mm::impl::vec2i<float>& a, const mm::impl::vec2i<float>& b )
   {
-    return mm::impl::sse_dot_ps( a.d, b.d );
+    return mm::impl::sse_dot_ps<0x3f>( a.d, b.d );
   }
   MYMATH_INLINE float dot( const mm::impl::vec3i<float>& a, const mm::impl::vec3i<float>& b )
   {
-    return mm::impl::sse_dot_ps( a.d, b.d );
+    return mm::impl::sse_dot_ps<0x7f>( a.d, b.d );
   }
   MYMATH_INLINE float dot( const mm::impl::vec4i<float>& a, const mm::impl::vec4i<float>& b )
   {
-    return mm::impl::sse_dot_ps( a.d, b.d );
+    return mm::impl::sse_dot_ps<0xff>( a.d, b.d );
   }
 
 //dot helper
   MYMATH_INLINE mm::impl::vec2i<float> dot_helper( const mm::impl::vec2i<float>& a, const mm::impl::vec2i<float>& b )
   {
-    return mm::impl::sse_dot_ps_helper( a.d, b.d );
+    return mm::impl::sse_dot_ps_helper<0x3f>( a.d, b.d );
   }
   MYMATH_INLINE mm::impl::vec3i<float> dot_helper( const mm::impl::vec3i<float>& a, const mm::impl::vec3i<float>& b )
   {
-    return mm::impl::sse_dot_ps_helper( a.d, b.d );
+    return mm::impl::sse_dot_ps_helper<0x7f>( a.d, b.d );
   }
   MYMATH_INLINE mm::impl::vec4i<float> dot_helper( const mm::impl::vec4i<float>& a, const mm::impl::vec4i<float>& b )
   {
-    return mm::impl::sse_dot_ps_helper( a.d, b.d );
+    return mm::impl::sse_dot_ps_helper<0xff>( a.d, b.d );
   }
 
 //length
 //WARNING: it's slow to switch to floats
   MYMATH_INLINE float length( const mm::impl::vec2i<float>& vec )
   {
-    return mm::impl::sse_length_ps( vec.d );
+    return mm::impl::sse_length_ps_vec2( vec.d );
   }
   MYMATH_INLINE float length( const mm::impl::vec3i<float>& vec )
   {
-    return mm::impl::sse_length_ps( vec.d );
+    return mm::impl::sse_length_ps_vec3( vec.d );
   }
   MYMATH_INLINE float length( const mm::impl::vec4i<float>& vec )
   {
-    return mm::impl::sse_length_ps( vec.d );
+    return mm::impl::sse_length_ps_vec4( vec.d );
   }
 
 //length helper
   MYMATH_INLINE mm::impl::vec2i<float> length_helper( const mm::impl::vec2i<float>& vec )
   {
-    return mm::impl::sse_length_ps_helper( vec.d );
+    return mm::impl::sse_length_ps_helper_vec2( vec.d );
   }
   MYMATH_INLINE mm::impl::vec3i<float> length_helper( const mm::impl::vec3i<float>& vec )
   {
-    return mm::impl::sse_length_ps_helper( vec.d );
+    return mm::impl::sse_length_ps_helper_vec3( vec.d );
   }
   MYMATH_INLINE mm::impl::vec4i<float> length_helper( const mm::impl::vec4i<float>& vec )
   {
-    return mm::impl::sse_length_ps_helper( vec.d );
+    return mm::impl::sse_length_ps_helper_vec4( vec.d );
   }
 
 //distance
 //WARNING: it's slow to switch to floats
   MYMATH_INLINE float distance( const mm::impl::vec2i<float>& a, const mm::impl::vec2i<float>& b )
   {
-    return mm::impl::sse_distance_ps( a.d, b.d );
+    return mm::impl::sse_distance_ps_vec2( a.d, b.d );
   }
   MYMATH_INLINE float distance( const mm::impl::vec3i<float>& a, const mm::impl::vec3i<float>& b )
   {
-    return mm::impl::sse_distance_ps( a.d, b.d );
+    return mm::impl::sse_distance_ps_vec3( a.d, b.d );
   }
   MYMATH_INLINE float distance( const mm::impl::vec4i<float>& a, const mm::impl::vec4i<float>& b )
   {
-    return mm::impl::sse_distance_ps( a.d, b.d );
+    return mm::impl::sse_distance_ps_vec4( a.d, b.d );
   }
 
 //distance helper
   MYMATH_INLINE mm::impl::vec2i<float> distance_helper( const mm::impl::vec2i<float>& a, const mm::impl::vec2i<float>& b )
   {
-    return mm::impl::sse_distance_ps_helper( a.d, b.d );
+    return mm::impl::sse_distance_ps_helper_vec2( a.d, b.d );
   }
   MYMATH_INLINE mm::impl::vec3i<float> distance_helper( const mm::impl::vec3i<float>& a, const mm::impl::vec3i<float>& b )
   {
-    return mm::impl::sse_distance_ps_helper( a.d, b.d );
+    return mm::impl::sse_distance_ps_helper_vec3( a.d, b.d );
   }
   MYMATH_INLINE mm::impl::vec4i<float> distance_helper( const mm::impl::vec4i<float>& a, const mm::impl::vec4i<float>& b )
   {
-    return mm::impl::sse_distance_ps_helper( a.d, b.d );
+    return mm::impl::sse_distance_ps_helper_vec4( a.d, b.d );
   }
 
 //normalize
   MYMATH_INLINE mm::impl::vec2i<float> normalize( const mm::impl::vec2i<float>& vec )
   {
-    return mm::impl::sse_normalize_ps( vec.d );
+    return mm::impl::sse_normalize_ps_vec2( vec.d );
   }
   MYMATH_INLINE mm::impl::vec3i<float> normalize( const mm::impl::vec3i<float>& vec )
   {
-    return mm::impl::sse_normalize_ps( vec.d );
+    return mm::impl::sse_normalize_ps_vec3( vec.d );
   }
   MYMATH_INLINE mm::impl::vec4i<float> normalize( const mm::impl::vec4i<float>& vec )
   {
-    return mm::impl::sse_normalize_ps( vec.d );
+    return mm::impl::sse_normalize_ps_vec4( vec.d );
   }
 
 //reflect
   MYMATH_INLINE mm::impl::vec2i<float> reflect( const mm::impl::vec2i<float>& a, const mm::impl::vec2i<float>& b )
   {
-    return mm::impl::sse_reflect_ps( a.d, b.d );
+    return mm::impl::sse_reflect_ps<0x3f>( a.d, b.d );
   }
   MYMATH_INLINE mm::impl::vec3i<float> reflect( const mm::impl::vec3i<float>& a, const mm::impl::vec3i<float>& b )
   {
-    return mm::impl::sse_reflect_ps( a.d, b.d );
+    return mm::impl::sse_reflect_ps<0x7f>( a.d, b.d );
   }
   MYMATH_INLINE mm::impl::vec4i<float> reflect( const mm::impl::vec4i<float>& a, const mm::impl::vec4i<float>& b )
   {
-    return mm::impl::sse_reflect_ps( a.d, b.d );
+    return mm::impl::sse_reflect_ps<0xff>( a.d, b.d );
   }
 
 //refract
   MYMATH_INLINE mm::impl::vec2i<float> refract( const mm::impl::vec2i<float>& a, const mm::impl::vec2i<float>& b, const mm::impl::vec2i<float>& c )
   {
-    return mm::impl::sse_refract_ps( a.d, b.d, c.d );
+    return mm::impl::sse_refract_ps<0x3f>( a.d, b.d, c.d );
   }
   MYMATH_INLINE mm::impl::vec3i<float> refract( const mm::impl::vec3i<float>& a, const mm::impl::vec3i<float>& b, const mm::impl::vec3i<float>& c )
   {
-    return mm::impl::sse_refract_ps( a.d, b.d, c.d );
+    return mm::impl::sse_refract_ps<0x7f>( a.d, b.d, c.d );
   }
   MYMATH_INLINE mm::impl::vec4i<float> refract( const mm::impl::vec4i<float>& a, const mm::impl::vec4i<float>& b, const mm::impl::vec4i<float>& c )
   {
-    return mm::impl::sse_refract_ps( a.d, b.d, c.d );
+    return mm::impl::sse_refract_ps<0xff>( a.d, b.d, c.d );
   }
 
 //faceforward
   MYMATH_INLINE mm::impl::vec2i<float> faceforward( const mm::impl::vec2i<float>& a, const mm::impl::vec2i<float>& b, const mm::impl::vec2i<float>& c )
   {
-    return mm::impl::sse_faceforward_ps( a.d, b.d, c.d );
+    return mm::impl::sse_faceforward_ps<0x3f>( a.d, b.d, c.d );
   }
   MYMATH_INLINE mm::impl::vec3i<float> faceforward( const mm::impl::vec3i<float>& a, const mm::impl::vec3i<float>& b, const mm::impl::vec3i<float>& c )
   {
-    return mm::impl::sse_faceforward_ps( a.d, b.d, c.d );
+    return mm::impl::sse_faceforward_ps<0x7f>( a.d, b.d, c.d );
   }
   MYMATH_INLINE mm::impl::vec4i<float> faceforward( const mm::impl::vec4i<float>& a, const mm::impl::vec4i<float>& b, const mm::impl::vec4i<float>& c )
   {
-    return mm::impl::sse_faceforward_ps( a.d, b.d, c.d );
+    return mm::impl::sse_faceforward_ps<0xff>( a.d, b.d, c.d );
   }
 
 //TODO isnan, isinf
@@ -926,60 +826,6 @@ namespace mymath
   MYMATH_INLINE mm::impl::vec4i<float> max( const mm::impl::vec4i<float>& a, const mm::impl::vec4i<float>& b )
   {
     return _mm_max_ps( a.d, b.d );
-  }
-
-  namespace impl
-  {
-    template<int ta, int tb, int tc, int td>
-    const vec2i<float>& vec2i<float>::swizzle<ta, tb, tc, td>::operator/=( const vec2i<float>& vec )
-    {
-      assert( notEqual( vec, vec2i<float>( 0 ) ) );
-      vec2i<float>* tmp = (vec2i<float>*)this;
-      tmp->d = _mm_div_ps( tmp->d, vec.d );
-      return *( vec2i<float>* )this;
-    }
-
-    template<int a, int b, int c, int dd>
-    const vec3i<float>& vec3i<float>::swizzle<a, b, c, dd>::operator/=( const vec3i<float>& vec )
-    {
-      assert( notEqual( vec, vec3i<float>( 0 ) ) );
-      vec3i<float>* tmp = (vec3i<float>*)this;
-      tmp->d = _mm_div_ps( tmp->d, vec.d );
-      return *( vec3i<float>* )this;
-    }
-
-    template<int a, int b, int c, int dd>
-    const vec4i<float>& vec4i<float>::swizzle<a, b, c, dd>::operator/=( const vec4i<float>& vec )
-    {
-      assert( notEqual( vec, vec4i<float>( 0 ) ) );
-      vec4i<float>* tmp = (vec4i<float>*)this;
-      tmp->d = _mm_div_ps( tmp->d, vec.d );
-      return *( vec4i<float>* )this;
-    }
-
-    const vec2i<float>& vec2i<float>::operator/=( const vec2i<float>& vec )
-    {
-      assert( notEqual( vec, vec2i<float>( 0 ) ) );
-      vec2i<float>* tmp = (vec2i<float>*)this;
-      tmp->d = _mm_div_ps( tmp->d, vec.d );
-      return *this;
-    }
-
-    const vec3i<float>& vec3i<float>::operator/=( const vec3i<float>& vec )
-    {
-      assert( notEqual( vec, vec3i<float>( 0 ) ) );
-      vec3i<float>* tmp = (vec3i<float>*)this;
-      tmp->d = _mm_div_ps( tmp->d, vec.d );
-      return *this;
-    }
-
-    const vec4i<float>& vec4i<float>::operator/=( const vec4i<float>& vec )
-    {
-      assert( notEqual( vec, vec4i<float>( 0 ) ) );
-      vec4i<float>* tmp = (vec4i<float>*)this;
-      tmp->d = _mm_div_ps( tmp->d, vec.d );
-      return *this;
-    }
   }
 }
 

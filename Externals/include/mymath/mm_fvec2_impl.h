@@ -220,6 +220,8 @@ namespace mymath
         vec2i( const __m128& num ) : d( num ) {}
         //vec2i() { d = impl::zero; }
         vec2i(){}
+        vec2i( const vec2i<int>& v );
+        vec2i( const vec2i<unsigned>& v );
 
         float& operator[]( const unsigned int& num ) //read-write
         {
@@ -250,45 +252,6 @@ namespace mymath
         const vec2i& operator-= ( const vec2i& vec )
         {
           d = _mm_sub_ps( d, vec.d );
-          return *this;
-        }
-
-        const vec2i& operator%= ( const vec2i& vec )
-        {
-          d = sse_mod_ps( d, vec.d );
-          return *this;
-        }
-
-        //TODO
-        /*const vec2i& operator<<= ( const vec2i& vec )
-        {
-          x = ( int )x << ( int )vec.x;
-          y = ( int )y << ( int )vec.y;
-          return *this;
-        }
-
-        const vec2i& operator>>= ( const vec2i& vec )
-        {
-          x = ( int )x >> ( int )vec.x;
-          y = ( int )y >> ( int )vec.y;
-          return *this;
-        }*/
-
-        const vec2i& operator&= ( const vec2i& vec )
-        {
-          d = _mm_and_ps( d, vec.d );
-          return *this;
-        }
-
-        const vec2i& operator^= ( const vec2i& vec )
-        {
-          d = _mm_xor_ps( d, vec.d );
-          return *this;
-        }
-
-        const vec2i& operator|= ( const vec2i& vec )
-        {
-          d = _mm_or_ps( d, vec.d );
           return *this;
         }
 
