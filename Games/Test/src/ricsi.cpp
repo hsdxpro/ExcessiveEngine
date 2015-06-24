@@ -120,7 +120,7 @@ int Ricsi()
 					float angleChangeZ = (float)(ev.deltaX) * 0.009;
 					float angleChangeX = (float)(-ev.deltaY) * 0.009;
 
-					mm::vec3 viewDir = mm::normalize(cam->GetTarGetPos() - cam->GetPos());
+					mm::vec3 viewDir = mm::normalize(cam->GetTargetPos() - cam->GetPos());
 					float lenXY = mm::length(viewDir.xy);
 					static float angleX = acos(lenXY)*(viewDir.z > 0 ? 1 : -1);
 					angleX += angleChangeX;

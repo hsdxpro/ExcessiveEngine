@@ -4,7 +4,20 @@
 #include "BulletCollision/CollisionShapes/btCollisionShape.h"
 
 EntityRigid::EntityRigid(btRigidBody* body) 
-:body(body) {
+:body(body) 
+{
+
+}
+
+
+void EntityRigid::SetAngularFactor(float factor)
+{
+	body->setAngularFactor(factor);
+}
+
+void EntityRigid::SetKinematic()
+{
+	body->setFlags(body->getFlags() | btRigidBody::CF_KINEMATIC_OBJECT);
 }
 
 void EntityRigid::SetPos(const mm::vec3& v)
@@ -51,14 +64,14 @@ void EntityRigid::SetScaleLocal(const mm::vec3& v)
 	}
 }
 
-mm::vec3 EntityRigid::GetPos()
+const mm::vec3 EntityRigid::GetPos() const
 {
 	btTransform trans;
-	body->getMotionState()->getWorldTransform(trans);
-	return{ trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z() };
+		body->getMotionState()->getWorldTransform(trans);
+	return mm::vec3(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z());
 }
 
-mm::quat EntityRigid::GetRot()
+const mm::quat EntityRigid::GetRot() const
 {
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
@@ -71,14 +84,14 @@ mm::quat EntityRigid::GetRot()
 	return rot;
 }
 
- mm::vec3 EntityRigid::GetScaleLocal()
+ const mm::vec3 EntityRigid::GetScaleLocal() const
 {
 	btCollisionShape* shape = body->getCollisionShape();
 
 	if (shape)
-		return{ shape->getLocalScaling().x(), shape->getLocalScaling().y(), shape->getLocalScaling().z() };
+		return std::move(mm::vec3(shape->getLocalScaling().x(), shape->getLocalScaling().y(), shape->getLocalScaling().z()));
 
-	return{ 1.f, 1.f, 1.f };
+	return mm::vec3(1,1,1);
 }
 
  btRigidBody* EntityRigid::GetBody()

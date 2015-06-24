@@ -13,28 +13,6 @@ void ComponentCamera::SetDirNormed(const mm::vec3& dir)
 	SetRot(cam->GetRot());
 }
 
-void ComponentCamera::SetPos(const mm::vec3& v)
-{
-	cam->SetPos(v);
-	WorldComponent::SetPos(v);
-}
-
-void ComponentCamera::SetRot(const mm::quat& q)
-{
-	cam->SetRot(q);
-	WorldComponent::SetRot(q);
-}
-
-const mm::vec3 ComponentCamera::GetPos() const
-{
-	return cam->GetPos();
-}
-
-const mm::quat ComponentCamera::GetRot() const
-{
-	return cam->GetRot();
-}
-
 graphics::ICamera* ComponentCamera::GetCam()
 {
 	return cam;
@@ -42,12 +20,12 @@ graphics::ICamera* ComponentCamera::GetCam()
 
 void ComponentCamera::_InnerReflectPos()
 {
-	cam->SetPos(worldTransform.GetPos());
+	cam->SetPos(transform.GetPos());
 }
 
 void ComponentCamera::_InnerReflectRot()
 {
-	cam->SetRot(worldTransform.GetRot());
+	cam->SetRot(transform.GetRot());
 }
 
 void ComponentCamera::_InnerReflectSkew()

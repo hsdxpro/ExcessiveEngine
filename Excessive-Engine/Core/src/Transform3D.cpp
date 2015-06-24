@@ -1,7 +1,7 @@
 #include "Transform3D.h"
 
 Transform3D::Transform3D()
-:pos(0, 0, 0)
+:pos(0, 0, 0), rot(0, {0,0,1})
 {
 	skew[0] = {1, 0, 0};
 	skew[1] = {0, 1, 0};

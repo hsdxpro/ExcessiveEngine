@@ -126,7 +126,7 @@ physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidStatic(mm::vec3* verti
 
 physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidCapsule(float height, float radius, float mass)
 {
-	btCapsuleShape* capsuleShape = new btCapsuleShape(radius, height);
+	btCapsuleShapeZ* capsuleShape = new btCapsuleShapeZ(radius, height);
 	capsuleShape->setSafeMargin(0, 0); // Thanks convex hull for your imprecision...
 
 	btVector3 localInertia(0, 0, 0);
@@ -137,10 +137,9 @@ physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidCapsule(float height, 
 	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), capsuleShape, localInertia);
 	world->addRigidBody(body);
 	
+	body->setFlags(btRigidBody::CF_KINEMATIC_OBJECT);
+	body->setAngularFactor(0);
 
-	// Bullet y up, z front, our engine y front, z up
-	//mm::quat rot = mm::get_rotation(mm::vec3(0,1,0), mm::vec3(0,0,1));
-	
 	EntityRigid* e = new EntityRigid(body);
 		entities.push_back(e);
 	return e;

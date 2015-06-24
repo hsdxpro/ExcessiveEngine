@@ -203,7 +203,7 @@ const mm::quat& Camera::GetRot() const
 	return rot;
 }
 
-const mm::vec3 Camera::GetTarGetPos() const
+const mm::vec3 Camera::GetTargetPos() const
 {
 	return pos + mm::rotate_vector(rot, mm::vec3(0, 1, 0));
 }
