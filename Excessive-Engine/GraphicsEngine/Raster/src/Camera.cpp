@@ -106,7 +106,7 @@ void Camera::SetDirNormed(const mm::vec3& p)
 	const mm::vec3 up(0.0f, 0.0f, 1.0f);
 
 	// TODO FIX THAT MATRIX -> QUAT NOT WORKING
-	rot = Matrix44ViewRH(pos, pos + p, up);
+	rot = (mm::quat)Matrix44ViewRH(pos, pos + p, up);
 }
 
 void Camera::SetRot(const mm::quat& q)

@@ -21,10 +21,10 @@ void EntityRigid::SetRot(const mm::quat& q)
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
 	btQuaternion btQuat;
-		btQuat.setX(q.vector().x);
-		btQuat.setY(q.vector().y);
-		btQuat.setZ(q.vector().z);
-		btQuat.setW(q.scalar());
+		btQuat.setX(q.value.x);
+		btQuat.setY(q.value.y);
+		btQuat.setZ(q.value.z);
+		btQuat.setW(q.value.w);
 	trans.setRotation(btQuat);
 
 	body->setWorldTransform(trans);

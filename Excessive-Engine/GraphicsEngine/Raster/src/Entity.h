@@ -23,7 +23,7 @@ public:
 	void SetRot(const mm::quat& q);
 	void SetScaleLocal(const mm::vec3& v);
 	void SetSkew(const mm::mat3& m);
-
+	
 	const mm::vec3& GetPos();
 	const mm::quat& GetRot();
 	const mm::vec3& GetScaleLocal();
@@ -41,11 +41,7 @@ private:
 	ref_ptr<Mesh> mesh;
 	ref_ptr<Material> mtl;
 
-	// World Transform
-	mm::vec3 pos;
-	mm::vec3 scale;
-	mm::quat rot;
-	mm::mat3 skew;
+	Transform3D transform;
 };
 
 } // graphics namespace end

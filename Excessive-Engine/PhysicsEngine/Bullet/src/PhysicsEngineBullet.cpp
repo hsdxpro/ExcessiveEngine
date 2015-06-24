@@ -138,6 +138,9 @@ physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidCapsule(float height, 
 	world->addRigidBody(body);
 	
 
+	// Bullet y up, z front, our engine y front, z up
+	//mm::quat rot = mm::get_rotation(mm::vec3(0,1,0), mm::vec3(0,0,1));
+	
 	EntityRigid* e = new EntityRigid(body);
 		entities.push_back(e);
 	return e;

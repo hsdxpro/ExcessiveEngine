@@ -65,7 +65,7 @@ WorldComponent* WorldComponent::SetParent(WorldComponent* c)
 	if (parent)
 	{
 		// Recalc relative transform...
-		relTransform.SetRot(mm::inverse(parent->worldTransform.GetRot()) * worldTransform.GetRot());
+		relTransform.SetRot(worldTransform.GetRot() * mm::inverse(parent->worldTransform.GetRot()));
 		relTransform.SetScaleLocal(worldTransform.GetScaleLocal() / parent->worldTransform.GetScaleLocal());
 		relTransform.SetPos(mm::rotate_vector(mm::inverse(parent->worldTransform.GetRot()), (worldTransform.GetPos() - parent->worldTransform.GetPos()) / parent->worldTransform.GetScaleLocal()));
 		relTransform.SetSkew(worldTransform.GetSkew() * mm::inverse(parent->worldTransform.GetSkew()));
@@ -109,7 +109,7 @@ void WorldComponent::SetRot(const mm::quat& q)
 
 	// We have parent, update relative transform
 	if (parent)
-		relTransform.SetRot(worldTransform.GetRot() * mm::inverse(parent->worldTransform.GetRot()));
+		relTransform.SetRot(mm::inverse(parent->worldTransform.GetRot()) * worldTransform.GetRot());
 		
 	// Rotate childs also, "this" rotation causes childs to move in world space, not just rot
 	for (auto& c : childs)
@@ -154,13 +154,13 @@ void WorldComponent::SetRelPos(const mm::vec3& v)
 
 void WorldComponent::SetRelRot(const mm::quat& q)
 {
-	mm::quat relRot = q * mm::inverse(relTransform.GetRot());
+	mm::quat relRot = mm::inverse(relTransform.GetRot()) * q;
 
 	// Update relative rotation
 	relTransform.SetRot(q);
 
 	// Calculate the worldSpace delta rot to rot childs easily, their relative transform cant change
-	mm::quat dRot = relRot * GetRot();
+	mm::quat dRot = GetRot() * relRot;
 
 	// Relative rotating also changes world rotation..
 	worldTransform.Rot(dRot);
@@ -183,7 +183,7 @@ void WorldComponent::Move(const mm::vec3& v)
 
 void WorldComponent::Rot(const mm::quat& q)
 {
-	SetRot(GetRot() * q);
+	SetRot(q * GetRot());
 }
 
 void WorldComponent::Scale(const mm::vec3& v)
@@ -203,7 +203,7 @@ void WorldComponent::MoveRel(const mm::vec3& v)
 
 void WorldComponent::RotRel(const mm::quat& q)
 {
-	SetRelRot(GetRelRot() * q);
+	SetRelRot(q * GetRelRot());
 }
 
 void WorldComponent::ScaleRel(const mm::vec3& v)
@@ -216,7 +216,7 @@ const Transform3D WorldComponent::GetTransform() const
 	Transform3D worldTransform;
 		worldTransform.SetPos(GetPos());
 		worldTransform.SetRot(GetRot());
-		worldTransform.SetScaleLocal(GetScaleLocal());
+		//worldTransform.SetScaleLocal(GetScaleLocal());
 		worldTransform.SetSkew(GetSkew());
 	return worldTransform;
 }
@@ -248,8 +248,8 @@ void WorldComponent::_InnerRotChildRecursively(WorldComponent* child, const mm::
 void WorldComponent::_InnerScaleChildRecursively(WorldComponent* child, const mm::vec3& parentPos, const mm::quat& parentRot, const mm::vec3& parentLocalScale,  const mm::mat3& parentSkew, const mm::vec3& dScale, const mm::quat& rootRotInverse)
 {
 	// Set child new skew
-	mm::mat4 rotRelToRoot = child->worldTransform.GetRot() * rootRotInverse;
-	mm::mat4 invRotRelToRoot = mm::inverse(child->worldTransform.GetRot() * rootRotInverse);
+	mm::mat4 rotRelToRoot = mm::mat4(rootRotInverse * child->worldTransform.GetRot());
+	mm::mat4 invRotRelToRoot = mm::mat4(mm::inverse(rootRotInverse * child->worldTransform.GetRot()));
 
 	child->worldTransform.SetSkew(mm::mat4(child->worldTransform.GetSkew()) * invRotRelToRoot * mm::create_scale(dScale) * rotRelToRoot);
 	child->_InnerReflectSkew();

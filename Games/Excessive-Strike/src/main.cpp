@@ -91,7 +91,6 @@ int main()
 			if (evt.msg == eWindowMsg::MOUSE_RELEASE && evt.mouseBtn == eMouseBtn::LEFT)
 			{
 				// Transform hierarchy UNIT TEST
-
 				//auto c0 = gEngineCore.AddCompGraphicsFromFile(boxModelPath);
 				//auto c1 = gEngineCore.AddCompGraphicsFromFile(boxModelPath);
 				//auto c2 = gEngineCore.AddCompGraphicsFromFile(boxModelPath);
