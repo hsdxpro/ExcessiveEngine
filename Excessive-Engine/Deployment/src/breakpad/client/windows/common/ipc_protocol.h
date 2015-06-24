@@ -47,16 +47,16 @@ struct CustomInfoEntry {
 
   CustomInfoEntry() {
     // Putting name and value in initializer list makes VC++ show warning 4351.
-    set_name(NULL);
-    set_value(NULL);
+    Set_name(NULL);
+    Set_value(NULL);
   }
 
   CustomInfoEntry(const wchar_t* name_arg, const wchar_t* value_arg) {
-    set_name(name_arg);
-    set_value(value_arg);
+    Set_name(name_arg);
+    Set_value(value_arg);
   }
 
-  void set_name(const wchar_t* name_arg) {
+  void Set_name(const wchar_t* name_arg) {
     if (!name_arg) {
       name[0] = L'\0';
       return;
@@ -64,7 +64,7 @@ struct CustomInfoEntry {
     WindowsStringUtils::safe_wcscpy(name, kNameMaxLength, name_arg);
   }
 
-  void set_value(const wchar_t* value_arg) {
+  void Set_value(const wchar_t* value_arg) {
     if (!value_arg) {
       value[0] = L'\0';
       return;
@@ -73,9 +73,9 @@ struct CustomInfoEntry {
     WindowsStringUtils::safe_wcscpy(value, kValueMaxLength, value_arg);
   }
 
-  void set(const wchar_t* name_arg, const wchar_t* value_arg) {
-    set_name(name_arg);
-    set_value(value_arg);
+  void Set(const wchar_t* name_arg, const wchar_t* value_arg) {
+    Set_name(name_arg);
+    Set_value(value_arg);
   }
 
   wchar_t name[kNameMaxLength];

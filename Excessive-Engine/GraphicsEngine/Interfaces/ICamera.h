@@ -26,43 +26,41 @@ struct rProjOrtho
 
 struct rProjPersp
 {
-	rProjPersp():fovRad(3.14159265358979f /2), aspectRatio(1) {}
-	rProjPersp(float fovRad, float aspectRatio) :fovRad(fovRad), aspectRatio(aspectRatio){}
+	rProjPersp():fovRad(3.14159265358979f /2){}
+	rProjPersp(float fovRad) :fovRad(fovRad){}
 
 	float fovRad;
-	float aspectRatio;
 };
 
 class ICamera
 {
 public:
-	virtual void setFOV(float rad) = 0;
-	virtual void setAspectRatio(float r) = 0;
-	virtual void setNearPlane(float nP) = 0;
-	virtual void setFarPlane(float fP) = 0;
+	virtual void SetFOV(float rad) = 0;
+	virtual void SetNearPlane(float nP) = 0;
+	virtual void SetFarPlane(float fP) = 0;
 	
-	virtual void setPos(const mm::vec3& p) = 0;
-	virtual void setTarget(const mm::vec3& p) = 0;
-	virtual void setDir(const mm::vec3& p) = 0;
+	virtual void SetPos(const mm::vec3& p) = 0;
+	virtual void SetTarget(const mm::vec3& p) = 0;
+	virtual void SetDirNormed(const mm::vec3& p) = 0;
+	virtual void SetRot(const mm::quat& q) = 0;
 	
-	virtual float getFOVRad() const = 0;
-	virtual float getAspectRatio() const = 0;
-	virtual float getNearPlane() const = 0;
-	virtual float getFarPlane() const = 0;
+	virtual float GetFOVRad() const = 0;
+	virtual float GetNearPlane() const = 0;
+	virtual float GetFarPlane() const = 0;
 	
-	virtual mm::mat4 getViewMatrix() const = 0;
-	virtual mm::mat4 getProjMatrix() const = 0;
+	virtual mm::mat4 GetViewMatrix() const = 0;
+	virtual mm::mat4 GetProjMatrix(float aspectRatio) const = 0;
 	
-	virtual mm::vec3 getDirFront() const = 0;
-	virtual mm::vec3 getDirBack() const = 0;
-	virtual mm::vec3 getDirUp() const = 0;
-	virtual mm::vec3 getDirDown() const = 0;
-	virtual mm::vec3 getDirRight() const = 0;
-	virtual mm::vec3 getDirLeft() const = 0;
+	virtual mm::vec3 GetDirNormedFront() const = 0;
+	virtual mm::vec3 GetDirNormedBack() const = 0;
+	virtual mm::vec3 GetDirNormedUp() const = 0;
+	virtual mm::vec3 GetDirNormedDown() const = 0;
+	virtual mm::vec3 GetDirNormedRight() const = 0;
+	virtual mm::vec3 GetDirNormedLeft() const = 0;
 	
-	virtual const mm::vec3& getPos() const = 0;
-	virtual const mm::quat& getRot() const = 0;
-	virtual const mm::vec3& getTargetPos() const = 0;
+	virtual const mm::vec3& GetPos() const = 0;
+	virtual const mm::quat& GetRot() const = 0;
+	virtual const mm::vec3 GetTarGetPos() const = 0;
 };
 
 

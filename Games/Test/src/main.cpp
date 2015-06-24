@@ -86,7 +86,7 @@ int main() {
 	string test_name;
 	// ask for a test if no config
 	if (!conf_file.is_open()) {
-		// get a name
+		// Get a name
 		test_name = GetTestName();
 	}
 	// parse last test from config file
@@ -114,7 +114,7 @@ int main() {
 			string ans;
 			do {
 				cout << "Launch " << test_name << "? y/n ";
-				getline(cin, ans);
+				Getline(cin, ans);
 			} while (ans == "" || ans == "y" || ans == "n");
 			if (ans == "n") {
 				test_name = GetTestName();
@@ -123,7 +123,7 @@ int main() {
 		}
 	}
 
-	// get test function's address	
+	// Get test function's Address	
 	TestFunctionT test_func;
 	auto it = test_cases.find(test_name);
 	if (it == test_cases.end()) {

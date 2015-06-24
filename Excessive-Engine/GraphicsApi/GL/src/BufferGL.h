@@ -10,5 +10,5 @@ public:
 	GLuint id;
 
 	void destroy() override;
-	rBuffer getDesc() override;
+	rBuffer GetDesc() override;
 };

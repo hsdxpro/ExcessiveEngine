@@ -12,9 +12,9 @@ enum class StoreMode : u32 {
 
 class ISoundData {
 public:
-	virtual void release() = 0;
+	virtual void Release() = 0;
 	
-	virtual bool load(const wchar_t* file_path, StoreMode mode = StoreMode::AUTOMATIC) = 0;
+	virtual bool Load(const wchar_t* file_path, StoreMode mode = StoreMode::AUTOMATIC) = 0;
 };
 
 } // namespace

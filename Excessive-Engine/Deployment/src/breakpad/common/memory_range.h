@@ -68,7 +68,7 @@ class MemoryRange {
   // Sets this memory range to point to |data| and its length to |length|.
   void Set(const void* data, size_t length) {
     data_ = reinterpret_cast<const uint8_t*>(data);
-    // Always set |length_| to zero if |data_| is NULL.
+    // Always Set |length_| to zero if |data_| is NULL.
     length_ = data ? length : 0;
   }
 

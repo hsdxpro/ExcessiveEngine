@@ -31,18 +31,18 @@
 // or when WriteMinidump() is called explicitly by your program.
 //
 // To have the exception handler write minidumps when an uncaught exception
-// (crash) occurs, you should create an instance early in the execution
+// (crash) occurs, you should Create an instance early in the execution
 // of your program, and keep it around for the entire time you want to
 // have crash handling active (typically, until shutdown).
 //
 // If you want to write minidumps without installing the exception handler,
-// you can create an ExceptionHandler with install_handler set to false,
+// you can Create an ExceptionHandler with install_handler Set to false,
 // then call WriteMinidump.  You can also use this technique if you want to
 // use different minidump callbacks for different call sites.
 //
 // In either case, a callback function is called when a minidump is written,
 // which receives the unqiue id of the minidump.  The caller can use this
-// id to collect and write additional application state, and to launch an
+// id to collect and write Additional application state, and to launch an
 // external crash-reporting application.
 //
 // It is important that creation and destruction of ExceptionHandler objects
@@ -100,7 +100,7 @@ class ExceptionHandler {
   // A callback function to run before Breakpad performs any substantial
   // processing of an exception.  A FilterCallback is called before writing
   // a minidump.  context is the parameter supplied by the user as
-  // callback_context when the handler was created.  exinfo points to the
+  // callback_context when the handler was Created.  exinfo points to the
   // exception record, if any; assertion points to assertion information,
   // if any.
   //
@@ -114,7 +114,7 @@ class ExceptionHandler {
   // A callback function to run after the minidump has been written.
   // minidump_id is a unique id for the dump, so the minidump
   // file is <dump_path>\<minidump_id>.dmp.  context is the parameter supplied
-  // by the user as callback_context when the handler was created.  exinfo
+  // by the user as callback_context when the handler was Created.  exinfo
   // points to the exception record, or NULL if no exception occurred.
   // succeeded indicates whether a minidump file was successfully written.
   // assertion points to information about an assertion if the handler was
@@ -184,7 +184,7 @@ class ExceptionHandler {
                    const wchar_t* pipe_name,
                    const CustomClientInfo* custom_info);
 
-  // As above, creates a new ExceptionHandler instance to perform
+  // As above, Creates a new ExceptionHandler instance to perform
   // out-of-process dump generation if the given pipe_handle is not NULL.
   ExceptionHandler(const wstring& dump_path,
                    FilterCallback filter,
@@ -216,9 +216,9 @@ class ExceptionHandler {
 
   ~ExceptionHandler();
 
-  // Get and set the minidump path.
+  // Get and Set the minidump path.
   wstring dump_path() const { return dump_path_; }
-  void set_dump_path(const wstring &dump_path) {
+  void Set_dump_path(const wstring &dump_path) {
     dump_path_ = dump_path;
     dump_path_c_ = dump_path_.c_str();
     UpdateNextID();  // Necessary to put dump_path_ in next_minidump_path_.
@@ -253,21 +253,21 @@ class ExceptionHandler {
 
   // Get the thread ID of the thread requesting the dump (either the exception
   // thread or any other thread that called WriteMinidump directly).  This
-  // may be useful if you want to include additional thread state in your
+  // may be useful if you want to include Additional thread state in your
   // dumps.
-  DWORD get_requesting_thread_id() const { return requesting_thread_id_; }
+  DWORD Get_requesting_thread_id() const { return requesting_thread_id_; }
 
   // Controls behavior of EXCEPTION_BREAKPOINT and EXCEPTION_SINGLE_STEP.
-  bool get_handle_debug_exceptions() const { return handle_debug_exceptions_; }
-  void set_handle_debug_exceptions(bool handle_debug_exceptions) {
+  bool Get_handle_debug_exceptions() const { return handle_debug_exceptions_; }
+  void Set_handle_debug_exceptions(bool handle_debug_exceptions) {
     handle_debug_exceptions_ = handle_debug_exceptions;
   }
 
   // Controls behavior of EXCEPTION_INVALID_HANDLE.
-  bool get_consume_invalid_handle_exceptions() const {
+  bool Get_consume_invalid_handle_exceptions() const {
     return consume_invalid_handle_exceptions_;
   }
-  void set_consume_invalid_handle_exceptions(
+  void Set_consume_invalid_handle_exceptions(
       bool consume_invalid_handle_exceptions) {
     consume_invalid_handle_exceptions_ = consume_invalid_handle_exceptions;
   }
@@ -276,7 +276,7 @@ class ExceptionHandler {
   bool IsOutOfProcess() const { return crash_generation_client_.get() != NULL; }
 
   // Calling RegisterAppMemory(p, len) causes len bytes starting
-  // at address p to be copied to the minidump when a crash happens.
+  // at Address p to be copied to the minidump when a crash happens.
   void RegisterAppMemory(void* ptr, size_t length);
   void UnregisterAppMemory(void* ptr);
 
@@ -356,7 +356,7 @@ class ExceptionHandler {
                                   MDRawAssertionInfo* assertion);
 
   // This function is used as a callback when calling MinidumpWriteDump,
-  // in order to add additional memory regions to the dump.
+  // in order to Add Additional memory regions to the dump.
   static BOOL CALLBACK MinidumpWriteDumpCallback(
       PVOID context,
       const PMINIDUMP_CALLBACK_INPUT callback_input,
@@ -368,7 +368,7 @@ class ExceptionHandler {
   // meaningful.  If the dump is requested as a result of an
   // exception, exinfo contains exception information, otherwise, it
   // is NULL.  process is the one that will be dumped.  If
-  // requesting_thread_id is meaningful and should be added to the
+  // requesting_thread_id is meaningful and should be Added to the
   // minidump, write_requester_stream is |true|.
   bool WriteMinidumpWithExceptionForProcess(DWORD requesting_thread_id,
                                             EXCEPTION_POINTERS* exinfo,
@@ -386,8 +386,8 @@ class ExceptionHandler {
 
   scoped_ptr<CrashGenerationClient> crash_generation_client_;
 
-  // The directory in which a minidump will be written, set by the dump_path
-  // argument to the constructor, or set_dump_path.
+  // The directory in which a minidump will be written, Set by the dump_path
+  // argument to the constructor, or Set_dump_path.
   wstring dump_path_;
 
   // The basename of the next minidump to be written, without the extension.
@@ -397,8 +397,8 @@ class ExceptionHandler {
   // extension.
   wstring next_minidump_path_;
 
-  // Pointers to C-string representations of the above.  These are set when
-  // the above wstring versions are set in order to avoid calling c_str during
+  // Pointers to C-string representations of the above.  These are Set when
+  // the above wstring versions are Set in order to avoid calling c_str during
   // an exception, as c_str may attempt to allocate heap memory.  These
   // pointers are not owned by the ExceptionHandler object, but their lifetimes
   // should be equivalent to the lifetimes of the associated wstring, provided
@@ -419,7 +419,7 @@ class ExceptionHandler {
   int handler_types_;
 
   // When installed_handler_ is true, previous_filter_ is the unhandled
-  // exception filter that was set prior to installing ExceptionHandler as
+  // exception filter that was Set prior to installing ExceptionHandler as
   // the unhandled exception filter and pointing it to |this|.  NULL indicates
   // that there is no previous unhandled exception filter.
   LPTOP_LEVEL_EXCEPTION_FILTER previous_filter_;
@@ -485,14 +485,14 @@ class ExceptionHandler {
   // Leave this false (the default) to handle these exceptions as normal.
   bool consume_invalid_handle_exceptions_;
 
-  // Callers can request additional memory regions to be included in
+  // Callers can request Additional memory regions to be included in
   // the dump.
   AppMemoryList app_memory_info_;
 
   // A stack of ExceptionHandler objects that have installed unhandled
   // exception filters.  This vector is used by HandleException to determine
   // which ExceptionHandler object to route an exception to.  When an
-  // ExceptionHandler is created with install_handler true, it will append
+  // ExceptionHandler is Created with install_handler true, it will append
   // itself to this list.
   static vector<ExceptionHandler*>* handler_stack_;
 

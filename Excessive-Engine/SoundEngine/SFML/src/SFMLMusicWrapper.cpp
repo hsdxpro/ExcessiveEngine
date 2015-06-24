@@ -4,54 +4,54 @@
 
 SFMLMusicWrapper::SFMLMusicWrapper() {
 	music.setVolume(100);
-	music.setAttenuation(0.5);
+	music.setAttenuation(0.1);
 }
 
-bool SFMLMusicWrapper::loadFromFile(const std::string& filename){
+bool SFMLMusicWrapper::LoadFromFile(const std::string& filename){
 	return music.openFromFile(filename);
 }
 
-void SFMLMusicWrapper::setPitch(float pitch) {
+void SFMLMusicWrapper::SetPitch(float pitch) {
 	music.setPitch(pitch);
 }
 
-void SFMLMusicWrapper::setVolume(float volume) {
+void SFMLMusicWrapper::SetVolume(float volume) {
 	music.setVolume(volume * 100);
 }
 
-void SFMLMusicWrapper::setPosition(const mm::vec3& newPos) {
+void SFMLMusicWrapper::SetPosition(const mm::vec3& newPos) {
 	music.setPosition(newPos.x, newPos.y, newPos.z);
 }
 
-void SFMLMusicWrapper::setLooped(bool looped) {
+void SFMLMusicWrapper::SetLooped(bool looped) {
 	music.setLoop(looped);
 }
 
-void SFMLMusicWrapper::start() {
+void SFMLMusicWrapper::Start() {
 	music.play();
 }
 
-void SFMLMusicWrapper::pause() {
+void SFMLMusicWrapper::Pause() {
 	music.pause();
 }
 
-void SFMLMusicWrapper::stop() {
+void SFMLMusicWrapper::Stop() {
 	music.stop();
 }
 
-float SFMLMusicWrapper::getPitch() const {
+float SFMLMusicWrapper::GetPitch() const {
 	return music.getPitch();
 }
 
-float SFMLMusicWrapper::getVolume() const {
+float SFMLMusicWrapper::GetVolume() const {
 	return music.getVolume() / 100.f;
 }
 
-mm::vec3 SFMLMusicWrapper::getPosition() const {
+mm::vec3 SFMLMusicWrapper::GetPosition() const {
 	sf::Vector3f pos = music.getPosition();
 	return mm::vec3(pos.x, pos.y, pos.z);
 }
 
-bool SFMLMusicWrapper::getLooped() const {
+bool SFMLMusicWrapper::GetLooped() const {
 	return music.getLoop();
 }

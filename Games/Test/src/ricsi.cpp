@@ -1,4 +1,4 @@
-﻿#include "EngineCore.h"
+﻿#include "..\Core\src\EngineCore.h"
 #include "Factory.h"
 
 // basic util
@@ -22,46 +22,36 @@ int Ricsi()
 		d.clientW = 800;
 		d.clientH = 600;
 		d.capText = "Excessive-Engine -> Ricsi teszt";
-	IWindow* window = Factory::createWindow(d);
+	IWindow* window = Factory::CreateWindow(d);
 
 	// Init engine core (graphics, physics, sound, network
 	EngineCore core;
-		core.initSoundEngine();
-		core.initNetworkEngine();
-		core.initPhysicsEngineBullet();
+		core.InitSoundEngine();
+		core.InitNetworkEngine();
+		core.InitPhysicsEngineBullet();
 			rGraphicsEngineRaster gDesc;
 			gDesc.gapiType = eGapiType::OPENGL_4_5;
 			gDesc.targetWindow = window;
-		graphics::IEngine* gEngine = core.initGraphicsEngineRaster(gDesc);
+		graphics::IEngine* gEngine = core.InitGraphicsEngineRaster(gDesc);
 
 	// Create camera
-	graphics::ICamera* cam = gEngine->createCam();
-	cam->setFOV(70 / 180.f*3.1415926f);
-	cam->setAspectRatio(window->getClientAspectRatio());
-	cam->setNearPlane(0.2f);
-	cam->setFarPlane(2000);
-	cam->setPos(mm::vec3(0, -3, 1));
+	graphics::ICamera* cam = core.AddCompCamera()->GetCam();
+	cam->SetFOV(70 / 180.f*3.1415926f);
+	//cam->SetAspectRatio(window->GetClientAspectRatio());
+	cam->SetNearPlane(0.2f);
+	cam->SetFarPlane(2000);
+	cam->SetPos(mm::vec3(0, -3, 1));
 
 	// Create scene, plug camera
-	graphics::IScene* scene = core.getDefaultGraphicsScene();
-	scene->setCamera(cam);
+	graphics::IScene* scene = core.GetDefaultGraphicsScene();
+	scene->SetCamera(cam);
 
-	//graphics::IEngine::Layer layer;
-	//layer.scene = scene;
-	//gEngine->addLayer(layer);
-
-	//*/
 	static const wchar_t assetName[] = L"../Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
 	static const wchar_t teapotModelPath[] = L"../Assets/box.dae"; // Assets/teapot.dae
 	static const wchar_t ak47ModelPath[] = L"../Assets/ak47/ak.obj"; // Assets/teapot.dae
 
-	/*/
-	static const wchar_t assetName[] = L"../Assets/teapot.dae";
-	//*/
-	//Actor* simpleEntity = core.addActor();
-	core.addCompRigidBodyFromFile(Sys::getWorkDir() + assetName, 0)->addChild(core.addCompGraphicsFromFile(Sys::getWorkDir() + assetName));
-	//core.addCompGraphicsFromFile(Sys::getWorkDir() + assetName);
-	core.addCompGraphicsFromFile(Sys::getWorkDir() + L"../Assets/skybox.dae")->setScale({ 1000, 1000, 1000 });
+	core.AddCompRigidBodyFromFile(Sys::GetWorkDir() + assetName, 0)->Attach(core.AddCompGraphicsFromFile(Sys::GetWorkDir() + assetName));
+	core.AddCompGraphicsFromFile(Sys::GetWorkDir() + L"../Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
 
 	// Run the main loop
 	rWindowEvent ev;
@@ -69,8 +59,8 @@ int Ricsi()
 	double last_frame;
 
 	// Timer for dT frame calc
-	ITimer* timer = Factory::createTimer();
-	timer->start();
+	ITimer* timer = Factory::CreateTimer();
+	timer->Start();
 	last_frame = 0;
 	elapsed = 0;
 
@@ -84,12 +74,10 @@ int Ricsi()
 	// Jesus, just because we dont want garbage for last_frame variable at first run
 	static bool bFirstRun = true;
 
-	while (window->isOpen())
+	while (window->IsOpen())
 	{
-		//t->reset();
-
 		// keep 60 fps
-		double now = timer->getSecondsPassed();
+		double now = timer->GetSecondsPassed();
 
 		if (bFirstRun) 
 		{
@@ -104,9 +92,9 @@ int Ricsi()
 		static float camAngleX = 0; // upwards/downwards looking
 		static float camAngleZ = 0; // orientation
 		title_ss << L"Excessive-Engine - Ricsi teszt | FPS=" << fps << L" | Pitch=" << camAngleX * 180 / 3.141592653f << L"° Facing=" << camAngleZ * 180 / 3.141592653f << L"°";
-		window->setText(title_ss.str().c_str());
+		window->SetText(title_ss.str().c_str());
 
-		while (window->popEvent(&ev))
+		while (window->PopEvent(&ev))
 		switch (ev.msg)
 		{
 			case eWindowMsg::MOUSE_PRESS:
@@ -114,30 +102,11 @@ int Ricsi()
 					bRMBDown = true;
 				else if (ev.mouseBtn == eMouseBtn::LEFT)
 				{
-					//for (uint32_t i = 0; i < 3; i++)
-					{
-						auto box = core.addCompRigidBodyFromFile(Sys::getWorkDir() + teapotModelPath, 10);
-						box->addChild(core.addCompGraphicsFromFile(Sys::getWorkDir() + teapotModelPath));
+					auto box = core.AddCompRigidBodyFromFile(Sys::GetWorkDir() + teapotModelPath, 10);
+					box->Attach(core.AddCompGraphicsFromFile(Sys::GetWorkDir() + teapotModelPath));
 
-						box->setPos(cam->getPos() + cam->getDirFront() * 3); // 3 méterrel elénk
-						box->setScale(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
-
-						//if (i == 0)
-						//{
-						//	box->setPos({ 20, 0, 0 }); // 3 méterrel elénk
-						//	box->setScale(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
-						//}
-						//else if (i == 1)
-						//{
-						//	box->setPos({ 0, 20, 0 }); // 3 méterrel elénk
-						//	box->setScale(mm::vec3(1.f / 10, 1.f / 10, 1.f / 10));
-						//}
-						//else
-						//{
-						//	box->setPos({ 0, 0, 20 }); // 3 méterrel elénk
-						//	box->setScale(mm::vec3(1.f / 5, 1.f / 5, 1.f / 5));
-						//}
-					}
+					box->SetPos(cam->GetPos() + cam->GetDirNormedFront() * 3); // 3 méterrel elénk
+					box->SetScaleLocal(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
 				}
 				break;
 			case eWindowMsg::MOUSE_RELEASE:
@@ -151,7 +120,7 @@ int Ricsi()
 					float angleChangeZ = (float)(ev.deltaX) * 0.009;
 					float angleChangeX = (float)(-ev.deltaY) * 0.009;
 
-					mm::vec3 viewDir = mm::normalize(cam->getTargetPos() - cam->getPos());
+					mm::vec3 viewDir = mm::normalize(cam->GetTarGetPos() - cam->GetPos());
 					float lenXY = mm::length(viewDir.xy);
 					static float angleX = acos(lenXY)*(viewDir.z > 0 ? 1 : -1);
 					angleX += angleChangeX;
@@ -164,6 +133,9 @@ int Ricsi()
 						angleZ -= ceil(angleZ / 3.141592653f) * 2 * 3.141592653f;
 
 					mm::vec3 newViewDir(0, 1, 0);
+
+					// MY HEKK
+					angleZ = 3.1415 / 2;
 
 					mm::mat3 rotAroundX(1,		0,			0,
 										0, cos(angleX), -sin(angleX),
@@ -179,14 +151,15 @@ int Ricsi()
 					camAngleX = angleX;
 					camAngleZ = angleZ;
 
-					cam->setTarget(cam->getPos() + newViewDir);
+					cam->SetDirNormed(mm::normalize(newViewDir));
+					//cam->SetTarget(cam->GetPos() + newViewDir);
 				}
 			} break;
 
 			case eWindowMsg::KEY_PRESS:
 				switch (ev.key)
 				{
-					case eKey::ESCAPE: window->close(); break;
+					case eKey::ESCAPE: window->Close(); break;
 					case eKey::W: bWDown = true; break;
 					case eKey::S: bSDown = true; break;
 					case eKey::A: bADown = true; break;
@@ -204,34 +177,24 @@ int Ricsi()
 				} break;
 
 			case eWindowMsg::RESIZE:
-				cam->setAspectRatio((float)ev.x / (float)ev.y);
+				//cam->SetAspectRatio((float)ev.x / (float)ev.y);
 				break;
 		}
 
 		// Camera move
 		if (bWDown) // W
-			cam->setPos(cam->getPos() + cam->getDirFront() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+			cam->SetPos(cam->GetPos() + cam->GetDirNormedFront() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 		if (bSDown) // S									 
-			cam->setPos(cam->getPos() + cam->getDirBack()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+			cam->SetPos(cam->GetPos() + cam->GetDirNormedBack()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 		if (bADown) // A									 
-			cam->setPos(cam->getPos() + cam->getDirLeft()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+			cam->SetPos(cam->GetPos() + cam->GetDirNormedLeft()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 		if (bDDown) // D									 
-			cam->setPos(cam->getPos() + cam->getDirRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
-
-		// Update everything
-
-		//float deltaT = t->getElapsedSinceReset();
+			cam->SetPos(cam->GetPos() + cam->GetDirNormedRight() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 
 		// Update core
-		core.update(elapsed/*, scene*/);
+		core.Update(elapsed/*, scene*/);
 
-		// Call that after OpenGL "finish" all of it's rendering
-		window->present();
-
-		// keep 60 fps
-		//std::chrono::time_point<std::chrono::high_resolution_clock> now = std::chrono::high_resolution_clock::now();
-		//std::chrono::microseconds sleep_time = std::chrono::microseconds(16667) - std::chrono::duration_cast<std::chrono::microseconds>(now - last_frame);
-		//this_thread::sleep_for(sleep_time);
+		window->Present();
 	}
 	std::cout << std::endl;
 

@@ -57,7 +57,7 @@
  *
  * Because precise data type sizes are crucial for this implementation to
  * function properly and portably in terms of interoperability with minidumps
- * produced by DbgHelp on Windows, a set of primitive types with known sizes
+ * produced by DbgHelp on Windows, a Set of primitive types with known sizes
  * are used as the basis of each structure defined by this file.  DbgHelp
  * on Windows is assumed to be the reference implementation; this file
  * seeks to provide a cross-platform compatible implementation.  To avoid
@@ -101,7 +101,7 @@ typedef struct {
 
 typedef struct {
   /*
-   * Register parameter home addresses.
+   * Register parameter home Addresses.
    */
   uint64_t  p1_home;
   uint64_t  p2_home;
@@ -161,7 +161,7 @@ typedef struct {
   /* The next register is included with MD_CONTEXT_AMD64_CONTROL */
   uint64_t  rip;
 
-  /* The next set of registers are included with
+  /* The next Set of registers are included with
    * MD_CONTEXT_AMD64_FLOATING_POINT
    */
   union {

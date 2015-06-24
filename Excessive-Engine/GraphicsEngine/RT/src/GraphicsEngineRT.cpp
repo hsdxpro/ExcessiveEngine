@@ -33,36 +33,36 @@ GraphicsEngineRT::~GraphicsEngineRT() {
 }
 
 
-void GraphicsEngineRT::release() {
+void GraphicsEngineRT::Release() {
 	delete this;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// create stuff
-graphics::IScene* GraphicsEngineRT::createScene() {
+// Create stuff
+graphics::IScene* GraphicsEngineRT::CreateScene() {
 	return 0;
 }
 
-graphics::IMesh* GraphicsEngineRT::createMesh() {
+graphics::IMesh* GraphicsEngineRT::CreateMesh() {
 	return nullptr;
 }
 
-graphics::IMaterial* GraphicsEngineRT::createMaterial() {
+graphics::IMaterial* GraphicsEngineRT::CreateMaterial() {
 	return nullptr;
 }
 
-graphics::ITexture* GraphicsEngineRT::createTexture() {
+graphics::ITexture* GraphicsEngineRT::CreateTexture() {
 	return nullptr;
 }
 
-Camera* GraphicsEngineRT::createCam() {
+Camera* GraphicsEngineRT::CreateCam() {
 	return nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// update
-void GraphicsEngineRT::update(float deltaTime) {
+// Update
+void GraphicsEngineRT::Update(float deltaTime) {
 	
 }
 
@@ -70,20 +70,20 @@ void GraphicsEngineRT::update(float deltaTime) {
 
 
 
-void GraphicsEngineRT::addLayer(const Layer& layer) {
+void GraphicsEngineRT::AddLayer(const Layer& layer) {
 }
 
-void GraphicsEngineRT::removeLayer(size_t index) {
+void GraphicsEngineRT::RemoveLayer(size_t index) {
 }
 
-size_t GraphicsEngineRT::getNumLayers() const {
+size_t GraphicsEngineRT::GetNumLayers() const {
 	return 0;
 }
 
-void GraphicsEngineRT::setNumLayers(size_t num_layers) {
+void GraphicsEngineRT::SetNumLayers(size_t num_layers) {
 }
 
-auto GraphicsEngineRT::getLayer(size_t index) -> Layer& {
+auto GraphicsEngineRT::GetLayer(size_t index) -> Layer& {
 	static Layer l;
 	return l;
 }

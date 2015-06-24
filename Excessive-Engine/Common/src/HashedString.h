@@ -24,7 +24,7 @@ public:
     return sid;
   }  
 
-  static std::string getStr( stringID sid )
+  static std::string GetStr( stringID sid )
   {
     auto it = hashtable.find( sid );
     

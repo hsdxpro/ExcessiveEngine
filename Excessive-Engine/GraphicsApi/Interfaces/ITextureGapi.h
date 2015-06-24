@@ -75,7 +75,7 @@ enum class eTextureFormat : uint32_t
 	STENCIL16
 };
 
-//specifies how you'd like to update the texture
+//specifies how you'd like to Update the texture
 struct rTextureUpdate
 {
 	rTextureUpdate() : x_offset(0), y_offset(0), z_offset(0), level(0), width(0), height(0), depth(0), data(0){}
@@ -116,6 +116,6 @@ class ITextureGapi
 {
 public:
 	virtual void destroy() = 0;
-	virtual const rTextureGapi& getDesc() = 0;
+	virtual const rTextureGapi& GetDesc() = 0;
 	virtual void genMipChain() = 0;
 };

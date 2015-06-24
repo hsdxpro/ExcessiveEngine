@@ -9,15 +9,15 @@ class EntityRigid : public physics::IEntityRigid
 public:
 	EntityRigid(btRigidBody* body);
 
-	void setPos(const mm::vec3& v) override;
-	void setRot(const mm::quat& q) override;
-	void setScale(const mm::vec3& v) override;
+	void SetPos(const mm::vec3& v) override;
+	void SetRot(const mm::quat& q) override;
+	void SetScaleLocal(const mm::vec3& v) override;
 
-	mm::vec3 getPos() override;
-	mm::quat getRot() override;
-	mm::vec3 getScale() override;
+	mm::vec3 GetPos() override;
+	mm::quat GetRot() override;
+	mm::vec3 GetScaleLocal() override;
 
-	btRigidBody* getBody();
+	btRigidBody* GetBody();
 
 protected:
 	btRigidBody* body;

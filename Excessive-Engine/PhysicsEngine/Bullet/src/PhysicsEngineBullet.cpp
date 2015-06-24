@@ -44,22 +44,22 @@ PhysicsEngineBullet::~PhysicsEngineBullet()
 {
 }
 
-void PhysicsEngineBullet::release()
+void PhysicsEngineBullet::Release()
 {
 	delete this;
 }
 
-void PhysicsEngineBullet::update(float deltaTime)
+void PhysicsEngineBullet::Update(float deltaTime)
 {
 	world->stepSimulation(deltaTime);
 
 	// Contact mainfolds for debugging
-	//auto overlappingPairCache = world->getBroadphase()->getOverlappingPairCache();
-	//auto nPairs = overlappingPairCache->getNumOverlappingPairs();
+	//auto overlappingPairCache = world->GetBroadphase()->GetOverlappingPairCache();
+	//auto nPairs = overlappingPairCache->GetNumOverlappingPairs();
 	//for (u32 i = 0; i < nPairs; i++)
 	//{
 	//	btManifoldArray array;
-	//	overlappingPairCache->getOverlappingPairArray()[i].m_algorithm->getAllContactManifolds(array);
+	//	overlappingPairCache->GetOverlappingPairArray()[i].m_algorithm->GetAllContactManifolds(array);
 	//	for (u32 j = 0; j < array.size(); j++)
 	//	{
 	//		auto& maniFold = array.at(j);
@@ -67,9 +67,9 @@ void PhysicsEngineBullet::update(float deltaTime)
 	//}
 }
 
-physics::IEntityRigid* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) 
+physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) 
 {
-	// You should call PhysicsEngineBullet::createEntityRigidStatic
+	// You should call PhysicsEngineBullet::CreateEntityRigidStatic
 	assert(mass != 0);
 
 	// Create collision shape for rigid body, based on it's vertices and mass
@@ -83,13 +83,14 @@ physics::IEntityRigid* PhysicsEngineBullet::addEntityRigidDynamic(mm::vec3* vert
 	// Create rigid body
 	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), colShape, localInertia);
 	world->addRigidBody(body);
-	
+		body->setFriction(1);
+
 	EntityRigid* e = new EntityRigid(body);
-	entities.push_back(e);
+		entities.push_back(e);
 	return e;
 }
 
-physics::IEntityRigid* PhysicsEngineBullet::addEntityRigidStatic(mm::vec3* vertices, u32 nVertices, void* indices, u32 indexSize, u32 nIndices) 
+physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidStatic(mm::vec3* vertices, u32 nVertices, void* indices, u32 indexSize, u32 nIndices) 
 {
 
 	btTriangleIndexVertexArray* VBIB;
@@ -119,7 +120,26 @@ physics::IEntityRigid* PhysicsEngineBullet::addEntityRigidStatic(mm::vec3* verti
 	world->addRigidBody(body);
 
 	EntityRigid* e = new EntityRigid(body);
-	entities.push_back(e);
+		entities.push_back(e);
+	return e;
+}
+
+physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidCapsule(float height, float radius, float mass)
+{
+	btCapsuleShape* capsuleShape = new btCapsuleShape(radius, height);
+	capsuleShape->setSafeMargin(0, 0); // Thanks convex hull for your imprecision...
+
+	btVector3 localInertia(0, 0, 0);
+	if (mass != 0)
+		capsuleShape->calculateLocalInertia(mass, localInertia);
+
+	// Create rigid body
+	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), capsuleShape, localInertia);
+	world->addRigidBody(body);
+	
+
+	EntityRigid* e = new EntityRigid(body);
+		entities.push_back(e);
 	return e;
 }
 
@@ -133,6 +153,30 @@ void PhysicsEngineBullet::GetDebugData(mm::vec3* nonIndexedVertices, uint32_t ve
 	{
 		btCollisionShape* colShape = colObjArray[i]->getCollisionShape();
 		btTransform worldTrans = colObjArray[i]->getWorldTransform();
+
+		if (colShape->isPolyhedral())
+		{
+			int asd = 5;
+			asd++;
+		}
+
+		if (colShape->isCompound())
+		{
+			int asd = 5;
+			asd++;
+		}
+
+		if (colShape->isConcave())
+		{
+			int asd = 5;
+			asd++;
+		}
+
+		if (colShape->isInfinite())
+		{
+			int asd = 5;
+			asd++;
+		}
 
 		// Add each edge from convex Shape to the list
 		if (colShape->isConvex())

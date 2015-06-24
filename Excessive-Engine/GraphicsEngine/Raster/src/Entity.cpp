@@ -15,58 +15,68 @@ Entity::~Entity() {
 	return;
 }
 
-void Entity::setPos(const mm::vec3& v)
+void Entity::SetPos(const mm::vec3& v)
 {
 	pos = v;
 }
 
-void Entity::setRot(const mm::quat& q)
+void Entity::SetRot(const mm::quat& q)
 {
 	rot = q;
 }
 
-void Entity::setScale(const mm::vec3& v)
+void Entity::SetScaleLocal(const mm::vec3& v)
 {
 	scale = v;
 }
 
-const mm::vec3& Entity::getPos()
+void Entity::SetSkew(const mm::mat3& m)
+{
+	skew = m;
+}
+
+const mm::vec3& Entity::GetPos()
 {
 	return pos;
 }
-const mm::quat& Entity::getRot()
+const mm::quat& Entity::GetRot()
 {
 	return rot;
 }
 
-const mm::vec3& Entity::getScale()
+const mm::vec3& Entity::GetScaleLocal()
 {
 	return scale;
+}
+
+const mm::mat3& Entity::GetSkew()
+{
+	return skew;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // mesh & mtl properties
 
-void Entity::setMesh(graphics::IMesh* mesh) {
-	setMesh((Mesh*)mesh);
+void Entity::SetMesh(graphics::IMesh* mesh) {
+	SetMesh((Mesh*)mesh);
 }
 
-void Entity::setMaterial(graphics::IMaterial* mtl) {
-	setMaterial((Material*)mtl);
+void Entity::SetMaterial(graphics::IMaterial* mtl) {
+	SetMaterial((Material*)mtl);
 }
 
-void Entity::setMesh(Mesh* mesh) {
-	this->mesh.reset(mesh);
+void Entity::SetMesh(Mesh* mesh) {
+	this->mesh.Reset(mesh);
 }
 
-void Entity::setMaterial(Material* material) {
-	this->mtl.reset(material);
+void Entity::SetMaterial(Material* material) {
+	this->mtl.Reset(material);
 }
 
-Mesh* Entity::getMesh() const {
+Mesh* Entity::GetMesh() const {
 	return mesh.get();
 }
 
-Material* Entity::getMaterial() const {
+Material* Entity::GetMaterial() const {
 	return mtl.get();
 }

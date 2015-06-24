@@ -57,7 +57,7 @@
  *
  * Because precise data type sizes are crucial for this implementation to
  * function properly and portably in terms of interoperability with minidumps
- * produced by DbgHelp on Windows, a set of primitive types with known sizes
+ * produced by DbgHelp on Windows, a Set of primitive types with known sizes
  * are used as the basis of each structure defined by this file.  DbgHelp
  * on Windows is assumed to be the reference implementation; this file
  * seeks to provide a cross-platform compatible implementation.  To avoid

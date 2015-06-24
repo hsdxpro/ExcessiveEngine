@@ -119,7 +119,7 @@ class StabsReader {
     // word size, 'struct nlist' layout, and so on.
     struct Entry {
       // True if this iterator has reached the end of the entry array. When
-      // this is set, the other members of this structure are not valid.
+      // this is Set, the other members of this structure are not valid.
       bool at_end;
 
       // The number of this entry within the list.
@@ -146,7 +146,7 @@ class StabsReader {
     // anyway.
     //
     // For the record: on Linux, STABS entry values are always 32 bits,
-    // regardless of the architecture address size (don't ask me why); on
+    // regardless of the architecture Address size (don't ask me why); on
     // Mac, they are 32 or 64 bits long. Oddly, the section header's entry
     // size for a Linux ELF .stab section varies according to the ELF class
     // from 12 to 20 even as the actual entries remain unchanged.
@@ -163,7 +163,7 @@ class StabsReader {
     const Entry *operator->() const { return &entry_; }
 
    private:
-    // Read the STABS entry at cursor_, and set entry_ appropriately.
+    // Read the STABS entry at cursor_, and Set entry_ appropriately.
     void Fetch();
 
     // The size of entries' value field, in bytes.
@@ -178,7 +178,7 @@ class StabsReader {
 
   // A source line, saved to be reported later.
   struct Line {
-    uint64_t address;
+    uint64_t Address;
     const char *filename;
     int number;
   };
@@ -246,44 +246,44 @@ class StabsHandler {
   // Processing proceeds until the end of the .stabs section, or until
   // one of these functions returns false.
 
-  // The addresses given are as reported in the STABS info, without
+  // The Addresses given are as reported in the STABS info, without
   // regard for whether the module may be loaded at different
-  // addresses at different times (a shared library, say).  When
-  // processing STABS from an ELF shared library, the addresses given
-  // all assume the library is loaded at its nominal load address.
-  // They are *not* offsets from the nominal load address.  If you
+  // Addresses at different times (a shared library, say).  When
+  // processing STABS from an ELF shared library, the Addresses given
+  // all assume the library is loaded at its nominal load Address.
+  // They are *not* offsets from the nominal load Address.  If you
   // want offsets, you must subtract off the library's nominal load
-  // address.
+  // Address.
 
   // The arguments to these functions named FILENAME are all
   // references to strings stored in the .stabstr section.  Because
   // both the Linux and Solaris linkers factor out duplicate strings
   // from the .stabstr section, the consumer can assume that if two
-  // FILENAME values are different addresses, they represent different
+  // FILENAME values are different Addresses, they represent different
   // file names.
   //
   // Thus, it's safe to use (say) std::map<char *, ...>, which does
-  // string address comparisons, not string content comparisons.
+  // string Address comparisons, not string content comparisons.
   // Since all the strings are in same array of characters --- the
-  // .stabstr section --- comparing their addresses produces
+  // .stabstr section --- comparing their Addresses produces
   // predictable, if not lexicographically meaningful, results.
 
   // Begin processing a compilation unit whose main source file is
-  // named FILENAME, and whose base address is ADDRESS.  If
+  // named FILENAME, and whose base Address is ADDRESS.  If
   // BUILD_DIRECTORY is non-NULL, it is the name of the build
   // directory in which the compilation occurred.
-  virtual bool StartCompilationUnit(const char *filename, uint64_t address,
+  virtual bool StartCompilationUnit(const char *filename, uint64_t Address,
                                     const char *build_directory) {
     return true;
   }
 
   // Finish processing the compilation unit.  If ADDRESS is non-zero,
-  // it is the ending address of the compilation unit.  If ADDRESS is
-  // zero, then the compilation unit's ending address is not
+  // it is the ending Address of the compilation unit.  If ADDRESS is
+  // zero, then the compilation unit's ending Address is not
   // available, and the consumer must infer it by other means.
-  virtual bool EndCompilationUnit(uint64_t address) { return true; }
+  virtual bool EndCompilationUnit(uint64_t Address) { return true; }
 
-  // Begin processing a function named NAME, whose starting address is
+  // Begin processing a function named NAME, whose starting Address is
   // ADDRESS.  This function belongs to the compilation unit that was
   // most recently started but not ended.
   //
@@ -293,26 +293,26 @@ class StabsHandler {
   // StartFunction is the function name alone.
   //
   // In languages that use name mangling, like C++, NAME is mangled.
-  virtual bool StartFunction(const string &name, uint64_t address) {
+  virtual bool StartFunction(const string &name, uint64_t Address) {
     return true;
   }
 
   // Finish processing the function.  If ADDRESS is non-zero, it is
-  // the ending address for the function.  If ADDRESS is zero, then
-  // the function's ending address is not available, and the consumer
+  // the ending Address for the function.  If ADDRESS is zero, then
+  // the function's ending Address is not available, and the consumer
   // must infer it by other means.
-  virtual bool EndFunction(uint64_t address) { return true; }
+  virtual bool EndFunction(uint64_t Address) { return true; }
   
   // Report that the code at ADDRESS is attributable to line NUMBER of
   // the source file named FILENAME.  The caller must infer the ending
-  // address of the line.
-  virtual bool Line(uint64_t address, const char *filename, int number) {
+  // Address of the line.
+  virtual bool Line(uint64_t Address, const char *filename, int number) {
     return true;
   }
 
   // Report that an exported function NAME is present at ADDRESS.
   // The size of the function is unknown.
-  virtual bool Extern(const string &name, uint64_t address) {
+  virtual bool Extern(const string &name, uint64_t Address) {
     return true;
   }
 

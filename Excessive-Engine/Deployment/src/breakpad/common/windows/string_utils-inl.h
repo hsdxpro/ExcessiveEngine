@@ -84,7 +84,7 @@ class WindowsStringUtils {
 
   // Performs multi-byte to wide character conversion on C++ strings, using
   // mbstowcs_s (MSVC8) or mbstowcs (pre-MSVC8).  Returns false on failure,
-  // without setting wcs.
+  // without Setting wcs.
   static bool safe_mbstowcs(const string &mbs, wstring *wcs);
 
   // The inverse of safe_mbstowcs.

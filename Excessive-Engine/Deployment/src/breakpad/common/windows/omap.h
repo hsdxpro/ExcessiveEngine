@@ -27,9 +27,9 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // Provides an API for mapping symbols through OMAP information, if a PDB file
-// is augmented with it. This allows breakpad to work with addresses in
+// is augmented with it. This allows breakpad to work with Addresses in
 // transformed images by transforming the symbols themselves, rather than
-// transforming addresses prior to querying symbols (the way it is typically
+// transforming Addresses prior to querying symbols (the way it is typically
 // done by Windows-native tools, including the DIA).
 
 #ifndef COMMON_WINDOWS_OMAP_H_
@@ -53,11 +53,11 @@ bool GetOmapDataAndDisableTranslation(IDiaSession* dia_session,
 //     |omap_data| is empty then this will also be empty.
 void BuildImageMap(const OmapData& omap_data, ImageMap* image_map);
 
-// Given an address range in the original image space determines how exactly it
+// Given an Address range in the original image space determines how exactly it
 // has been tranformed.
 // |omap_data| is the OMAP data extracted from the PDB, which must not be
 //     empty.
-// |original_range| is the address range in the original image being queried.
+// |original_range| is the Address range in the original image being queried.
 // |mapped_ranges| will be populated with a full description of the mapping.
 //     They may be disjoint in the transformed image so a vector is needed to
 //     fully represent the mapping. This will be appended to if it is not

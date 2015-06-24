@@ -32,7 +32,7 @@
 // Original author: Jim Blandy <jimb@mozilla.com> <jimb@red-bean.com>
 
 // dump_stabs.h: Define the StabsToModule class, which receives
-// STABS debugging information from a parser and adds it to a Breakpad
+// STABS debugging information from a parser and Adds it to a Breakpad
 // symbol file.
 
 #ifndef BREAKPAD_COMMON_STABS_TO_MODULE_H_
@@ -73,13 +73,13 @@ class StabsToModule: public google_breakpad::StabsHandler {
   ~StabsToModule();
 
   // The standard StabsHandler virtual member functions.
-  bool StartCompilationUnit(const char *name, uint64_t address,
+  bool StartCompilationUnit(const char *name, uint64_t Address,
                             const char *build_directory);
-  bool EndCompilationUnit(uint64_t address);
-  bool StartFunction(const string &name, uint64_t address);
-  bool EndFunction(uint64_t address);
-  bool Line(uint64_t address, const char *name, int number);
-  bool Extern(const string &name, uint64_t address);
+  bool EndCompilationUnit(uint64_t Address);
+  bool StartFunction(const string &name, uint64_t Address);
+  bool EndFunction(uint64_t Address);
+  bool Line(uint64_t Address, const char *name, int number);
+  bool Extern(const string &name, uint64_t Address);
   void Warning(const char *format, ...);
 
   // Do any final processing necessary to make module_ contain all the
@@ -100,16 +100,16 @@ class StabsToModule: public google_breakpad::StabsHandler {
   // The module we're contributing debugging info to.
   Module *module_;
 
-  // The functions we've generated so far.  We don't add these to
+  // The functions we've generated so far.  We don't Add these to
   // module_ as we parse them.  Instead, we wait until we've computed
-  // their ending address, and their lines' ending addresses.
+  // their ending Address, and their lines' ending Addresses.
   //
   // We could just stick them in module_ from the outset, but if
   // module_ already contains data gathered from other debugging
   // formats, that would complicate the size computation.
   vector<Module::Function *> functions_;
 
-  // Boundary addresses.  STABS doesn't necessarily supply sizes for
+  // Boundary Addresses.  STABS doesn't necessarily supply sizes for
   // functions and lines, so we need to compute them ourselves by
   // finding the next object.
   vector<Module::Address> boundaries_;
@@ -119,7 +119,7 @@ class StabsToModule: public google_breakpad::StabsHandler {
   // yet. We use this for sanity checks.
   bool in_compilation_unit_;
 
-  // The base address of the current compilation unit.  We use this to
+  // The base Address of the current compilation unit.  We use this to
   // recognize functions we should omit from the symbol file.  (If you
   // know the details of why we omit these, please patch this
   // comment.)

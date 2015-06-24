@@ -12,10 +12,10 @@ public:
 	NetworkEngineBoost(const rNetworkEngine& d);
 	~NetworkEngineBoost();
 
-	void release() override;
+	void Release() override;
 
 	// interact
-	void update(float deltaTime) override;
+	void Update(float deltaTime) override;
 
 private:
 };

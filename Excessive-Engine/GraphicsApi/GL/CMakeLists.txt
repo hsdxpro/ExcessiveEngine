@@ -11,13 +11,14 @@ else()
 endif()
 
 target_link_libraries( GraphicsApiGL glew32 opengl32 )
+target_link_libraries( GraphicsApiGL Common )
 
 add_executable( GLGapiTest test.cpp )
 add_dependencies( GLGapiTest GraphicsApiGL )
 target_link_libraries( GLGapiTest Common)
 
 # Link SFML to GraphicsApiGL
-# This is only a temporary hack, we should remove this dependency...
+# This is only a temporary hack, we should Remove this dependency...
 #if(DEBUG_BUILD)
 #	target_link_libraries( GraphicsApiGL sfml-main-d sfml-system-d sfml-window-d sfml-graphics-d sfml-audio-d sfml-network-d)
 #else()

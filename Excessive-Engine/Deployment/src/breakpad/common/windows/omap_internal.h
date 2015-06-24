@@ -62,7 +62,7 @@ struct OmapData {
   OmapData() : length_original(0) { }
 };
 
-// This represents a range of addresses in an image.
+// This represents a range of Addresses in an image.
 struct AddressRange {
   DWORD rva;
   DWORD length;
@@ -70,7 +70,7 @@ struct AddressRange {
   AddressRange() : rva(0), length(0) { }
   AddressRange(DWORD rva, DWORD length) : rva(rva), length(length) { }
 
-  // Returns the end address of this range.
+  // Returns the end Address of this range.
   DWORD end() const { return rva + length; }
 
   // Addreses only compare as less-than or greater-than if they are not
@@ -88,25 +88,25 @@ struct AddressRange {
 
 typedef std::vector<AddressRange> AddressRangeVector;
 
-// This represents an address range in an original image, and its corresponding
+// This represents an Address range in an original image, and its corresponding
 // range in the transformed image.
 struct MappedRange {
-  // An address in the original image.
+  // An Address in the original image.
   DWORD rva_original;
-  // The corresponding addresses in the transformed image.
+  // The corresponding Addresses in the transformed image.
   DWORD rva_transformed;
-  // The length of the address range.
+  // The length of the Address range.
   DWORD length;
   // It is possible for code to be injected into a transformed image, for which
   // there is no corresponding code in the original image. If this range of
   // transformed image is immediately followed by such injected code we maintain
   // a record of its length here.
   DWORD injected;
-  // It is possible for code to be removed from the original image. This happens
+  // It is possible for code to be Removed from the original image. This happens
   // for things like padding between blocks. There is no actual content lost,
-  // but the spacing between items may be lost. This keeps track of any removed
+  // but the spacing between items may be lost. This keeps track of any Removed
   // content immediately following the |original| range.
-  DWORD removed;
+  DWORD Removed;
 };
 // A vector of mapped ranges is used as a more useful representation of
 // OMAP data.
@@ -124,7 +124,7 @@ typedef std::vector<EndpointIndex> EndpointIndexMap;
 // because we don't need insertion and deletion.)
 struct ImageMap {
   // This is a description of the mapping between original and transformed
-  // image, sorted by addresses in the original image.
+  // image, sorted by Addresses in the original image.
   Mapping mapping;
   // For all interval endpoints in |mapping| this stores the minimum index of
   // an interval in |mapping| that contains the endpoint. Useful for doing

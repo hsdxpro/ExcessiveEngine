@@ -28,20 +28,20 @@ public:
 	};
 
 	// release
-	virtual void release() = 0;
+	virtual void Release() = 0;
 
 	// load
-	virtual void load(const wchar_t* file_path) = 0;
+	virtual void Load(const wchar_t* file_path) = 0;
 
-	virtual void reset() = 0;
+	virtual void Reset() = 0;
 
 	// manage contents
-	virtual SubMaterial& addSubMaterial() = 0; // returns ref
-	virtual i32 getNumSubMaterials() const = 0;
-	virtual void setNumSubMaterials(i32 n) = 0; // warning! stuff is deleted
+	virtual SubMaterial& AddSubMaterial() = 0; // returns ref
+	virtual i32 GetNumSubMaterials() const = 0;
+	virtual void SetNumSubMaterials(i32 n) = 0; // warning! stuff is deleted
 	virtual void deleteSubMaterial(i32 index) = 0;
-	virtual SubMaterial& getSubMaterial(i32 index) = 0;
-	virtual const SubMaterial& getSubMaterial(i32 index) const = 0;
+	virtual SubMaterial& GetSubMaterial(i32 index) = 0;
+	virtual const SubMaterial& GetSubMaterial(i32 index) const = 0;
 };
 
 } // namespace

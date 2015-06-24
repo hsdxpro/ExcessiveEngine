@@ -15,15 +15,15 @@
 	#include "../CommonMac/src/Timer.h"
 #endif
 
-graphics::IEngine* Factory::createGraphicsEngineRaster(const rGraphicsEngineRaster& d) 
+graphics::IEngine* Factory::CreateGraphicsEngineRaster(const rGraphicsEngineRaster& d) 
 {
 #ifdef BUILD_DLL
 	using CreateT = graphics::IEngine*(*)(const rGraphicsEngineRaster& d);
-	auto module = Sys::loadDLL(L"GraphicsEngineRaster");
+	auto module = Sys::LoadDLL(L"GraphicsEngineRaster");
 	if (!module) {
 		return nullptr;
 	}
-	CreateT CreateGraphicsEngine = (CreateT)Sys::getDLLProcAddress(module, "CreateGraphicsEngineRaster");
+	CreateT CreateGraphicsEngine = (CreateT)Sys::GetDLLProcAddress(module, "CreateGraphicsEngineRaster");
 	if (!CreateGraphicsEngine) {
 		return nullptr;
 	}
@@ -33,15 +33,15 @@ graphics::IEngine* Factory::createGraphicsEngineRaster(const rGraphicsEngineRast
 #endif
 }
 
-graphics::IEngine* Factory::createGraphicsEngineRT(const rGraphicsEngineRT& d) 
+graphics::IEngine* Factory::CreateGraphicsEngineRT(const rGraphicsEngineRT& d) 
 {
 #ifdef BUILD_DLL
 	using CreateT = graphics::IEngine*(*)(const rGraphicsEngineRT& d);
-	auto module = Sys::loadDLL(L"GraphicsEngineRasterRT");
+	auto module = Sys::LoadDLL(L"GraphicsEngineRasterRT");
 	if (!module) {
 		return nullptr;
 	}
-	CreateT CreateGraphicsEngine = (CreateT)Sys::getDLLProcAddress(module, "CreateGraphicsEngineRT");
+	CreateT CreateGraphicsEngine = (CreateT)Sys::GetDLLProcAddress(module, "CreateGraphicsEngineRT");
 	if (!CreateGraphicsEngine) {
 		return nullptr;
 	}
@@ -51,15 +51,15 @@ graphics::IEngine* Factory::createGraphicsEngineRT(const rGraphicsEngineRT& d)
 #endif
 }
 
-physics::IEngine* Factory::createPhysicsEngineBullet(const rPhysicsEngineBullet& d) 
+physics::IEngine* Factory::CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d) 
 {
 #ifdef BUILD_DLL
 	using CreateT = physics::IEngine*(*)(const rPhysicsEngineBullet& d);
-	auto module = Sys::loadDLL(L"PhysicsEngineBullet");
+	auto module = Sys::LoadDLL(L"PhysicsEngineBullet");
 	if (!module) {
 		return nullptr;
 	}
-	CreateT creator = (CreateT)Sys::getDLLProcAddress(module, "CreatePhysicsEngineBullet");
+	CreateT creator = (CreateT)Sys::GetDLLProcAddress(module, "CreatePhysicsEngineBullet");
 	if (!creator) {
 		return nullptr;
 	}
@@ -69,15 +69,15 @@ physics::IEngine* Factory::createPhysicsEngineBullet(const rPhysicsEngineBullet&
 #endif
 }
 
-network::IEngine* Factory::createNetworkEngine(const rNetworkEngine& d) 
+network::IEngine* Factory::CreateNetworkEngine(const rNetworkEngine& d) 
 {
 #ifdef BUILD_DLL
 	using CreateT = network::IEngine*(*)(const rNetworkEngine& d);
-	auto module = Sys::loadDLL(L"NetworkEngineBoost");
+	auto module = Sys::LoadDLL(L"NetworkEngineBoost");
 	if (!module) {
 		return nullptr;
 	}
-	CreateT creator = (CreateT)Sys::getDLLProcAddress(module, "CreateNetworkEngine");
+	CreateT creator = (CreateT)Sys::GetDLLProcAddress(module, "CreateNetworkEngine");
 	if (!creator) {
 		return nullptr;
 	}
@@ -87,15 +87,15 @@ network::IEngine* Factory::createNetworkEngine(const rNetworkEngine& d)
 #endif
 }
 
-sound::IEngine* Factory::createSoundEngine(const rSoundEngine& d) 
+sound::IEngine* Factory::CreateSoundEngine(const rSoundEngine& d) 
 {
 #ifdef BUILD_DLL
 	using CreateT = sound::IEngine*(*)(const rSoundEngine& d);
-	auto module = Sys::loadDLL(L"SoundEngineSFML");
+	auto module = Sys::LoadDLL(L"SoundEngineSFML");
 	if (!module) {
 		return nullptr;
 	}
-	CreateT creator = (CreateT)Sys::getDLLProcAddress(module, "CreateSoundEngine");
+	CreateT creator = (CreateT)Sys::GetDLLProcAddress(module, "CreateSoundEngine");
 	if (!creator) {
 		return nullptr;
 	}
@@ -105,21 +105,21 @@ sound::IEngine* Factory::createSoundEngine(const rSoundEngine& d)
 #endif
 }
 
-IGapi* Factory::createGapiGL() 
+IGapi* Factory::CreateGapiGL() 
 {
 #ifdef BUILD_DLL
-	return ((IGapi*(*)())Sys::getDLLProcAddress(Sys::loadDLL((Sys::getWorkDir() + L"GraphicsApiGL").c_str()), "createGraphicsApi"))();
+	return ((IGapi*(*)())Sys::GetDLLProcAddress(Sys::LoadDLL((Sys::GetWorkDir() + L"GraphicsApiGL").c_str()), "createGraphicsApi"))();
 #elif BUILD_STATIC
 	return (IGapi*)new GapiGL();
 #endif
 }
 
-IWindow* Factory::createWindow(const rWindow& d) 
+IWindow* Factory::CreateWindow(const rWindow& d)
 {
 	return new Window(d);
 }
 
-ITimer* Factory::createTimer()
+ITimer* Factory::CreateTimer()
 {
 	return new Timer();
 }

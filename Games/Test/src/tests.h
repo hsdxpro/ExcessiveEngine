@@ -2,7 +2,7 @@
 #include <map>
 
 
-// add you test function here & make a new .cpp for it
+// Add you test function here & make a new .cpp for it
 int PetiTestGeneric();
 int CommonTest();
 int PetiGraphics();
@@ -13,7 +13,7 @@ int sqliteTest();
 int artur();
 
 const std::map<std::string, int(*)(void)> test_cases = {
-	// add you test here
+	// Add you test here
 		{"peti_test_generic",  PetiTestGeneric},
 		{"peti_graphics",      PetiGraphics },
 		{"common_test",        CommonTest},

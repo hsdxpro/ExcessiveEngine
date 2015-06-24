@@ -20,11 +20,11 @@ Material::~Material() {
 ////////////////////////////////////////////////////////////////////////////////
 // lifecycle
 
-void Material::acquire() {
+void Material::Acquire() {
 	refcount++;
 }
 
-void Material::release() {
+void Material::Release() {
 	refcount--;
 	if (refcount == 0) {
 		delete this;
@@ -35,27 +35,27 @@ void Material::release() {
 ////////////////////////////////////////////////////////////////////////////////
 // load
 
-void Material::load(const wchar_t* file_path) {
+void Material::Load(const wchar_t* file_path) {
 	std::cout << "ha kirakod a faszod akkor sincs load" << std::endl;
 }
 
-void Material::reset() {
+void Material::Reset() {
 	sub_materials.clear();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // modify
-auto Material::addSubMaterial() -> SubMaterial& {
+auto Material::AddSubMaterial() -> SubMaterial& {
 	sub_materials.push_back(SubMaterial());
 	return sub_materials[sub_materials.size() - 1];
 }
  
-i32 Material::getNumSubMaterials() const {
+i32 Material::GetNumSubMaterials() const {
 	return (int)sub_materials.size();
 }
 
-void Material::setNumSubMaterials(i32 n) {
-	reset();
+void Material::SetNumSubMaterials(i32 n) {
+	Reset();
 	sub_materials.resize(n);
 }
 
@@ -65,20 +65,20 @@ void Material::deleteSubMaterial(i32 index) {
 }
 
 
-auto Material::getSubMaterial(i32 index) -> SubMaterial& {
+auto Material::GetSubMaterial(i32 index) -> SubMaterial& {
 	assert(index < (int)sub_materials.size());
 	return sub_materials[index];
 }
 
-auto Material::getSubMaterial(i32 index) const -> const SubMaterial&{
+auto Material::GetSubMaterial(i32 index) const -> const SubMaterial&{
 	assert(index < (int)sub_materials.size());
 	return sub_materials[index];
 }
 
 
 auto Material::operator[](i32 index) -> SubMaterial& {
-	return getSubMaterial(index);
+	return GetSubMaterial(index);
 }
 auto Material::operator[](i32 index) const -> const SubMaterial&{
-	return getSubMaterial(index);
+	return GetSubMaterial(index);
 }

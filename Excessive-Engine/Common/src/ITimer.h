@@ -5,14 +5,14 @@ class ITimer
 {
 public:
 	// Start timing
-	virtual void start() = 0;
+	virtual void Start() = 0;
 
 	// restart timing
-	virtual void reset() = 0;
+	virtual void Reset() = 0;
 
-	// get seconds passed since start() or reset()
-	virtual double getSecondsPassed() = 0;
+	// Get seconds passed since start() or Reset()
+	virtual double GetSecondsPassed() = 0;
 
-	// get micro seconds passed since start() or reset()
-	virtual size_t getMicroSecondsPassed() = 0;
+	// Get micro seconds passed since start() or Reset()
+	virtual double GetMicroSecondsPassed() = 0;
 };

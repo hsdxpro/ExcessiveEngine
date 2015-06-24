@@ -12,9 +12,9 @@ namespace graphics {
 class ILight 
 {
 public:
-	virtual void setColor() = 0;
-	virtual void setPosition() = 0;
-	virtual void setDirection() = 0;
+	virtual void SetColor() = 0;
+	virtual void SetPosition() = 0;
+	virtual void SetDirection() = 0;
 };
 
 

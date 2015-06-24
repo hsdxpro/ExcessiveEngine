@@ -50,17 +50,17 @@
 
 namespace google_breakpad {
 
-using std::set;
+using std::Set;
 using std::vector;
 using std::map;
 
 // A Module represents the contents of a module, and supports methods
-// for adding information produced by parsing STABS or DWARF data
+// for Adding information produced by parsing STABS or DWARF data
 // --- possibly both from the same file --- and then writing out the
 // unified contents as a Breakpad-format symbol file.
 class Module {
  public:
-  // The type of addresses and sizes in a symbol table.
+  // The type of Addresses and sizes in a symbol table.
   typedef uint64_t Address;
   struct File;
   struct Function;
@@ -68,9 +68,9 @@ class Module {
   struct Extern;
 
   // Addresses appearing in File, Function, and Line structures are
-  // absolute, not relative to the the module's load address.  That
-  // is, if the module were loaded at its nominal load address, the
-  // addresses would be correct.
+  // absolute, not relative to the the module's load Address.  That
+  // is, if the module were loaded at its nominal load Address, the
+  // Addresses would be correct.
 
   // A source file.
   struct File {
@@ -88,91 +88,91 @@ class Module {
   // A function.
   struct Function {
     Function(const string &name_input, const Address &address_input) :
-        name(name_input), address(address_input), size(0), parameter_size(0) {}
+        name(name_input), Address(address_input), size(0), parameter_size(0) {}
 
-    // For sorting by address.  (Not style-guide compliant, but it's
+    // For sorting by Address.  (Not style-guide compliant, but it's
     // stupid not to put this in the struct.)
     static bool CompareByAddress(const Function *x, const Function *y) {
-      return x->address < y->address;
+      return x->Address < y->Address;
     }
 
     // The function's name.
     const string name;
 
-    // The start address and length of the function's code.
-    const Address address;
+    // The start Address and length of the function's code.
+    const Address Address;
     Address size;
 
     // The function's parameter size.
     Address parameter_size;
 
     // Source lines belonging to this function, sorted by increasing
-    // address.
+    // Address.
     vector<Line> lines;
   };
 
   // A source line.
   struct Line {
-    // For sorting by address.  (Not style-guide compliant, but it's
+    // For sorting by Address.  (Not style-guide compliant, but it's
     // stupid not to put this in the struct.)
     static bool CompareByAddress(const Module::Line &x, const Module::Line &y) {
-      return x.address < y.address;
+      return x.Address < y.Address;
     }
 
-    Address address, size;    // The address and size of the line's code.
+    Address Address, size;    // The Address and size of the line's code.
     File *file;                // The source file.
     int number;                // The source line number.
   };
 
   // An exported symbol.
   struct Extern {
-    explicit Extern(const Address &address_input) : address(address_input) {}
-    const Address address;
+    explicit Extern(const Address &address_input) : Address(address_input) {}
+    const Address Address;
     string name;
   };
 
   // A map from register names to postfix expressions that recover
-  // their their values. This can represent a complete set of rules to
-  // follow at some address, or a set of changes to be applied to an
-  // extant set of rules.
+  // their their values. This can represent a complete Set of rules to
+  // follow at some Address, or a Set of changes to be applied to an
+  // extant Set of rules.
   typedef map<string, string> RuleMap;
 
-  // A map from addresses to RuleMaps, representing changes that take
-  // effect at given addresses.
+  // A map from Addresses to RuleMaps, representing changes that take
+  // effect at given Addresses.
   typedef map<Address, RuleMap> RuleChangeMap;
 
   // A range of 'STACK CFI' stack walking information. An instance of
   // this structure corresponds to a 'STACK CFI INIT' record and the
   // subsequent 'STACK CFI' records that fall within its range.
   struct StackFrameEntry {
-    // The starting address and number of bytes of machine code this
+    // The starting Address and number of bytes of machine code this
     // entry covers.
-    Address address, size;
+    Address Address, size;
 
     // The initial register recovery rules, in force at the starting
-    // address.
+    // Address.
     RuleMap initial_rules;
 
-    // A map from addresses to rule changes. To find the rules in
-    // force at a given address, start with initial_rules, and then
-    // apply the changes given in this map for all addresses up to and
-    // including the address you're interested in.
+    // A map from Addresses to rule changes. To find the rules in
+    // force at a given Address, start with initial_rules, and then
+    // apply the changes given in this map for all Addresses up to and
+    // including the Address you're interested in.
     RuleChangeMap rule_changes;
   };
 
   struct FunctionCompare {
     bool operator() (const Function *lhs,
                      const Function *rhs) const {
-      if (lhs->address == rhs->address)
+      if (lhs->Address == rhs->Address)
         return lhs->name < rhs->name;
-      return lhs->address < rhs->address;
+      return lhs->Address < rhs->Address;
     }
   };
 
   struct ExternCompare {
     bool operator() (const Extern *lhs,
                      const Extern *rhs) const {
-      return lhs->address < rhs->address;
+      return lhs->Address < rhs->Address;
     }
   };
 
@@ -182,44 +182,44 @@ class Module {
          const string &id);
   ~Module();
 
-  // Set the module's load address to LOAD_ADDRESS; addresses given
+  // Set the module's load Address to LOAD_ADDRESS; Addresses given
   // for functions and lines will be written to the Breakpad symbol
-  // file as offsets from this address.  Construction initializes this
-  // module's load address to zero: addresses written to the symbol
+  // file as offsets from this Address.  Construction initializes this
+  // module's load Address to zero: Addresses written to the symbol
   // file will be the same as they appear in the Function, Line, and
   // StackFrameEntry structures.
   //
-  // Note that this member function has no effect on addresses stored
-  // in the data added to this module; the Write member function
-  // simply subtracts off the load address from addresses before it
-  // prints them. Only the last load address given before calling
+  // Note that this member function has no effect on Addresses stored
+  // in the data Added to this module; the Write member function
+  // simply subtracts off the load Address from Addresses before it
+  // prints them. Only the last load Address given before calling
   // Write is used.
   void SetLoadAddress(Address load_address);
 
   // Add FUNCTION to the module. FUNCTION's name must not be empty.
-  // This module owns all Function objects added with this function:
+  // This module owns all Function objects Added with this function:
   // destroying the module destroys them as well.
   void AddFunction(Function *function);
 
   // Add all the functions in [BEGIN,END) to the module.
-  // This module owns all Function objects added with this function:
+  // This module owns all Function objects Added with this function:
   // destroying the module destroys them as well.
   void AddFunctions(vector<Function *>::iterator begin,
                     vector<Function *>::iterator end);
 
   // Add STACK_FRAME_ENTRY to the module.
-  // This module owns all StackFrameEntry objects added with this
+  // This module owns all StackFrameEntry objects Added with this
   // function: destroying the module destroys them as well.
   void AddStackFrameEntry(StackFrameEntry *stack_frame_entry);
 
   // Add PUBLIC to the module.
-  // This module owns all Extern objects added with this function:
+  // This module owns all Extern objects Added with this function:
   // destroying the module destroys them as well.
   void AddExtern(Extern *ext);
 
   // If this module has a file named NAME, return a pointer to it. If
-  // it has none, then create one and return a pointer to the new
-  // file. This module owns all File objects created using these
+  // it has none, then Create one and return a pointer to the new
+  // file. This module owns all File objects Created using these
   // functions; destroying the module destroys them as well.
   File *FindFile(const string &name);
   File *FindFile(const char *name);
@@ -228,31 +228,31 @@ class Module {
   // Otherwise, return NULL.
   File *FindExistingFile(const string &name);
 
-  // Insert pointers to the functions added to this module at I in
+  // Insert pointers to the functions Added to this module at I in
   // VEC. The pointed-to Functions are still owned by this module.
   // (Since this is effectively a copy of the function list, this is
-  // mostly useful for testing; other uses should probably get a more
+  // mostly useful for testing; other uses should probably Get a more
   // appropriate interface.)
   void GetFunctions(vector<Function *> *vec, vector<Function *>::iterator i);
 
-  // Insert pointers to the externs added to this module at I in
+  // Insert pointers to the externs Added to this module at I in
   // VEC. The pointed-to Externs are still owned by this module.
   // (Since this is effectively a copy of the extern list, this is
-  // mostly useful for testing; other uses should probably get a more
+  // mostly useful for testing; other uses should probably Get a more
   // appropriate interface.)
   void GetExterns(vector<Extern *> *vec, vector<Extern *>::iterator i);
 
-  // Clear VEC and fill it with pointers to the Files added to this
+  // Clear VEC and fill it with pointers to the Files Added to this
   // module, sorted by name. The pointed-to Files are still owned by
   // this module. (Since this is effectively a copy of the file list,
-  // this is mostly useful for testing; other uses should probably get
+  // this is mostly useful for testing; other uses should probably Get
   // a more appropriate interface.)
   void GetFiles(vector<File *> *vec);
 
   // Clear VEC and fill it with pointers to the StackFrameEntry
-  // objects that have been added to this module. (Since this is
+  // objects that have been Added to this module. (Since this is
   // effectively a copy of the stack frame entry list, this is mostly
-  // useful for testing; other uses should probably get
+  // useful for testing; other uses should probably Get
   // a more appropriate interface.)
   void GetStackFrameEntries(vector<StackFrameEntry *> *vec) const;
 
@@ -268,12 +268,12 @@ class Module {
   // an error occurs. This method writes out:
   // - a header based on the values given to the constructor,
   // If symbol_data is not ONLY_CFI then:
-  // - the source files added via FindFile,
-  // - the functions added via AddFunctions, each with its lines,
+  // - the source files Added via FindFile,
+  // - the functions Added via AddFunctions, each with its lines,
   // - all public records,
   // If symbol_data is not NO_CFI then:
   // - all CFI records.
-  // Addresses in the output are all relative to the load address
+  // Addresses in the output are all relative to the load Address
   // established by SetLoadAddress.
   bool Write(std::ostream &stream, SymbolData symbol_data);
 
@@ -289,15 +289,15 @@ class Module {
 
   // Write RULE_MAP to STREAM, in the form appropriate for 'STACK CFI'
   // records, without a final newline. Return true if all goes well;
-  // if an error occurs, return false, and leave errno set.
+  // if an error occurs, return false, and leave errno Set.
   static bool WriteRuleMap(const RuleMap &rule_map, std::ostream &stream);
 
   // Module header entries.
   string name_, os_, architecture_, id_;
 
-  // The module's nominal load address.  Addresses for functions and
+  // The module's nominal load Address.  Addresses for functions and
   // lines are absolute, assuming the module is loaded at this
-  // address.
+  // Address.
   Address load_address_;
 
   // Relation for maps whose keys are strings shared with some other
@@ -310,23 +310,23 @@ class Module {
   // pointers to the Files' names.
   typedef map<const string *, File *, CompareStringPtrs> FileByNameMap;
 
-  // A set containing Function structures, sorted by address.
-  typedef set<Function *, FunctionCompare> FunctionSet;
+  // A Set containing Function structures, sorted by Address.
+  typedef Set<Function *, FunctionCompare> FunctionSet;
 
-  // A set containing Extern structures, sorted by address.
-  typedef set<Extern *, ExternCompare> ExternSet;
+  // A Set containing Extern structures, sorted by Address.
+  typedef Set<Extern *, ExternCompare> ExternSet;
 
-  // The module owns all the files and functions that have been added
+  // The module owns all the files and functions that have been Added
   // to it; destroying the module frees the Files and Functions these
   // point to.
   FileByNameMap files_;    // This module's source files.
   FunctionSet functions_;  // This module's functions.
 
   // The module owns all the call frame info entries that have been
-  // added to it.
+  // Added to it.
   vector<StackFrameEntry *> stack_frame_entries_;
 
-  // The module owns all the externs that have been added to it;
+  // The module owns all the externs that have been Added to it;
   // destroying the module frees the Externs these point to.
   ExternSet externs_;
 };

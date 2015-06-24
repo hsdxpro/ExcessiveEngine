@@ -9,14 +9,13 @@ class Timer : public ITimer
 public:
 	Timer();
 
-	void start() override;
-	void reset() override;
+	void Start() override;
+	void Reset() override;
 
-	double getSecondsPassed() override;
-	size_t getMicroSecondsPassed() override;
+	double GetSecondsPassed() override;
+	double GetMicroSecondsPassed() override;
 
 private:
 	// std::chrono::system_clock::time_point startTime;
-	unsigned long long frequency;
 	unsigned long long startTime;
 };

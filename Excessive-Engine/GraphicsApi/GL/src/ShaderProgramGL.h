@@ -21,15 +21,15 @@ public:
 	void destroy() override;
 
 	/// Provide program id for gapi.
-	GLuint getProgramId() { return program; }
+	GLuint GetProgramId() { return program; }
 
 
 	// May only be kept for internal stuff.
 	// See interface for more
-	int getUniformBlockIndex(const char* str) override;
-	int getAttributeIndex(const char* str) override;
-	int getSamplerIndex(const char* str) override;
-	int getRenderTargetIndex(const char* str) override;
+	int GetUniformBlockIndex(const char* str) override;
+	int GetAttributeIndex(const char* str) override;
+	int GetSamplerIndex(const char* str) override;
+	int GetRenderTargetIndex(const char* str) override;
 
 protected:
 	GLuint program;

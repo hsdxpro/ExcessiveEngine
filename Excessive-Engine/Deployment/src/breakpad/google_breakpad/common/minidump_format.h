@@ -45,7 +45,7 @@
  *
  * Because precise data type sizes are crucial for this implementation to
  * function properly and portably in terms of interoperability with minidumps
- * produced by DbgHelp on Windows, a set of primitive types with known sizes
+ * produced by DbgHelp on Windows, a Set of primitive types with known sizes
  * are used as the basis of each structure defined by this file.  DbgHelp
  * on Windows is assumed to be the reference implementation; this file
  * seeks to provide a cross-platform compatible implementation.  To avoid
@@ -241,7 +241,7 @@ typedef struct {
 
 
 typedef struct {
-  /* The base address of the memory range on the host that produced the
+  /* The base Address of the memory range on the host that produced the
    * minidump. */
   uint64_t             start_of_memory_range;
 
@@ -275,7 +275,7 @@ typedef enum {
    * streams for the thread list, module list, exception, system info,
    * and miscellaneous info.  A memory list stream is also present,
    * pointing to the same stack memory contained in the thread list,
-   * as well as a 256-byte region around the instruction address that
+   * as well as a 256-byte region around the instruction Address that
    * was executing when the exception occurred.  Stack memory is from
    * 4 bytes below a thread's stack pointer up to the top of the
    * memory region encompassing the stack. */
@@ -333,7 +333,7 @@ typedef enum {
   /* Breakpad extension types.  0x4767 = "Gg" */
   MD_BREAKPAD_INFO_STREAM        = 0x47670001,  /* MDRawBreakpadInfo  */
   MD_ASSERTION_INFO_STREAM       = 0x47670002,  /* MDRawAssertionInfo */
-  /* These are additional minidump stream values which are specific to
+  /* These are Additional minidump stream values which are specific to
    * the linux breakpad implementation. */
   MD_LINUX_CPU_INFO              = 0x47670003,  /* /proc/cpuinfo      */
   MD_LINUX_PROC_STATUS           = 0x47670004,  /* /proc/$x/status    */
@@ -426,7 +426,7 @@ typedef struct {
 
 typedef struct {
   MDCVHeader cv_header;
-  uint32_t   signature;         /* time_t debug information created */
+  uint32_t   signature;         /* time_t debug information Created */
   uint32_t   age;               /* revision of PDB file */
   uint8_t    pdb_file_name[1];  /* Pathname or filename of PDB file */
 } MDCVInfoPDB20;
@@ -458,7 +458,7 @@ typedef struct {
   uint8_t  extra[2];
 } MDCVInfoELF;
 
-/* In addition to the two CodeView record formats above, used for linking
+/* In Addition to the two CodeView record formats above, used for linking
  * to external pdb files, it is possible for debugging data to be carried
  * directly in the CodeView record itself.  These signature values will
  * be found in the first 4 bytes of the CodeView record.  Additional values
@@ -521,9 +521,9 @@ typedef struct {
   uint64_t  exception_record;   /* Address (in the minidump-producing host's
                                  * memory) of another MDException, for
                                  * nested exceptions. */
-  uint64_t  exception_address;  /* The address that caused the exception.
+  uint64_t  exception_address;  /* The Address that caused the exception.
                                  * Mac OS X: exception subcode (which is
-                                 *           typically the address). */
+                                 *           typically the Address). */
   uint32_t  number_parameters;  /* Number of valid elements in
                                  * exception_information. */
   uint32_t  __align;
@@ -708,7 +708,7 @@ typedef struct {
 /* The miscellaneous information stream contains a variety
  * of small pieces of information.  A member is valid if
  * it's within the available size and its corresponding
- * bit is set. */
+ * bit is Set. */
 typedef struct {
   uint32_t size_of_info;  /* Length of entire MDRawMiscInfo structure. */
   uint32_t flags1;
@@ -725,7 +725,7 @@ typedef struct {
 
   /* The following fields are not present in MINIDUMP_MISC_INFO but are
    * in MINIDUMP_MISC_INFO_2.  When this struct is populated, these values
-   * may not be set.  Use flags1 and size_of_info to determine whether these
+   * may not be Set.  Use flags1 and size_of_info to determine whether these
    * values are present.  These are only valid when flags1 contains
    * MD_MISCINFO_FLAGS1_PROCESSOR_POWER_INFO. */
   uint32_t processor_max_mhz;
@@ -736,7 +736,7 @@ typedef struct {
 
   /* The following fields are not present in MINIDUMP_MISC_INFO_2 but are
    * in MINIDUMP_MISC_INFO_3.  When this struct is populated, these values
-   * may not be set.  Use flags1 and size_of_info to determine whether these
+   * may not be Set.  Use flags1 and size_of_info to determine whether these
    * values are present. */
    
   /* The following field is only valid if flags1 contains
@@ -758,7 +758,7 @@ typedef struct {
 
   /* The following fields are not present in MINIDUMP_MISC_INFO_3 but are
    * in MINIDUMP_MISC_INFO_4.  When this struct is populated, these values
-   * may not be set.  Use flags1 and size_of_info to determine whether these
+   * may not be Set.  Use flags1 and size_of_info to determine whether these
    * values are present. */
 
   /* The following 2 fields are only valid if flags1 contains
@@ -815,8 +815,8 @@ typedef struct {
 } MDRawMemoryInfoList;  /* MINIDUMP_MEMORY_INFO_LIST */
 
 typedef struct {
-  uint64_t  base_address;           /* Base address of a region of pages */
-  uint64_t  allocation_base;        /* Base address of a range of pages
+  uint64_t  base_address;           /* Base Address of a region of pages */
+  uint64_t  allocation_base;        /* Base Address of a range of pages
                                      * within this region. */
   uint32_t  allocation_protection;  /* Memory protection when this region
                                      * was originally allocated:
@@ -876,7 +876,7 @@ typedef struct {
    * the thread_id of an MDRawThread in the minidump's MDRawThreadList if
    * a dedicated thread in that list was used to produce the minidump.  If
    * the MDRawThreadList does not contain a dedicated thread used to produce
-   * the minidump, this field should be set to 0 and the validity field
+   * the minidump, this field should be Set to 0 and the validity field
    * must not contain MD_BREAKPAD_INFO_VALID_DUMP_THREAD_ID. */
   uint32_t dump_thread_id;
 
@@ -888,7 +888,7 @@ typedef struct {
    * minidumps produced "manually" at the program's request,
    * requesting_thread_id will indicate which thread caused the dump to be
    * written.  If the minidump was produced at the request of something
-   * other than a thread in the MDRawThreadList, this field should be set
+   * other than a thread in the MDRawThreadList, this field should be Set
    * to 0 and the validity field must not contain
    * MD_BREAKPAD_INFO_VALID_REQUESTING_THREAD_ID. */
   uint32_t requesting_thread_id;
@@ -896,10 +896,10 @@ typedef struct {
 
 /* For (MDRawBreakpadInfo).validity: */
 typedef enum {
-  /* When set, the dump_thread_id field is valid. */
+  /* When Set, the dump_thread_id field is valid. */
   MD_BREAKPAD_INFO_VALID_DUMP_THREAD_ID       = 1 << 0,
 
-  /* When set, the requesting_thread_id field is valid. */
+  /* When Set, the requesting_thread_id field is valid. */
   MD_BREAKPAD_INFO_VALID_REQUESTING_THREAD_ID = 1 << 1
 } MDBreakpadInfoValidity;
 
@@ -935,7 +935,7 @@ typedef enum {
  * according to client word size, so tools potentially need to support both. */
 
 typedef struct {
-  uint32_t  addr;
+  uint32_t  Addr;
   MDRVA     name;
   uint32_t  ld;
 } MDRawLinkMap32;
@@ -950,7 +950,7 @@ typedef struct {
 } MDRawDebug32;
 
 typedef struct {
-  uint64_t  addr;
+  uint64_t  Addr;
   MDRVA     name;
   uint64_t  ld;
 } MDRawLinkMap64;

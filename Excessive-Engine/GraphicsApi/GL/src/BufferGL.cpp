@@ -8,7 +8,7 @@ void BufferGL::destroy()
 	id = 0;
 }
 
-auto BufferGL::getDesc() -> rBuffer
+auto BufferGL::GetDesc() -> rBuffer
 {
 	return adata;
 }

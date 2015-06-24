@@ -57,7 +57,7 @@
  *
  * Because precise data type sizes are crucial for this implementation to
  * function properly and portably in terms of interoperability with minidumps
- * produced by DbgHelp on Windows, a set of primitive types with known sizes
+ * produced by DbgHelp on Windows, a Set of primitive types with known sizes
  * are used as the basis of each structure defined by this file.  DbgHelp
  * on Windows is assumed to be the reference implementation; this file
  * seeks to provide a cross-platform compatible implementation.  To avoid
@@ -116,7 +116,7 @@ typedef struct {
 typedef struct {
   /* context_flags is not present in ppc_thread_state, but it aids
    * identification of MDRawContextPPC among other raw context types,
-   * and it guarantees alignment when we get to float_save. */
+   * and it guarantees alignment when we Get to float_save. */
   uint32_t              context_flags;
 
   uint32_t              srr0;    /* Machine status save/restore: stores pc

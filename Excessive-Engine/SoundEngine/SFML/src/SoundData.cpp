@@ -10,18 +10,18 @@ SoundData::~SoundData() {
 	delete pSFMLSoundData;
 }
 
-void SoundData::acquire() {
+void SoundData::Acquire() {
 	refcount++;
 }
 
-void SoundData::release() {
+void SoundData::Release() {
 	refcount--;
 	if (refcount == 0) {
 		delete this;
 	}
 }
 
-bool SoundData::load(const wchar_t* file_path, sound::StoreMode mode) {
+bool SoundData::Load(const wchar_t* file_path, sound::StoreMode mode) {
 	std::string narrow_file_path;
 	//FIXME probably a bad way to convert wide string to standard
 	for (int i = 0; file_path[i] != L'\0'; i++) {
@@ -65,6 +65,6 @@ bool SoundData::load(const wchar_t* file_path, sound::StoreMode mode) {
 	return true;
 }
 
-const SFMLCommonSoundData* SoundData::getSFMLSoundData() const {
+const SFMLCommonSoundData* SoundData::GetSFMLSoundData() const {
 	return pSFMLSoundData;
 }

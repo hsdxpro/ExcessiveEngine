@@ -11,7 +11,7 @@ template <class T>
 struct Deleter 
 {
 	void operator()(T* p) {
-		p->release();
+		p->Release();
 	}
 };
 
@@ -22,7 +22,7 @@ public:
 	// ctor
 	ref_ptr() : unique_ptr() { }
 	ref_ptr(nullptr_t) : unique_ptr(nullptr) { }
-	explicit ref_ptr(T* p) : unique_ptr(p) { p->acquire(); }
+	explicit ref_ptr(T* p) : unique_ptr(p) { p->Acquire(); }
 	ref_ptr(ref_ptr&& rhs) : unique_ptr(rhs) { }
 
 	// copy
@@ -40,13 +40,13 @@ public:
 	}
 
 	// reset
-	ref_ptr& reset(nullptr_t) {
-		unique_ptr<T, Deleter<T>>::reset(nullptr);
+	ref_ptr& Reset(nullptr_t) {
+		unique_ptr<T, Deleter<T>>::Reset(nullptr);
 		return *this;
 	}
-	ref_ptr& reset(T* p) {
+	ref_ptr& Reset(T* p) {
 		unique_ptr<T, Deleter<T>>::reset(p);
-		p->acquire();
+		p->Acquire();
 		return *this;
 	}
 };

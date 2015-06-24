@@ -4,7 +4,7 @@
 class Light : public graphics::ILight
 {
 public:
-	void setColor() override;
-	void setPosition() override;
-	void setDirection() override;
+	void SetColor() override;
+	void SetPosition() override;
+	void SetDirection() override;
 };

@@ -11,24 +11,23 @@ class Window : public IWindow
 public:
 	Window(const rWindow& d);
 
-	bool popEvent(rWindowEvent* evt_out) override;
+	bool PopEvent(rWindowEvent* evt_out) override;
 
-	void close() override;
+	void Close() override;
 
-	void present() override;
+	void Present() override;
 
-	// getters
-	bool isOpen() const override;
+	// Getters
+	bool IsOpen() const override;
 
-	u16 getClientW() const override;
-	u16 getClientH() const override;
+	u16 GetClientW() const override;
+	u16 GetClientH() const override;
 
-	float getClientAspectRatio() const override;
+	float GetClientAspectRatio() const override;
 
-	void setText(const wchar_t* text) override;
+	void SetText(const wchar_t* text) override;
 
 protected:
-	sf::RenderWindow w;
-
-	mm::ivec2 lastMousePos;
+	sf::Window w;
+	mm::ivec3 lastMousePos;
 };

@@ -10,8 +10,8 @@ class UniformBufferGL : public BufferGL, public IUniformBuffer
       BufferGL::destroy();
     }
 
-	rBuffer getDesc() override
+	rBuffer GetDesc() override
     {
-      return BufferGL::getDesc();
+      return BufferGL::GetDesc();
     }
 };

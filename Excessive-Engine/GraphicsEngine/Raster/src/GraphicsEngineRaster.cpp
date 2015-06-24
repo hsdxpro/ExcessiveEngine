@@ -5,7 +5,6 @@
 #include <map>
 #include "..\Common\src\Factory.h"
 #include "mymath\mm_quat_func.h"
-#include "..\Common\src\EngineCpuProfiler.h"
 using std::cout;
 using std::endl;
 
@@ -117,23 +116,27 @@ EXPORT graphics::IEngine* CreateGraphicsEngineRaster(const rGraphicsEngineRaster
 // ctor, dtor, release
 
 GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRaster& d) {
-	gapi = Factory::createGapiGL();
+	gapi = Factory::CreateGapiGL();
+
+	targetWindow = d.targetWindow;
+	renderRegion = renderRegion;
 
 	// WARNING: temporary testing code
-	// create shaders
-	shader = gapi->createShaderSource(vertexShaderCode, pixelShaderCode);
+	// Create shaders
+	shader = gapi->CreateShaderSource(vertexShaderCode, pixelShaderCode);
 	isValid = shader != nullptr;
 
-	u32 windowWidth = d.targetWindow->getClientW();
-	u32 windowHeight = d.targetWindow->getClientH();
-	gapi->setViewport(	windowWidth * d.renderRegion.bottomLeftPercentNormed.x,
-						windowHeight * d.renderRegion.bottomLeftPercentNormed.y,
-						windowWidth * (d.renderRegion.topRightPercentNormed.x - d.renderRegion.bottomLeftPercentNormed.x),
-						windowHeight * (d.renderRegion.topRightPercentNormed.y - d.renderRegion.bottomLeftPercentNormed.y));
+	u32 windowWidth = d.targetWindow->GetClientW();
+	u32 windowHeight = d.targetWindow->GetClientH();
 
-	gapi->setDebugOutput(true);
-	gapi->setSeamlessCubeMaps(true);
-	gapi->setSyncDebugOutput(true);
+	gapi->SetViewport(	windowWidth  *  renderRegion.bottomLeftPercentNormed.x,
+						windowHeight *  renderRegion.bottomLeftPercentNormed.y,
+						windowWidth  * (renderRegion.topRightPercentNormed.x - renderRegion.bottomLeftPercentNormed.x),
+						windowHeight * (renderRegion.topRightPercentNormed.y - renderRegion.bottomLeftPercentNormed.y));
+
+	gapi->SetDebugOutput(true);
+	gapi->SetSeamlessCubeMaps(true);
+	gapi->SetSyncDebugOutput(true);
 }
 
 GraphicsEngineRaster::~GraphicsEngineRaster() {
@@ -141,31 +144,31 @@ GraphicsEngineRaster::~GraphicsEngineRaster() {
 }
 
 
-void GraphicsEngineRaster::release() {
+void GraphicsEngineRaster::Release() {
 	delete this;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// create stuff
-Scene* GraphicsEngineRaster::createScene() {
+// Create stuff
+Scene* GraphicsEngineRaster::CreateScene() {
 	Scene* s = new Scene;
 	return s;
 }
 
-Mesh* GraphicsEngineRaster::createMesh() {
+Mesh* GraphicsEngineRaster::CreateMesh() {
 	return new Mesh(gapi);
 }
 
-Material* GraphicsEngineRaster::createMaterial() {
+Material* GraphicsEngineRaster::CreateMaterial() {
 	return new Material;
 }
 
-Texture* GraphicsEngineRaster::createTexture() {
+Texture* GraphicsEngineRaster::CreateTexture() {
 	return new Texture(gapi);
 }
 
-Camera* GraphicsEngineRaster::createCam() {
+Camera* GraphicsEngineRaster::CreateCam() {
 	return new Camera();
 }
 
@@ -173,48 +176,49 @@ Camera* GraphicsEngineRaster::createCam() {
 ////////////////////////////////////////////////////////////////////////////////
 // scene system
 
-void GraphicsEngineRaster::addLayer(const Layer& layer) {
+void GraphicsEngineRaster::AddLayer(const Layer& layer) {
 	layers.push_back(layer);
 }
 
-void GraphicsEngineRaster::removeLayer(size_t index) {
-	assert(index < getNumLayers());
+void GraphicsEngineRaster::RemoveLayer(size_t index) {
+	assert(index < GetNumLayers());
 	layers.erase(layers.begin() + index);
 }
 
-size_t GraphicsEngineRaster::getNumLayers() const {
+size_t GraphicsEngineRaster::GetNumLayers() const {
 	return layers.size();
 }
 
-void GraphicsEngineRaster::setNumLayers(size_t num_layers) {
+void GraphicsEngineRaster::SetNumLayers(size_t num_layers) {
 	layers.resize(num_layers);
 }
 
-auto GraphicsEngineRaster::getLayer(size_t index) -> Layer& {
-	assert(index < getNumLayers());
+auto GraphicsEngineRaster::GetLayer(size_t index) -> Layer& {
+	assert(index < GetNumLayers());
 	return layers[index];
 }
 
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// update
-void GraphicsEngineRaster::update(float deltaTime) {
-	//cout << "Updating frame..." << endl;
+// Update
+void GraphicsEngineRaster::Update(float deltaTime) {
 
-	{
-		PROFILER("FrameBufferClear");
-		gapi->clearFrameBuffer(eClearFlag::COLOR_DEPTH, mm::vec4(0, 0, 0, 0), 0, 0);
-	}
+	// TODO Improve performance
+	gapi->SetViewport(	targetWindow->GetClientW() *  renderRegion.bottomLeftPercentNormed.x,
+						targetWindow->GetClientH() *  renderRegion.bottomLeftPercentNormed.y,
+						targetWindow->GetClientW() * (renderRegion.topRightPercentNormed.x - renderRegion.bottomLeftPercentNormed.x),
+						targetWindow->GetClientH() * (renderRegion.topRightPercentNormed.y - renderRegion.bottomLeftPercentNormed.y));
+
+	gapi->ClearFrameBuffer(eClearFlag::COLOR_DEPTH, mm::vec4(0, 0, 0, 0), 0, 0);
 	
-
 	rDepthState ds;
 		ds.enable_test = true;
 		ds.enable_write = true;
 		ds.far = 1.0f;
 		ds.near = 0.0f;
 		ds.func = eCompareFunc::LESSER_OR_EQUAL;
-	gapi->setDepthState(ds);
+	gapi->SetDepthState(ds);
 
 	// ok, this function is only for testing purposes, it's not a real renderer xD	
 	// just render the first scene, entity by entity
@@ -224,34 +228,34 @@ void GraphicsEngineRaster::update(float deltaTime) {
 		return;
 	}
 
-	// get entities and lights
+	// Get entities and lights
 	Scene& scene = *((Scene*)layers.begin()->scene);
 	
-	auto entities = scene.getEntities();
-	auto lights = scene.getLights();
+	auto entities = scene.GetEntities();
+	auto lights = scene.GetLights();
 
+	//PROFILE_SCOPE("All Entity Draw");
 
 	// for each entity
-	int num_drawn = 0;
+	int num_Drawn = 0;
 	for (auto entity : entities) {
-		PROFILER("Entity Draw");
 
-		// get mesh
-		Mesh* mesh = entity->getMesh();
+		// Get mesh
+		Mesh* mesh = entity->GetMesh();
 		if (!mesh) {
 			continue;
 		}
 		rVertexAttrib attribs[3];
 		Mesh::ElementInfo attribInfos[3];
 		bool hasAllAttribs =
-			mesh->getElementBySemantic(attribInfos[0], Mesh::POSITION) &&
-			mesh->getElementBySemantic(attribInfos[1], Mesh::NORMAL) &&
-			mesh->getElementBySemantic(attribInfos[2], Mesh::TEX0);
+			mesh->GetElementBySemantic(attribInfos[0], Mesh::POSITION) &&
+			mesh->GetElementBySemantic(attribInfos[1], Mesh::NORMAL) &&
+			mesh->GetElementBySemantic(attribInfos[2], Mesh::TEX0);
 		//if (!hasAllAttribs) {
 		//	continue;
 		//}
 
-		// create input layout
+		// Create input layout
 		auto ConvertType = [](Mesh::ElementType type)->eVertexAttribType {
 			switch (type) {
 				case Mesh::FLOAT: return eVertexAttribType::FLOAT;
@@ -274,17 +278,17 @@ void GraphicsEngineRaster::update(float deltaTime) {
 
 		// new vertex attribs (doesn't work yet)
 		rInputElement elements[3];
-		elements[0].setName("in_vertex");
+		elements[0].SetName("in_vertex");
 		elements[0].num_components = attribInfos[0].num_components;
 		elements[0].offset = attribInfos[0].offset;
 		elements[0].type = ConvertType(attribInfos[0].type);
 
-		elements[1].setName("in_normal");
+		elements[1].SetName("in_normal");
 		elements[1].num_components = attribInfos[1].num_components;
 		elements[1].offset = attribInfos[1].offset;
 		elements[1].type = ConvertType(attribInfos[1].type);
 
-		elements[2].setName("in_tex0");
+		elements[2].SetName("in_tex0");
 		elements[2].num_components = attribInfos[2].num_components;
 		elements[2].offset = attribInfos[2].offset;
 		elements[2].type = ConvertType(attribInfos[2].type);
@@ -292,28 +296,28 @@ void GraphicsEngineRaster::update(float deltaTime) {
 		elements[0].stream_index = attribInfos[0].buffer_index;
 		elements[1].stream_index = attribInfos[1].buffer_index;
 		elements[2].stream_index = attribInfos[2].buffer_index;
-		
+
 		// Yes static, cuz we know the only shader working need that layout, and models also in that format...
-		static IInputLayout* input_layout = gapi->createInputLayout(elements, 3);
-		gapi->setInputLayout(input_layout);
+		static IInputLayout* input_layout = gapi->CreateInputLayout(elements, 3);
+		gapi->SetInputLayout(input_layout);
 
 		// old vertex attribs
 		/*
-		attribs[0].index = shader->getAttributeIndex("in_vertex");
+		attribs[0].index = shader->GetAttributeIndex("in_vertex");
 		attribs[0].nComponent = attribInfos[0].num_components;
 		attribs[0].offset = attribInfos[2].offset;
 		attribs[0].type = eVertexAttribType::FLOAT;
 		attribs[0].size = 0;
 		attribs[0].divisor = 0;
 
-		attribs[1].index = shader->getAttributeIndex("in_normal");
+		attribs[1].index = shader->GetAttributeIndex("in_normal");
 		attribs[1].nComponent = attribInfos[1].num_components;
 		attribs[1].offset = attribInfos[2].offset;
 		attribs[1].type = eVertexAttribType::FLOAT;
 		attribs[1].size = 0;
 		attribs[1].divisor = 0;
 
-		attribs[2].index = shader->getAttributeIndex("in_tex0");
+		attribs[2].index = shader->GetAttributeIndex("in_tex0");
 		attribs[2].nComponent = attribInfos[2].num_components;
 		attribs[2].offset = attribInfos[2].offset;
 		attribs[2].type = eVertexAttribType::FLOAT;
@@ -322,16 +326,17 @@ void GraphicsEngineRaster::update(float deltaTime) {
 		*/
 
 
-		// set stuff
-		gapi->setShaderProgram(shader);
-		gapi->setRenderTargets(0, 0);
+		// Set stuff
+		gapi->SetShaderProgram(shader);
+		gapi->SetRenderTargets(0, 0);
 
 		mm::mat4 prs =
-			mm::create_translation(entity->getPos())
-			*mm::mat4(entity->getRot())
-			*mm::create_scale(entity->getScale());
+			mm::create_translation(entity->GetPos())
+			*mm::mat4(entity->GetRot())
+			*mm::mat4(entity->GetSkew());
+			//*mm::create_scale(entity->GetScale());
 
-		mm::mat4 wvp = scene.getCamera()->getProjMatrix() * scene.getCamera()->getViewMatrix() * prs;
+		mm::mat4 wvp = scene.GetCamera()->GetProjMatrix((float)targetWindow->GetClientW() / targetWindow->GetClientH()) * scene.GetCamera()->GetViewMatrix() * prs;
 
 		rBuffer ubo_alloc_data;
 			ubo_alloc_data.is_persistent = false;
@@ -339,37 +344,37 @@ void GraphicsEngineRaster::update(float deltaTime) {
 			ubo_alloc_data.is_writable = true;
 			ubo_alloc_data.prefer_cpu_storage = false;
 			ubo_alloc_data.size = 1 * sizeof(mm::mat4);
-		static auto ubo_buf = gapi->createUniformBuffer(ubo_alloc_data);
-		static auto index_vs = shader->getUniformBlockIndex("constant_data");
+		static auto ubo_buf = gapi->CreateUniformBuffer(ubo_alloc_data);
+		static auto index_vs = shader->GetUniformBlockIndex("constant_data");
 
-		gapi->writeBuffer(ubo_buf, &wvp, sizeof(mm::mat4), 0);
-		gapi->setUniformBuffer(ubo_buf, index_vs);
+		gapi->WriteBuffer(ubo_buf, &wvp, sizeof(mm::mat4), 0);
+		gapi->SetUniformBuffer(ubo_buf, index_vs);
 
-		// set vertex buffer (old)
+		// Set vertex buffer (old)
 		/*/
 		IVertexBuffer* tmp[3] = {
-			mesh->getVertexBuffers()[attribInfos[0].buffer_index].vb,
-			mesh->getVertexBuffers()[attribInfos[1].buffer_index].vb,
-			mesh->getVertexBuffers()[attribInfos[2].buffer_index].vb
+			mesh->GetVertexBuffers()[attribInfos[0].buffer_index].vb,
+			mesh->GetVertexBuffers()[attribInfos[1].buffer_index].vb,
+			mesh->GetVertexBuffers()[attribInfos[2].buffer_index].vb
 		};
-		gapi->setVertexBuffers(tmp, attribs, 3);
+		gapi->SetVertexBuffers(tmp, attribs, 3);
 		/*/
 
-		// set vertex buffers (new)
-		for (int i = 0; i < mesh->getNumVertexBuffers(); i++) {
-			auto stream = mesh->getVertexBuffers()[i];
-			gapi->setVertexBuffers(&stream.vb, &stream.stride, &stream.offset, i, 1);
+		// Set vertex buffers (new)
+		for (int i = 0; i < mesh->GetNumVertexBuffers(); i++) {
+			auto stream = mesh->GetVertexBuffers()[i];
+			gapi->SetVertexBuffers(&stream.vb, &stream.stride, &stream.offset, i, 1);
 		}
 		//*/
 
 
-		// set index buffer
-		auto ib = mesh->getIndexBuffer();
+		// Set index buffer
+		auto ib = mesh->GetIndexBuffer();
 		if (ib)
-			gapi->setIndexBuffer(mesh->getIndexBuffer());
+			gapi->SetIndexBuffer(mesh->GetIndexBuffer());
 
-		// get material
-		Material* mtl = entity->getMaterial();
+		// Get material
+		Material* mtl = entity->GetMaterial();
 
 		struct {
 			mm::vec4 diffuse;
@@ -382,21 +387,21 @@ void GraphicsEngineRaster::update(float deltaTime) {
 			pc_const_desc.is_writable = true;
 			pc_const_desc.prefer_cpu_storage = false;
 			pc_const_desc.size = sizeof(ps_const);
-		static auto ps_const_buf = gapi->createUniformBuffer(pc_const_desc);
-		static auto index_ps = shader->getUniformBlockIndex("ps_const");
+		static auto ps_const_buf = gapi->CreateUniformBuffer(pc_const_desc);
+		static auto index_ps = shader->GetUniformBlockIndex("ps_const");
 
-		// draw each mesh mat id group
-		auto& matGroups = mesh->getMaterialIds();
+		// Draw each mesh mat id group
+		auto& matGroups = mesh->GetMaterialIds();
 		for (auto& matGroup : matGroups) {
-			// get corresponding material id
+			// Get corresponding material id
 			ITextureGapi* texture = nullptr; // gapi resource
 
 			// if has mtl
-			if (mtl && mtl->getNumSubMaterials() > matGroup.id) {
-				Material::SubMaterial subMat = mtl->getSubMaterial(matGroup.id);
+			if (mtl && mtl->GetNumSubMaterials() > matGroup.id) {
+				Material::SubMaterial subMat = mtl->GetSubMaterial(matGroup.id);
 				ps_const.diffuse = subMat.base;
 				if (subMat.t_diffuse) {
-					texture = ((Texture*)subMat.t_diffuse)->getTexture();
+					texture = ((Texture*)subMat.t_diffuse)->GetTexture();
 				}
 				ps_const.hasTex = (texture != nullptr);
 			}
@@ -405,25 +410,25 @@ void GraphicsEngineRaster::update(float deltaTime) {
 				ps_const.hasTex = false;
 			}
 
-			// set uniform buffer
-			gapi->writeBuffer(ps_const_buf, &ps_const, sizeof(ps_const), 0);
-			gapi->setUniformBuffer(ps_const_buf, index_ps);
+			// Set uniform buffer
+			gapi->WriteBuffer(ps_const_buf, &ps_const, sizeof(ps_const), 0);
+			gapi->SetUniformBuffer(ps_const_buf, index_ps);
 
-			// set texture
+			// Set texture
 			if (ps_const.hasTex) {
-				gapi->setTexture(texture, shader->getSamplerIndex("tex"));
+				gapi->SetTexture(texture, shader->GetSamplerIndex("tex"));
 			}
 
-			// draw matgroup
-			gapi->drawIndexed((matGroup.endFace - matGroup.beginFace) * 3, matGroup.beginFace * 3 * sizeof(u32));
+			// Draw matgroup
+			gapi->DrawIndexed((matGroup.endFace - matGroup.beginFace) * 3, matGroup.beginFace * 3 * sizeof(u32));
 		}
 
-		//input_layout->release();
+		//input_layout->Release();
 		//ps_const_buf->destroy();
 		//ubo_buf->destroy();
 	}
 }
 
-IGapi* GraphicsEngineRaster::getGapi() {
+IGapi* GraphicsEngineRaster::GetGapi() {
 	return gapi;
 }

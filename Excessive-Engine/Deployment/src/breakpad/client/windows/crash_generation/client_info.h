@@ -44,7 +44,7 @@ class CrashGenerationServer;
 class ClientInfo {
  public:
   // Creates an instance with the given values. Gets the process
-  // handle for the given process id and creates necessary event
+  // handle for the given process id and Creates necessary event
   // objects.
   ClientInfo(CrashGenerationServer* crash_server,
              DWORD pid,
@@ -70,11 +70,11 @@ class ClientInfo {
     return custom_client_info_;
   }
 
-  void set_dump_request_wait_handle(HANDLE value) {
+  void Set_dump_request_wait_handle(HANDLE value) {
     dump_request_wait_handle_ = value;
   }
 
-  void set_process_exit_wait_handle(HANDLE value) {
+  void Set_process_exit_wait_handle(HANDLE value) {
     process_exit_wait_handle_ = value;
   }
 
@@ -91,7 +91,7 @@ class ClientInfo {
   bool GetClientExceptionInfo(EXCEPTION_POINTERS** ex_info) const;
   bool GetClientThreadId(DWORD* thread_id) const;
 
-  // Reads the custom information from the client process address space.
+  // Reads the custom information from the client process Address space.
   bool PopulateCustomInfo();
 
   // Returns the client custom information.
@@ -112,20 +112,20 @@ class ClientInfo {
   MINIDUMP_TYPE dump_type_;
 
   // Address of an EXCEPTION_POINTERS* variable in the client
-  // process address space that will point to an instance of
+  // process Address space that will point to an instance of
   // EXCEPTION_POINTERS containing information about crash.
   //
   // WARNING: Do not dereference these pointers as they are pointers
-  // in the address space of another process.
+  // in the Address space of another process.
   EXCEPTION_POINTERS** ex_info_;
 
   // Address of an instance of MDRawAssertionInfo in the client
-  // process address space that will contain information about
+  // process Address space that will contain information about
   // non-exception related crashes like invalid parameter assertion
   // failures and pure calls.
   //
   // WARNING: Do not dereference these pointers as they are pointers
-  // in the address space of another process.
+  // in the Address space of another process.
   MDRawAssertionInfo* assert_info_;
 
   // Custom information about the client.
@@ -136,11 +136,11 @@ class ClientInfo {
   // is called.
   scoped_array<CustomInfoEntry> custom_info_entries_;
 
-  // Address of a variable in the client process address space that
+  // Address of a variable in the client process Address space that
   // will contain the thread id of the crashing client thread.
   //
   // WARNING: Do not dereference these pointers as they are pointers
-  // in the address space of another process.
+  // in the Address space of another process.
   DWORD* thread_id_;
 
   // Client process handle.

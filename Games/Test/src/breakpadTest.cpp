@@ -29,7 +29,7 @@ void crashServerStart()
 
   if (_wmkdir(s.c_str()) && (errno != EEXIST)) 
   {
-    cerr << "unable to create dump dir" << endl;
+    cerr << "unable to Create dump dir" << endl;
     return;
   }
 

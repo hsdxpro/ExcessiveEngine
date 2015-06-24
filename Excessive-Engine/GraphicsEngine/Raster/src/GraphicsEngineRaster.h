@@ -26,16 +26,17 @@ enum class eGapiType
 	OPENGL_4_5,
 };
 
+// TODO move to better place
+struct rRectNormed
+{
+	rRectNormed() :bottomLeftPercentNormed(0, 0), topRightPercentNormed(1, 1){}
+
+	mm::vec2 bottomLeftPercentNormed;
+	mm::vec2 topRightPercentNormed;
+};
+
 struct rGraphicsEngineRaster 
 {
-	struct rRectNormed
-	{
-		rRectNormed() :bottomLeftPercentNormed(0, 0), topRightPercentNormed(1, 1){}
-
-		mm::vec2 bottomLeftPercentNormed;
-		mm::vec2 topRightPercentNormed;
-	};
-
 	eGapiType		gapiType;
 	IWindow*		targetWindow;
 	rRectNormed		renderRegion;
@@ -49,30 +50,34 @@ public:
 	~GraphicsEngineRaster();
 	bool isConstructionSucceeded() const { return isValid; }
 
-	void release() override;
+	void Release() override;
 
-	// create stuff
-	Scene* createScene() override;
-	Mesh* createMesh() override;
-	Material* createMaterial() override;
-	Texture* createTexture() override;
-	Camera* createCam() override;
+	// Create stuff
+	Scene* CreateScene() override;
+	Mesh* CreateMesh() override;
+	Material* CreateMaterial() override;
+	Texture* CreateTexture() override;
+	Camera* CreateCam() override;
 	
 	// scene & layer system
-	void addLayer(const Layer& layer) override;
-	void removeLayer(size_t index) override;
-	size_t getNumLayers() const override;
-	void setNumLayers(size_t num_layers) override;
-	Layer& getLayer(size_t index) override;
+	void AddLayer(const Layer& layer) override;
+	void RemoveLayer(size_t index) override;
+	size_t GetNumLayers() const override;
+	void SetNumLayers(size_t num_layers) override;
+	Layer& GetLayer(size_t index) override;
 
 	// interact
-	void update(float deltaTime) override;
+	void Update(float deltaTime) override;
 
-	IGapi* getGapi() override;
+	IGapi* GetGapi() override;
 
 private:
 	IGapi* gapi;
 	std::vector<Layer> layers;
+
+	// ? TMP
+	IWindow* targetWindow;
+	rRectNormed	renderRegion;
 
 	// WARNING: temporary code
 	IShaderProgram* shader;

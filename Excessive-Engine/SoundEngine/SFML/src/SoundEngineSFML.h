@@ -16,19 +16,28 @@ public:
 	SoundEngineSFML(const rSoundEngine& d);
 	~SoundEngineSFML();
 
-	void release() override;
+	void Release() override;
 	
-	SoundScene* createScene() override;
+	SoundScene* CreateScene() override;
 	
-	SoundData* createSoundData() override;
+	SoundData* CreateSoundData() override;
 	
-	Listener* createListener() override;
+	Listener* CreateListener() override;
+
+	void SetScene(sound::IScene* scene) override;
 	
-	void setMasterVolume(float volume) override;
+	void SetMasterVolume(float volume) override;
 	
-	float getMasterVolume() const override;
+	float GetMasterVolume() const override;
 
 	// interact
-	void update(float deltaTime) override;
+	void Update(float deltaTime) override;
+
+private:
+	std::unordered_set<SoundScene*> scenes;
+	std::unordered_set<SoundData*> soundDataObjects;
+	std::unordered_set<Listener*> listeners;
+
+	SoundScene* activeScene;
 };
 

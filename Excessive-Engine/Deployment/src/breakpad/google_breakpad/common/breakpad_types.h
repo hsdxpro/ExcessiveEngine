@@ -76,7 +76,7 @@ typedef struct {
 
 typedef uint64_t breakpad_time_t;
 
-/* Try to get PRIx64 from inttypes.h, but if it's not defined, fall back to
+/* Try to Get PRIx64 from inttypes.h, but if it's not defined, fall back to
  * llx, which is the format string for "long long" - this is a 64-bit
  * integral type on many systems. */
 #ifndef PRIx64

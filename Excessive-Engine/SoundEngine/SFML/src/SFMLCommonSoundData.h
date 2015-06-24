@@ -9,5 +9,5 @@ class SFMLCommonSoundData
 public:
 	virtual ~SFMLCommonSoundData();
 
-	virtual SFMLCommonSoundEmitter* createSFMLSoundSource() const = 0;
+	virtual SFMLCommonSoundEmitter* CreateSFMLSoundSource() const = 0;
 };

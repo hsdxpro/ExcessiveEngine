@@ -148,8 +148,8 @@ class PageAllocator {
   }
 
   struct PageHeader {
-    PageHeader *next;  // pointer to the start of the next set of pages.
-    size_t num_pages;  // the number of pages in this set.
+    PageHeader *next;  // pointer to the start of the next Set of pages.
+    size_t num_pages;  // the number of pages in this Set.
   };
 
   const size_t page_size_;

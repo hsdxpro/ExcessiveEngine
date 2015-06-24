@@ -29,7 +29,7 @@
 
 // HTTPUpload provides a "nice" API to send a multipart HTTP(S) POST
 // request using wininet.  It currently supports requests that contain
-// a set of string parameters (key/value pairs), and a file to upload.
+// a Set of string parameters (key/value pairs), and a file to upload.
 
 #ifndef COMMON_WINDOWS_HTTP_UPLOAD_H_
 #define COMMON_WINDOWS_HTTP_UPLOAD_H_
@@ -54,7 +54,7 @@ using std::vector;
 
 class HTTPUpload {
  public:
-  // Sends the given set of parameters, along with the contents of
+  // Sends the given Set of parameters, along with the contents of
   // upload_file, as a multipart POST request to the given URL.
   // file_part_name contains the name of the file part of the request
   // (i.e. it corresponds to the name= attribute on an <input type="file">.
@@ -63,8 +63,8 @@ class HTTPUpload {
   // Only HTTP(S) URLs are currently supported.  Returns true on success.
   // If the request is successful and response_body is non-NULL,
   // the response body will be returned in response_body.
-  // If response_code is non-NULL, it will be set to the HTTP response code
-  // received (or 0 if the request failed before getting an HTTP response).
+  // If response_code is non-NULL, it will be Set to the HTTP response code
+  // received (or 0 if the request failed before Getting an HTTP response).
   static bool SendRequest(const wstring &url,
                           const map<wstring, wstring> &parameters,
                           const wstring &upload_file,
@@ -88,7 +88,7 @@ class HTTPUpload {
   // Generates a HTTP request header for a multipart form submit.
   static wstring GenerateRequestHeader(const wstring &boundary);
 
-  // Given a set of parameters, an upload filename, and a file part name,
+  // Given a Set of parameters, an upload filename, and a file part name,
   // generates a multipart request body string with these parameters
   // and minidump contents.  Returns true on success.
   static bool GenerateRequestBody(const map<wstring, wstring> &parameters,
@@ -116,7 +116,7 @@ class HTTPUpload {
   // any quote (") characters.  Returns true if so.
   static bool CheckParameters(const map<wstring, wstring> &parameters);
 
-  // No instances of this class should be created.
+  // No instances of this class should be Created.
   // Disallow all constructors, destructors, and operator=.
   HTTPUpload();
   explicit HTTPUpload(const HTTPUpload &);

@@ -13,16 +13,16 @@ InputLayoutGL::~InputLayoutGL() {
 }
 
 
-size_t InputLayoutGL::getNumElements() {
+size_t InputLayoutGL::GetNumElements() {
 	return elements.size();
 }
 
-const rInputElement& InputLayoutGL::getElement(size_t index) {
+const rInputElement& InputLayoutGL::GetElement(size_t index) {
 	assert(index < elements.size());
 	return elements[index];
 }
 
-void InputLayoutGL::release() {
+void InputLayoutGL::Release() {
 	delete this;
 }
 

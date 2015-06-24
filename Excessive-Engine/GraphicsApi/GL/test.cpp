@@ -40,7 +40,7 @@ const char* pshd =
 "  color = texture(tex, vec2(texcoord.x, 1-texcoord.y)); \n"
 "} \n";
 
-std::string get_app_path();
+std::string Get_app_path();
 #ifdef WIN_BUILD
 char* realpath(const char* path, char** ret);
 #endif
@@ -49,7 +49,7 @@ typedef IGapi* (*getGapiType)(void);
 
 int main(int argc, char** args)
 {
-	string app_path = get_app_path();
+	string app_path = Get_app_path();
 
 	//initialize sfml
 	sf::Window w;
@@ -75,23 +75,23 @@ int main(int argc, char** args)
 
 	std::replace(dll_path.begin(), dll_path.end(), '/', '\\');
 	auto dll = LoadLibrary(dll_path.c_str());
-	getGapiType createGraphicsApi = 0;
+	getGapiType CreateGraphicsApi = 0;
 
 	if (dll)
 	{
-		createGraphicsApi = (getGapiType)GetProcAddress(dll, "createGraphicsApi");
+		CreateGraphicsApi = (getGapiType)GetProcAddress(dll, "createGraphicsApi");
 	}
 
 	//set up the GL Gapi
-	//IGapi* gapi = createGraphicsApi();
-	IGapi* gapi = Factory::createGapiGL();
+	//IGapi* gapi = CreateGraphicsApi();
+	IGapi* gapi = Factory::CreateGapiGL();
 
-	gapi->setDebugOutput(true);
-	gapi->setSeamlessCubeMaps(true);
-	gapi->setSyncDebugOutput(true);
+	gapi->SetDebugOutput(true);
+	gapi->SetSeamlessCubeMaps(true);
+	gapi->SetSyncDebugOutput(true);
 
 	//set up the shader program
-	auto sp = gapi->createShaderSource(vshd, pshd);
+	auto sp = gapi->CreateShaderSource(vshd, pshd);
 	if (!sp)
 		return 0;
 
@@ -100,7 +100,7 @@ int main(int argc, char** args)
 	/*/example binary shader store/load
 	char* data;
 	u32 size;
-	sp->getBinary(&data, &size);
+	sp->GetBinary(&data, &size);
 
 	f.open("shader.shaderbin", ios::binary | ios::out);
 	f.write((const char*)&size, sizeof(u32));
@@ -132,7 +132,7 @@ int main(int argc, char** args)
 	texdata.is_layered = false;
 	texdata.num_levels = 1;
 
-	auto tex = gapi->createTexture(texdata);
+	auto tex = gapi->CreateTexture(texdata);
 
 	rTextureUpdate texupdata;
 	texupdata.data = (char*)im.getPixelsPtr();
@@ -145,14 +145,14 @@ int main(int argc, char** args)
 	texupdata.y_offset = 0;
 	texupdata.z_offset = 0;
 
-	gapi->writeTexture(tex, texupdata);
+	gapi->WriteTexture(tex, texupdata);
 
 	rSamplerState smpdata;
 	smpdata.is_anisotropic = false;
 	smpdata.is_bilinear = true;
 	smpdata.is_clamped = true;
 	smpdata.is_mipmapped = false;
-	gapi->setSamplerState("tex", smpdata, tex);
+	gapi->SetSamplerState("tex", smpdata, tex);
 
 
 	//set up the mesh
@@ -199,15 +199,15 @@ int main(int argc, char** args)
 	idx_alloc_data.prefer_cpu_storage = false;
 	idx_alloc_data.size = indices.size() * sizeof(u32);
 
-	auto vtx_buf = gapi->createVertexBuffer(vtx_alloc_data);
-	auto tex_buf = gapi->createVertexBuffer(tex_alloc_data);
+	auto vtx_buf = gapi->CreateVertexBuffer(vtx_alloc_data);
+	auto tex_buf = gapi->CreateVertexBuffer(tex_alloc_data);
 
-	auto idx_buf = gapi->createIndexBuffer(idx_alloc_data);
+	auto idx_buf = gapi->CreateIndexBuffer(idx_alloc_data);
 
-	gapi->writeBuffer(vtx_buf, vertices.data(), vertices.size() * sizeof(vec3), 0);
-	gapi->writeBuffer(tex_buf, texcoords.data(), texcoords.size() * sizeof(vec2), 0);
+	gapi->WriteBuffer(vtx_buf, vertices.data(), vertices.size() * sizeof(vec3), 0);
+	gapi->WriteBuffer(tex_buf, texcoords.data(), texcoords.size() * sizeof(vec2), 0);
 
-	gapi->writeBuffer(idx_buf, indices.data(), indices.size() * sizeof(u32), 0);
+	gapi->WriteBuffer(idx_buf, indices.data(), indices.size() * sizeof(u32), 0);
 
 	//set up the uniform buffer
 	rBuffer ubo_alloc_data;
@@ -219,11 +219,11 @@ int main(int argc, char** args)
 
 	mat4 mvp = ortographic(-1.0f, 1.0f, -1.0f, 1.0f, 0.0f, -1.0f);
 
-	auto ubo_buf = gapi->createUniformBuffer(ubo_alloc_data);
+	auto ubo_buf = gapi->CreateUniformBuffer(ubo_alloc_data);
 
-	gapi->writeBuffer(ubo_buf, &mvp[0][0], sizeof(mat4), 0);
+	gapi->WriteBuffer(ubo_buf, &mvp[0][0], sizeof(mat4), 0);
 
-	//draw stuff
+	//Draw stuff
 	bool run = true;
 	sf::Event ev;
 	while (run)
@@ -250,25 +250,25 @@ int main(int argc, char** args)
 		rVertexAttrib attr;
 		attr.nComponent = 3;
 		attr.divisor = 0;
-		attr.index = sp->getAttributeIndex("in_vertex");
+		attr.index = sp->GetAttributeIndex("in_vertex");
 		attr.offset = 0;
 		attr.size = 0;
 		attr.type = eVertexAttribType::FLOAT;
 		attribs.push_back(attr);
 
 		attr.nComponent = 2;
-		attr.index = sp->getAttributeIndex("in_texcoord");
+		attr.index = sp->GetAttributeIndex("in_texcoord");
 		attribs.push_back(attr);
 
-		gapi->setViewport(0, 0, 512, 512);
-		gapi->setShaderProgram(sp);
-		gapi->setRenderTargets(0, 0);
-		//gapi->setTextureView(texview, sp->getSamplerIndex("tex"));
-		gapi->setTexture(tex, sp->getSamplerIndex("tex"));
-		gapi->setUniformBuffer(ubo_buf, sp->getUniformBlockIndex("constant_data"));
-		gapi->setVertexBuffers(&vbos[0], attribs.data(), vbos.size());
-		gapi->setIndexBuffer(idx_buf);
-		gapi->draw(indices.size());
+		gapi->SetViewport(0, 0, 512, 512);
+		gapi->SetShaderProgram(sp);
+		gapi->SetRenderTargets(0, 0);
+		//gapi->SetTextureView(texview, sp->GetSamplerIndex("tex"));
+		gapi->SetTexture(tex, sp->GetSamplerIndex("tex"));
+		gapi->SetUniformBuffer(ubo_buf, sp->GetUniformBlockIndex("constant_data"));
+		gapi->SetVertexBuffers(&vbos[0], attribs.data(), vbos.size());
+		gapi->SetIndexBuffer(idx_buf);
+		gapi->Draw(indices.size());
 
 		w.display();
 	}
@@ -327,7 +327,7 @@ char* realpath(const char* path, char** ret)
 }
 #endif
 
-std::string get_app_path()
+std::string Get_app_path()
 {
 
 	char fullpath[4096];
@@ -374,7 +374,7 @@ std::string get_app_path()
 
 	if (GetModuleFileName(0, (char*)&fullpath, sizeof(fullpath) - 1) == 0)
 	{
-		cerr << "Couldn't get the app path." << endl;
+		cerr << "Couldn't Get the app path." << endl;
 		return "";
 	}
 

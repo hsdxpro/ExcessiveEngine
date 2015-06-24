@@ -126,12 +126,12 @@ class Sys
 public:
 	typedef void* DLLHandle;
 
-	static DLLHandle	loadDLL(const wchar_t* path);
-	static bool			unloadDLL(DLLHandle h);
+	static DLLHandle	LoadDLL(const wchar_t* path);
+	static bool			unLoadDLL(DLLHandle h);
 
-	static void*			getDLLProcAddress(DLLHandle h, const std::string& procName);
-	static std::wstring		getWorkDir();
-	static mm::ivec2		getMousePos();
-	static mm::ivec2		getScreenSize();
+	static void*			GetDLLProcAddress(DLLHandle h, const std::string& procName);
+	static std::wstring		GetWorkDir();
+	static mm::ivec2		GetMousePos();
+	static mm::ivec2		GetScreenSize();
 	static void				messageBox(const std::wstring& msg);
 };

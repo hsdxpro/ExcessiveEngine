@@ -19,20 +19,22 @@ public:
 	Entity();
 	~Entity();
 
-	void setPos(const mm::vec3& v);
-	void setRot(const mm::quat& q);
-	void setScale(const mm::vec3& v);
+	void SetPos(const mm::vec3& v);
+	void SetRot(const mm::quat& q);
+	void SetScaleLocal(const mm::vec3& v);
+	void SetSkew(const mm::mat3& m);
 
-	const mm::vec3& getPos();
-	const mm::quat& getRot();
-	const mm::vec3& getScale();
+	const mm::vec3& GetPos();
+	const mm::quat& GetRot();
+	const mm::vec3& GetScaleLocal();
+	const mm::mat3& GetSkew();
 
-	virtual void setMesh(graphics::IMesh* mesh) override;
-	virtual void setMaterial(graphics::IMaterial* mtl) override;
-	void setMesh(Mesh* mesh);
-	void setMaterial(Material* material);
-	Mesh* getMesh() const override;
-	Material* getMaterial() const override;
+	virtual void SetMesh(graphics::IMesh* mesh) override;
+	virtual void SetMaterial(graphics::IMaterial* mtl) override;
+	void SetMesh(Mesh* mesh);
+	void SetMaterial(Material* material);
+	Mesh* GetMesh() const override;
+	Material* GetMaterial() const override;
 
 private:
 	// mtl
@@ -43,6 +45,7 @@ private:
 	mm::vec3 pos;
 	mm::vec3 scale;
 	mm::quat rot;
+	mm::mat3 skew;
 };
 
 } // graphics namespace end

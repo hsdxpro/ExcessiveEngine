@@ -15,18 +15,18 @@ enum class eHandedness : u32 {
 class IListener {
 public:
 	
-	virtual void setHandedness(eHandedness handedness) = 0;
-	virtual void setUpwards(const mm::vec3&) = 0;
-	virtual void setTarget(const mm::vec3&) = 0;
-	virtual void setDir(const mm::vec3&) = 0;
-	virtual void setPos(const mm::vec3&) = 0;
-	virtual void setVel(const mm::vec3&) = 0;
+	virtual void SetHandedness(eHandedness handedness) = 0;
+	virtual void SetUpwards(const mm::vec3&) = 0;
+	virtual void SetTarget(const mm::vec3&) = 0;
+	virtual void SetDir(const mm::vec3&) = 0;
+	virtual void SetPos(const mm::vec3&) = 0;
+	virtual void SetVel(const mm::vec3&) = 0;
 	
-	virtual eHandedness getHandedness() const = 0;
-	virtual mm::vec3 getUpwards() const = 0;
-	virtual mm::vec3 getDir() const = 0;
-	virtual mm::vec3 getPos() const = 0;
-	virtual mm::vec3 getVel() const = 0;
+	virtual eHandedness GetHandedness() const = 0;
+	virtual mm::vec3 GetUpwards() const = 0;
+	virtual mm::vec3 GetDir() const = 0;
+	virtual mm::vec3 GetPos() const = 0;
+	virtual mm::vec3 GetVel() const = 0;
 };
 
 } // namespace

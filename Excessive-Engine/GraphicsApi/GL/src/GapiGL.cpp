@@ -12,6 +12,7 @@
 #include <functional>
 #include "GL\glew.h"
 #include "..\Common\src\custom_assert.h"
+#include "..\Common\src\EngineCpuProfiler.h"
 
 using namespace std;
 
@@ -22,7 +23,7 @@ using namespace std;
 #endif
 
 extern "C"
-EXPORT IGapi* createGraphicsApi()
+EXPORT IGapi* CreateGraphicsApi()
 {
 	return new GapiGL();
 }
@@ -49,9 +50,9 @@ GapiGL::GapiGL() {
 	cout << "OpenGL version: " << glGetString(GL_VERSION) << endl;
 	cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
 
-	resetStatesToDefault();
+	ResetStatesToDefault();
 
-	// set initial bindings
+	// Set initial bindings
 	active_shader = nullptr;
 	active_layout = nullptr;
 }
@@ -92,22 +93,22 @@ GLenum raster_order_data[] =
 };
 
 /* DEPRECATED
-IShaderProgram* GapiGL::createShaderProgram(const rShaderPaths& data)
+IShaderProgram* GapiGL::CreateShaderProgram(const rShaderPaths& data)
 {
 // TODO
 ShaderProgramGL* sp = new ShaderProgramGL();
 return sp;
 }
 
-IShaderProgram* GapiGL::createShaderProgram(const rShaderSources& data)
+IShaderProgram* GapiGL::CreateShaderProgram(const rShaderSources& data)
 {
 ShaderProgramGL* sp = new ShaderProgramGL();
 sp->id = glCreateProgram();
-if (data.vsSrc != 0)				sp->addShader(data.vsSrc, VERTEX_SHADER);
-if (data.psSrc != 0)				sp->addShader(data.psSrc, PIXEL_SHADER);
-if (data.tessCtrlSrc != 0)			sp->addShader(data.tessCtrlSrc, TESSELLATION_CONTROL_SHADER);
-if (data.tessEvaluationSrc != 0)	sp->addShader(data.tessEvaluationSrc, TESSELLATION_EVALUATION_SHADER);
-if (data.gsSrc != 0)				sp->addShader(data.gsSrc, GEOMETRY_SHADER);
+if (data.vsSrc != 0)				sp->AddShader(data.vsSrc, VERTEX_SHADER);
+if (data.psSrc != 0)				sp->AddShader(data.psSrc, PIXEL_SHADER);
+if (data.tessCtrlSrc != 0)			sp->AddShader(data.tessCtrlSrc, TESSELLATION_CONTROL_SHADER);
+if (data.tessEvaluationSrc != 0)	sp->AddShader(data.tessEvaluationSrc, TESSELLATION_EVALUATION_SHADER);
+if (data.gsSrc != 0)				sp->AddShader(data.gsSrc, GEOMETRY_SHADER);
 sp->link();
 return sp;
 }
@@ -115,7 +116,7 @@ return sp;
 
 
 
-ShaderProgramGL* GapiGL::createShaderSource(
+ShaderProgramGL* GapiGL::CreateShaderSource(
 	const char* vertex_shader_source,
 	const char* pixel_shader_source,
 	const char* geometry_shader_source,
@@ -126,7 +127,7 @@ ShaderProgramGL* GapiGL::createShaderSource(
 	GLuint vs = 0, ps = 0, tcs = 0, tes = 0, gs = 0;
 	bool success = false;
 
-	// if success if set to false, frees everything when function returns
+	// if success if Set to false, frees everything when function returns
 	struct CleanupT {
 		std::function<void()> func;
 		~CleanupT() {
@@ -134,13 +135,13 @@ ShaderProgramGL* GapiGL::createShaderSource(
 		};
 	} cleanup{[&]{if (!success) { glDeleteProgram(program_id); }}};
 
-	// create program
+	// Create program
 	program_id = glCreateProgram();
 	if (program_id == 0) {
 		return nullptr;
 	}
 
-	// create, compile, and add shaders one-by-one
+	// Create, compile, and Add shaders one-by-one
 
 	// vertex shader
 	if (vertex_shader_source) {
@@ -266,7 +267,7 @@ ShaderProgramGL* GapiGL::createShaderSource(
 		return nullptr;
 	}
 
-	// finally, create the shader program
+	// finally, Create the shader program
 	// hope that fucker can allocate...
 	success = true;
 	ShaderProgramGL* shader_program = new ShaderProgramGL(program_id);
@@ -274,9 +275,9 @@ ShaderProgramGL* GapiGL::createShaderSource(
 }
 
 
-ShaderProgramGL* GapiGL::createShaderBinary(void* data, size_t size)
+ShaderProgramGL* GapiGL::CreateShaderBinary(void* data, size_t size)
 {
-	// create program
+	// Create program
 	auto program_id = glCreateProgram();
 
 	ASSERT(data)
@@ -302,7 +303,7 @@ ShaderProgramGL* GapiGL::createShaderBinary(void* data, size_t size)
 
 
 
-UniformBufferGL* GapiGL::createUniformBuffer(const rBuffer& data)
+UniformBufferGL* GapiGL::CreateUniformBuffer(const rBuffer& data)
 {
 	UniformBufferGL* ubo = new UniformBufferGL();
 	glGenBuffers(1, &ubo->id);
@@ -326,7 +327,7 @@ UniformBufferGL* GapiGL::createUniformBuffer(const rBuffer& data)
 	return ubo;
 }
 
-VertexBufferGL* GapiGL::createVertexBuffer(const rBuffer& data)
+VertexBufferGL* GapiGL::CreateVertexBuffer(const rBuffer& data)
 {
 	VertexBufferGL* vbo = new VertexBufferGL();
 	glGenBuffers(1, &vbo->id);
@@ -350,7 +351,7 @@ VertexBufferGL* GapiGL::createVertexBuffer(const rBuffer& data)
 	return vbo;
 }
 
-TextureGL* GapiGL::createTexture(const rTextureGapi& data)
+TextureGL* GapiGL::CreateTexture(const rTextureGapi& data)
 {
 	TextureGL* tex = new TextureGL();
 	glGenTextures(1, &tex->ID);
@@ -432,7 +433,7 @@ TextureGL* GapiGL::createTexture(const rTextureGapi& data)
 	return tex;
 }
 
-IndexBufferGL* GapiGL::createIndexBuffer(const rBuffer& data)
+IndexBufferGL* GapiGL::CreateIndexBuffer(const rBuffer& data)
 {
 	IndexBufferGL* ibo = new IndexBufferGL();
 	glGenBuffers(1, &ibo->id);
@@ -459,7 +460,7 @@ IndexBufferGL* GapiGL::createIndexBuffer(const rBuffer& data)
 
 
 // textures
-void GapiGL::writeTexture(ITextureGapi* t, const rTextureUpdate& d) {
+void GapiGL::WriteTexture(ITextureGapi* t, const rTextureUpdate& d) {
 	TextureGL* tex = (TextureGL*)t;
 
 	glActiveTexture(GL_TEXTURE0);
@@ -482,13 +483,13 @@ void GapiGL::writeTexture(ITextureGapi* t, const rTextureUpdate& d) {
 		//glTextureSubImage3D(tex->ID, d.level, d.x_offset, d.y_offset, d.z_offset, d.width, d.height, d.depth, texture_formats[d.format], texture_types[d.format], d.data);
 	}
 }
-void GapiGL::readTexture(ITextureGapi* t, const rTextureUpdate& d) {
+void GapiGL::writeTexture(ITextureGapi* t, const rTextureUpdate& d) {
 	auto id = ((TextureGL*)t)->ID;
 	glGetTextureSubImage(id, d.level, d.x_offset, d.y_offset, d.z_offset, d.width, d.height, d.depth, texture_formats[(int)d.format], texture_types[(int)d.format], ((d.width - d.x_offset) * (d.height - d.y_offset) * (d.depth - d.z_offset) * texture_sizes[(int)d.format]) / 8, d.data);
 }
 
 // vertex buffers
-void GapiGL::writeBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t offset) {
+void GapiGL::WriteBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t offset) {
 	auto id = ((VertexBufferGL*)buffer)->id;
 	/*void* ptr = glMapBufferRange( GL_ARRAY_BUFFER, offset, size, GL_MAP_WRITE_BIT );
 	memcpy( ptr, data, size );
@@ -496,7 +497,7 @@ void GapiGL::writeBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t 
 	glBindBuffer(GL_ARRAY_BUFFER, id);
 	glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
 }
-void GapiGL::readBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t offset) {
+void GapiGL::ReadBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t offset) {
 	// TODO 4.5
   auto id = ((VertexBufferGL*)buffer)->id;
   glBindBuffer(GL_ARRAY_BUFFER, id);
@@ -504,12 +505,12 @@ void GapiGL::readBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t o
 }
 
 // index buffers
-void GapiGL::writeBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) {
+void GapiGL::WriteBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) {
 	auto id = ((IndexBufferGL*)buffer)->id;
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, size, data);
 }
-void GapiGL::readBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) {
+void GapiGL::ReadBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) {
 	// TODO 4.5
   auto id = ((IndexBufferGL*)buffer)->id;
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
@@ -517,19 +518,19 @@ void GapiGL::readBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t of
 }
 
 // uniform buffers
-void GapiGL::writeBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t offset) {
+void GapiGL::WriteBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t offset) {
 	auto id = ((UniformBufferGL*)buffer)->id;
 	glBindBuffer(GL_UNIFORM_BUFFER, id);
 	glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
 }
-void GapiGL::readBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t offset) {
+void GapiGL::ReadBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t offset) {
 	// TODO 4.5
   auto id = ((UniformBufferGL*)buffer)->id;
   glBindBuffer(GL_UNIFORM_BUFFER, id);
   glBufferSubData( GL_UNIFORM_BUFFER, offset, size, data );
 }
 
-void GapiGL::resetStatesToDefault()
+void GapiGL::ResetStatesToDefault()
 {
 	//use a single global vao
 	glGenVertexArrays(1, &global_vao);
@@ -537,10 +538,10 @@ void GapiGL::resetStatesToDefault()
 
 	rBlendState d;
 		d.enable = false;
-	setBlendState(d);
+	SetBlendState(d);
 }
 
-void GapiGL::setDepthState(const rDepthState& state)
+void GapiGL::SetDepthState(const rDepthState& state)
 {
 	if (state.enable_test)
 	{
@@ -558,7 +559,7 @@ void GapiGL::setDepthState(const rDepthState& state)
 	glDepthFunc(func_data[(u32)state.func]);
 }
 
-void GapiGL::setStencilState(const rStencilState& state)
+void GapiGL::SetStencilState(const rStencilState& state)
 {
 	if (state.enable_test)
 	{
@@ -578,7 +579,7 @@ void GapiGL::setStencilState(const rStencilState& state)
 	glStencilOp(stencil_op_data[(u32)state.on_stencil_fail], stencil_op_data[(u32)state.on_stencil_pass_depth_fail], stencil_op_data[(u32)state.on_stencil_pass_depth_pass]);
 }
 
-void GapiGL::setBlendState(const rBlendState& state)
+void GapiGL::SetBlendState(const rBlendState& state)
 {
 	if (state.enable)
 	{
@@ -594,7 +595,7 @@ void GapiGL::setBlendState(const rBlendState& state)
 	}
 }
 
-void GapiGL::setSamplerState(const char* slotName, const rSamplerState& smpdata, ITextureGapi* t)
+void GapiGL::SetSamplerState(const char* slotName, const rSamplerState& smpdata, ITextureGapi* t)
 {
 	TextureGL* tex = (TextureGL*)t;
 
@@ -653,7 +654,7 @@ void GapiGL::setSamplerState(const char* slotName, const rSamplerState& smpdata,
 	}
 }
 
-void GapiGL::setSRGBWrites(bool val)
+void GapiGL::SetSRGBWrites(bool val)
 {
 	if (val)
 	{
@@ -665,7 +666,7 @@ void GapiGL::setSRGBWrites(bool val)
 	}
 }
 
-void GapiGL::setSeamlessCubeMaps(bool val)
+void GapiGL::SetSeamlessCubeMaps(bool val)
 {
 	if (val)
 	{
@@ -677,12 +678,12 @@ void GapiGL::setSeamlessCubeMaps(bool val)
 	}
 }
 
-void GapiGL::setViewport(int x, int y, u32 w, u32 h)
+void GapiGL::SetViewport(int x, int y, u32 w, u32 h)
 {
 	glViewport(x, y, w, h);
 }
 
-void GapiGL::setRasterizationState(const rRasterizerState& state)
+void GapiGL::SetRasterizationState(const rRasterizerState& state)
 {
 	glPolygonMode(GL_FRONT_AND_BACK, raster_mode_data[(u32)state.mode]);
 	glFrontFace(raster_order_data[(u32)state.vertex_order]);
@@ -690,12 +691,12 @@ void GapiGL::setRasterizationState(const rRasterizerState& state)
 	glColorMask(state.r_mask, state.g_mask, state.b_mask, state.a_mask);
 }
 
-bool GapiGL::getError() //true if error
+bool GapiGL::GetError() //true if error
 {
 	return glGetError != GL_NO_ERROR;
 }
 
-void GapiGL::setDebugOutput(bool val)
+void GapiGL::SetDebugOutput(bool val)
 {
 	if (val)
 	{
@@ -707,7 +708,7 @@ void GapiGL::setDebugOutput(bool val)
 	}
 }
 
-void GapiGL::setSyncDebugOutput(bool val)
+void GapiGL::SetSyncDebugOutput(bool val)
 {
 	if (val)
 	{
@@ -719,19 +720,19 @@ void GapiGL::setSyncDebugOutput(bool val)
 	}
 }
 
-void GapiGL::setShaderProgram(IShaderProgram* sp)
+void GapiGL::SetShaderProgram(IShaderProgram* sp)
 {
 	ASSERT(sp);
 	ShaderProgramGL* shader_program = static_cast<ShaderProgramGL*>(sp);
-	glUseProgram(shader_program->getProgramId());
+	glUseProgram(shader_program->GetProgramId());
 
 	active_shader = shader_program;
-	// set dirty flag
+	// Set dirty flag
 	is_layout_bound = false;
-	//bindInputLayout();
+	//BindInputLayout();
 }
 
-void GapiGL::setTexture(ITextureGapi* t, u32 idx)
+void GapiGL::SetTexture(ITextureGapi* t, u32 idx)
 {
 	TextureGL* tex = (TextureGL*)t;
 
@@ -742,13 +743,13 @@ void GapiGL::setTexture(ITextureGapi* t, u32 idx)
 	glBindTexture(tex->target, tex->viewID);
 }
 
-void GapiGL::setRenderTargets(const rRenderTargetInfo* render_targets, u32 size)
+void GapiGL::SetRenderTargets(const rRenderTargetInfo* render_targets, u32 size)
 {
 	//TODO
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void GapiGL::setUniformBuffer(IUniformBuffer* buf, u32 index)
+void GapiGL::SetUniformBuffer(IUniformBuffer* buf, u32 index)
 {
 	ASSERT(buf);
 	auto buffer_id = static_cast<UniformBufferGL*>(buf)->id;
@@ -762,7 +763,7 @@ GLenum attrib_array[] =
 
 
 // DEPRECATED API
-void GapiGL::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers)
+void GapiGL::SetVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers)
 {
 	ASSERT(buffers && attrib_data);
 
@@ -792,13 +793,13 @@ void GapiGL::setVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attr
 	}
 }
 
-void GapiGL::setIndexBuffer(IIndexBuffer* ibo)
+void GapiGL::SetIndexBuffer(IIndexBuffer* ibo)
 {
 	ASSERT(ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<IndexBufferGL*>(ibo)->id);
 }
 
-void GapiGL::drawIndexed(u32 num_indices, u32 index_byte_offset /*= 0*/)
+void GapiGL::DrawIndexed(u32 num_indices, u32 index_byte_offset /*= 0*/)
 {
 #ifdef DEBUG_SHADER_ERRORS
 	glValidateProgram(static_cast<ShaderProgram*>(s)->id);
@@ -808,18 +809,19 @@ void GapiGL::drawIndexed(u32 num_indices, u32 index_byte_offset /*= 0*/)
 	cerr << infolog << endl;
 #endif
 	if (!is_layout_bound) {
-		bindInputLayout();
+		BindInputLayout();
 	}
 
+	PROFILE_SCOPE_SUM("glDrawElements");
 	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, (void*)index_byte_offset);
 }
 
-void GapiGL::draw(u32 nVertices, u32 offset /*= 0*/)
+void GapiGL::Draw(u32 nVertices, u32 offset /*= 0*/)
 {
 	glDrawArrays(GL_TRIANGLES, offset, nVertices);
 }
 
-void GapiGL::clearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth /*= 0*/, i32 stencil /*= 0*/)
+void GapiGL::ClearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth /*= 0*/, i32 stencil /*= 0*/)
 {
 
 	unsigned int clearFlag = 0;
@@ -884,44 +886,44 @@ static inline GLboolean IsNormalizedType(eVertexAttribType type) {
 }
 
 
-// create an input layout
-InputLayoutGL* GapiGL::createInputLayout(rInputElement* elements, size_t num_elements) {
+// Create an input layout
+InputLayoutGL* GapiGL::CreateInputLayout(rInputElement* elements, size_t num_elements) {
 	// validate here
 	for (size_t i = 0; i < num_elements; i++) {
 		if (elements[i].num_components == 0 || elements[i].num_components > 4) {
 			return nullptr;
 		}
 	}
-	// create and return a new layout
+	// Create and return a new layout
 	InputLayoutGL* layout = new InputLayoutGL(elements, num_elements);
 	return layout;
 }
 
 
-// set an input layout
-void GapiGL::setInputLayout(IInputLayout* layout) {
+// Set an input layout
+void GapiGL::SetInputLayout(IInputLayout* layout) {
 	active_layout = (InputLayoutGL*)layout;
 
-	// set dirty flag
+	// Set dirty flag
 	is_layout_bound = false;
-	//bindInputLayout();
+	//BindInputLayout();
 }
 
-void GapiGL::bindInputLayout() {
+void GapiGL::BindInputLayout() {
 	if (!active_layout || !active_shader) {
 		return;
 	}
 
-	// set each element (== attribute)
-	for (size_t i = 0; i < active_layout->getNumElements(); i++) {
-		auto& element = active_layout->getElement(i);
+	// Set each element (== attribute)
+	for (size_t i = 0; i < active_layout->GetNumElements(); i++) {
+		auto& element = active_layout->GetElement(i);
 
-		// get attribute location
-		int location = active_shader->getAttributeIndex(element.name);
+		// Get attribute location
+		int location = active_shader->GetAttributeIndex(element.name);
 
 		GLenum result;
 
-		// set attribute
+		// Set attribute
 		glVertexAttribFormat(
 			location,
 			element.num_components,
@@ -931,18 +933,18 @@ void GapiGL::bindInputLayout() {
 			);
 		result = glGetError();
 
-		// set bindig point
+		// Set bindig point
 		glVertexAttribBinding(location, element.stream_index);
 		result = glGetError();
 		// enable this format
 		glEnableVertexAttribArray(location);
 	}
 
-	// set dirty flag
+	// Set dirty flag
 	is_layout_bound = true;
 }
 
-void GapiGL::setVertexBuffers(
+void GapiGL::SetVertexBuffers(
 	const IVertexBuffer* const * buffers,
 	u32* strides,
 	u32* offsets,
@@ -975,6 +977,6 @@ void GapiGL::setVertexBuffers(
 }
 
 
-u32 GapiGL::getNumVertexBufferSlots() const {
+u32 GapiGL::GetNumVertexBufferSlots() const {
 	return 16;
 }

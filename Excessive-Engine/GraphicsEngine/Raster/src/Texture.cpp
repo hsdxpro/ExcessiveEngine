@@ -26,11 +26,11 @@ Texture::~Texture() {
 ////////////////////////////////////////////////////////////////////////////////
 // lifecycle
 
-void Texture::acquire() {
+void Texture::Acquire() {
 	refcount++;
 }
 
-void Texture::release() {
+void Texture::Release() {
 	refcount--;
 	if (refcount == 0) {
 		delete this;
@@ -41,10 +41,10 @@ void Texture::release() {
 ////////////////////////////////////////////////////////////////////////////////
 // load
 
-bool Texture::load(const std::wstring& file_path) {
+bool Texture::Load(const std::wstring& file_path) {
 	// clean up old contents, if any
 	if (tex) {
-		reset();
+		Reset();
 	}
 
 	const wchar_t* path = file_path.c_str();
@@ -71,7 +71,7 @@ bool Texture::load(const std::wstring& file_path) {
 	texdata.is_layered = false;
 	texdata.num_levels = 1;
 
-	tex = gapi->createTexture(texdata);
+	tex = gapi->CreateTexture(texdata);
 	if (!tex) {
 		return false;
 	}
@@ -87,13 +87,13 @@ bool Texture::load(const std::wstring& file_path) {
 	texupdata.y_offset = 0;
 	texupdata.z_offset = 0;
 
-	gapi->writeTexture(tex, texupdata);
+	gapi->WriteTexture(tex, texupdata);
 
 	return true;
 }
 
 
-void Texture::reset() {
+void Texture::Reset() {
 	if (tex) {
 		tex->destroy();
 		tex = nullptr;
@@ -103,6 +103,6 @@ void Texture::reset() {
 
 ////////////////////////////////////////////////////////////////////////////////
 // internal accessors
-ITextureGapi* Texture::getTexture() {
+ITextureGapi* Texture::GetTexture() {
 	return tex;
 }

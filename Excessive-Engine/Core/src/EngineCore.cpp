@@ -1,16 +1,15 @@
 #include "EngineCore.h"
-#include "Factory.h"
-#include "Importer3D.h"
-#include "EngineCpuProfiler.h"
+#include "../../Common/src/Factory.h"
+#include "../../Common/src/Importer3D.h"
 
 #include "../GraphicsEngine/Raster/src/GraphicsEngineRaster.h"
 #include "../GraphicsEngine/RT/src/GraphicsEngineRT.h"
 #include "../PhysicsEngine/Bullet/src/PhysicsEngineBullet.h"
 #include "../NetworkEngine/Boost/src/NetworkEngineBoost.h"
 #include "../SoundEngine/SFML/src/SoundEngineSFML.h"
+#include "../../Common/src/EngineCpuProfiler.h"
 
 #include <assert.h>
-
 
 //////////////////////////////////////////////////
 //                                              //
@@ -55,74 +54,74 @@ EngineCore::~EngineCore()
 	for (auto& a : importedModels)
 		delete a.second;
 
-	if (graphicsEngine)	graphicsEngine->release();
-	if (physicsEngine)	physicsEngine->release();
-	if (networkEngine)	networkEngine->release();
-	if (soundEngine)	soundEngine->release();
+	if (graphicsEngine)	graphicsEngine->Release();
+	if (physicsEngine)	physicsEngine->Release();
+	if (networkEngine)	networkEngine->Release();
+	if (soundEngine)	soundEngine->Release();
 }
 
-graphics::IEngine* EngineCore::initGraphicsEngineRaster(const rGraphicsEngineRaster& d /*= rGraphicsEngineRaster()*/) 
+graphics::IEngine* EngineCore::InitGraphicsEngineRaster(const rGraphicsEngineRaster& d /*= rGraphicsEngineRaster()*/) 
 {
-	if (graphicsEngine) 
-		graphicsEngine->release(); 
+	if (graphicsEngine)
+		graphicsEngine->Release();
 
-	graphicsEngine = Factory::createGraphicsEngineRaster(d);
+	graphicsEngine = Factory::CreateGraphicsEngineRaster(d);
 
 	// Load error diffuse texture, that we place on materials which fails load their own texture by path
-	texError = graphicsEngine->createTexture();
+	texError = graphicsEngine->CreateTexture();
 	
-	bool bSuccess = texError->load(Sys::getWorkDir() + L"../Assets/error.jpg");
-	assert(bSuccess);
+	bool bSuccess = texError->Load(Sys::GetWorkDir() + L"../Assets/error.jpg");
+	//assert(bSuccess);
 
 	// Default scene and layer for GraphicsEngine
-	defaultGraphicsScene = graphicsEngine->createScene();
+	defaultGraphicsScene = graphicsEngine->CreateScene();
 	graphics::IEngine::Layer layer;
 		layer.scene = defaultGraphicsScene;
-	graphicsEngine->addLayer(layer);
+	graphicsEngine->AddLayer(layer);
 
 	return graphicsEngine;
 }
 
-graphics::IEngine* EngineCore::initGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/) 
+graphics::IEngine* EngineCore::InitGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/) 
 {
 	if (graphicsEngine) 
-		graphicsEngine->release(); 
+		graphicsEngine->Release(); 
 	
-	return graphicsEngine = Factory::createGraphicsEngineRT(d);
+	return graphicsEngine = Factory::CreateGraphicsEngineRT(d);
 }
 
-physics::IEngine* EngineCore::initPhysicsEngineBullet(const rPhysicsEngineBullet& d /*= rPhysicsEngineBullet()*/) 
+physics::IEngine* EngineCore::InitPhysicsEngineBullet(const rPhysicsEngineBullet& d /*= rPhysicsEngineBullet()*/) 
 {
 	if (physicsEngine)
-		physicsEngine->release();
+		physicsEngine->Release();
 
-	return physicsEngine = Factory::createPhysicsEngineBullet(d);
+	return physicsEngine = Factory::CreatePhysicsEngineBullet(d);
 }
 
-network::IEngine* EngineCore::initNetworkEngine(const rNetworkEngine& d /*= rNetworkEngine()*/) 
+network::IEngine* EngineCore::InitNetworkEngine(const rNetworkEngine& d /*= rNetworkEngine()*/) 
 {
 	if (networkEngine)
-		networkEngine->release();
+		networkEngine->Release();
 
-	return networkEngine = Factory::createNetworkEngine(d);
+	return networkEngine = Factory::CreateNetworkEngine(d);
 }
 
-sound::IEngine* EngineCore::initSoundEngine(const rSoundEngine& d /*= rSoundEngine()*/) 
+sound::IEngine* EngineCore::InitSoundEngine(const rSoundEngine& d /*= rSoundEngine()*/) 
 {
 	if (soundEngine)
-		soundEngine->release();
+		soundEngine->Release();
 
-	return soundEngine = Factory::createSoundEngine(d);
+	return soundEngine = Factory::CreateSoundEngine(d);
 }
 
-Actor* EngineCore::addActor()
+Actor* EngineCore::AddActor()
 {
 	auto a = new Actor();
 		actors.push_back(a);
 	return a;
 }
 
-ComponentGraphics* EngineCore::addCompGraphicsFromFile(const std::wstring& modelFilePath, graphics::IScene* scene /*= nullptr*/)
+ComponentGraphics* EngineCore::AddCompGraphicsFromFile(const std::wstring& modelFilePath)
 {
 	// Check if model already loaded somehow
 	rImporter3DData* modelDesc;
@@ -141,38 +140,35 @@ ComponentGraphics* EngineCore::addCompGraphicsFromFile(const std::wstring& model
 			eImporter3DFlag::PIVOT_RECENTER });
 
 		modelDesc = new rImporter3DData();
-		Importer3D::loadFile(modelFilePath, cfg, *modelDesc);
+		Importer3D::LoadModelFromFile(modelFilePath, cfg, *modelDesc);
 
 		importedModels[modelFilePath] = modelDesc;
 	}
 
-	graphics::IEntity* compGraphics;
+	graphics::IEntity* graphicsEntity;
 
 	// We will feed meshes to that graphics entity
-	if (!scene)
-		compGraphics = defaultGraphicsScene->addEntity();
-	else
-		compGraphics = scene->addEntity();
+	graphicsEntity = defaultGraphicsScene->AddEntity();
 
 	// Material for entity
-	graphics::IMaterial* material = graphicsEngine->createMaterial();
-	compGraphics->setMaterial(material);
+	graphics::IMaterial* material = graphicsEngine->CreateMaterial();
+	graphicsEntity->SetMaterial(material);
 
-	// For each mesh imported, create graphics mesh
+	// For each mesh imported, Create graphics mesh
 	for (auto& importedMesh : modelDesc->meshes)
 	{
-		graphics::IMesh* graphicsMesh = graphicsEngine->createMesh();
-		compGraphics->setMesh(graphicsMesh);
+		graphics::IMesh* graphicsMesh = graphicsEngine->CreateMesh();
+		graphicsEntity->SetMesh(graphicsMesh);
 
 		// Materials
 		for (auto& importedMaterial : importedMesh.materials)
 		{
-			auto& subMat = material->addSubMaterial();
+			auto& subMat = material->AddSubMaterial();
 			subMat.base = mm::vec4(1, 1, 1, 1);
 
 			if (importedMaterial.texPathDiffuse != L"")
 			{
-				subMat.t_diffuse = graphicsEngine->createTexture();
+				subMat.t_diffuse = graphicsEngine->CreateTexture();
 
 				std::wstring finalPath;
 
@@ -190,7 +186,7 @@ ComponentGraphics* EngineCore::addCompGraphicsFromFile(const std::wstring& model
 				}
 
 				// Try Load texture
-				if (!subMat.t_diffuse->load(finalPath.c_str()))
+				if (!subMat.t_diffuse->Load(finalPath.c_str()))
 				{
 					// Texture load fail...
 					subMat.t_diffuse = texError;
@@ -224,15 +220,15 @@ ComponentGraphics* EngineCore::addCompGraphicsFromFile(const std::wstring& model
 		meshData.vertex_elements_num = sizeof(elements) / sizeof(elements[0]);
 
 		// Feed data to mesh
-		graphicsMesh->update(meshData);
+		graphicsMesh->Update(meshData);
 	}
 
-	auto c = new ComponentGraphics(compGraphics);
+	auto c = new ComponentGraphics(graphicsEntity);
 		worldComponents.push_back(c);
 	return c;
 }
 
-ComponentRigidBody* EngineCore::addCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass)
+ComponentRigidBody* EngineCore::AddCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass)
 {
 	// Check if model already loaded somehow
 	rImporter3DData* modelDesc;
@@ -251,17 +247,17 @@ ComponentRigidBody* EngineCore::addCompRigidBodyFromFile(const std::wstring& mod
 			eImporter3DFlag::PIVOT_RECENTER });
 
 		modelDesc = new rImporter3DData();
-		Importer3D::loadFile(modelFilePath, cfg, *modelDesc);
+		Importer3D::LoadModelFromFile(modelFilePath, cfg, *modelDesc);
 
 		importedModels[modelFilePath] = modelDesc;
 	}
 
-	physics::IEntityRigid* compRigidBody = nullptr;
+	physics::IEntityRigid* rigidEntity = nullptr;
 
 	auto mesh = modelDesc->meshes[0];
 
 	mm::vec3* vertices;
-	// Little hekk, we know it's INTERLEAVED, cuz  addCompRigidBodyFromFile and addCompGraphicsFromFile implementation
+	// Little hekk, we know it's INTERLEAVED, cuz  AddCompRigidBodyFromFile and AddCompGraphicsFromFile implementation
 	//if (cfg.isContain(eImporter3DFlag::VERT_BUFF_INTERLEAVED)) // Interleaved buffer? Okay gather positions from vertices stepping with vertex stride
 	{
 		vertices = new mm::vec3[mesh.nVertices];
@@ -274,23 +270,44 @@ ComponentRigidBody* EngineCore::addCompRigidBodyFromFile(const std::wstring& mod
 	//}
 
 	if (mass == 0)
-		compRigidBody = physicsEngine->addEntityRigidStatic(vertices, mesh.nVertices, mesh.indices, mesh.indexSize, mesh.nIndices);
+		rigidEntity = physicsEngine->AddEntityRigidStatic(vertices, mesh.nVertices, mesh.indices, mesh.indexSize, mesh.nIndices);
 	else
-		compRigidBody = physicsEngine->addEntityRigidDynamic(vertices, mesh.nVertices, mass);
+		rigidEntity = physicsEngine->AddEntityRigidDynamic(vertices, mesh.nVertices, mass);
 
 	delete vertices;
 	vertices = nullptr; // Important
 
-	auto c = new ComponentRigidBody(compRigidBody);
+	auto c = new ComponentRigidBody(rigidEntity);
 		worldComponents.push_back(c);
 	return c;
 }
 
-void EngineCore::update(float deltaTime/*, graphics::IScene* scene*/)
+ComponentRigidBody* EngineCore::AddCompRigidBodyCapsule(float height, float radius, float mass /* = 0*/)
+{
+	auto capsuleEntity = physicsEngine->AddEntityRigidCapsule(height, radius, mass);
+
+	auto c = new ComponentRigidBody(capsuleEntity);
+		worldComponents.push_back(c);
+	return c;
+}
+
+ComponentCamera* EngineCore::AddCompCamera()
+{
+	auto c = new ComponentCamera(graphicsEngine->CreateCam());
+		worldComponents.push_back(c);
+	return c;
+}
+
+graphics::IMaterial* EngineCore::CreateGraphicsMaterial()
+{
+	return graphicsEngine->CreateMaterial();
+}
+
+void EngineCore::Update(float deltaTime)
 {
 	/*
 	// Debugging fcking bullet physics
-	static graphics::IMesh* debugRenderMesh = graphicsEngine->createMesh();
+	static graphics::IMesh* debugRenderMesh = graphicsEngine->CreateMesh();
 
 	uint32_t nVertices;
 	mm::vec3* nonIndexedVertices = new mm::vec3[999999];
@@ -316,10 +333,10 @@ void EngineCore::update(float deltaTime/*, graphics::IScene* scene*/)
 			matGroup.endFace = nVertices / 3;
 			matGroup.id = 0;
 		data.mat_ids = &matGroup;
-	debugRenderMesh->update(data);
+	debugRenderMesh->Update(data);
 	
-	static graphics::IEntity* entity = scene->addEntity();
-	entity->setMesh(debugRenderMesh);
+	static graphics::IEntity* entity = defaultGraphicsScene->AddEntity();
+	entity->SetMesh(debugRenderMesh);
 
 	delete[] nonIndexedVertices;
 	delete[] indices;
@@ -327,67 +344,77 @@ void EngineCore::update(float deltaTime/*, graphics::IScene* scene*/)
 
 	if (physicsEngine)
 	{
-		PROFILER("PhysicsEngine");
-		physicsEngine->update(deltaTime);
+		PROFILE_SCOPE("PhysicsEngine");
+		physicsEngine->Update(deltaTime);
 	}
 
 	// Okay physics simulation done, move high level physics component's attached WorldComponents
 	// TODO, ez kibaszottul nem mukodik jol es redundans tree call - t csinál WorldComponent - eken belül
+
+	// TODO
+	//PROFILE_SECTION_BEGIN("EngineCore Component Update After Physics");
 	{
-		PROFILER("EngineCore -> Component Updates");
+		PROFILE_SCOPE("EngineCore Component Update After Physics");
 		for (auto a : worldComponents)
-			a->updateAfterPhysicsSimulate();
+			a->UpdateAfterPhysicsSimulate();
 	}
+	//PROFILE_SECTION_END();
+	
 
 	if (graphicsEngine)
 	{
-		PROFILER("GraphicsEngine");
+		PROFILE_SCOPE("GraphicsEngine");
 
 #ifdef PROFILE_ENGINE
-		graphicsEngine->getGapi()->resetStatesToDefault(); // Jesus the profiler also uses OpenGL temporarily, and mess up the binds etc...
+		graphicsEngine->GetGapi()->ResetStatesToDefault(); // Jesus the profiler also uses OpenGL temporarily, and mess up the binds etc...
 #endif
-		graphicsEngine->update(deltaTime);
+		graphicsEngine->Update(deltaTime);
 	}
 
 	if (soundEngine)
 	{
-		PROFILER("SoundEngine");
-		soundEngine->update(deltaTime);
+		PROFILE_SCOPE("SoundEngine");
+		soundEngine->Update(deltaTime);
 	}
 		
 
 	if (networkEngine)
 	{
-		PROFILER("NetworkEngine");
-		networkEngine->update(deltaTime);
+		PROFILE_SCOPE("NetworkEngine");
+		networkEngine->Update(deltaTime);
 	}
 
 #ifdef PROFILE_ENGINE
-	EngineCpuProfiler::updateAndPresent();
+	EngineCpuProfiler::UpdateAndPresent();
 #endif
 }
 
-graphics::IEngine* EngineCore::getGraphicsEngine() 
+void EngineCore::SetCam(ComponentCamera* c)
+{
+	defaultGraphicsScene->SetCamera(c->GetCam());
+}
+
+graphics::IEngine* EngineCore::GetGraphicsEngine()
 { 
 	return graphicsEngine; 
 }
 
-physics::IEngine* EngineCore::getPhysicsEngine() 
+physics::IEngine* EngineCore::GetPhysicsEngine() 
 { 
 	return physicsEngine; 
 }
 
-network::IEngine* EngineCore::getNetworkEngine() 
+network::IEngine* EngineCore::GetNetworkEngine() 
 { 
 	return networkEngine; 
 }
 
-sound::IEngine*	EngineCore::getSoundEngine() 
+sound::IEngine*	EngineCore::GetSoundEngine() 
 { 
 	return soundEngine; 
 }
 
-graphics::IScene* EngineCore::getDefaultGraphicsScene()
+graphics::IScene* EngineCore::GetDefaultGraphicsScene()
 {
 	return defaultGraphicsScene;
 }

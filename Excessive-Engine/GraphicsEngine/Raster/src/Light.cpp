@@ -2,12 +2,12 @@
 
 
 
-void Light::setColor() {
+void Light::SetColor() {
 	return;
 }
-void Light::setPosition() {
+void Light::SetPosition() {
 	return;
 }
-void Light::setDirection() {
+void Light::SetDirection() {
 	return;
 }

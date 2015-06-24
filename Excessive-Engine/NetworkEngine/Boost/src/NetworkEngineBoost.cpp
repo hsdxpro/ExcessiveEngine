@@ -23,10 +23,10 @@ NetworkEngineBoost::~NetworkEngineBoost() {
 }
 
 
-void NetworkEngineBoost::release() {
+void NetworkEngineBoost::Release() {
 	delete this;
 }
 
-void NetworkEngineBoost::update(float deltaTime) {
+void NetworkEngineBoost::Update(float deltaTime) {
 	
 }

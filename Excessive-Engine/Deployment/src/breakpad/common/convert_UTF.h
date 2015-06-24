@@ -43,7 +43,7 @@
 
 Conversions between UTF32, UTF-16, and UTF-8.  Header file.
 
-Several funtions are included here, forming a complete set of
+Several funtions are included here, forming a complete Set of
 conversions between the three formats.  UTF-7 is not included
 here, but is handled in a separate source file.
 
@@ -72,8 +72,8 @@ sourceEnd, targetEnd - respectively pointers to the ends of the
 two buffers, for overflow checking only.
 
 These conversion functions take a ConversionFlags argument. When this
-flag is set to strict, both irregular sequences and isolated surrogates
-will cause an error.  When the flag is set to lenient, both irregular
+flag is Set to strict, both irregular sequences and isolated surrogates
+will cause an error.  When the flag is Set to lenient, both irregular
 sequences and isolated surrogates are converted.
 
 Whether the flag is strict or lenient, all illegal sequences will cause
@@ -81,8 +81,8 @@ an error return. This includes sequences such as: <F4 90 80 80>, <C0 80>,
 or <A0> in UTF-8, and values above 0x10FFFF in UTF-32. Conformant code
 must check for illegal sequences.
 
-When the flag is set to lenient, characters over 0x10FFFF are converted
-to the replacement character; otherwise (when the flag is set to strict)
+When the flag is Set to lenient, characters over 0x10FFFF are converted
+to the replacement character; otherwise (when the flag is Set to strict)
 they constitute an error.
 
 Output parameters:
@@ -93,8 +93,8 @@ in UTF-8 when a sequence is malformed, it points to the start of the
 malformed sequence.
 
 Author: Mark E. Davis, 1994.
-Rev History: Rick McGowan, fixes & updates May 2001.
-Fixes & updates, Sept 2001.
+Rev History: Rick McGowan, fixes & Updates May 2001.
+Fixes & Updates, Sept 2001.
 
 ------------------------------------------------------------------------ */
 

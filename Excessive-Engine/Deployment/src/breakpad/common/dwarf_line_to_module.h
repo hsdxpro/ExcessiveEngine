@@ -32,7 +32,7 @@
 // Original author: Jim Blandy <jimb@mozilla.com> <jimb@red-bean.com>
 
 // The DwarfLineToModule class accepts line number information from a
-// DWARF parser and adds it to a google_breakpad::Module. The Module
+// DWARF parser and Adds it to a google_breakpad::Module. The Module
 // can write that data out as a Breakpad symbol file.
 
 #ifndef COMMON_LINUX_DWARF_LINE_TO_MODULE_H
@@ -53,7 +53,7 @@ namespace google_breakpad {
 // dwarf2reader::LineInfo DWARF line number information parser. The
 // handler accepts source location information from the parser and
 // uses it to produce a vector of google_breakpad::Module::Line
-// objects, referring to google_breakpad::Module::File objects added
+// objects, referring to google_breakpad::Module::File objects Added
 // to a particular google_breakpad::Module.
 //
 // GNU toolchain omitted sections support:
@@ -61,15 +61,15 @@ namespace google_breakpad {
 //
 // Given the right options, the GNU toolchain will omit unreferenced
 // functions from the final executable. Unfortunately, when it does so, it
-// does not remove the associated portions of the DWARF line number
+// does not Remove the associated portions of the DWARF line number
 // program; instead, it gives the DW_LNE_set_address instructions referring
-// to the now-deleted code addresses of zero. Given this input, the DWARF
-// line parser will call AddLine with a series of lines starting at address
+// to the now-deleted code Addresses of zero. Given this input, the DWARF
+// line parser will call AddLine with a series of lines starting at Address
 // zero. For example, here is the output from 'readelf -wl' for a program
 // with four functions, the first three of which have been omitted:
 //
 //   Line Number Statements:
-//    Extended opcode 2: set Address to 0x0
+//    Extended opcode 2: Set Address to 0x0
 //    Advance Line by 14 to 15
 //    Copy
 //    Special opcode 48: advance Address by 3 to 0x3 and Line by 1 to 16
@@ -77,7 +77,7 @@ namespace google_breakpad {
 //    Advance PC by 2 to 0xd
 //    Extended opcode 1: End of Sequence
 // 
-//    Extended opcode 2: set Address to 0x0
+//    Extended opcode 2: Set Address to 0x0
 //    Advance Line by 14 to 15
 //    Copy
 //    Special opcode 48: advance Address by 3 to 0x3 and Line by 1 to 16
@@ -85,7 +85,7 @@ namespace google_breakpad {
 //    Advance PC by 2 to 0xd
 //    Extended opcode 1: End of Sequence
 // 
-//    Extended opcode 2: set Address to 0x0
+//    Extended opcode 2: Set Address to 0x0
 //    Advance Line by 19 to 20
 //    Copy
 //    Special opcode 48: advance Address by 3 to 0x3 and Line by 1 to 21
@@ -93,7 +93,7 @@ namespace google_breakpad {
 //    Advance PC by 2 to 0xa
 //    Extended opcode 1: End of Sequence
 // 
-//    Extended opcode 2: set Address to 0x80483a4
+//    Extended opcode 2: Set Address to 0x80483a4
 //    Advance Line by 23 to 24
 //    Copy
 //    Special opcode 202: advance Address by 14 to 0x80483b2 and Line by 1 to 25
@@ -104,21 +104,21 @@ namespace google_breakpad {
 // Instead of collecting runs of lines describing code that is not there,
 // we try to recognize and drop them. Since the linker doesn't explicitly
 // distinguish references to dropped sections from genuine references to
-// code at address zero, we must use a heuristic. We have chosen:
+// code at Address zero, we must use a heuristic. We have chosen:
 //
-// - If a line starts at address zero, omit it. (On the platforms
+// - If a line starts at Address zero, omit it. (On the platforms
 //   breakpad targets, it is extremely unlikely that there will be code
-//   at address zero.)
+//   at Address zero.)
 //
 // - If a line starts immediately after an omitted line, omit it too.
 class DwarfLineToModule: public dwarf2reader::LineInfoHandler {
  public:
-  // As the DWARF line info parser passes us line records, add source
-  // files to MODULE, and add all lines to the end of LINES. LINES
+  // As the DWARF line info parser passes us line records, Add source
+  // files to MODULE, and Add all lines to the end of LINES. LINES
   // need not be empty. If the parser hands us a zero-length line, we
   // omit it. If the parser hands us a line that extends beyond the
-  // end of the address space, we clip it. It's up to our client to
-  // sort out which lines belong to which functions; we don't add them
+  // end of the Address space, we clip it. It's up to our client to
+  // sort out which lines belong to which functions; we don't Add them
   // to any particular function in MODULE ourselves.
   DwarfLineToModule(Module *module, const string& compilation_dir,
                     vector<Module::Line> *lines)
@@ -136,7 +136,7 @@ class DwarfLineToModule: public dwarf2reader::LineInfoHandler {
   void DefineFile(const string &name, int32 file_num,
                   uint32 dir_num, uint64 mod_time,
                   uint64 length);
-  void AddLine(uint64 address, uint64 length,
+  void AddLine(uint64 Address, uint64 length,
                uint32 file_num, uint32 line_num, uint32 column_num);
 
  private:
@@ -155,9 +155,9 @@ class DwarfLineToModule: public dwarf2reader::LineInfoHandler {
   // The vector of lines we're accumulating. Owned by our client.
   //
   // In a Module, as in a breakpad symbol file, lines belong to
-  // specific functions, but DWARF simply assigns lines to addresses;
+  // specific functions, but DWARF simply assigns lines to Addresses;
   // one must infer the line/function relationship using the
-  // functions' beginning and ending addresses. So we can't add these
+  // functions' beginning and ending Addresses. So we can't Add these
   // to the appropriate function from module_ until we've read the
   // function info as well. Instead, we accumulate lines here, and let
   // whoever constructed this sort it all out.
@@ -173,7 +173,7 @@ class DwarfLineToModule: public dwarf2reader::LineInfoHandler {
   // none.  Used for dynamically defined file numbers.
   int32 highest_file_number_;
   
-  // This is the ending address of the last line we omitted, or zero if we
+  // This is the ending Address of the last line we omitted, or zero if we
   // didn't omit the previous line. It is zero before we have received any
   // AddLine calls.
   uint64 omitted_line_end_;

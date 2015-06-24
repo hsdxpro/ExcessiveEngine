@@ -8,14 +8,14 @@ typedef u32 marker;
 template< u32 alignment >
 class DoubleEndedStackAllocator
 {
-    char* stack; //we assume this address is aligned
+    char* stack; //we assume this Address is aligned
     u32 size;
     u32 bottom;
     u32 top;
     
     static_assert( alignment > 1, "Alignment must be >1" );
 
-    u32 getAligned( u32 s )
+    u32 GetAligned( u32 s )
     {
 		  return s + (alignment - s % alignment);
     }
@@ -28,7 +28,7 @@ class DoubleEndedStackAllocator
     {
       ASSERT( stack && size > 0 );
       ASSERT( bottom + s < size && bottom + s < top );
-      u32 aligned_size = getAligned( s );
+      u32 aligned_size = GetAligned( s );
       char* mem = stack + bottom;
       bottom += aligned_size;
       return mem;
@@ -38,18 +38,18 @@ class DoubleEndedStackAllocator
     {
       ASSERT( stack && size > 0 );
       ASSERT( top - s > 0 && top - s > bottom );
-      u32 aligned_size = getAligned( s );
+      u32 aligned_size = GetAligned( s );
       char* mem = stack + top;
       top -= aligned_size;
       return mem;
     }
 
-    marker getMarkerBottom()
+    marker GetMarkerBottom()
     {
       return bottom;
     }
 
-    marker getMarkerTop()
+    marker GetMarkerTop()
     {
       return top;
     }
