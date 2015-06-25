@@ -1,5 +1,11 @@
 #include "ComponentRigidBody.h"
 #include "..\PhysicsEngine\Interfaces\IEntityRigid.h"
+#include "..\GraphicsEngine\Interfaces\IEntity.h"
+
+ComponentRigidBody::ComponentRigidBody(physics::IEntityRigid* a)
+:entityRigid(a)
+{
+}
 
 void ComponentRigidBody::UpdateAfterPhysicsSimulate()
 {
@@ -7,52 +13,27 @@ void ComponentRigidBody::UpdateAfterPhysicsSimulate()
 	WorldComponent::SetRot(entityRigid->GetRot());
 }
 
-void ComponentRigidBody::SetPos(const mm::vec3& v)
+void ComponentRigidBody::SetAngularFactor(float factor)
 {
-	entityRigid->SetPos(v);
-	WorldComponent::SetPos(v);
+	entityRigid->SetAngularFactor(factor);
 }
 
-void ComponentRigidBody::SetRot(const mm::quat& q)
+void ComponentRigidBody::SetKinematic()
 {
-	entityRigid->SetRot(q);
-	WorldComponent::SetRot(q);
-}
-
-void ComponentRigidBody::SetScaleLocal(const mm::vec3& v)
-{
-	entityRigid->SetScaleLocal(v);
-	WorldComponent::SetScaleLocal(v);
-}
-
-const mm::vec3& ComponentRigidBody::GetPos()
-{
-	return entityRigid->GetPos();
-}
-
-const mm::quat& ComponentRigidBody::GetRot()
-{
-	return entityRigid->GetRot();
-}
-
-const mm::vec3& ComponentRigidBody::GetScaleLocal()
-{
-	return entityRigid->GetScaleLocal();
+	entityRigid->SetKinematic();
 }
 
 void ComponentRigidBody::_InnerReflectPos()
 {
-	// If mass = 0 maybe
-	//entityRigid->SetPos(worldTransform.GetPos());
+	entityRigid->SetPos(transform.GetPos());
 }
 
 void ComponentRigidBody::_InnerReflectRot()
 {
-	// If mass = 0 maybe
-	//entityRigid->SetRot(worldTransform.GetRot());
+	entityRigid->SetRot(transform.GetRot());
 }
 
 void ComponentRigidBody::_InnerReflectSkew()
 {
-
+	assert(0);
 }

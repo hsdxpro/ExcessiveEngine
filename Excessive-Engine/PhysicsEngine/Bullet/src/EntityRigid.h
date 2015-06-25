@@ -9,13 +9,16 @@ class EntityRigid : public physics::IEntityRigid
 public:
 	EntityRigid(btRigidBody* body);
 
+	void SetAngularFactor(float factor) override;
+	void SetKinematic() override;
+
 	void SetPos(const mm::vec3& v) override;
 	void SetRot(const mm::quat& q) override;
 	void SetScaleLocal(const mm::vec3& v) override;
 
-	mm::vec3 GetPos() override;
-	mm::quat GetRot() override;
-	mm::vec3 GetScaleLocal() override;
+	const mm::vec3 GetPos() const override;
+	const mm::quat GetRot() const override;
+	const mm::vec3 GetScaleLocal() const override;
 
 	btRigidBody* GetBody();
 

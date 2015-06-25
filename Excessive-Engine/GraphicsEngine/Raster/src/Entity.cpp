@@ -7,7 +7,6 @@ using namespace graphics;
 // Ctor & Dtor + Misc
 
 Entity::Entity()
-:scale(1,1,1)
 {
 }
 
@@ -17,41 +16,41 @@ Entity::~Entity() {
 
 void Entity::SetPos(const mm::vec3& v)
 {
-	pos = v;
+	transform.SetPos(v);
 }
 
 void Entity::SetRot(const mm::quat& q)
 {
-	rot = q;
+	transform.SetRot(q);
 }
 
 void Entity::SetScaleLocal(const mm::vec3& v)
 {
-	scale = v;
+	transform.SetScaleLocal(v);
 }
 
 void Entity::SetSkew(const mm::mat3& m)
 {
-	skew = m;
+	transform.SetSkew(m);
 }
 
 const mm::vec3& Entity::GetPos()
 {
-	return pos;
+	return transform.GetPos();
 }
 const mm::quat& Entity::GetRot()
 {
-	return rot;
+	return transform.GetRot();
 }
 
 const mm::vec3& Entity::GetScaleLocal()
 {
-	return scale;
+	return transform.GetScaleLocal();
 }
 
 const mm::mat3& Entity::GetSkew()
 {
-	return skew;
+	return transform.GetSkew();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

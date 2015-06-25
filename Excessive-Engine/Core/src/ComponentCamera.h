@@ -10,12 +10,6 @@ public:
 
 	void SetDirNormed(const mm::vec3& dir);
 
-	void SetPos(const mm::vec3& v);
-	void SetRot(const mm::quat& q);
-
-	const mm::vec3 GetPos() const;
-	const mm::quat GetRot() const;
-
 	graphics::ICamera* GetCam();
 
 protected:

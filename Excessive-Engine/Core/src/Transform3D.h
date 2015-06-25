@@ -23,7 +23,7 @@ public:
 	__inline const mm::quat& GetRot() const { return rot; }
 	//__inline const mm::vec3& GetScale() const { return scale; }
 	__inline const mm::mat3& GetSkew() const { return skew; }
-	__inline const mm::vec3 GetScaleLocal() const { return skew * mm::vec3(1,1,1);}
+	__inline const mm::vec3& GetScaleLocal() const { return skew * mm::vec3(1,1,1);}
 	//const Transform3D operator * (const Transform3D& other) const;
 
 protected:

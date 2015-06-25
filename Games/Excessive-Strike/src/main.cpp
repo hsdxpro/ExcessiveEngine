@@ -50,12 +50,17 @@ int main()
 	gEngineCore.AddCompRigidBodyFromFile(groundModelPath, 0)->Attach(gEngineCore.AddCompGraphicsFromFile(groundModelPath));
 	gEngineCore.AddCompGraphicsFromFile(skyModelPath)->SetScaleLocal({ 1000, 1000, 1000 });
 
+	// Camera
+	
 
 	// Player components
 	auto compPhysics = gEngineCore.AddCompRigidBodyCapsule(2, 0.2, 20);
+		compPhysics->SetAngularFactor(0);
+		compPhysics->SetKinematic();
+
 	gMainCam = gEngineCore.AddCompCamera();
-	compPhysics->Attach(gMainCam);
-	compPhysics->SetPos({0, 0, 10});
+		compPhysics->Attach(gMainCam);
+		compPhysics->SetPos({0, 0, 10});
 
 	//auto compGraphics	= gEngineCore.AddCompGraphicsFromFile(ak47ModelPath);
 	//	compGraphics->SetScale({ 1.f / 500, 1.f / 500, 1.f / 500 });
@@ -91,7 +96,6 @@ int main()
 			if (evt.msg == eWindowMsg::MOUSE_RELEASE && evt.mouseBtn == eMouseBtn::LEFT)
 			{
 				// Transform hierarchy UNIT TEST
-
 				//auto c0 = gEngineCore.AddCompGraphicsFromFile(boxModelPath);
 				//auto c1 = gEngineCore.AddCompGraphicsFromFile(boxModelPath);
 				//auto c2 = gEngineCore.AddCompGraphicsFromFile(boxModelPath);

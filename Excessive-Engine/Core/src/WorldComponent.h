@@ -37,10 +37,10 @@ public:
 
 	__inline WorldComponent* GetParent() const { return parent; }
 
-	__inline virtual const mm::vec3 GetPos() const { return worldTransform.GetPos(); }
-	__inline virtual const mm::quat GetRot() const { return worldTransform.GetRot(); }
-	__inline virtual const mm::vec3 GetScaleLocal() const { return worldTransform.GetScaleLocal(); }
-	__inline virtual const mm::mat3 GetSkew() const { return worldTransform.GetSkew(); }
+	__inline virtual const mm::vec3& GetPos() const { return transform.GetPos(); }
+	__inline virtual const mm::quat& GetRot() const { return transform.GetRot(); }
+	__inline virtual const mm::vec3& GetScaleLocal() const { return transform.GetScaleLocal(); }
+	__inline virtual const mm::mat3& GetSkew() const { return transform.GetSkew(); }
 
 	__inline const mm::vec3& GetRelPos() const { return relTransform.GetPos(); }
 	__inline const mm::quat& GetRelRot() const { return relTransform.GetRot(); }
@@ -66,6 +66,6 @@ protected:
 	WorldComponent* parent;
 
 	// World and Relative transformation
-	Transform3D worldTransform;
+	Transform3D transform;
 	Transform3D relTransform;
 };
