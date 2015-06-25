@@ -223,6 +223,14 @@ namespace mymath
         vec2i( const vec2i<int>& v );
         vec2i( const vec2i<unsigned>& v );
 
+        vec2i( std::initializer_list<float> list )
+        {
+          assert( list.size() == 2 );
+
+          x = *( list.begin() + 0 );
+          y = *( list.begin() + 1 );
+        }
+
         float& operator[]( const unsigned int& num ) //read-write
         {
           assert( num < 2 && this );

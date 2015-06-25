@@ -78,6 +78,15 @@ namespace mymath
         mat3i()
         {}
 
+        mat3i( std::initializer_list<t> list )
+        {
+          assert( list.size() == 9 );
+
+          m[0] = vec3i<t>( *( list.begin() + 0 ), *( list.begin() + 1 ), *( list.begin() + 2 ) );
+          m[1] = vec3i<t>( *( list.begin() + 3 ), *( list.begin() + 4 ), *( list.begin() + 5 ) );
+          m[2] = vec3i<t>( *( list.begin() + 6 ), *( list.begin() + 7 ), *( list.begin() + 8 ) );
+        }
+
         vec3i<t>& operator[]( const unsigned int& num )
         {
           assert( num < 3 );

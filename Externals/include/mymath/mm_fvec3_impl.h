@@ -332,6 +332,15 @@ namespace mymath
         vec3i( const vec3i<int>& v );
         vec3i( const vec3i<unsigned>& v );
 
+        vec3i( std::initializer_list<float> list )
+        {
+          assert( list.size() == 3 );
+
+          x = *( list.begin() + 0 );
+          y = *( list.begin() + 1 );
+          z = *( list.begin() + 2 );
+        }
+
         float& operator[]( const unsigned int& num )
         {
           assert( num < 3 && this );

@@ -387,6 +387,16 @@ namespace mymath
         vec4i( const vec4i<int>& v );
         vec4i( const vec4i<unsigned>& v );
 
+        vec4i( std::initializer_list<float> list )
+        {
+          assert( list.size() == 4 );
+
+          x = *( list.begin() + 0 );
+          y = *( list.begin() + 1 );
+          z = *( list.begin() + 2 );
+          w = *( list.begin() + 3 );
+        }
+
         float& operator[]( const unsigned int& num )
         {
           assert( num < 4 && this );

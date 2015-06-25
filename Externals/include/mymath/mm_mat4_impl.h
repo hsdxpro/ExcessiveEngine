@@ -113,6 +113,16 @@ namespace mymath
         mat4i()
         {}
 
+        mat4i( std::initializer_list<t> list )
+        {
+          assert( list.size() == 16 );
+
+          m[0] = vec4i<t>( *( list.begin() + 0 ), *( list.begin() + 1 ), *( list.begin() + 2 ), *( list.begin() + 3 ) );
+          m[1] = vec4i<t>( *( list.begin() + 4 ), *( list.begin() + 5 ), *( list.begin() + 6 ), *( list.begin() + 7 ) );
+          m[2] = vec4i<t>( *( list.begin() + 8 ), *( list.begin() + 9 ), *( list.begin() + 10 ), *( list.begin() + 11 ) );
+          m[3] = vec4i<t>( *( list.begin() + 12 ), *( list.begin() + 13 ), *( list.begin() + 14 ), *( list.begin() + 15 ) );
+        }
+
         vec4i<t>& operator[]( const unsigned int& num )
         {
           assert( num < 4 );
