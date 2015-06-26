@@ -211,29 +211,19 @@ void WorldComponent::ScaleRel(const mm::vec3& v)
 	assert(0);
 }
 
-const Transform3D WorldComponent::GetTransform() const
-{
-	Transform3D transform;
-		transform.SetPos(GetPos());
-		transform.SetRot(GetRot());
-		//transform.SetScaleLocal(GetScaleLocal());
-		transform.SetSkew(GetSkew());
-	return transform;
-}
-
 void WorldComponent::_InnerMoveChildRecursively(WorldComponent* child, const mm::vec3& dMove)
 {
 	child->transform.Move(dMove);
 	child->_InnerReflectPos();
 
 	for(auto& c : child->childs)
-		_InnerMoveChildRecursively(c, dMove);
+		child->_InnerMoveChildRecursively(c, dMove);
 }
 
 void WorldComponent::_InnerRotChildRecursively(WorldComponent* child, const mm::quat& dRot, const mm::vec3& transformRootPos)
 {
 	// Rotate child, reflect it to component
-	child->transform.Rot(dRot);
+	child->transform.SetRot(transform.GetRot() * child->GetRelRot());
 	child->_InnerReflectRot();
 
 	// Child rotations causes position change...
@@ -242,7 +232,7 @@ void WorldComponent::_InnerRotChildRecursively(WorldComponent* child, const mm::
 
 	// Rot childs
 	for (auto& c : child->childs)
-		_InnerRotChildRecursively(c, dRot, transformRootPos);
+		child->_InnerRotChildRecursively(c, dRot, transformRootPos);
 }
 
 void WorldComponent::_InnerScaleChildRecursively(WorldComponent* child, const mm::vec3& parentPos, const mm::quat& parentRot, const mm::vec3& parentLocalScale,  const mm::mat3& parentSkew, const mm::vec3& dScale, const mm::quat& rootRotInverse)
@@ -260,5 +250,5 @@ void WorldComponent::_InnerScaleChildRecursively(WorldComponent* child, const mm
 
 	// Skew childs
 	for (auto& c : child->childs)
-		_InnerScaleChildRecursively(c, child->transform.GetPos(), child->transform.GetRot(), child->transform.GetScaleLocal(), child->transform.GetSkew(), dScale, rootRotInverse);
+		child->_InnerScaleChildRecursively(c, child->transform.GetPos(), child->transform.GetRot(), child->transform.GetScaleLocal(), child->transform.GetSkew(), dScale, rootRotInverse);
 }

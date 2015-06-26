@@ -13,16 +13,6 @@ void ComponentRigidBody::UpdateAfterPhysicsSimulate()
 	WorldComponent::SetRot(entityRigid->GetRot());
 }
 
-void ComponentRigidBody::SetAngularFactor(float factor)
-{
-	entityRigid->SetAngularFactor(factor);
-}
-
-void ComponentRigidBody::SetKinematic()
-{
-	entityRigid->SetKinematic();
-}
-
 void ComponentRigidBody::_InnerReflectPos()
 {
 	entityRigid->SetPos(transform.GetPos());

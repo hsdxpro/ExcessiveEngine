@@ -51,12 +51,12 @@ public:
 	virtual mm::mat4 GetViewMatrix() const = 0;
 	virtual mm::mat4 GetProjMatrix(float aspectRatio) const = 0;
 	
-	virtual mm::vec3 GetDirNormedFront() const = 0;
-	virtual mm::vec3 GetDirNormedBack() const = 0;
-	virtual mm::vec3 GetDirNormedUp() const = 0;
-	virtual mm::vec3 GetDirNormedDown() const = 0;
-	virtual mm::vec3 GetDirNormedRight() const = 0;
-	virtual mm::vec3 GetDirNormedLeft() const = 0;
+	virtual mm::vec3 GetDirFrontNormed() const = 0;
+	virtual mm::vec3 GetDirBackNormed() const = 0;
+	virtual mm::vec3 GetDirUpNormed() const = 0;
+	virtual mm::vec3 GetDirDownNormed() const = 0;
+	virtual mm::vec3 GetDirRightNormed() const = 0;
+	virtual mm::vec3 GetDirLeftNormed() const = 0;
 	
 	virtual const mm::vec3& GetPos() const = 0;
 	virtual const mm::quat& GetRot() const = 0;

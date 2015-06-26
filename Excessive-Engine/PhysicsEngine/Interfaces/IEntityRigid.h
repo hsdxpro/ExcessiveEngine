@@ -7,6 +7,8 @@ namespace physics {
 class IEntityRigid
 {
 public:
+	virtual void AddForce(const mm::vec3& force, const mm::vec3& relPos = {0,0,0}) = 0;
+
 	virtual void SetAngularFactor(float factor) = 0;
 	virtual void SetKinematic() = 0;
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "WorldComponent.h"
+#include "..\PhysicsEngine\Interfaces\IEntityRigid.h"
 
-namespace physics { class IEntityRigid;  }
 
 class ComponentRigidBody : public WorldComponent
 {
@@ -10,8 +10,10 @@ public:
 
 	void UpdateAfterPhysicsSimulate(); // After physics simulation done, we transforms all WorldComponent child also
 
-	void SetAngularFactor(float factor);
-	void SetKinematic();
+	__inline void AddForce(const mm::vec3& force, const mm::vec3& relPos = {0,0,0}) {entityRigid->AddForce(force, relPos);}
+
+	__inline void SetAngularFactor(float factor)	{entityRigid->SetAngularFactor(factor);}
+	__inline void SetKinematic()					{entityRigid->SetKinematic();}
 
 public:
 	void _InnerReflectPos() override;

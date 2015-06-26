@@ -32,11 +32,12 @@ EXPORT physics::IEngine* CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d
 PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d) 
 {
 	world = new btDiscreteDynamicsWorld(new	btCollisionDispatcher(new btDefaultCollisionConfiguration),
-										new btDbvtBroadphase,
-										//new btAxisSweep3({ -1000, -1000, -1000 }, { 1000, 1000, 1000 }),
+										//new btDbvtBroadphase,
+										new btAxisSweep3({ -1000, -1000, -1000 }, { 1000, 1000, 1000 }),
 										new btSequentialImpulseConstraintSolver,
 										new btDefaultCollisionConfiguration);
 
+	//world->setGravity(btVector3(0, 0, -9.81));
 	world->setGravity(btVector3(0, 0, -9.81));
 }
 
@@ -51,7 +52,7 @@ void PhysicsEngineBullet::Release()
 
 void PhysicsEngineBullet::Update(float deltaTime)
 {
-	world->stepSimulation(deltaTime);
+	world->stepSimulation(1.f / 30, 5);
 
 	// Contact mainfolds for debugging
 	//auto overlappingPairCache = world->GetBroadphase()->GetOverlappingPairCache();
@@ -136,9 +137,6 @@ physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidCapsule(float height, 
 	// Create rigid body
 	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), capsuleShape, localInertia);
 	world->addRigidBody(body);
-	
-	body->setFlags(btRigidBody::CF_KINEMATIC_OBJECT);
-	body->setAngularFactor(0);
 
 	EntityRigid* e = new EntityRigid(body);
 		entities.push_back(e);

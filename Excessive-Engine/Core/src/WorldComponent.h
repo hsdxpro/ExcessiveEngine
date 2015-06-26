@@ -4,6 +4,7 @@
 #include "..\..\Common\src\BasicTypes.h"
 #include "mymath\mymath.h"
 #include "Transform3D.h"
+#include "mymath\mm_quat_func.h"
 
 class WorldComponent
 {
@@ -35,19 +36,27 @@ public:
 	void RotRel(const mm::quat& q);
 	void ScaleRel(const mm::vec3& v);
 
-	__inline WorldComponent* GetParent() const { return parent; }
+	__inline WorldComponent* GetParent() const {return parent;}
 
-	__inline virtual const mm::vec3& GetPos() const { return transform.GetPos(); }
-	__inline virtual const mm::quat& GetRot() const { return transform.GetRot(); }
-	__inline virtual const mm::vec3& GetScaleLocal() const { return transform.GetScaleLocal(); }
-	__inline virtual const mm::mat3& GetSkew() const { return transform.GetSkew(); }
+	__inline const mm::vec3& GetScaleLocal() const		{return transform.GetScaleLocal();}
+	__inline const mm::mat3& GetSkew()		 const		{return transform.GetSkew();}
+	__inline const mm::vec3& GetPos()		 const		{return transform.GetPos();}
+	__inline const mm::quat& GetRot()		 const		{return transform.GetRot();}
 
-	__inline const mm::vec3& GetRelPos() const { return relTransform.GetPos(); }
-	__inline const mm::quat& GetRelRot() const { return relTransform.GetRot(); }
-	__inline const mm::vec3& GetRelScaleLocal() const { return relTransform.GetScaleLocal(); }
+	__inline const mm::vec3& GetRelScaleLocal() const	{return relTransform.GetScaleLocal();}
+	__inline const mm::vec3& GetRelPos()		const	{return relTransform.GetPos();}
+	__inline const mm::quat& GetRelRot()		const	{return relTransform.GetRot();}
+	
 
-	__inline const Transform3D& GetRelTransform() const { return relTransform; }
-	const Transform3D GetTransform() const;
+	__inline const Transform3D& GetRelTransform()	const {return relTransform;}
+	__inline const Transform3D& GetTransform()		const {return transform;}
+
+	__inline mm::vec3 GetDirFrontNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3( 0,  1,  0));}
+	__inline mm::vec3 GetDirBackNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3( 0, -1,  0));}
+	__inline mm::vec3 GetDirUpNormed()		const {return mm::rotate_vector(GetRot(), mm::vec3( 0,  0,  1));}
+	__inline mm::vec3 GetDirDownNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3( 0,  0, -1));}
+	__inline mm::vec3 GetDirRightNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3( 1,  0,  0));}
+	__inline mm::vec3 GetDirLeftNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3(-1,  0,  0));}
 
 protected:
 	virtual void _InnerReflectPos() = 0;

@@ -47,91 +47,106 @@ int main()
 	auto& boxModelPath = Sys::GetWorkDir() + L"../Assets/box.dae";
 
 	// Terrain & Sky
-	gEngineCore.AddCompRigidBodyFromFile(groundModelPath, 0)->Attach(gEngineCore.AddCompGraphicsFromFile(groundModelPath));
+	gEngineCore.AddCompRigidBodyFromFile(groundModelPath, 0);
+	gEngineCore.AddCompGraphicsFromFile(groundModelPath);
 	gEngineCore.AddCompGraphicsFromFile(skyModelPath)->SetScaleLocal({ 1000, 1000, 1000 });
 
 	// Camera
-	
-
-	// Player components
-	auto compPhysics = gEngineCore.AddCompRigidBodyCapsule(2, 0.2, 20);
-		compPhysics->SetAngularFactor(0);
-		compPhysics->SetKinematic();
-
 	gMainCam = gEngineCore.AddCompCamera();
-		compPhysics->Attach(gMainCam);
-		compPhysics->SetPos({0, 0, 10});
-
-	//auto compGraphics	= gEngineCore.AddCompGraphicsFromFile(ak47ModelPath);
-	//	compGraphics->SetScale({ 1.f / 500, 1.f / 500, 1.f / 500 });
-	//	//compGraphics->SetRot(mm::quat(-0.05, {1,0,0}) * mm::quat(3.1415 - 0.08, { 0, 0, 1 }) * mm::quat(3.1415 / 2, { 1, 0, 0 })); // Need quaternion rework, multiply swapped, mm::quat(angle) rots with -angle, why?
-	////
-	////// Build Player component tree
-	//	gCamComp->SetPos({ 0.f, 0.f, 1.8f });
-	//	//compGraphics->SetPos(gCamComp->GetPos() + mm::vec3(1.4, 2, -2.8));
-	//
-	////compPhysics->AddChild(compCamera);
-	//gCamComp->SetPos({ 0, -8, 4 });
-	//
-	//compPhysics->attach(compGraphics);
-	//compPhysics->attach(gCamComp);
-	//
-	//
-	//compPhysics->SetPos({ 0.f, 0.f, 10.f });
-	//
 	gEngineCore.SetCam(gMainCam);
 
-	//auto mat = gEngineCore.CreateGraphicsMaterial();
-	//graphics::IMaterial::SubMaterial s;
-	//	s.t_diffuse = gEngineCore.CreateGraphicsTexture();
-	//	s.t_diffuse->load(Sys::GetWorkDir() + )
-	//mat->AddSubMaterial()
-	//comp->SetMaterial(mat);
+	//// Player components
+	auto playerCapsule = gEngineCore.AddCompRigidBodyCapsule(2, 0.2, 20);
+		playerCapsule->SetAngularFactor(0);
+		//playerCapsule->SetKinematic();
+	
+	// Attach camera to player physics
+	gMainCam->Move({0,0,1});
+	playerCapsule->Attach(gMainCam);
+	playerCapsule->SetPos({0, 0, 2});
+	
+	auto ak47Graphics = gEngineCore.AddCompGraphicsFromFile(ak47ModelPath);
+		ak47Graphics->SetScaleLocal({ 1.f / 1500, 1.f / 1500, 1.f / 1500 });
+		ak47Graphics->SetRot(mm::quat(-0.05, {1,0,0}) * mm::quat(3.1415 - 0.08, { 0, 0, 1 }) * mm::quat(3.1415 / 2, { 1, 0, 0 })); // Need quaternion rework, multiply swapped, mm::quat(angle) rots with -angle, why?
+		ak47Graphics->SetPos(gMainCam->GetPos() + mm::vec3(0.7, 1.05, -0.6));
+		ak47Graphics->Rot(mm::quat(7 / 180.f * 3.1415, {0,0,1}) * mm::quat(-3 / 180.f * 3.1415, {1,0,0}));
+	gMainCam->Attach(ak47Graphics); // Attach weapon to player physics
+
+
+	// Player moving
+	bool bMovingFront = false;
+	bool bMovingBack = false;
+	bool bMovingLeft = false;
+	bool bMovingRight = false;
+	const float playerMoveSpeed = 10;
 
 	while (gWindow->IsOpen())
 	{
+		float deltaSeconds = timer->GetSecondsPassed();
+		timer->Reset();
+
 		rWindowEvent evt;
 		while (gWindow->PopEvent(&evt))
 		{
-			if (evt.msg == eWindowMsg::MOUSE_RELEASE && evt.mouseBtn == eMouseBtn::LEFT)
+			// W,S,A,D and Jump
+			if(evt.msg == eWindowMsg::KEY_PRESS)
 			{
-				// Transform hierarchy UNIT TEST
-				//auto c0 = gEngineCore.AddCompGraphicsFromFile(boxModelPath);
-				//auto c1 = gEngineCore.AddCompGraphicsFromFile(boxModelPath);
-				//auto c2 = gEngineCore.AddCompGraphicsFromFile(boxModelPath);
-				//
-				//gMainCam->SetPos({0,-25, 5});
-				//
-				//c0->SetScaleLocal({ 1.f / 20, 1.f / 20, 1.f / 20 });
-				//c1->SetScaleLocal({ 1.f / 20, 1.f / 20, 1.f / 20 });
-				//c2->SetScaleLocal({ 1.f / 20, 1.f / 20, 1.f / 20 });
-				//
-				//c0->SetPos({ 2, -4, 6 });
-				//c1->SetPos({ -1, -4, 6 });
-				//c2->SetPos({ -1, -4, 3 });
-				//
-				//
-				//c0->SetRot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
-				//c2->SetRot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
-				//
-				//
-				//c0->Attach(c1);
-				//c1->Attach(c2);
-				//
-				//c1->Rot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
-				//
-				//c0->ScaleLocal({ 1, 1, 3 });
-				//
-				//c1->Rot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
-				//c1->Rot(mm::quat(3.14159265 / 4, { 0, 1, 0 }));
-				//
-				//// Ennek semmit se kéne csinálnia
-				//c0->ScaleLocal({ 2, 1, 1 });
+				if(evt.key == eKey::SPACE)
+					playerCapsule->AddForce({0,0,4000});
+				if(evt.key == eKey::W)
+					bMovingFront = true;
+				if(evt.key == eKey::S)
+					bMovingBack = true;
+				if(evt.key == eKey::A)
+					bMovingLeft = true;
+				if(evt.key == eKey::D)
+					bMovingRight = true;
+			}
+			else if(evt.msg == eWindowMsg::KEY_RELEASE)
+			{
+				if (evt.key == eKey::W)
+					bMovingFront = false;
+				if (evt.key == eKey::S)
+					bMovingBack = false;
+				if (evt.key == eKey::A)
+					bMovingLeft = false;
+				if (evt.key == eKey::D)
+					bMovingRight = false;
+			}
+			// Look around with camera
+			else if(evt.msg == eWindowMsg::MOUSE_MOVE)
+			{
+				const float pixelsToRot360 = 600;
+				static float angleZ = 0;
+				static float angleX = 0;
+
+				angleZ += -(float)evt.deltaX / pixelsToRot360 * 6.28;
+				angleX += -(float)evt.deltaY / pixelsToRot360 * 6.28;
+
+				// Clamp angleX
+				float angleSign = angleX >= 0 ? 1 : -1;
+				if(angleX * angleSign >= 3.14159265 / 2 * 0.95)
+					angleX = 3.14159265 / 2 * 0.95 * angleSign;
+
+				mm::quat rotAroundZ(angleZ, {0,0,1});
+				mm::quat rotAroundX(angleX, {1,0,0});
+
+				gMainCam->SetRot(rotAroundZ * rotAroundX);
 			}
 		}
 
-		float deltaSeconds = timer->GetSecondsPassed();
-		timer->Reset();
+		// Player capsule move logic interpret
+		mm::vec3 dMove(0,0,0);
+		if(bMovingFront)
+			dMove += gMainCam->GetDirFrontNormed() * deltaSeconds * playerMoveSpeed;
+		if(bMovingBack)
+			dMove += gMainCam->GetDirBackNormed() * deltaSeconds * playerMoveSpeed;
+		if(bMovingLeft)
+			dMove += gMainCam->GetDirLeftNormed() * deltaSeconds * playerMoveSpeed;
+		if(bMovingRight)
+			dMove += gMainCam->GetDirRightNormed() * deltaSeconds * playerMoveSpeed;
+		dMove.z = 0;
+		playerCapsule->Move(dMove);
 
 		gEngineCore.Update(deltaSeconds);
 		gWindow->Present();

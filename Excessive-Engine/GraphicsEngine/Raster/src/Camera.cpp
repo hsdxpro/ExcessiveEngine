@@ -105,8 +105,9 @@ void Camera::SetDirNormed(const mm::vec3& p)
 	// Important, roll is 0
 	const mm::vec3 up(0.0f, 0.0f, 1.0f);
 
+	auto mat = Matrix44ViewRH(pos, pos + p, up);
 	// TODO FIX THAT MATRIX -> QUAT NOT WORKING
-	rot = (mm::quat)Matrix44ViewRH(pos, pos + p, up);
+	rot = (mm::quat)mat;
 }
 
 void Camera::SetRot(const mm::quat& q)
@@ -163,32 +164,32 @@ mm::mat4 Camera::GetProjMatrix(float aspectRatio) const
 	}
 }
 
-mm::vec3 Camera::GetDirNormedFront() const
+mm::vec3 Camera::GetDirFrontNormed() const
 {
 	return mm::rotate_vector(rot, mm::vec3(0, 1, 0));
 }
 
-mm::vec3 Camera::GetDirNormedBack() const
+mm::vec3 Camera::GetDirBackNormed() const
 {
 	return mm::rotate_vector(rot, mm::vec3(0, -1, 0));
 }
 
-mm::vec3 Camera::GetDirNormedUp() const
+mm::vec3 Camera::GetDirUpNormed() const
 {
 	return mm::rotate_vector(rot, mm::vec3(0, 0, 1));
 }
 
-mm::vec3 Camera::GetDirNormedDown() const
+mm::vec3 Camera::GetDirDownNormed() const
 {
 	return mm::rotate_vector(rot, mm::vec3(0, 0, -1));
 }
 
-mm::vec3 Camera::GetDirNormedRight() const
+mm::vec3 Camera::GetDirRightNormed() const
 {
 	return mm::rotate_vector(rot, mm::vec3(1, 0, 0));
 }
 
-mm::vec3 Camera::GetDirNormedLeft() const
+mm::vec3 Camera::GetDirLeftNormed() const
 {
 	return mm::rotate_vector(rot, mm::vec3(-1, 0, 0));
 }

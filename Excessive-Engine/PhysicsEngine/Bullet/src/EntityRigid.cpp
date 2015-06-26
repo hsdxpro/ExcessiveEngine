@@ -6,9 +6,13 @@
 EntityRigid::EntityRigid(btRigidBody* body) 
 :body(body) 
 {
-
 }
 
+void EntityRigid::AddForce(const mm::vec3& force, const mm::vec3& relPos /*= {0,0,0}*/)
+{
+	body->applyForce({force.x, force.y, force.z}, {relPos.x, relPos.y, relPos.z});
+	body->activate();
+}
 
 void EntityRigid::SetAngularFactor(float factor)
 {
@@ -23,10 +27,11 @@ void EntityRigid::SetKinematic()
 void EntityRigid::SetPos(const mm::vec3& v)
 {
 	btTransform trans;
-	body->getMotionState()->getWorldTransform(trans);
-	trans.setOrigin(btVector3( v.x, v.y, v.z ));
+		body->getMotionState()->getWorldTransform(trans);
+		trans.setOrigin(btVector3( v.x, v.y, v.z ));
 	body->setWorldTransform(trans);
 	body->getMotionState()->setWorldTransform(trans);
+	body->activate();
 }
 
 void EntityRigid::SetRot(const mm::quat& q)
@@ -42,6 +47,7 @@ void EntityRigid::SetRot(const mm::quat& q)
 
 	body->setWorldTransform(trans);
 	body->getMotionState()->setWorldTransform(trans);
+	body->activate();
 }
 
 void EntityRigid::SetScaleLocal(const mm::vec3& v)
@@ -62,6 +68,7 @@ void EntityRigid::SetScaleLocal(const mm::vec3& v)
 			body->setMassProps(mass, localInertia);
 		}
 	}
+	body->activate();
 }
 
 const mm::vec3 EntityRigid::GetPos() const
@@ -89,7 +96,7 @@ const mm::quat EntityRigid::GetRot() const
 	btCollisionShape* shape = body->getCollisionShape();
 
 	if (shape)
-		return std::move(mm::vec3(shape->getLocalScaling().x(), shape->getLocalScaling().y(), shape->getLocalScaling().z()));
+		return mm::vec3(shape->getLocalScaling().x(), shape->getLocalScaling().y(), shape->getLocalScaling().z());
 
 	return mm::vec3(1,1,1);
 }

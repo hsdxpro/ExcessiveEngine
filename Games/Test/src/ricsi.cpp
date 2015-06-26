@@ -35,9 +35,8 @@ int Ricsi()
 		graphics::IEngine* gEngine = core.InitGraphicsEngineRaster(gDesc);
 
 	// Create camera
-	graphics::ICamera* cam = core.AddCompCamera()->GetCam();
+	ComponentCamera* cam = core.AddCompCamera();
 	cam->SetFOV(70 / 180.f*3.1415926f);
-	//cam->SetAspectRatio(window->GetClientAspectRatio());
 	cam->SetNearPlane(0.2f);
 	cam->SetFarPlane(2000);
 	cam->SetPos(mm::vec3(0, -3, 1));

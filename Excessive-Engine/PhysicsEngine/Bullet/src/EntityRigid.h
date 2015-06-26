@@ -9,6 +9,8 @@ class EntityRigid : public physics::IEntityRigid
 public:
 	EntityRigid(btRigidBody* body);
 
+	void AddForce(const mm::vec3& force, const mm::vec3& relPos = {0,0,0}) override;
+	
 	void SetAngularFactor(float factor) override;
 	void SetKinematic() override;
 
