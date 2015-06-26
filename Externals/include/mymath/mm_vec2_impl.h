@@ -108,6 +108,14 @@ namespace mymath
         vec2i( const vec2i<int>& v ){ x = v.x; y = v.y; }
         vec2i( const vec2i<unsigned>& v ){ x = v.x; y = v.y; }
 
+        vec2i( std::initializer_list<ty> list )
+        {
+          assert( list.size() == 2 );
+
+          x = *( list.begin() + 0 );
+          y = *( list.begin() + 1 );
+        }
+
         ty& operator[]( const unsigned int& num ) //read-write
         {
           assert( num < 2 && this );

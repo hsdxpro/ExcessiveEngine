@@ -48,6 +48,14 @@ namespace mymath
         mat2i()
         {}
 
+        mat2i( std::initializer_list<t> list )
+        {
+          assert( list.size() == 4 );
+
+          m[0] = vec2i<t>( *( list.begin() + 0 ), *( list.begin() + 1 ) );
+          m[1] = vec2i<t>( *( list.begin() + 2 ), *( list.begin() + 3 ) );
+        }
+
         vec2i<t>& operator[]( const unsigned int& num )
         {
           assert( num < 2 );

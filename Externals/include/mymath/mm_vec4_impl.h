@@ -377,6 +377,16 @@ namespace mymath
         vec4i( const vec4i<int>& v ){ x = v.x; y = v.y; z = v.z; w = v.w; }
         vec4i( const vec4i<unsigned>& v ){ x = v.x; y = v.y; z = v.z; w = v.w; }
 
+        vec4i( std::initializer_list<ty> list )
+        {
+          assert( list.size() == 4 );
+
+          x = *( list.begin() + 0 );
+          y = *( list.begin() + 1 );
+          z = *( list.begin() + 2 );
+          w = *( list.begin() + 3 );
+        }
+
         ty& operator[]( const unsigned int& num )
         {
           assert( num < 4 && this );
