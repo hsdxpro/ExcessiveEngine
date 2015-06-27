@@ -1,7 +1,7 @@
-#ifdef EXC_WINDOWS
+#ifdef EXCESSIVE_WINDOWS
 	#include "Windows/Window_win.h"
-#elif EXC_LINUX
+#elif EXCESSIVE_LINUX
 	#include "Linux/Window_linux.h"
-#elif ECX_OSX
+#elif EXCESSIVE_OSX
 	#include "Linux/Window_osx.h"
 #endif

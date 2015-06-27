@@ -1,7 +1,7 @@
-#ifdef EXC_WINDOWS
+#ifdef EXCESSIVE_WINDOWS
 #include "Windows/Timer_win.h"
-#elif EXC_LINUX
+#elif EXCESSIVE_LINUX
 #include "Linux/Timer_linux.h"
-#elif ECX_OSX
+#elif EXCESSIVE_OSX
 #include "Linux/Timer_osx.h"
 #endif
