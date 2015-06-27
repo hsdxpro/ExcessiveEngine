@@ -1,7 +1,7 @@
 // Windows implementation of high resolution timer
 #pragma once
-#include "..\Common\src\ITimer.h"
-#include "..\Common\src\BasicTypes.h"
+#include "..\ITimer.h"
+#include "..\..\SupportLibrary\BasicTypes.h"
 #include <chrono>
 
 class Timer : public ITimer
