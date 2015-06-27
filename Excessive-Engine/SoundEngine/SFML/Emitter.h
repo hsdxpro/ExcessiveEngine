@@ -1,13 +1,13 @@
 #pragma once
-
-#include "../../Interfaces/IEmitter.h"
+#include "../IEmitter.h"
 
 #include "SoundData.h"
 #include "SFMLCommonSoundEmitter.h"
 
 //TODO fix this ugly include
-#include "../../../GraphicsEngine/Raster/src/utility/ref_ptr.h"
 #include <mymath/mymath.h>
+#include "GraphicsEngine/Raster/utility/ref_ptr.h"
+
 
 class Scene;
 

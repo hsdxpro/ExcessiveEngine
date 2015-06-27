@@ -1,7 +1,7 @@
 #pragma once
 #include "WorldComponent.h"
-#include "..\PhysicsEngine\Interfaces\IEntityRigid.h"
 
+#include "..\PhysicsEngine\IEntityRigid.h"
 
 class ComponentRigidBody : public WorldComponent
 {

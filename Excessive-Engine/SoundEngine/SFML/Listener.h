@@ -1,6 +1,5 @@
 #pragma once
-
-#include "../../Interfaces/IListener.h"
+#include "..\IListener.h"
 
 class Listener : public sound::IListener {
 public:

@@ -1,5 +1,4 @@
 #pragma once
-
 #include "../ICamera.h"
 
 #include <mymath/mm_common.h>

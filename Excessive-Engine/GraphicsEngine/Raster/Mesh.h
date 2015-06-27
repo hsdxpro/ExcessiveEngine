@@ -1,9 +1,8 @@
 #pragma once
 
-#include "../../Interfaces/IMesh.h"
-
 #include <vector>
 #include <limits>
+#include "..\IMesh.h"
 
 
 class IVertexBuffer;

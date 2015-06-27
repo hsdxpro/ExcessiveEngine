@@ -2,21 +2,26 @@
 // The purpose of this class is to take the most minimal input from the user to (startup, use) engine
 
 // Modules
+#include "GraphicsEngine\IEngine.h"
+#include "PhysicsEngine\IEngine.h"
+#include "NetworkEngine\IEngine.h"
+#include "SoundEngine\IEngine.h"
+#include "GraphicsEngine\Raster\GraphicsEngineRaster.h"
+#include "GraphicsEngine\RT\GraphicsEngineRT.h"
+#include "PhysicsEngine\Bullet\PhysicsEngineBullet.h"
+#include "NetworkEngine\Boost\NetworkEngineBoost.h"
+#include "SoundEngine\SFML\SoundEngineSFML.h"
 
-//#include "Actor.h"
-#include "../GraphicsEngine/Raster/src/GraphicsEngineRaster.h"
-#include "../GraphicsEngine/RT/src/GraphicsEngineRT.h"
-#include "../PhysicsEngine/Bullet/src/PhysicsEngineBullet.h"
-#include "../NetworkEngine/Boost/src/NetworkEngineBoost.h"
-#include "../SoundEngine/SFML/src/SoundEngineSFML.h"
-#include <unordered_map>
-
-// These includes are for ComponentConstructor
-#include "../../Common/src/Importer3D.h"
 #include "Actor.h"
 #include "ComponentGraphics.h"
 #include "ComponentRigidBody.h"
 #include "ComponentCamera.h"
+#include "SupportLibrary\Importer3D.h"
+
+//#include "Actor.h"
+#include <unordered_map>
+
+
 
 class EngineCore
 {

@@ -1,6 +1,7 @@
 #pragma once
 #include "WorldComponent.h"
 
+
 namespace graphics { class IEntity; }
 
 class ComponentGraphics : public WorldComponent

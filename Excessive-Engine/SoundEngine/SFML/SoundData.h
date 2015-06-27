@@ -1,8 +1,8 @@
 #pragma once
-
-#include "../../Interfaces/ISoundData.h"
+#include "..\ISoundData.h"
 
 #include "SFMLCommonSoundData.h"
+
 
 class SoundData : public sound::ISoundData {
 public:

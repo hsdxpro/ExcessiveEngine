@@ -1,5 +1,5 @@
 #pragma once
-#include "../../Common/src/BasicTypes.h"
+#include "SupportLibrary\BasicTypes.h"
 
 // namespace
 namespace sound {

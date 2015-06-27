@@ -1,5 +1,4 @@
 #include "ComponentCamera.h"
-#include "..\GraphicsEngine\Interfaces\ICamera.h"
 
 ComponentCamera::ComponentCamera(graphics::ICamera* cam)
 :cam(cam)

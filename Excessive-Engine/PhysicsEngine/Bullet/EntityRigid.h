@@ -1,5 +1,5 @@
 #pragma once
-#include "../../Interfaces/IEntityRigid.h"
+#include "..\IEntityRigid.h"
 
 
 class btRigidBody;

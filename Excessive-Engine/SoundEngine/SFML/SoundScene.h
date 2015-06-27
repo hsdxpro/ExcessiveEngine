@@ -1,10 +1,11 @@
 #pragma once
+#include "..\IScene.h"
 
 #include "Emitter.h"
 #include "Listener.h"
-#include "../../Interfaces/IScene.h"
 
 #include <unordered_set>
+
 
 class SoundScene : public sound::IScene {
 public:

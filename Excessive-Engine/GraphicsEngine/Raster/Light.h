@@ -1,5 +1,5 @@
 #pragma once
-#include "../../Interfaces/ILight.h"
+#include "..\ILight.h"
 
 class Light : public graphics::ILight
 {

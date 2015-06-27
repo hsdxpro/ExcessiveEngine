@@ -1,6 +1,5 @@
 #pragma once
 #include "mymath/mymath.h"
-#include "../Core/src/WorldComponent.h"
 
 namespace physics {
 

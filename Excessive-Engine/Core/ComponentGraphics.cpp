@@ -1,5 +1,5 @@
 #include "ComponentGraphics.h"
-#include "..\GraphicsEngine\Interfaces\IEntity.h"
+#include "GraphicsEngine\IEntity.h"
 
 ComponentGraphics::ComponentGraphics(graphics::IEntity* e) 
 :entityGraphics(e)

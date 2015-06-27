@@ -3,6 +3,7 @@
 #include <codecvt>
 
 #include <GraphicsApi/OpenGL/GapiGL.h>
+#include "PlatformLibrary/Sys.h"
 
 
 graphics::IEngine* Factory::CreateGraphicsEngineRaster(const rGraphicsEngineRaster& d) 
@@ -97,9 +98,9 @@ sound::IEngine* Factory::CreateSoundEngine(const rSoundEngine& d)
 
 IGapi* Factory::CreateGapiGL() 
 {
-#ifdef BUILD_DLL
+#ifdef EXC_DYNAMIC_LINK_MODULES
 	return ((IGapi*(*)())Sys::GetDLLProcAddress(Sys::LoadDLL((Sys::GetWorkDir() + L"GraphicsApiGL").c_str()), "createGraphicsApi"))();
-#elif BUILD_STATIC
+#else
 	return (IGapi*)new GapiGL();
 #endif
 }

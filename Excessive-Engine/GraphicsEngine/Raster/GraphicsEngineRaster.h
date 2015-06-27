@@ -14,7 +14,9 @@
 #include <unordered_set>
 #include <vector>
 
+
 class IWindow;
+class IShaderProgram;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// GraphicsEngine implementation.
