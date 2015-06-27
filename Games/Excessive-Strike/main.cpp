@@ -1,10 +1,9 @@
-#include "..\Common\src\Factory.h"
-#include "..\Common\src\IWindow.h"
-#include "..\Common\src\Sys.h"
-#include "..\Common\src\ITimer.h"
-#include "..\Common\src\VisualCpuProfiler.h"
+#include "Core\EngineCore.h"
+#include "PlatformLibrary\IWindow.h"
+#include "Core\ComponentCamera.h"
+#include "PlatformLibrary\Window.h"
+#include "PlatformLibrary\Timer.h"
 
-#include "..\Core\src\EngineCore.h"
 
 // Spirit of the engine
 EngineCore gEngineCore;
@@ -24,7 +23,7 @@ int main()
 		d.clientW = Sys::GetScreenSize().x; //FULL SCREEN props
 		d.clientH = Sys::GetScreenSize().y; //FULL SCREEN props
 		d.style = eWindowStyle::FULLSCREEN; //FULL SCREEN props
-	gWindow = Factory::CreateWindow(d);
+	gWindow = new Window(d);
 
 	// Hide hardware cursor for our game on window
 	gWindow->HideCursor();
@@ -37,7 +36,7 @@ int main()
 	gEngineCore.InitPhysicsEngineBullet();
 	gEngineCore.InitSoundEngine();
 
-	ITimer* timer = Factory::CreateTimer();
+	ITimer* timer = new Timer();
 	timer->Start();
 
 	// Create camera
