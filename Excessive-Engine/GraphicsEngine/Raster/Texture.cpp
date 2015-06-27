@@ -1,12 +1,15 @@
 #include "Texture.h"
 
-#include "../GraphicsApi/Interfaces/IGapi.h"
+#include "GraphicsApi/ITextureGapi.h"
+
 #include <SFML/Graphics/Image.hpp>
 
 #include <memory>
 #include <iostream> // for debug only
 #include <cstring>
 #include <fstream>
+#include "GraphicsApi/IGapi.h"
+
 
 
 ////////////////////////////////////////////////////////////////////////////////

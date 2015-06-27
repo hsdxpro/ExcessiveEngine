@@ -1,9 +1,10 @@
 #pragma once
 #include "Entity.h"
 #include "Light.h"
-#include "../../Interfaces/IScene.h"
+#include "..\IScene.h"
 
 #include <unordered_set>
+
 
 
 class Scene : public graphics::IScene

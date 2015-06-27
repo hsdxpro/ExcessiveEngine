@@ -1,10 +1,11 @@
 #pragma once
-#include "../../Interfaces/IEngine.h"
-#include "../../Interfaces/IEntityRigid.h"
+#include "../IEngine.h"
+#include "../IEntityRigid.h"
 
-#include "../Common/src/BasicTypes.h"
+#include "SupportLibrary/BasicTypes.h"
 #include "mymath/mymath.h"
 #include <vector>
+
 
 class btSoftRigidDynamicsWorld;
 class btDiscreteDynamicsWorld;

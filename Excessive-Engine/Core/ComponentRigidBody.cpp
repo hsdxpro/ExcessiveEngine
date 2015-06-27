@@ -1,6 +1,4 @@
 #include "ComponentRigidBody.h"
-#include "..\PhysicsEngine\Interfaces\IEntityRigid.h"
-#include "..\GraphicsEngine\Interfaces\IEntity.h"
 
 ComponentRigidBody::ComponentRigidBody(physics::IEntityRigid* a)
 :entityRigid(a)

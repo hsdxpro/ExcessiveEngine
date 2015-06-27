@@ -2,10 +2,11 @@
 
 #include "Mesh.h"
 #include "Material.h"
-#include "../../Interfaces/IEntity.h"
+#include "../IEntity.h"
 
 #include "utility/ref_ptr.h"
 #include <mymath/mymath.h>
+#include "Core/Transform3D.h"
 
 
 class Scene;

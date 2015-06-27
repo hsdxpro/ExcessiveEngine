@@ -1,5 +1,5 @@
 #pragma once
-#include "../../Interfaces/ITexture.h"
+#include "..\ITexture.h"
 
 class ITextureGapi;
 class IGapi;

@@ -1,20 +1,19 @@
 #pragma once
 
-#include "../../Interfaces/IEngine.h"
-
-
 // must be included because of covariant return type override
 #include "Scene.h"
 #include "Mesh.h"
 #include "Material.h"
 #include "Texture.h"
 #include "Camera.h"
-#include "../../../GraphicsApi/Interfaces/IGapi.h"
+#include "..\IEngine.h"
 
 #include <unordered_set>
 #include <vector>
 
+
 class IWindow;
+class IShaderProgram;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// GraphicsEngine implementation.

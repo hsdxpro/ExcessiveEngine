@@ -1,6 +1,6 @@
 #pragma once
 #include "WorldComponent.h"
-#include "..\GraphicsEngine\Interfaces\ICamera.h"
+#include "GraphicsEngine\ICamera.h"
 
 namespace graphics { class IEntity; }
 

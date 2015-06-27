@@ -1,13 +1,15 @@
 #pragma once
-#include "../../Interfaces/IEngine.h"
+#include "../IEngine.h"
 
 // must be included because of covariant return type override
-#include "../../Interfaces/IScene.h"
-#include "../../Interfaces/IMaterial.h"
-#include "../../Interfaces/IMesh.h"
-#include "../../Raster/src/Camera.h"
+#include "../IScene.h"
+#include "../IMaterial.h"
+#include "../IMesh.h"
+#include "../Raster/Camera.h"
 
 #include <unordered_set>
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /// GraphicsEngine implementation.
@@ -44,7 +46,5 @@ public:
 	void Update(float deltaTime) override;
 
 	IGapi* GetGapi() override { return nullptr;  }
-
-private:
 };
 

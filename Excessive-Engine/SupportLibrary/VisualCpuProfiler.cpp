@@ -1,10 +1,9 @@
 #include "VisualCpuProfiler.h"
-#include "Sys.h"
-#include "Factory.h"
-#include "ITimer.h"
 #include <sstream>
 #include <iomanip>
 #include "GL\glew.h"
+#include "PlatformLibrary\Timer.h"
+#include "PlatformLibrary\Sys.h"
 
 VisualCpuProfiler* VisualCpuProfiler::instance = nullptr;
 VisualCpuProfiler::ProfilerNode* VisualCpuProfiler::lastConstructedTreeNode = nullptr;
@@ -16,7 +15,7 @@ VisualCpuProfiler::Scope::Scope(const std::string& name)
 {
 	IDGenerator++;
 
-	timer = Factory::CreateTimer();
+	timer = new Timer();
 	
 	// Add that Section to tree
 	ProfilerNode* node = new ProfilerNode();
@@ -90,7 +89,7 @@ VisualCpuProfiler::ScopeSum::ScopeSum(const std::string& name)
 	// Itt a baj, DLL - nél IDGenerator 0 ad vissza, static lib - nél meg 3 - at
 	ID = IDGenerator;
 
-	timer = Factory::CreateTimer();
+	timer = new Timer();
 
 	profilerNode = new ProfilerNode();
 		profilerNode->name = name;
