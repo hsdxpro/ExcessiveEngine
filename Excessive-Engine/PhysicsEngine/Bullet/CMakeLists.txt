@@ -19,7 +19,7 @@ SOURCE_GROUP( Interfaces FILES ${interfaces})
 
 
 # Project
-if(EXC_DYNAMIC_LINK_MODULES)
+if(EXCESSIVE_DLL_MODULES)
 	add_library( PhysicsEngineBullet SHARED ${sources} ${headers} ${interfaces} )
 else()
 	add_library( PhysicsEngineBullet STATIC ${sources} ${headers} ${interfaces} )

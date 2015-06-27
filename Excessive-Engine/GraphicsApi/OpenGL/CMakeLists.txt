@@ -11,7 +11,7 @@ FILE( GLOB_RECURSE sources *.c* )
 FILE( GLOB_RECURSE headers *.h* )
 
 # add build target
-if(EXC_DYNAMIC_LINK_MODULES)
+if(EXCESSIVE_DLL_MODULES)
 	add_library( GraphicsApiGL SHARED ${sources} ${headers} ${interfaces} )
 else()
 	add_library( GraphicsApiGL STATIC ${sources} ${headers} ${interfaces} )

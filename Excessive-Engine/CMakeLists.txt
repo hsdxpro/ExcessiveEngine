@@ -6,9 +6,6 @@
 
 message( "-Excessive-Engine" )
 
-# configure include paths
-include_directories( ${CMAKE_CURRENT_LIST_DIR} )
-
 # add modules
 add_subdirectory( PlatformLibrary )
 add_subdirectory( SupportLibrary )

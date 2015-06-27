@@ -49,7 +49,7 @@ SFMLSoundData.cpp
 #---------------------------------------
 # Project
 
-if(EXC_DYNAMIC_LINK_MODULES)
+if(EXCESSIVE_DLL_MODULES)
 	add_library( SoundEngineSFML SHARED ${sources} ${headers} ${interfaces} )
 else()
 	add_library( SoundEngineSFML STATIC ${sources} ${headers} ${interfaces} )

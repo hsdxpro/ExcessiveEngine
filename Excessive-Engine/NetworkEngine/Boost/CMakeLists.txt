@@ -11,7 +11,7 @@ message( "-NetworkEngineBoost" )
 FILE( GLOB_RECURSE sources *.c* )
 FILE( GLOB_RECURSE headers *.h* )
 
-if(BUILD_EXCESSIVE_WITH_DLL)
+if(EXCESSIVE_DLL_MODULES)
 	add_library( NetworkEngineBoost SHARED ${sources} ${headers} ${interfaces} )
 else()
 	add_library( NetworkEngineBoost STATIC ${sources} ${headers} ${interfaces} )
