@@ -1,20 +1,21 @@
+#-------------------------------------------------------------------------------
+# EXCESSIVE-ENGINE MODULES
+#
+# Excessive-Engine's core modules are included here.
+#-------------------------------------------------------------------------------
+
 message( "-Excessive-Engine" )
 
-add_subdirectory( Common )
+# configure include paths
+include_directories( ${CMAKE_CURRENT_LIST_DIR} )
 
-if(WIN32)
-	add_subdirectory( CommonWin )
-elseif(UNIX)
-	add_subdirectory( CommonLin )
-elseif(APPLE)
-	add_subdirectory( CommonMac )
-endif()
-
-add_subdirectory( PIL )
+# add modules
+add_subdirectory( PlatformLibrary )
+add_subdirectory( SupportLibrary )
 add_subdirectory( Core )
 add_subdirectory( GraphicsApi )
 add_subdirectory( GraphicsEngine )
 add_subdirectory( PhysicsEngine )
 add_subdirectory( SoundEngine )
 add_subdirectory( NetworkEngine )
-add_subdirectory( Deployment )
+

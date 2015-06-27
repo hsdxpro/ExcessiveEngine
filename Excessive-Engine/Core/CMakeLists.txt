@@ -1,8 +1,14 @@
-message( "-Core" )
+#-------------------------------------------------------------------------------
+# CORE
+#
+# Ricsi kérlek ide írj valami rövid információt!
+#-------------------------------------------------------------------------------
 
-FILE( GLOB_RECURSE sources src/*.c* )
-FILE( GLOB_RECURSE headers src/*.h* )
+message( "-Core: @RICSI A CMAKELISTS-BE IRJ FILE HEADERT!" )
+
+FILE( GLOB_RECURSE sources *.c* )
+FILE( GLOB_RECURSE headers *.h* )
 
 add_library( Core STATIC ${sources} ${headers} )
 
-target_link_libraries( Core Common )
+target_link_libraries( Core SupportLibrary PlatformLibrary )

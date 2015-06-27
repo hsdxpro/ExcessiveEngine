@@ -1,1 +1,0 @@
-Collective logic over components (i.e. sound, graphics, logic and ui).
