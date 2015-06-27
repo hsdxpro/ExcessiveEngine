@@ -156,9 +156,9 @@ message("External link path: ${EXC_LINK_PATH}")
 # Engine
 add_subdirectory( Excessive-Engine )
 # Editor
-#add_subdirectory( Excessive-Editor )
+add_subdirectory( Excessive-Editor )
 # Game
-#add_subdirectory( Games )
+add_subdirectory( Games )
 
 
 
