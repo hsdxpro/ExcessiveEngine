@@ -18,12 +18,12 @@ int main()
 {
 	// Full screen popup window for our game
 	rWindow d;
-		d.style = eWindowStyle::TITLE__RESIZE__CLOSE; // Windowded props
-		d.clientW = 800; // Windowded props
-		d.clientH = 600; // Windowded props
-		//d.clientW = Sys::GetScreenSize().x; FULL SCREEN props
-		//d.clientH = Sys::GetScreenSize().y; FULL SCREEN props
-		//d.style = eWindowStyle::FULLSCREEN; FULL SCREEN props
+		//d.style = eWindowStyle::TITLE__RESIZE__CLOSE; // Windowded props
+		//d.clientW = 800; // Windowded props
+		//d.clientH = 600; // Windowded props
+		d.clientW = Sys::GetScreenSize().x; //FULL SCREEN props
+		d.clientH = Sys::GetScreenSize().y; //FULL SCREEN props
+		d.style = eWindowStyle::FULLSCREEN; //FULL SCREEN props
 	gWindow = Factory::CreateWindow(d);
 
 	// Hide hardware cursor for our game on window
@@ -88,7 +88,7 @@ int main()
 
 	// Mouse recenter
 	mm::vec2 windowCenter = gWindow->GetCenterPos();
-	Sys::SetMousePos(mm::uvec2((u32)windowCenter.x, (u32)windowCenter.y));
+	Sys::SetCursorPos(mm::uvec2((u32)windowCenter.x, (u32)windowCenter.y));
 	
 	while (gWindow->IsOpen())
 	{
@@ -130,7 +130,7 @@ int main()
 				static float angleX = 0;
 
 				// Input read up finished, now we can recenter cursor for our fps game
-				auto mousePos = Sys::GetMousePos();
+				auto mousePos = Sys::GetCursorPos();
 
 				float mouseDx = mousePos.x - windowCenter.x;
 				float mouseDy = mousePos.y - windowCenter.y;
@@ -151,7 +151,7 @@ int main()
 		}
 
 		// Mouse recenter
-		Sys::SetMousePos(mm::uvec2((u32)windowCenter.x, (u32)windowCenter.y));
+		Sys::SetCursorPos(mm::uvec2((u32)windowCenter.x, (u32)windowCenter.y));
 
 		// Player capsule move logic interpret
 		mm::vec3 dMove(0,0,0);

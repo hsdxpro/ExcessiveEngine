@@ -22,9 +22,9 @@ void Sys::MsgBox(const std::wstring& msg)
 
 }
 
-void Sys::SetMousePos(const mm::uvec2& pos)
+void Sys::SetCursorPos(const mm::uvec2& pos)
 {
-	SetCursorPos(pos.x, pos.y);
+	::SetCursorPos(pos.x, pos.y);
 }
 
 void* Sys::GetDLLProcAddress(DLLHandle h, const std::string& procName) 
@@ -57,9 +57,9 @@ std::wstring Sys::GetWorkDir()
 	return path;
 }
 
-mm::ivec2 Sys::GetMousePos() 
+mm::ivec2 Sys::GetCursorPos() 
 {
-	POINT p; GetCursorPos(&p);
+	POINT p; ::GetCursorPos(&p);
 	return mm::ivec2(p.x, p.y);
 }
 

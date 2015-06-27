@@ -129,12 +129,12 @@ public:
 	static DLLHandle	LoadDLL(const wchar_t* path);
 	static bool			UnLoadDLL(DLLHandle h);
 
-	static void				MsgBox(const std::wstring& msg);
+	static void			MsgBox(const std::wstring& msg);
 
-	static void				SetMousePos(const mm::uvec2& pos);
+	static void			SetCursorPos(const mm::uvec2& pos);
 
-	static void*			GetDLLProcAddress(DLLHandle h, const std::string& procName);
-	static std::wstring		GetWorkDir();
-	static mm::ivec2		GetMousePos();
-	static mm::ivec2		GetScreenSize();
+	static void*		GetDLLProcAddress(DLLHandle h, const std::string& procName);
+	static std::wstring	GetWorkDir();
+	static mm::ivec2	GetCursorPos();
+	static mm::ivec2	GetScreenSize();
 };
