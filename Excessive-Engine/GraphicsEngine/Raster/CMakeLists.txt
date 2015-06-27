@@ -25,6 +25,18 @@ SOURCE_GROUP(Scene FILES src/Scene.h src/Scene.cpp)
 # Interface
 SOURCE_GROUP(Interfaces FILES ${interfaces})
 
+# Pipeline graph stuff
+SOURCE_GROUP(PipelineGraph FILES 
+src/InputPortBase.cpp
+src/InputPortBase.h
+src/NodeBase.cpp
+src/NodeBase.h
+src/NodeFactory.cpp
+src/NodeFactory.h
+src/PipelineData.cpp
+src/PipelineData.h
+)
+
 # Resource management files filter
 SOURCE_GROUP("Resources" FILES
 src/Texture.h
