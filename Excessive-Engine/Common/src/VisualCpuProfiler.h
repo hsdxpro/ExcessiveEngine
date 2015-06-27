@@ -16,11 +16,11 @@
 	#define CONCAT_MACRO(x,y)			CONCAT_MACRO_BASE(x,y)
 
 	#define PROFILE_SCOPE(strName) \
-		EngineCpuProfiler::Scope CONCAT_MACRO(section_, __COUNTER__)(strName)
+		VisualCpuProfiler::Scope CONCAT_MACRO(section_, __COUNTER__)(strName)
 
 #define PROFILE_SCOPE_SUM_HELPER_CONCAT(strName, count) \
-	static EngineCpuProfiler::ScopeSum CONCAT_MACRO(_node, count)(strName); \
-	EngineCpuProfiler::ScopeSum::LifeCycleHelper CONCAT_MACRO(_helper, count)(&CONCAT_MACRO(_node, count));
+	static VisualCpuProfiler::ScopeSum CONCAT_MACRO(_node, count)(strName); \
+	VisualCpuProfiler::ScopeSum::LifeCycleHelper CONCAT_MACRO(_helper, count)(&CONCAT_MACRO(_node, count));
 
 	#define PROFILE_SCOPE_SUM(strName) \
 		PROFILE_SCOPE_SUM_HELPER_CONCAT(strName, __COUNTER__)
@@ -31,7 +31,7 @@
 
 class ITimer;
 
-class EngineCpuProfiler
+class VisualCpuProfiler
 {
 public:
 	struct ProfilerNode
@@ -80,18 +80,18 @@ public:
 	};
 
 protected:
-	EngineCpuProfiler();
+	VisualCpuProfiler();
 	void _internalupdateAndPresent();
 	void _internalDrawSectionTreeRecursively(ProfilerNode* node, size_t& curNodePosY_inout, size_t depth);
 
 public:
 	static void init();
 	static void UpdateAndPresent();
-	static EngineCpuProfiler* GetSingletonInstance();
+	static VisualCpuProfiler* GetSingletonInstance();
 
 protected:
-	static EngineCpuProfiler* instance;
-	static EngineCpuProfiler::ProfilerNode* lastConstructedTreeNode;
+	static VisualCpuProfiler* instance;
+	static VisualCpuProfiler::ProfilerNode* lastConstructedTreeNode;
 	static size_t IDGenerator;
 
 	sf::RenderWindow window;

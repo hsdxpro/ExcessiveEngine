@@ -91,7 +91,7 @@ int Ricsi()
 		static float camAngleX = 0; // upwards/downwards looking
 		static float camAngleZ = 0; // orientation
 		title_ss << L"Excessive-Engine - Ricsi teszt | FPS=" << fps << L" | Pitch=" << camAngleX * 180 / 3.141592653f << L"° Facing=" << camAngleZ * 180 / 3.141592653f << L"°";
-		window->SetText(title_ss.str().c_str());
+		window->SetTitle(title_ss.str().c_str());
 
 		while (window->PopEvent(&ev))
 		switch (ev.msg)

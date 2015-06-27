@@ -11,9 +11,20 @@ Sys::DLLHandle Sys::LoadDLL(const wchar_t* path)
 	return LoadLibraryW(path);
 }
 
-bool Sys::unLoadDLL(DLLHandle h) 
+bool Sys::UnLoadDLL(DLLHandle h) 
 {
 	return FreeLibrary((HMODULE)h) ? true : false;
+}
+
+void Sys::MsgBox(const std::wstring& msg)
+{
+	MessageBoxW(0, msg.c_str(), L"", MB_OK);
+
+}
+
+void Sys::SetMousePos(const mm::uvec2& pos)
+{
+	SetCursorPos(pos.x, pos.y);
 }
 
 void* Sys::GetDLLProcAddress(DLLHandle h, const std::string& procName) 
@@ -55,9 +66,4 @@ mm::ivec2 Sys::GetMousePos()
 mm::ivec2 Sys::GetScreenSize()
 {
 	return{ GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) };
-}
-
-void Sys::messageBox(const std::wstring& msg)
-{
-	MessageBoxW(0, msg.c_str(), L"", MB_OK);
 }

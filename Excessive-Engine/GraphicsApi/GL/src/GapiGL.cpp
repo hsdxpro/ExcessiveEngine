@@ -12,7 +12,7 @@
 #include <functional>
 #include "GL\glew.h"
 #include "..\Common\src\custom_assert.h"
-#include "..\Common\src\EngineCpuProfiler.h"
+#include "..\Common\src\VisualCpuProfiler.h"
 
 using namespace std;
 

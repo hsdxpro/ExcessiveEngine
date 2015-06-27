@@ -76,11 +76,20 @@ public:
 	// U need to call that function after some DrawingAPI finishe s Draw on window client region, this will BLIT the content to your monitor where client region is defined
 	virtual void Present() = 0;
 
+	// Hide cursor only, when above window client area
+	virtual void HideCursor() = 0;
+
+	// Show cursor when above window client area
+	virtual void ShowCursor() = 0;
+
 	// Window client surface width
 	virtual u16 GetClientW() const = 0;
 
 	// Window client surface height
 	virtual u16 GetClientH() const = 0;
+
+	// Get center of window relative to your display
+	virtual mm::vec2 GetCenterPos() const = 0;
 
 	// (client surface width / client surface height)
 	virtual float GetClientAspectRatio() const = 0;
@@ -89,5 +98,5 @@ public:
 	virtual bool IsOpen() const = 0;
 
 	/// Set window title
-	virtual void SetText(const wchar_t* text) = 0;
+	virtual void SetTitle(const wchar_t* text) = 0;
 };

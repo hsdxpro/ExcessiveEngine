@@ -98,6 +98,21 @@ void Window::Present()
 	w.display();
 }
 
+void Window::HideCursor()
+{
+	w.setMouseCursorVisible(false);
+}
+
+void Window::ShowCursor()
+{
+	w.setMouseCursorVisible(true);
+}
+
+void Window::SetTitle(const wchar_t* text)
+{
+	w.setTitle(text);
+}
+
 bool Window::IsOpen() const
 {
 	return w.isOpen();
@@ -119,7 +134,10 @@ float Window::GetClientAspectRatio() const
 	return (float)size.x / size.y;
 }
 
-void Window::SetText(const wchar_t* text)
+mm::vec2 Window::GetCenterPos() const
 {
-	w.setTitle(text);
+	auto size = w.getSize();
+	auto pos = w.getPosition();
+
+	return mm::vec2(pos.x + size.x * 0.5, pos.y + size.y * 0.5);
 }

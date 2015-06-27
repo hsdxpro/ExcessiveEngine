@@ -17,6 +17,11 @@ public:
 
 	void Present() override;
 
+	void HideCursor() override;
+	void ShowCursor() override;
+
+	void SetTitle(const wchar_t* text) override;
+
 	// Getters
 	bool IsOpen() const override;
 
@@ -25,7 +30,7 @@ public:
 
 	float GetClientAspectRatio() const override;
 
-	void SetText(const wchar_t* text) override;
+	mm::vec2 GetCenterPos() const override;
 
 protected:
 	sf::Window w;

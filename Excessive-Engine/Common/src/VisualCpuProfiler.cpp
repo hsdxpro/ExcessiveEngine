@@ -1,4 +1,4 @@
-#include "EngineCpuProfiler.h"
+#include "VisualCpuProfiler.h"
 #include "Sys.h"
 #include "Factory.h"
 #include "ITimer.h"
@@ -6,12 +6,12 @@
 #include <iomanip>
 #include "GL\glew.h"
 
-EngineCpuProfiler* EngineCpuProfiler::instance = nullptr;
-EngineCpuProfiler::ProfilerNode* EngineCpuProfiler::lastConstructedTreeNode = nullptr;
-size_t EngineCpuProfiler::IDGenerator = 0;
+VisualCpuProfiler* VisualCpuProfiler::instance = nullptr;
+VisualCpuProfiler::ProfilerNode* VisualCpuProfiler::lastConstructedTreeNode = nullptr;
+size_t VisualCpuProfiler::IDGenerator = 0;
 
 // Scope profiling
-EngineCpuProfiler::Scope::Scope(const std::string& name)
+VisualCpuProfiler::Scope::Scope(const std::string& name)
 :name(name)
 {
 	IDGenerator++;
@@ -26,7 +26,7 @@ EngineCpuProfiler::Scope::Scope(const std::string& name)
 	if (lastConstructedTreeNode == nullptr)
 	{
 		node->parent = nullptr;
-		EngineCpuProfiler::GetSingletonInstance()->treeRootComponents.push_back(node);
+		VisualCpuProfiler::GetSingletonInstance()->treeRootComponents.push_back(node);
 	}
 	else // This is a child node
 	{
@@ -39,7 +39,7 @@ EngineCpuProfiler::Scope::Scope(const std::string& name)
 	timer->Start();
 }
 
-EngineCpuProfiler::Scope::~Scope()
+VisualCpuProfiler::Scope::~Scope()
 {
 	// Save profiled time
 	lastConstructedTreeNode->profiledSeconds = timer->GetSecondsPassed();
@@ -51,14 +51,14 @@ EngineCpuProfiler::Scope::~Scope()
 }
 
 // Scope sum profiling
-EngineCpuProfiler::ScopeSum::LifeCycleHelper::LifeCycleHelper(ScopeSum* scopeSumProfiler)
+VisualCpuProfiler::ScopeSum::LifeCycleHelper::LifeCycleHelper(ScopeSum* scopeSumProfiler)
 :scopeSumProfiler(scopeSumProfiler)
 {
-	auto& treeRootComponents = EngineCpuProfiler::GetSingletonInstance()->treeRootComponents;
+	auto& treeRootComponents = VisualCpuProfiler::GetSingletonInstance()->treeRootComponents;
 	if (!lastConstructedTreeNode)
 	{
 		scopeSumProfiler->profilerNode->parent = nullptr;
-		EngineCpuProfiler::GetSingletonInstance()->treeRootComponents.push_back(scopeSumProfiler->profilerNode);
+		VisualCpuProfiler::GetSingletonInstance()->treeRootComponents.push_back(scopeSumProfiler->profilerNode);
 	}
 	else if (scopeSumProfiler->ID == IDGenerator++)
 	{
@@ -76,7 +76,7 @@ EngineCpuProfiler::ScopeSum::LifeCycleHelper::LifeCycleHelper(ScopeSum* scopeSum
 	scopeSumProfiler->timer->Reset();
 }
 
-EngineCpuProfiler::ScopeSum::LifeCycleHelper::~LifeCycleHelper()
+VisualCpuProfiler::ScopeSum::LifeCycleHelper::~LifeCycleHelper()
 {
 	scopeSumProfiler->profilerNode->profiledSeconds += scopeSumProfiler->timer->GetSecondsPassed();
 
@@ -84,7 +84,7 @@ EngineCpuProfiler::ScopeSum::LifeCycleHelper::~LifeCycleHelper()
 	lastConstructedTreeNode = lastConstructedTreeNode->parent;
 }
 
-EngineCpuProfiler::ScopeSum::ScopeSum(const std::string& name)
+VisualCpuProfiler::ScopeSum::ScopeSum(const std::string& name)
 :name(name)
 {
 	// Itt a baj, DLL - nél IDGenerator 0 ad vissza, static lib - nél meg 3 - at
@@ -96,12 +96,12 @@ EngineCpuProfiler::ScopeSum::ScopeSum(const std::string& name)
 		profilerNode->name = name;
 }
 
-EngineCpuProfiler::ScopeSum::~ScopeSum()
+VisualCpuProfiler::ScopeSum::~ScopeSum()
 {
 
 }
 
-EngineCpuProfiler::EngineCpuProfiler()
+VisualCpuProfiler::VisualCpuProfiler()
 {
 	window.create(sf::VideoMode(600, 600), "Engine - CpuProfiler");
 	window.setPosition({ 0, 0 });
@@ -110,7 +110,7 @@ EngineCpuProfiler::EngineCpuProfiler()
 	assert(b);
 }
 
-void EngineCpuProfiler::_internalupdateAndPresent()
+void VisualCpuProfiler::_internalupdateAndPresent()
 {
 	IDGenerator = 0;
 
@@ -180,7 +180,7 @@ void EngineCpuProfiler::_internalupdateAndPresent()
 	treeRootComponents.clear();
 }
 
-void EngineCpuProfiler::_internalDrawSectionTreeRecursively(ProfilerNode* node, size_t& curNodePosY_inout, size_t depth)
+void VisualCpuProfiler::_internalDrawSectionTreeRecursively(ProfilerNode* node, size_t& curNodePosY_inout, size_t depth)
 {
 	// Draw that node...
 	sf::Text text;
@@ -219,16 +219,16 @@ void EngineCpuProfiler::_internalDrawSectionTreeRecursively(ProfilerNode* node, 
 		_internalDrawSectionTreeRecursively(n, curNodePosY_inout, depth + 1);
 }
 
-void EngineCpuProfiler::UpdateAndPresent()
+void VisualCpuProfiler::UpdateAndPresent()
 {
 	GetSingletonInstance();
 	instance->_internalupdateAndPresent();
 }
 
-EngineCpuProfiler* EngineCpuProfiler::GetSingletonInstance()
+VisualCpuProfiler* VisualCpuProfiler::GetSingletonInstance()
 {
 	if (!instance)
-		instance = new EngineCpuProfiler();
+		instance = new VisualCpuProfiler();
 
 	return instance;
 }

@@ -2,7 +2,7 @@
 #include "..\Common\src\IWindow.h"
 #include "..\Common\src\Sys.h"
 #include "..\Common\src\ITimer.h"
-#include "..\Common\src\EngineCpuProfiler.h"
+#include "..\Common\src\VisualCpuProfiler.h"
 
 #include "..\Core\src\EngineCore.h"
 
@@ -18,11 +18,16 @@ int main()
 {
 	// Full screen popup window for our game
 	rWindow d;
-		//d.style = eWindowStyle::FULLSCREEN;
-		d.style = eWindowStyle::TITLE__RESIZE__CLOSE;
-		d.clientW = 800;// Sys::GetScreenSize().x;
-		d.clientH = 600;// Sys::GetScreenSize().y;
+		d.style = eWindowStyle::TITLE__RESIZE__CLOSE; // Windowded props
+		d.clientW = 800; // Windowded props
+		d.clientH = 600; // Windowded props
+		//d.clientW = Sys::GetScreenSize().x; FULL SCREEN props
+		//d.clientH = Sys::GetScreenSize().y; FULL SCREEN props
+		//d.style = eWindowStyle::FULLSCREEN; FULL SCREEN props
 	gWindow = Factory::CreateWindow(d);
+
+	// Hide hardware cursor for our game on window
+	gWindow->HideCursor();
 
 	// Init Engine core
 	rGraphicsEngineRaster graphicsDesc;
@@ -73,13 +78,18 @@ int main()
 	gMainCam->Attach(ak47Graphics); // Attach weapon to player physics
 
 
-	// Player moving
+	// GAME CONSTANTS... TODO
 	bool bMovingFront = false;
 	bool bMovingBack = false;
 	bool bMovingLeft = false;
 	bool bMovingRight = false;
 	const float playerMoveSpeed = 10;
+	const float pixelsToRot360 = 1000;
 
+	// Mouse recenter
+	mm::vec2 windowCenter = gWindow->GetCenterPos();
+	Sys::SetMousePos(mm::uvec2((u32)windowCenter.x, (u32)windowCenter.y));
+	
 	while (gWindow->IsOpen())
 	{
 		float deltaSeconds = timer->GetSecondsPassed();
@@ -92,7 +102,7 @@ int main()
 			if(evt.msg == eWindowMsg::KEY_PRESS)
 			{
 				if(evt.key == eKey::SPACE)
-					playerCapsule->AddForce({0,0,4000});
+					playerCapsule->AddForce({0,0,5100});
 				if(evt.key == eKey::W)
 					bMovingFront = true;
 				if(evt.key == eKey::S)
@@ -116,12 +126,17 @@ int main()
 			// Look around with camera
 			else if(evt.msg == eWindowMsg::MOUSE_MOVE)
 			{
-				const float pixelsToRot360 = 600;
 				static float angleZ = 0;
 				static float angleX = 0;
 
-				angleZ += -(float)evt.deltaX / pixelsToRot360 * 6.28;
-				angleX += -(float)evt.deltaY / pixelsToRot360 * 6.28;
+				// Input read up finished, now we can recenter cursor for our fps game
+				auto mousePos = Sys::GetMousePos();
+
+				float mouseDx = mousePos.x - windowCenter.x;
+				float mouseDy = mousePos.y - windowCenter.y;
+
+				angleZ += -(float)mouseDx / pixelsToRot360 * 6.28;
+				angleX += -(float)mouseDy / pixelsToRot360 * 6.28;
 
 				// Clamp angleX
 				float angleSign = angleX >= 0 ? 1 : -1;
@@ -134,6 +149,9 @@ int main()
 				gMainCam->SetRot(rotAroundZ * rotAroundX);
 			}
 		}
+
+		// Mouse recenter
+		Sys::SetMousePos(mm::uvec2((u32)windowCenter.x, (u32)windowCenter.y));
 
 		// Player capsule move logic interpret
 		mm::vec3 dMove(0,0,0);

@@ -7,7 +7,7 @@
 #include "../PhysicsEngine/Bullet/src/PhysicsEngineBullet.h"
 #include "../NetworkEngine/Boost/src/NetworkEngineBoost.h"
 #include "../SoundEngine/SFML/src/SoundEngineSFML.h"
-#include "../../Common/src/EngineCpuProfiler.h"
+#include "../../Common/src/VisualCpuProfiler.h"
 
 #include <assert.h>
 
@@ -385,7 +385,7 @@ void EngineCore::Update(float deltaTime)
 	}
 
 #ifdef PROFILE_ENGINE
-	EngineCpuProfiler::UpdateAndPresent();
+	VisualCpuProfiler::UpdateAndPresent();
 #endif
 }
 
