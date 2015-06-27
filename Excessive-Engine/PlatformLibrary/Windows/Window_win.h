@@ -1,7 +1,7 @@
 // Windows O.S window
 #pragma once
 
-#include "../Common/src/IWindow.h"
+#include "../IWindow.h"
 
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/Window/Event.hpp"

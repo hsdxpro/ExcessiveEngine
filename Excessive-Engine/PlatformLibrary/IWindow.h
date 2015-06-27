@@ -1,7 +1,7 @@
 // Interface for typical O.S Window
 #pragma once
 
-#include "BasicTypes.h"
+#include "..\SupportLibrary\BasicTypes.h"
 #include "Sys.h"
 
 #include <string>
