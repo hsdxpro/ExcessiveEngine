@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Interfaces/IEngine.h"
+#include "../IEngine.h"
 
 
 // must be included because of covariant return type override
@@ -9,7 +9,7 @@
 #include "Material.h"
 #include "Texture.h"
 #include "Camera.h"
-#include "../../../GraphicsApi/Interfaces/IGapi.h"
+#include <GraphicsApi/IGapi.h>
 
 #include <unordered_set>
 #include <vector>

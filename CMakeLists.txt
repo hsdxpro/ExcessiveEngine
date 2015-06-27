@@ -153,9 +153,10 @@ message("External link path: ${EXCESSIVE_LINK_PATH}")
 # add sub-folders
 #---------------------------------------
 
+include_directories(${CMAKE_CURRENT_LIST_DIR}/Excessive-Engine)
+
 # Engine
 add_subdirectory( Excessive-Engine )
-include_directories( ${CMAKE_CURRENT_LIST_DIR}/Excessive-Engine )
 # Editor
 add_subdirectory( Excessive-Editor )
 # Game
