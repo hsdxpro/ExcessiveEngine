@@ -28,7 +28,7 @@ SOURCE_GROUP(Main FILES src/GraphicsEngine.h src/GraphicsEngine.cpp)
 #---------------------------------------
 # Project
 
-if(BUILD_EXCESSIVE_WITH_DLL)
+if(EXCESSIVE_DLL_MODULES)
 	add_library( GraphicsEngineRT SHARED ${sources} ${headers} ${interfaces} )
 else()
 	add_library( GraphicsEngineRT STATIC ${sources} ${headers} ${interfaces} )

@@ -69,7 +69,7 @@ Camera.cpp
 #---------------------------------------
 # Project
 
-if(EXC_DYNAMIC_LINK_MODULES)
+if(EXCESSIVE_DLL_MODULES)
 	add_library( GraphicsEngineRaster SHARED ${sources} ${headers} ${interfaces} )
 else()
 	add_library( GraphicsEngineRaster STATIC ${sources} ${headers} ${interfaces} )
