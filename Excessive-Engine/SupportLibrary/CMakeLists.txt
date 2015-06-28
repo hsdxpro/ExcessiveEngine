@@ -16,6 +16,8 @@ FILE( GLOB_RECURSE headers *.h* )
 add_library( SupportLibrary STATIC ${sources} ${headers} )
 
 target_link_libraries(SupportLibrary
+	glew32
+	opengl32
 	debug assimpd
 	optimized assimp
 	)

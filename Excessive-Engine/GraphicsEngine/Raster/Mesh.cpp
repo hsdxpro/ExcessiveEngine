@@ -188,7 +188,7 @@ bool Mesh::Update(MeshData data) {
 
 
 	// compute mat ids
-	mat_ids.resize(data.mat_ids_num + 1);
+	mat_ids.resize(data.mat_ids_num);
 	for (size_t i = 0; i < data.mat_ids_num; i++) {
 		mat_ids[i] = data.mat_ids[i];
 	}

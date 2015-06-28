@@ -2,8 +2,8 @@
 // Represent those components which can be placed in a 3D world (pos, rot, scale), attachable to Actor, and to itself
 #include <vector>
 #include "mymath\mymath.h"
-#include "Transform3D.h"
 #include "mymath\mm_quat_func.h"
+#include "SupportLibrary\Transform3D.h"
 
 class WorldComponent
 {

@@ -4,8 +4,8 @@
 #include <unordered_map>
 #include <map>
 #include "mymath\mm_quat_func.h"
-#include "SupportLibrary\Factory.h"
 #include "PlatformLibrary\IWindow.h"
+#include "Core\Factory.h"
 using std::cout;
 using std::endl;
 

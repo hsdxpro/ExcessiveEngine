@@ -45,10 +45,10 @@ int main()
 	//gEngineCore.GetDefaultGraphicsScene()->SetCamera(cam);
 
 	// Add some actors
-	auto& groundModelPath = Sys::GetWorkDir() + L"../Assets/demo_ground.dae";
-	auto& skyModelPath = Sys::GetWorkDir() + L"../Assets/skybox.dae";
-	auto& ak47ModelPath = Sys::GetWorkDir() + L"../Assets/ak47/ak.obj";
-	auto& boxModelPath = Sys::GetWorkDir() + L"../Assets/box.dae";
+	auto& groundModelPath = Sys::GetWorkDir() + L"Assets/demo_ground.dae";
+	auto& skyModelPath = Sys::GetWorkDir() + L"Assets/skybox.dae";
+	auto& ak47ModelPath = Sys::GetWorkDir() + L"Assets/ak47/ak.obj";
+	auto& boxModelPath = Sys::GetWorkDir() + L"Assets/box.dae";
 
 	// Terrain & Sky
 	gEngineCore.AddCompRigidBodyFromFile(groundModelPath, 0);
@@ -62,8 +62,7 @@ int main()
 	//// Player components
 	auto playerCapsule = gEngineCore.AddCompRigidBodyCapsule(2, 0.2, 20);
 		playerCapsule->SetAngularFactor(0);
-		//playerCapsule->SetKinematic();
-	
+
 	// Attach camera to player physics
 	gMainCam->Move({0,0,1});
 	playerCapsule->Attach(gMainCam);
@@ -82,6 +81,7 @@ int main()
 	bool bMovingBack = false;
 	bool bMovingLeft = false;
 	bool bMovingRight = false;
+	bool bCanJump = true;
 	const float playerMoveSpeed = 10;
 	const float pixelsToRot360 = 1000;
 
@@ -101,7 +101,10 @@ int main()
 			if(evt.msg == eWindowMsg::KEY_PRESS)
 			{
 				if(evt.key == eKey::SPACE)
+				{
+					bCanJump = false;
 					playerCapsule->AddForce({0,0,5100});
+				}
 				if(evt.key == eKey::W)
 					bMovingFront = true;
 				if(evt.key == eKey::S)

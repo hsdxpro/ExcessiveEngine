@@ -12,3 +12,12 @@ FILE( GLOB_RECURSE headers *.h* )
 add_library( Core STATIC ${sources} ${headers} )
 
 target_link_libraries( Core SupportLibrary PlatformLibrary )
+
+if(NOT EXCESSIVE_DLL_MODULES)
+	target_link_libraries( Core GraphicsApiGL
+								GraphicsEngineRaster
+								GraphicsEngineRT
+								NetworkEngineBoost
+								PhysicsEngineBullet
+								SoundEngineSFML )
+endif()

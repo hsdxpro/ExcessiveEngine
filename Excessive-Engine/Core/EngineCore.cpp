@@ -1,7 +1,7 @@
 #include "EngineCore.h"
-#include "SupportLibrary\Factory.h"
 #include "PlatformLibrary\Sys.h"
 #include "SupportLibrary\VisualCpuProfiler.h"
+#include "Factory.h"
 
 //////////////////////////////////////////////////
 //                                              //
@@ -62,8 +62,8 @@ graphics::IEngine* EngineCore::InitGraphicsEngineRaster(const rGraphicsEngineRas
 	// Load error diffuse texture, that we place on materials which fails load their own texture by path
 	texError = graphicsEngine->CreateTexture();
 	
-	bool bSuccess = texError->Load(Sys::GetWorkDir() + L"../Assets/error.jpg");
-	//assert(bSuccess);
+	bool bSuccess = texError->Load(Sys::GetWorkDir() + L"Assets/error.jpg");
+	assert(bSuccess);
 
 	// Default scene and layer for GraphicsEngine
 	defaultGraphicsScene = graphicsEngine->CreateScene();
@@ -157,15 +157,13 @@ ComponentGraphics* EngineCore::AddCompGraphicsFromFile(const std::wstring& model
 		{
 			auto& subMat = material->AddSubMaterial();
 			subMat.base = mm::vec4(1, 1, 1, 1);
+			subMat.t_diffuse = texError; // Default is error texture !!
 
 			if (importedMaterial.texPathDiffuse != L"")
 			{
-				subMat.t_diffuse = graphicsEngine->CreateTexture();
-
-				std::wstring finalPath;
-
 				// TODO:
 				// turn .bmp references into .jpg (UGLY TMP)
+				std::wstring finalPath;
 				if (importedMaterial.texPathDiffuse.rfind(L".bmp"))
 				{
 					auto idx = importedMaterial.texPathDiffuse.rfind('.');
@@ -177,12 +175,9 @@ ComponentGraphics* EngineCore::AddCompGraphicsFromFile(const std::wstring& model
 					finalPath = importedMaterial.texPathDiffuse;
 				}
 
-				// Try Load texture
-				if (!subMat.t_diffuse->Load(finalPath.c_str()))
-				{
-					// Texture load fail...
-					subMat.t_diffuse = texError;
-				}
+				auto texDiffuse = graphicsEngine->CreateTexture();
+				if(texDiffuse->Load(finalPath.c_str()))
+					subMat.t_diffuse = texDiffuse;
 			}
 		}
 
