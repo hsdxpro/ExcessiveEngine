@@ -14,3 +14,8 @@ FILE( GLOB_RECURSE headers *.h* )
 
 # add build target
 add_library( SupportLibrary STATIC ${sources} ${headers} )
+
+target_link_libraries(SupportLibrary
+	debug assimpd
+	optimized assimp
+	)

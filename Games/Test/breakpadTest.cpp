@@ -1,4 +1,6 @@
 #include <iostream>
+
+/*
 #include "client/windows/crash_generation/client_info.h"
 #include "client/windows/crash_generation/crash_generation_server.h"
 #include "client/windows/handler/exception_handler.h"
@@ -82,3 +84,4 @@ int breakpadTest()
   cin >> a;
   return 0;
 }
+*/

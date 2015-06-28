@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "../GraphicsEngine/Interfaces/IEngine.h"
+#include <GraphicsEngine/IEngine.h>
 using namespace graphics;
 
 #ifdef _MSC_VER

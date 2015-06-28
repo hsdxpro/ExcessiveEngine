@@ -1,10 +1,10 @@
 #include "Awesomium/WebCore.h"
 #include "Awesomium/BitmapSurface.h"
 #include "Awesomium/STLHelpers.h"
-#include "../Core/src/EngineCore.h"
+#include <Core/EngineCore.h>
 
-#include "../Common/src/IWindow.h"
-#include "../Common/src/Factory.h"
+#include <PlatformLibrary/Window.h>
+#include <SupportLibrary/Factory.h>
 
 static const char vertexShaderCode[] =
 "#version 440 core \n"
@@ -38,12 +38,12 @@ int main()
 		d.clientW = 800;
 		d.clientH = 600;
 		d.capText = "Excessive Awesome Editor";
-	IWindow* window = Factory::CreateWindow(d);
+	Window window(d);
 
 	// Engine core
 	rGraphicsEngineRaster gDesc;
 		gDesc.gapiType = eGapiType::OPENGL_4_5;
-		gDesc.targetWindow = window;
+		gDesc.targetWindow = &window;
 	graphics::IEngine* gEngine = gEngineCore.InitGraphicsEngineRaster(gDesc);
 
 // GAPI HACKED THINGS
@@ -54,7 +54,7 @@ int main()
 
 // Awesome...
 	Awesomium::WebCore* web_core = Awesomium::WebCore::Initialize(Awesomium::WebConfig());
-	Awesomium::WebView* view = web_core->CreateWebView(window->GetClientW(), window->GetClientH());
+	Awesomium::WebView* view = web_core->CreateWebView(window.GetClientW(), window.GetClientH());
 	Awesomium::WebURL url(Awesomium::WSLit("http://www.google.com"));
 	view->LoadURL(url);
 	
@@ -65,19 +65,19 @@ int main()
 	rTextureGapi texDesc;
 		texDesc.depth = 1;
 		texDesc.format = eTextureFormat::RGBA8;
-		texDesc.height = window->GetClientH();
-		texDesc.width = window->GetClientW();
+		texDesc.height = window.GetClientH();
+		texDesc.width = window.GetClientW();
 		texDesc.is_cubemap = false;
 		texDesc.is_layered = false;
 		texDesc.num_levels = 1;
 	ITextureGapi* texAwesome = gapi->CreateTexture(texDesc);
 
-	void* tmpAwesomiumSurfaceData = malloc(window->GetClientW() * window->GetClientH() * 4);
+	void* tmpAwesomiumSurfaceData = malloc(window.GetClientW() * window.GetClientH() * 4);
 
-	while (window->IsOpen())
+	while (window.IsOpen())
 	{
 		rWindowEvent evt;
-		while (window->PopEvent(&evt))
+		while (window.PopEvent(&evt))
 		{
 			if (evt.msg == eWindowMsg::MOUSE_MOVE)
 			{
@@ -131,13 +131,13 @@ int main()
 		
 		if (surface->is_dirty())
 		{
-			surface->CopyTo((u8*)tmpAwesomiumSurfaceData, window->GetClientW() * 4, 4, false, false);
+			surface->CopyTo((u8*)tmpAwesomiumSurfaceData, window.GetClientW() * 4, 4, false, false);
 			rTextureUpdate texUpdate;
 				texUpdate.data = tmpAwesomiumSurfaceData;
 				texUpdate.depth = 1;
 				texUpdate.format = eTextureFormat::RGBA8;
-				texUpdate.height = window->GetClientH();
-				texUpdate.width = window->GetClientW();
+				texUpdate.height = window.GetClientH();
+				texUpdate.width = window.GetClientW();
 				texUpdate.level = 0;
 			gapi->WriteTexture(texAwesome, texUpdate);
 		}
@@ -155,7 +155,7 @@ int main()
 
 		gapi->Draw(3);
 
-		window->Present();
+		window.Present();
 	}
 
 	Awesomium::BitmapSurface* surface = (Awesomium::BitmapSurface*)view->surface();

@@ -17,7 +17,7 @@ To change choice press SPACE while waiting for launch.
 #include <thread>
 
 #include "tests.h"
-#include "BasicTypes.h"
+#include <SupportLibrary/BasicTypes.h>
 
 #ifdef _MSC_VER
 #define _WIN32_LEAN_AND_MEAN

@@ -1,5 +1,5 @@
-﻿#include "..\Core\src\EngineCore.h"
-#include "Factory.h"
+﻿#include <Core/EngineCore.h>
+#include <SupportLibrary/Factory.h>
 
 // basic util
 #include <chrono>
@@ -7,7 +7,8 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include "Sys.h"
+#include <PlatformLibrary/Sys.h>
+#include <PlatformLibrary/Window.h>
 
 namespace testartur
 {
@@ -25,7 +26,7 @@ namespace testartur
 		d.clientW = 800;
 		d.clientH = 600;
 		d.capText = "Excessive-Engine -> artur test";
-		IWindow* window = Factory::CreateWindow(d);
+		Window window(d);
 
 		// Init engine core (graphics, physics, sound, network
 		EngineCore core;
@@ -34,7 +35,7 @@ namespace testartur
 		core.InitPhysicsEngineBullet();
 		rGraphicsEngineRaster gDesc;
 		gDesc.gapiType = eGapiType::OPENGL_4_5;
-		gDesc.targetWindow = window;
+		gDesc.targetWindow = &window;
 		graphics::IEngine* gEngine = core.InitGraphicsEngineRaster(gDesc);
 
 		// Create camera
@@ -112,7 +113,7 @@ namespace testartur
 
 		last_frame = std::chrono::high_resolution_clock::now();
 
-		while (window->IsOpen())
+		while (window.IsOpen())
 		{
 			//t->Reset();
 
@@ -127,9 +128,9 @@ namespace testartur
 			static float camAngleX = 0; // upwards/downwards looking
 			static float camAngleZ = 0; // orientation
 			title_ss << L"Excessive-Engine - artur test | FPS=" << fps << L" | Pitch=" << camAngleX * 180 / 3.141592653f << L"° Facing=" << camAngleZ * 180 / 3.141592653f << L"°";
-			window->SetTitle(title_ss.str().c_str());
+			window.SetTitle(title_ss.str().c_str());
 
-			while (window->PopEvent(&ev))
+			while (window.PopEvent(&ev))
 				switch (ev.msg)
 			{
 				case eWindowMsg::MOUSE_PRESS:
@@ -187,7 +188,7 @@ namespace testartur
 				case eWindowMsg::KEY_PRESS:
 					switch (ev.key)
 					{
-					case eKey::ESCAPE: window->Close(); break;
+					case eKey::ESCAPE: window.Close(); break;
 					case eKey::W: bWDown = true; break;
 					case eKey::S: bSDown = true; break;
 					case eKey::A: bADown = true; break;
@@ -234,7 +235,7 @@ namespace testartur
 			core.Update(elapsed/*, scene*/);
 
 			// Call that after OpenGL "finish" all of it's rendering
-			window->Present();
+			window.Present();
 
 			// keep 60 fps
 			//std::chrono::time_point<std::chrono::high_resolution_clock> now = std::chrono::high_resolution_clock::now();

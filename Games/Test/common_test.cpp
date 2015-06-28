@@ -1,5 +1,5 @@
 #include "tests.h"
-
+/*
 #include "custom_assert.h"
 #include "HashedString.h"
 
@@ -190,3 +190,4 @@ int CommonTest()
 
   return 0;
 }
+*/

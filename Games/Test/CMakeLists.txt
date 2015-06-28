@@ -20,4 +20,4 @@ target_link_libraries( Test optimized sqlite )
 
 target_link_libraries( Test exception_handler crash_generation_server crash_generation_client common )
 
-target_link_libraries( Test PlatformLibrary SupportLibrary )
+target_link_libraries( Test PlatformLibrary SupportLibrary Core)

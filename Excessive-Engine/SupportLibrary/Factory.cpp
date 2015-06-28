@@ -8,7 +8,7 @@
 
 graphics::IEngine* Factory::CreateGraphicsEngineRaster(const rGraphicsEngineRaster& d) 
 {
-#ifdef EXC_DYNAMIC_LINK_MODULES
+#ifdef EXCESSIVE_DLL_MODULES
 	using CreateT = graphics::IEngine*(*)(const rGraphicsEngineRaster& d);
 	auto module = Sys::LoadDLL(L"GraphicsEngineRaster");
 	if (!module) {
@@ -26,7 +26,7 @@ graphics::IEngine* Factory::CreateGraphicsEngineRaster(const rGraphicsEngineRast
 
 graphics::IEngine* Factory::CreateGraphicsEngineRT(const rGraphicsEngineRT& d) 
 {
-#ifdef EXC_DYNAMIC_LINK_MODULES
+#ifdef EXCESSIVE_DLL_MODULES
 	using CreateT = graphics::IEngine*(*)(const rGraphicsEngineRT& d);
 	auto module = Sys::LoadDLL(L"GraphicsEngineRasterRT");
 	if (!module) {
@@ -44,7 +44,7 @@ graphics::IEngine* Factory::CreateGraphicsEngineRT(const rGraphicsEngineRT& d)
 
 physics::IEngine* Factory::CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d) 
 {
-#ifdef EXC_DYNAMIC_LINK_MODULES
+#ifdef EXCESSIVE_DLL_MODULES
 	using CreateT = physics::IEngine*(*)(const rPhysicsEngineBullet& d);
 	auto module = Sys::LoadDLL(L"PhysicsEngineBullet");
 	if (!module) {
@@ -62,7 +62,7 @@ physics::IEngine* Factory::CreatePhysicsEngineBullet(const rPhysicsEngineBullet&
 
 network::IEngine* Factory::CreateNetworkEngine(const rNetworkEngine& d) 
 {
-#ifdef EXC_DYNAMIC_LINK_MODULES
+#ifdef EXCESSIVE_DLL_MODULES
 	using CreateT = network::IEngine*(*)(const rNetworkEngine& d);
 	auto module = Sys::LoadDLL(L"NetworkEngineBoost");
 	if (!module) {
@@ -80,7 +80,7 @@ network::IEngine* Factory::CreateNetworkEngine(const rNetworkEngine& d)
 
 sound::IEngine* Factory::CreateSoundEngine(const rSoundEngine& d) 
 {
-#ifdef EXC_DYNAMIC_LINK_MODULES
+#ifdef EXCESSIVE_DLL_MODULES
 	using CreateT = sound::IEngine*(*)(const rSoundEngine& d);
 	auto module = Sys::LoadDLL(L"SoundEngineSFML");
 	if (!module) {
@@ -98,7 +98,7 @@ sound::IEngine* Factory::CreateSoundEngine(const rSoundEngine& d)
 
 IGapi* Factory::CreateGapiGL() 
 {
-#ifdef EXC_DYNAMIC_LINK_MODULES
+#ifdef EXCESSIVE_DLL_MODULES
 	return ((IGapi*(*)())Sys::GetDLLProcAddress(Sys::LoadDLL((Sys::GetWorkDir() + L"GraphicsApiGL").c_str()), "createGraphicsApi"))();
 #else
 	return (IGapi*)new GapiGL();
