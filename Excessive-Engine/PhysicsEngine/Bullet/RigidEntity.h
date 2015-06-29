@@ -1,13 +1,13 @@
 #pragma once
-#include "..\IEntityRigid.h"
+#include "..\IRigidEntity.h"
 
 
 class btRigidBody;
 
-class EntityRigid : public physics::IEntityRigid 
+class RigidEntity : public physics::IRigidEntity
 {
 public:
-	EntityRigid(btRigidBody* body);
+	RigidEntity(btRigidBody* body);
 
 	void AddForce(const mm::vec3& force, const mm::vec3& relPos = {0,0,0}) override;
 	

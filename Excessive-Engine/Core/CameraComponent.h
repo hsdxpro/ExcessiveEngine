@@ -4,10 +4,10 @@
 
 namespace graphics { class IEntity; }
 
-class ComponentCamera : public WorldComponent
+class CameraComponent : public WorldComponent
 {
 public:
-	ComponentCamera(graphics::ICamera* cam);
+	CameraComponent(graphics::ICamera* cam);
 
 	void SetDirNormed(const mm::vec3& dir);
 

@@ -10,7 +10,7 @@
 #include "Bullet3/BulletSoftBody/btSoftBodyHelpers.h"
 #include "Bullet3/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h"
 
-#include "EntityRigid.h"
+#include "RigidEntity.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Export Create function
@@ -68,7 +68,7 @@ void PhysicsEngineBullet::Update(float deltaTime)
 	//}
 }
 
-physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) 
+physics::IRigidEntity* PhysicsEngineBullet::AddEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) 
 {
 	// You should call PhysicsEngineBullet::CreateEntityRigidStatic
 	assert(mass != 0);
@@ -86,12 +86,12 @@ physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidDynamic(mm::vec3* vert
 	world->addRigidBody(body);
 		body->setFriction(1);
 
-	EntityRigid* e = new EntityRigid(body);
+	RigidEntity* e = new RigidEntity(body);
 		entities.push_back(e);
 	return e;
 }
 
-physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidStatic(mm::vec3* vertices, u32 nVertices, void* indices, u32 indexSize, u32 nIndices) 
+physics::IRigidEntity* PhysicsEngineBullet::AddEntityRigidStatic(mm::vec3* vertices, u32 nVertices, void* indices, u32 indexSize, u32 nIndices) 
 {
 
 	btTriangleIndexVertexArray* VBIB;
@@ -120,12 +120,12 @@ physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidStatic(mm::vec3* verti
 	btRigidBody* body = new btRigidBody(0, new btDefaultMotionState(), new btBvhTriangleMeshShape(VBIB, true), btVector3(0, 0, 0));
 	world->addRigidBody(body);
 
-	EntityRigid* e = new EntityRigid(body);
+	RigidEntity* e = new RigidEntity(body);
 		entities.push_back(e);
 	return e;
 }
 
-physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidCapsule(float height, float radius, float mass)
+physics::IRigidEntity* PhysicsEngineBullet::AddEntityRigidCapsule(float height, float radius, float mass)
 {
 	btCapsuleShapeZ* capsuleShape = new btCapsuleShapeZ(radius, height);
 	capsuleShape->setSafeMargin(0, 0); // Thanks convex hull for your imprecision...
@@ -138,7 +138,7 @@ physics::IEntityRigid* PhysicsEngineBullet::AddEntityRigidCapsule(float height, 
 	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), capsuleShape, localInertia);
 	world->addRigidBody(body);
 
-	EntityRigid* e = new EntityRigid(body);
+	RigidEntity* e = new RigidEntity(body);
 		entities.push_back(e);
 	return e;
 }

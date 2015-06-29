@@ -4,10 +4,10 @@
 
 namespace graphics { class IEntity; }
 
-class ComponentGraphics : public WorldComponent
+class GraphicsComponent : public WorldComponent
 {
 public:
-	ComponentGraphics(graphics::IEntity* e);
+	GraphicsComponent(graphics::IEntity* e);
 
 protected:
 	void _InnerReflectPos() override;

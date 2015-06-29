@@ -37,7 +37,7 @@ int Ricsi()
 		graphics::IEngine* gEngine = core.InitGraphicsEngineRaster(gDesc);
 
 	// Create camera
-	ComponentCamera* cam = core.AddCompCamera();
+	CameraComponent* cam = core.AddCompCamera();
 	cam->SetFOV(70 / 180.f*3.1415926f);
 	cam->SetNearPlane(0.2f);
 	cam->SetFarPlane(2000);

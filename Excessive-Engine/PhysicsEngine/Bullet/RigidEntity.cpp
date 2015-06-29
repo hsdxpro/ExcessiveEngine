@@ -1,30 +1,30 @@
-#include "EntityRigid.h"
+#include "RigidEntity.h"
 
 #include "BulletDynamics/Dynamics/btRigidBody.h"
 #include "BulletCollision/CollisionShapes/btCollisionShape.h"
 
-EntityRigid::EntityRigid(btRigidBody* body) 
+RigidEntity::RigidEntity(btRigidBody* body) 
 :body(body) 
 {
 }
 
-void EntityRigid::AddForce(const mm::vec3& force, const mm::vec3& relPos /*= {0,0,0}*/)
+void RigidEntity::AddForce(const mm::vec3& force, const mm::vec3& relPos /*= {0,0,0}*/)
 {
 	body->applyForce({force.x, force.y, force.z}, {relPos.x, relPos.y, relPos.z});
 	body->activate();
 }
 
-void EntityRigid::SetAngularFactor(float factor)
+void RigidEntity::SetAngularFactor(float factor)
 {
 	body->setAngularFactor(factor);
 }
 
-void EntityRigid::SetKinematic()
+void RigidEntity::SetKinematic()
 {
 	body->setFlags(body->getFlags() | btRigidBody::CF_KINEMATIC_OBJECT);
 }
 
-void EntityRigid::SetPos(const mm::vec3& v)
+void RigidEntity::SetPos(const mm::vec3& v)
 {
 	btTransform trans;
 		body->getMotionState()->getWorldTransform(trans);
@@ -34,7 +34,7 @@ void EntityRigid::SetPos(const mm::vec3& v)
 	body->activate();
 }
 
-void EntityRigid::SetRot(const mm::quat& q)
+void RigidEntity::SetRot(const mm::quat& q)
 {
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
@@ -50,7 +50,7 @@ void EntityRigid::SetRot(const mm::quat& q)
 	body->activate();
 }
 
-void EntityRigid::SetScaleLocal(const mm::vec3& v)
+void RigidEntity::SetScaleLocal(const mm::vec3& v)
 {
 	btCollisionShape* colShape = body->getCollisionShape();
 
@@ -71,14 +71,14 @@ void EntityRigid::SetScaleLocal(const mm::vec3& v)
 	body->activate();
 }
 
-const mm::vec3 EntityRigid::GetPos() const
+const mm::vec3 RigidEntity::GetPos() const
 {
 	btTransform trans;
 		body->getMotionState()->getWorldTransform(trans);
 	return mm::vec3(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z());
 }
 
-const mm::quat EntityRigid::GetRot() const
+const mm::quat RigidEntity::GetRot() const
 {
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
@@ -91,7 +91,7 @@ const mm::quat EntityRigid::GetRot() const
 	return rot;
 }
 
- const mm::vec3 EntityRigid::GetScaleLocal() const
+ const mm::vec3 RigidEntity::GetScaleLocal() const
 {
 	btCollisionShape* shape = body->getCollisionShape();
 
@@ -101,7 +101,7 @@ const mm::quat EntityRigid::GetRot() const
 	return mm::vec3(1,1,1);
 }
 
- btRigidBody* EntityRigid::GetBody()
+ btRigidBody* RigidEntity::GetBody()
  {
 	 return body;
  }

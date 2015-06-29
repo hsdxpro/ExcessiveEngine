@@ -3,7 +3,7 @@
 
 namespace physics {
 
-class IEntityRigid
+class IRigidEntity
 {
 public:
 	virtual void AddForce(const mm::vec3& force, const mm::vec3& relPos = {0,0,0}) = 0;

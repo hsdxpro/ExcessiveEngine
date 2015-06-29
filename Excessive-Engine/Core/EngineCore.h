@@ -13,9 +13,9 @@
 #include "SoundEngine\SFML\SoundEngineSFML.h"
 
 #include "Actor.h"
-#include "ComponentGraphics.h"
-#include "ComponentRigidBody.h"
-#include "ComponentCamera.h"
+#include "GraphicsComponent.h"
+#include "RigidBodyComponent.h"
+#include "CameraComponent.h"
 #include "SupportLibrary\Importer3D.h"
 
 //#include "Actor.h"
@@ -47,16 +47,16 @@ public:
 	
 	Actor* AddActor();
 
-	ComponentGraphics*  AddCompGraphicsFromFile(const std::wstring& modelFilePath);
-	ComponentRigidBody* AddCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass);
-	ComponentRigidBody* AddCompRigidBodyCapsule(float height, float radius, float mass = 0);
-	ComponentCamera*	AddCompCamera();
+	GraphicsComponent*  AddCompGraphicsFromFile(const std::wstring& modelFilePath);
+	RigidBodyComponent* AddCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass);
+	RigidBodyComponent* AddCompRigidBodyCapsule(float height, float radius, float mass = 0);
+	CameraComponent*	AddCompCamera();
 
 	graphics::IMaterial* CreateGraphicsMaterial();
 
 	void Update(float deltaTime);
 
-	void SetCam(ComponentCamera* c);
+	void SetCam(CameraComponent* c);
 
 	graphics::IEngine*	GetGraphicsEngine();
 	physics::IEngine*	GetPhysicsEngine();

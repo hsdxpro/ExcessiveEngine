@@ -113,7 +113,7 @@ Actor* EngineCore::AddActor()
 	return a;
 }
 
-ComponentGraphics* EngineCore::AddCompGraphicsFromFile(const std::wstring& modelFilePath)
+GraphicsComponent* EngineCore::AddCompGraphicsFromFile(const std::wstring& modelFilePath)
 {
 	// Check if model already loaded somehow
 	rImporter3DData* modelDesc;
@@ -210,12 +210,12 @@ ComponentGraphics* EngineCore::AddCompGraphicsFromFile(const std::wstring& model
 		graphicsMesh->Update(meshData);
 	}
 
-	auto c = new ComponentGraphics(graphicsEntity);
+	auto c = new GraphicsComponent(graphicsEntity);
 		worldComponents.push_back(c);
 	return c;
 }
 
-ComponentRigidBody* EngineCore::AddCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass)
+RigidBodyComponent* EngineCore::AddCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass)
 {
 	// Check if model already loaded somehow
 	rImporter3DData* modelDesc;
@@ -239,7 +239,7 @@ ComponentRigidBody* EngineCore::AddCompRigidBodyFromFile(const std::wstring& mod
 		importedModels[modelFilePath] = modelDesc;
 	}
 
-	physics::IEntityRigid* rigidEntity = nullptr;
+	physics::IRigidEntity* rigidEntity = nullptr;
 
 	auto mesh = modelDesc->meshes[0];
 
@@ -264,23 +264,23 @@ ComponentRigidBody* EngineCore::AddCompRigidBodyFromFile(const std::wstring& mod
 	delete vertices;
 	vertices = nullptr; // Important
 
-	auto c = new ComponentRigidBody(rigidEntity);
+	auto c = new RigidBodyComponent(rigidEntity);
 		worldComponents.push_back(c);
 	return c;
 }
 
-ComponentRigidBody* EngineCore::AddCompRigidBodyCapsule(float height, float radius, float mass /* = 0*/)
+RigidBodyComponent* EngineCore::AddCompRigidBodyCapsule(float height, float radius, float mass /* = 0*/)
 {
 	auto capsuleEntity = physicsEngine->AddEntityRigidCapsule(height, radius, mass);
 
-	auto c = new ComponentRigidBody(capsuleEntity);
+	auto c = new RigidBodyComponent(capsuleEntity);
 		worldComponents.push_back(c);
 	return c;
 }
 
-ComponentCamera* EngineCore::AddCompCamera()
+CameraComponent* EngineCore::AddCompCamera()
 {
-	auto c = new ComponentCamera(graphicsEngine->CreateCam());
+	auto c = new CameraComponent(graphicsEngine->CreateCam());
 		worldComponents.push_back(c);
 	return c;
 }
@@ -376,7 +376,7 @@ void EngineCore::Update(float deltaTime)
 #endif
 }
 
-void EngineCore::SetCam(ComponentCamera* c)
+void EngineCore::SetCam(CameraComponent* c)
 {
 	defaultGraphicsScene->SetCamera(c->GetCam());
 }

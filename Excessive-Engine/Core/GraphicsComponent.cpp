@@ -1,23 +1,23 @@
-#include "ComponentGraphics.h"
+#include "GraphicsComponent.h"
 #include "GraphicsEngine\IEntity.h"
 
-ComponentGraphics::ComponentGraphics(graphics::IEntity* e) 
+GraphicsComponent::GraphicsComponent(graphics::IEntity* e) 
 :entityGraphics(e)
 {
 
 }
 
-void ComponentGraphics::_InnerReflectPos()
+void GraphicsComponent::_InnerReflectPos()
 {
 	entityGraphics->SetPos(transform.GetPos());
 }
 
-void ComponentGraphics::_InnerReflectRot()
+void GraphicsComponent::_InnerReflectRot()
 {
 	entityGraphics->SetRot(transform.GetRot());
 }
 
-void ComponentGraphics::_InnerReflectSkew()
+void GraphicsComponent::_InnerReflectSkew()
 {
 	entityGraphics->SetSkew(transform.GetSkew());
 }

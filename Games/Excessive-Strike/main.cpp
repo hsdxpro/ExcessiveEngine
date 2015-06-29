@@ -1,6 +1,6 @@
 #include "Core\EngineCore.h"
 #include "PlatformLibrary\IWindow.h"
-#include "Core\ComponentCamera.h"
+#include "Core\CameraComponent.h"
 #include "PlatformLibrary\Window.h"
 #include "PlatformLibrary\Timer.h"
 
@@ -11,7 +11,7 @@ EngineCore gEngineCore;
 // Window for our game
 IWindow* gWindow;
 
-ComponentCamera* gMainCam;
+CameraComponent* gMainCam;
 
 int main()
 {

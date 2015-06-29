@@ -1,7 +1,7 @@
-#include "ComponentGraphics.h"
-#include "ComponentRigidBody.h"
-#include "ComponentSoftBody.h"
-#include "ComponentCamera.h"
+#include "GraphicsComponent.h"
+#include "RigidBodyComponent.h"
+#include "SoftBodyComponent.h"
+#include "CameraComponent.h"
 
 WorldComponent::WorldComponent()
 :parent(0)
