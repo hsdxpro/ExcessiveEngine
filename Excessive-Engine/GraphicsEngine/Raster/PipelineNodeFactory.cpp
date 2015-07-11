@@ -10,3 +10,6 @@ PipelineNode* PipelineNodeFactory::CreateNode(const char* className) {
 		return nullptr;
 	}
 }
+
+
+std::unordered_map<std::string, std::function<PipelineNode*()>> PipelineNodeFactory::registeredClasses;

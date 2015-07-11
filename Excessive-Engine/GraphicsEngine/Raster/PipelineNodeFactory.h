@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <functional>
 #include <type_traits>
+#include <string>
 
 
 class PipelineNodeFactory {
