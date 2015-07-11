@@ -32,14 +32,14 @@ SOURCE_GROUP(Interfaces FILES ${interfaces})
 
 # Pipeline graph stuff
 SOURCE_GROUP(PipelineGraph FILES 
-InputPortBase.cpp
-InputPortBase.h
-NodeBase.cpp
-NodeBase.h
-NodeFactory.cpp
-NodeFactory.h
 PipelineData.cpp
 PipelineData.h
+PipelineNode.cpp
+PipelineNode.h
+PipelineNodeFactory.cpp
+PipelineNodeFactory.h
+PipelinePorts.cpp
+PipelinePorts.h
 )
 
 # Resource management files filter
