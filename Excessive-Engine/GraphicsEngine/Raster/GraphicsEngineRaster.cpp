@@ -95,7 +95,7 @@ static const char pixelShaderCode[] =
 ////////////////////////////////////////////////////////////////////////////////
 
 extern "C"
-EXPORT graphics::IEngine* CreateGraphicsEngineRaster(const rGraphicsEngineRaster& d) {
+EXPORT graphics::IEngine* CreateGraphicsEngineRaster(const rGraphicsEngineRasterData& d) {
 	auto myEngine = new GraphicsEngineRaster(d);
 	if (myEngine->isConstructionSucceeded()) {
 		return myEngine;
@@ -116,9 +116,9 @@ EXPORT graphics::IEngine* CreateGraphicsEngineRaster(const rGraphicsEngineRaster
 ////////////////////////////////////////////////////////////////////////////////
 // ctor, dtor, release
 
-GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRaster& d) {
-	gapi = Factory::CreateGapiGL();
-
+GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRasterData& d) {
+	gapi = d.gapi;
+	
 	targetWindow = d.targetWindow;
 	renderRegion = renderRegion;
 

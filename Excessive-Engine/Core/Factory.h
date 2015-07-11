@@ -12,7 +12,7 @@
 class Factory
 {
 public:
-	static graphics::IEngine*	CreateGraphicsEngineRaster(const rGraphicsEngineRaster& d);
+	static graphics::IEngine*	CreateGraphicsEngineRaster(const rGraphicsEngineRasterData& d);
 	static graphics::IEngine*	CreateGraphicsEngineRT(const rGraphicsEngineRT& d);
 	static physics::IEngine*	CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d);
 	static network::IEngine*	CreateNetworkEngine(const rNetworkEngine& d);

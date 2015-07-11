@@ -6,10 +6,10 @@
 #include "PlatformLibrary/Sys.h"
 
 
-graphics::IEngine* Factory::CreateGraphicsEngineRaster(const rGraphicsEngineRaster& d) 
+graphics::IEngine* Factory::CreateGraphicsEngineRaster(const rGraphicsEngineRasterData& d) 
 {
 #ifdef EXCESSIVE_DLL_MODULES
-	using CreateT = graphics::IEngine*(*)(const rGraphicsEngineRaster& d);
+	using CreateT = graphics::IEngine*(*)(const rGraphicsEngineRasterData& d);
 	auto module = Sys::LoadDLL(L"GraphicsEngineRaster");
 	if (!module) {
 		return nullptr;

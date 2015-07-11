@@ -65,7 +65,22 @@ graphics::IEngine* Core::InitGraphicsEngineRaster(const rGraphicsEngineRaster& d
 	if (graphicsEngine)
 		graphicsEngine->Release();
 
-	graphicsEngine = Factory::CreateGraphicsEngineRaster(d);
+	// Make data from description to startup graphics engine
+	rGraphicsEngineRasterData graphicsEngineData;
+		graphicsEngineData.renderRegion = d.renderRegion;
+		graphicsEngineData.targetWindow = d.targetWindow;
+		switch(d.gapiType)
+		{
+			case eGapiType::OPENGL_4_5:
+			{
+				graphicsEngineData.gapi = Factory::CreateGapiGL();
+				break;
+			}
+
+			default:
+				assert(0);
+		}
+	graphicsEngine = Factory::CreateGraphicsEngineRaster(graphicsEngineData);
 
 	// Load error diffuse texture, that we place on materials which fails load their own texture by path
 	texError = graphicsEngine->CreateTexture();

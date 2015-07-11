@@ -44,11 +44,18 @@ struct rGraphicsEngineRaster
 	rRectNormed		renderRegion;
 };
 
+struct rGraphicsEngineRasterData
+{
+	IGapi*			gapi;
+	IWindow*		targetWindow;
+	rRectNormed		renderRegion;
+};
+
 class GraphicsEngineRaster : public graphics::IEngine
 {
 public:
 	// ctor, dtor, release
-	GraphicsEngineRaster(const rGraphicsEngineRaster& d);
+	GraphicsEngineRaster(const rGraphicsEngineRasterData& d);
 	~GraphicsEngineRaster();
 	bool isConstructionSucceeded() const { return isValid; }
 
