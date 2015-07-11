@@ -1,5 +1,6 @@
 #pragma once
 #include "SupportLibrary\BasicTypes.h"
+#include "PlatformLibrary\IWindow.h"
 
 class IGapi;
 
@@ -83,6 +84,8 @@ public:
 	virtual Layer& GetLayer(size_t index) = 0;
 
 	virtual IGapi* GetGapi() = 0;
+
+	virtual IWindow* GetTargetWindow() = 0;
 
 	///////////////////////////////////////
 	// interact

@@ -1,5 +1,4 @@
-﻿#include <Core/EngineCore.h>
-#include <SupportLibrary/Factory.h>
+﻿#include <Core/Core.h>
 
 // basic util
 #include <chrono>
@@ -29,7 +28,7 @@ namespace testartur
 		Window window(d);
 
 		// Init engine core (graphics, physics, sound, network
-		EngineCore core;
+		Core core;
 		sound::IEngine* sEngine = core.InitSoundEngine();
 		core.InitNetworkEngine();
 		core.InitPhysicsEngineBullet();
@@ -39,16 +38,14 @@ namespace testartur
 		graphics::IEngine* gEngine = core.InitGraphicsEngineRaster(gDesc);
 
 		// Create camera
-		graphics::ICamera* cam = gEngine->CreateCam();
+		CameraComponent* cam = gCore.SpawnCompCamera();
 		cam->SetFOV(70 / 180.f*3.1415926f);
 		//cam->SetAspectRatio(window->GetClientAspectRatio());
 		cam->SetNearPlane(0.2f);
 		cam->SetFarPlane(2000);
 		cam->SetPos(mm::vec3(0, -3, 1));
 
-		// Create scene, plug camera
-		graphics::IScene* scene = core.GetDefaultGraphicsScene();
-		scene->SetCamera(cam);
+		gCore.SetCam(cam);
 
 		//graphics::IEngine::Layer layer;
 		//layer.scene = scene;
@@ -61,11 +58,11 @@ namespace testartur
 		static const wchar_t assetName[] = L"../Assets/teapot.dae";
 		//*/
 		//Actor* simpleEntity = core.AddActor();
-		core.AddCompRigidBodyFromFile(Sys::GetWorkDir() + assetName, 0)->Attach(core.AddCompGraphicsFromFile(Sys::GetWorkDir() + assetName));
+		core.SpawnCompRigidBodyFromFile(Sys::GetWorkDir() + assetName, 0)->Attach(core.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + assetName));
 
-		core.AddCompGraphicsFromFile(Sys::GetWorkDir() + L"../Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
+		core.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + L"../Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
 
-		auto pMusicSourceRepresenterModel = core.AddCompGraphicsFromFile(Sys::GetWorkDir() + teapotModelPath);
+		auto pMusicSourceRepresenterModel = core.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + teapotModelPath);
 		pMusicSourceRepresenterModel->SetScaleLocal({ 0.1f, 0.1f, 0.1f });
 		pMusicSourceRepresenterModel->SetPos(musicPosition);
 
@@ -93,7 +90,7 @@ namespace testartur
 			return 1;
 		}
 		pFireSound->SetSoundData(pFireSoundData);
-		pFireSound->SetVolume(0.3);
+		pFireSound->SetVolume(0.3f);
 		//NOTE: FIRE SOUND IS STEREO, SFML IMPLEMENTATION CAN ONLY SPATIALIZE MONO SOUND. SO SETTING ITS POSITION IS MEANINGLESS.
 
 		// Run the main loop
@@ -149,39 +146,27 @@ namespace testartur
 				{
 					if (bRMBDown)
 					{
-						float angleChangeZ = (float)(ev.deltaX) * 0.009;
-						float angleChangeX = (float)(-ev.deltaY) * 0.009;
-
-						mm::vec3 viewDir = mm::normalize(cam->GetTargetPos() - cam->GetPos());
-						float lenXY = mm::length(viewDir.xy);
-						static float angleX = acos(lenXY)*(viewDir.z > 0 ? 1 : -1);
-						angleX += angleChangeX;
-						angleX = std::max(-85.f / 180 * 3.141592653f, std::min(angleX, 85.f / 180 * 3.141592653f));
-						static float angleZ = atan2(viewDir.y / lenXY, viewDir.z / lenXY) - 3.141592653f / 2;
-						angleZ += angleChangeZ;
-						if (angleZ > 3.141592653f)
-							angleZ -= floor(angleZ / 3.141592653f) * 2 * 3.141592653f;
-						else if (angleZ < -3.141592653f)
-							angleZ -= ceil(angleZ / 3.141592653f) * 2 * 3.141592653f;
-
-						mm::vec3 newViewDir(0, 1, 0);
-
-						mm::mat3 rotAroundX(1, 0, 0,
-							0, cos(angleX), -sin(angleX),
-							0, sin(angleX), cos(angleX));
-
-						mm::mat3 rotAroundZ(cos(-angleZ), -sin(-angleZ), 0,
-							sin(-angleZ), cos(-angleZ), 0,
-							0, 0, 1);
-
-						newViewDir *= rotAroundX;
-						newViewDir *= rotAroundZ;
-
-						camAngleX = angleX;
-						camAngleZ = angleZ;
-
-						cam->SetTarget(cam->GetPos() + newViewDir);
-						listener->SetDir(newViewDir);
+						static float angleZ = 0;
+						static float angleX = 0;
+						
+						// Input read up finished, now we can recenter cursor for our fps game
+						auto mousePos = Sys::GetCursorPos();
+						
+						//float mouseDx = mousePos.x - windowCenter.x;
+						//float mouseDy = mousePos.y - windowCenter.y;
+						
+						angleZ += -(float)ev.deltaX / 360.f * 6.28;
+						angleX += -(float)ev.deltaY / 360.f * 6.28;
+						
+						// Clamp angleX
+						float angleSign = angleX >= 0 ? 1 : -1;
+						if (angleX * angleSign >= 3.14159265 / 2 * 0.95)
+							angleX = 3.14159265 / 2 * 0.95 * angleSign;
+						
+						mm::quat rotAroundZ(angleZ, { 0, 0, 1 });
+						mm::quat rotAroundX(angleX, { 1, 0, 0 });
+						
+						cam->SetRot(rotAroundZ * rotAroundX);
 					}
 				} break;
 

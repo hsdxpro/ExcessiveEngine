@@ -12,23 +12,27 @@
 #include "NetworkEngine\Boost\NetworkEngineBoost.h"
 #include "SoundEngine\SFML\SoundEngineSFML.h"
 
+#include "Script.h"
+#include "Thing.h"
+#include "ActorScript.h"
 #include "Actor.h"
 #include "GraphicsComponent.h"
 #include "RigidBodyComponent.h"
 #include "CameraComponent.h"
+
 #include "SupportLibrary\Importer3D.h"
 
-//#include "Actor.h"
 #include <unordered_map>
+#include <vector>
 
 
 
-class EngineCore
+class Core
 {
 public:
 	// Nearly do nothing, null out vars
-	EngineCore();
-	~EngineCore();
+	Core();
+	~Core();
 
 	// Init raster graphics engine, if one already exists will be destroyed, then instantiate it
 	graphics::IEngine* InitGraphicsEngineRaster(const rGraphicsEngineRaster& d = rGraphicsEngineRaster());
@@ -44,26 +48,38 @@ public:
 
 	// Init network engine, if one already exists will be destroyed, then instantiate it
 	sound::IEngine* InitSoundEngine(const rSoundEngine& d = rSoundEngine());
-	
+
+	// TODO!
+	//ThingType*			  CreateThingType(Thing* t);
+	//GraphicsComponentType*  CreateCompGraphicsType(GraphicsComponent* comp);
+	//RigidBodyComponentType* CreateCompRigidBodyType(RigidBodyComponent* comp);
+	//CameraComponentType*	  CreateCompCameraType(CameraComponent* comp);
+
+	Thing* SpawnThing(ActorScript* s);
+
 	Actor* AddActor();
 
-	GraphicsComponent*  AddCompGraphicsFromFile(const std::wstring& modelFilePath);
-	RigidBodyComponent* AddCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass);
-	RigidBodyComponent* AddCompRigidBodyCapsule(float height, float radius, float mass = 0);
-	CameraComponent*	AddCompCamera();
+	template<class ScriptClass>
+	Script* AddScript();
 
-	graphics::IMaterial* CreateGraphicsMaterial();
+	template<class ActorScriptClass>
+	ActorScript* AddActorScript();
 
-	void Update(float deltaTime);
+	//Actor* AddActor();
+	GraphicsComponent*  SpawnCompGraphicsFromFile(const std::wstring& modelFilePath);
+	RigidBodyComponent* SpawnCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass);
+	RigidBodyComponent* SpawnCompRigidBodyCapsule(float height, float radius, float mass = 0);
+	CameraComponent*	SpawnCompCamera();
 
 	void SetCam(CameraComponent* c);
+	void Update(float deltaTime);
+
+	IWindow* GetTargetWindow();
 
 	graphics::IEngine*	GetGraphicsEngine();
 	physics::IEngine*	GetPhysicsEngine();
 	network::IEngine*	GetNetworkEngine();
 	sound::IEngine*		GetSoundEngine();
-
-	graphics::IScene*	GetDefaultGraphicsScene();
 
 protected:
 	graphics::IEngine*	graphicsEngine;
@@ -71,13 +87,45 @@ protected:
 	network::IEngine*	networkEngine;
 	sound::IEngine*		soundEngine;
 
-	graphics::IScene*	defaultGraphicsScene;
+	// Scripts
+	std::vector<Script*> scripts;
 
+	// Things
+	std::vector<Thing*> things;
+
+	// Actor scripts
+	std::vector<ActorScript*> actorScripts;
+
+	// Actors
 	std::vector<Actor*> actors;
+
+	// World components
 	std::vector<WorldComponent*> worldComponents;
 
+	// Imported models
 	std::unordered_map<std::wstring, rImporter3DData*> importedModels;
+
+	// The default graphicsScene we add things to
+	graphics::IScene* defaultGraphicsScene;
 
 	// Error diffuse texture for failed texture loads
 	graphics::ITexture* texError;
 };
+
+extern Core gCore;
+
+template<class ScriptClass>
+Script* Core::AddScript()
+{
+	ScriptClass* p = new ScriptClass();
+		scripts.push_back(p);
+	return p;
+}
+
+template<class ActorScriptClass>
+ActorScript* Core::AddActorScript()
+{
+	ActorScriptClass* p = new ActorScriptClass(gCore.AddActor());
+		actorScripts.push_back(p);
+	return p;
+}

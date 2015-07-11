@@ -45,6 +45,7 @@ public:
 	// interact
 	void Update(float deltaTime) override;
 
-	IGapi* GetGapi() override { return nullptr;  }
+	IGapi* GetGapi() override			{return nullptr;}
+	IWindow* GetTargetWindow() override {return nullptr;}
 };
 

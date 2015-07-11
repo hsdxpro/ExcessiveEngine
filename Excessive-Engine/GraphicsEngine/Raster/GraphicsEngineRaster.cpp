@@ -432,3 +432,7 @@ void GraphicsEngineRaster::Update(float deltaTime) {
 IGapi* GraphicsEngineRaster::GetGapi() {
 	return gapi;
 }
+
+IWindow* GraphicsEngineRaster::GetTargetWindow() {
+	return targetWindow;
+}

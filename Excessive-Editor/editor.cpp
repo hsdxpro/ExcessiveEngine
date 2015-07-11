@@ -1,10 +1,8 @@
 #include "Awesomium/WebCore.h"
 #include "Awesomium/BitmapSurface.h"
 #include "Awesomium/STLHelpers.h"
-#include <Core/EngineCore.h>
-
-#include <PlatformLibrary/Window.h>
-#include <SupportLibrary/Factory.h>
+#include <Core/Core.h>
+#include "PlatformLibrary/Window.h"
 
 static const char vertexShaderCode[] =
 "#version 440 core \n"
@@ -29,8 +27,6 @@ static const char pixelShaderCode[] =
 "} \n"
 ;
 
-EngineCore gEngineCore;
-
 int main() 
 {
 	// Window
@@ -44,7 +40,7 @@ int main()
 	rGraphicsEngineRaster gDesc;
 		gDesc.gapiType = eGapiType::OPENGL_4_5;
 		gDesc.targetWindow = &window;
-	graphics::IEngine* gEngine = gEngineCore.InitGraphicsEngineRaster(gDesc);
+	graphics::IEngine* gEngine = gCore.InitGraphicsEngineRaster(gDesc);
 
 // GAPI HACKED THINGS
 	auto gapi = gEngine->GetGapi();

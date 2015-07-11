@@ -1,5 +1,4 @@
-﻿#include <Core/EngineCore.h>
-#include <SupportLibrary/Factory.h>
+﻿#include <Core/Core.h>
 #include <PlatformLibrary/Window.h>
 #include <PlatformLibrary/Timer.h>
 
@@ -27,7 +26,7 @@ int Ricsi()
 	Window window(d);
 
 	// Init engine core (graphics, physics, sound, network
-	EngineCore core;
+	Core core;
 		core.InitSoundEngine();
 		core.InitNetworkEngine();
 		core.InitPhysicsEngineBullet();
@@ -37,22 +36,19 @@ int Ricsi()
 		graphics::IEngine* gEngine = core.InitGraphicsEngineRaster(gDesc);
 
 	// Create camera
-	CameraComponent* cam = core.AddCompCamera();
-	cam->SetFOV(70 / 180.f*3.1415926f);
-	cam->SetNearPlane(0.2f);
-	cam->SetFarPlane(2000);
-	cam->SetPos(mm::vec3(0, -3, 1));
-
-	// Create scene, plug camera
-	graphics::IScene* scene = core.GetDefaultGraphicsScene();
-	scene->SetCamera(cam->GetCam());
+	CameraComponent* cam = core.SpawnCompCamera();
+		cam->SetFOV(70 / 180.f*3.1415926f);
+		cam->SetNearPlane(0.2f);
+		cam->SetFarPlane(2000);
+		cam->SetPos(mm::vec3(0, -3, 1));
+	core.SetCam(cam);
 
 	static const wchar_t assetName[] = L"../Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
 	static const wchar_t teapotModelPath[] = L"../Assets/box.dae"; // Assets/teapot.dae
 	static const wchar_t ak47ModelPath[] = L"../Assets/ak47/ak.obj"; // Assets/teapot.dae
 
-	core.AddCompRigidBodyFromFile(Sys::GetWorkDir() + assetName, 0)->Attach(core.AddCompGraphicsFromFile(Sys::GetWorkDir() + assetName));
-	core.AddCompGraphicsFromFile(Sys::GetWorkDir() + L"../Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
+	core.SpawnCompRigidBodyFromFile(Sys::GetWorkDir() + assetName, 0)->Attach(core.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + assetName));
+	core.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + L"../Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
 
 	// Run the main loop
 	rWindowEvent ev;
@@ -103,8 +99,8 @@ int Ricsi()
 					bRMBDown = true;
 				else if (ev.mouseBtn == eMouseBtn::LEFT)
 				{
-					auto box = core.AddCompRigidBodyFromFile(Sys::GetWorkDir() + teapotModelPath, 10);
-					box->Attach(core.AddCompGraphicsFromFile(Sys::GetWorkDir() + teapotModelPath));
+					auto box = core.SpawnCompRigidBodyFromFile(Sys::GetWorkDir() + teapotModelPath, 10);
+					box->Attach(core.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + teapotModelPath));
 
 					box->SetPos(cam->GetPos() + cam->GetCam()->GetDirFrontNormed() * 3); // 3 méterrel elénk
 					box->SetScaleLocal(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));

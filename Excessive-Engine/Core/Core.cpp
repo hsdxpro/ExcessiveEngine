@@ -1,7 +1,9 @@
-#include "EngineCore.h"
+#include "Core.h"
 #include "PlatformLibrary\Sys.h"
 #include "SupportLibrary\VisualCpuProfiler.h"
 #include "Factory.h"
+
+Core gCore;
 
 //////////////////////////////////////////////////
 //                                              //
@@ -29,18 +31,24 @@
 //                                              //
 //////////////////////////////////////////////////
 
-EngineCore::EngineCore() 
+Core::Core() 
 :graphicsEngine(0), physicsEngine(0), soundEngine(0), networkEngine(0)
 {
 
 }
 
-EngineCore::~EngineCore() 
+Core::~Core()
 {
-	for (auto& a : actors)
+	for (auto& a : scripts)
 		delete a;
 
 	for (auto& a : worldComponents)
+		delete a;
+
+	for (auto& a : actorScripts)
+		delete a;
+
+	for (auto& a : actors)
 		delete a;
 
 	for (auto& a : importedModels)
@@ -52,7 +60,7 @@ EngineCore::~EngineCore()
 	if (soundEngine)	soundEngine->Release();
 }
 
-graphics::IEngine* EngineCore::InitGraphicsEngineRaster(const rGraphicsEngineRaster& d /*= rGraphicsEngineRaster()*/) 
+graphics::IEngine* Core::InitGraphicsEngineRaster(const rGraphicsEngineRaster& d /*= rGraphicsEngineRaster()*/) 
 {
 	if (graphicsEngine)
 		graphicsEngine->Release();
@@ -68,13 +76,13 @@ graphics::IEngine* EngineCore::InitGraphicsEngineRaster(const rGraphicsEngineRas
 	// Default scene and layer for GraphicsEngine
 	defaultGraphicsScene = graphicsEngine->CreateScene();
 	graphics::IEngine::Layer layer;
-		layer.scene = defaultGraphicsScene;
+	layer.scene = defaultGraphicsScene;
 	graphicsEngine->AddLayer(layer);
 
 	return graphicsEngine;
 }
 
-graphics::IEngine* EngineCore::InitGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/) 
+graphics::IEngine* Core::InitGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/) 
 {
 	if (graphicsEngine) 
 		graphicsEngine->Release(); 
@@ -82,7 +90,7 @@ graphics::IEngine* EngineCore::InitGraphicsEngineRT(const rGraphicsEngineRT& d /
 	return graphicsEngine = Factory::CreateGraphicsEngineRT(d);
 }
 
-physics::IEngine* EngineCore::InitPhysicsEngineBullet(const rPhysicsEngineBullet& d /*= rPhysicsEngineBullet()*/) 
+physics::IEngine* Core::InitPhysicsEngineBullet(const rPhysicsEngineBullet& d /*= rPhysicsEngineBullet()*/) 
 {
 	if (physicsEngine)
 		physicsEngine->Release();
@@ -90,7 +98,7 @@ physics::IEngine* EngineCore::InitPhysicsEngineBullet(const rPhysicsEngineBullet
 	return physicsEngine = Factory::CreatePhysicsEngineBullet(d);
 }
 
-network::IEngine* EngineCore::InitNetworkEngine(const rNetworkEngine& d /*= rNetworkEngine()*/) 
+network::IEngine* Core::InitNetworkEngine(const rNetworkEngine& d /*= rNetworkEngine()*/) 
 {
 	if (networkEngine)
 		networkEngine->Release();
@@ -98,7 +106,7 @@ network::IEngine* EngineCore::InitNetworkEngine(const rNetworkEngine& d /*= rNet
 	return networkEngine = Factory::CreateNetworkEngine(d);
 }
 
-sound::IEngine* EngineCore::InitSoundEngine(const rSoundEngine& d /*= rSoundEngine()*/) 
+sound::IEngine* Core::InitSoundEngine(const rSoundEngine& d /*= rSoundEngine()*/) 
 {
 	if (soundEngine)
 		soundEngine->Release();
@@ -106,14 +114,29 @@ sound::IEngine* EngineCore::InitSoundEngine(const rSoundEngine& d /*= rSoundEngi
 	return soundEngine = Factory::CreateSoundEngine(d);
 }
 
-Actor* EngineCore::AddActor()
+Thing* Core::SpawnThing(ActorScript* s)
 {
-	auto a = new Actor();
-		actors.push_back(a);
-	return a;
+	// New thing
+	Thing* thing = new Thing();
+
+		// Behavior from script
+		ActorBehavior* behav = new ActorBehavior();
+		behav->AddActorScript(s);
+
+	thing->AddBehavior(behav);
+	thing->SetActor(s->GetActor());
+
+	return thing;
 }
 
-GraphicsComponent* EngineCore::AddCompGraphicsFromFile(const std::wstring& modelFilePath)
+Actor* Core::AddActor()
+{
+	Actor* p = new Actor();
+		actors.push_back(p);
+	return p;
+}
+
+GraphicsComponent* Core::SpawnCompGraphicsFromFile(const std::wstring& modelFilePath)
 {
 	// Check if model already loaded somehow
 	rImporter3DData* modelDesc;
@@ -176,7 +199,7 @@ GraphicsComponent* EngineCore::AddCompGraphicsFromFile(const std::wstring& model
 				}
 
 				auto texDiffuse = graphicsEngine->CreateTexture();
-				if(texDiffuse->Load(finalPath.c_str()))
+				if (texDiffuse->Load(finalPath.c_str()))
 					subMat.t_diffuse = texDiffuse;
 			}
 		}
@@ -211,11 +234,11 @@ GraphicsComponent* EngineCore::AddCompGraphicsFromFile(const std::wstring& model
 	}
 
 	auto c = new GraphicsComponent(graphicsEntity);
-		worldComponents.push_back(c);
+	worldComponents.push_back(c);
 	return c;
 }
 
-RigidBodyComponent* EngineCore::AddCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass)
+RigidBodyComponent* Core::SpawnCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass)
 {
 	// Check if model already loaded somehow
 	rImporter3DData* modelDesc;
@@ -244,7 +267,7 @@ RigidBodyComponent* EngineCore::AddCompRigidBodyFromFile(const std::wstring& mod
 	auto mesh = modelDesc->meshes[0];
 
 	mm::vec3* vertices;
-	// Little hekk, we know it's INTERLEAVED, cuz  AddCompRigidBodyFromFile and AddCompGraphicsFromFile implementation
+	// Little hekk, we know it's INTERLEAVED, cuz  SpawnCompRigidBodyFromFile and SpawnCompGraphicsFromFile implementation
 	//if (cfg.isContain(eImporter3DFlag::VERT_BUFF_INTERLEAVED)) // Interleaved buffer? Okay gather positions from vertices stepping with vertex stride
 	{
 		vertices = new mm::vec3[mesh.nVertices];
@@ -265,32 +288,32 @@ RigidBodyComponent* EngineCore::AddCompRigidBodyFromFile(const std::wstring& mod
 	vertices = nullptr; // Important
 
 	auto c = new RigidBodyComponent(rigidEntity);
-		worldComponents.push_back(c);
+	worldComponents.push_back(c);
 	return c;
 }
 
-RigidBodyComponent* EngineCore::AddCompRigidBodyCapsule(float height, float radius, float mass /* = 0*/)
+RigidBodyComponent* Core::SpawnCompRigidBodyCapsule(float height, float radius, float mass /* = 0*/)
 {
 	auto capsuleEntity = physicsEngine->AddEntityRigidCapsule(height, radius, mass);
 
 	auto c = new RigidBodyComponent(capsuleEntity);
-		worldComponents.push_back(c);
+	worldComponents.push_back(c);
 	return c;
 }
 
-CameraComponent* EngineCore::AddCompCamera()
+CameraComponent* Core::SpawnCompCamera()
 {
 	auto c = new CameraComponent(graphicsEngine->CreateCam());
-		worldComponents.push_back(c);
+	worldComponents.push_back(c);
 	return c;
 }
 
-graphics::IMaterial* EngineCore::CreateGraphicsMaterial()
+void Core::SetCam(CameraComponent* c)
 {
-	return graphicsEngine->CreateMaterial();
+	defaultGraphicsScene->SetCamera(c->GetCam());
 }
 
-void EngineCore::Update(float deltaTime)
+void Core::Update(float deltaTime)
 {
 	/*
 	// Debugging fcking bullet physics
@@ -374,34 +397,32 @@ void EngineCore::Update(float deltaTime)
 #ifdef PROFILE_ENGINE
 	VisualCpuProfiler::UpdateAndPresent();
 #endif
+
+	// Present opengl window
+	graphicsEngine->GetTargetWindow()->Present();
 }
 
-void EngineCore::SetCam(CameraComponent* c)
+IWindow* Core::GetTargetWindow()
 {
-	defaultGraphicsScene->SetCamera(c->GetCam());
+	return graphicsEngine->GetTargetWindow();
 }
 
-graphics::IEngine* EngineCore::GetGraphicsEngine()
+graphics::IEngine* Core::GetGraphicsEngine()
 { 
 	return graphicsEngine; 
 }
 
-physics::IEngine* EngineCore::GetPhysicsEngine() 
+physics::IEngine* Core::GetPhysicsEngine() 
 { 
 	return physicsEngine; 
 }
 
-network::IEngine* EngineCore::GetNetworkEngine() 
+network::IEngine* Core::GetNetworkEngine() 
 { 
 	return networkEngine; 
 }
 
-sound::IEngine*	EngineCore::GetSoundEngine() 
+sound::IEngine*	Core::GetSoundEngine()
 { 
 	return soundEngine; 
-}
-
-graphics::IScene* EngineCore::GetDefaultGraphicsScene()
-{
-	return defaultGraphicsScene;
 }

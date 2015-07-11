@@ -73,6 +73,7 @@ public:
 
 	IGapi* GetGapi() override;
 
+	IWindow* GetTargetWindow() override;
 private:
 	IGapi* gapi;
 	std::vector<Layer> layers;
