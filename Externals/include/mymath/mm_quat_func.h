@@ -11,14 +11,14 @@ mymath::impl::quati<ty> operator*( const mymath::impl::quati<ty>& p, const mymat
   const mymath::impl::vec3i<ty> qv = q.value.xyz;
   const ty                      qs = q.value.w;
 
-  return mymath::impl::quati<ty>(mymath::impl::vec4i<ty>( ps * qv + qs * pv + mymath::cross( pv, qv ),
-    ps * qs - mymath::dot( pv, qv ) ));
+  return mymath::impl::quati<ty>( mymath::impl::vec4i<ty>( ps * qv + qs * pv + mymath::cross( pv, qv ),
+    ps * qs - mymath::dot( pv, qv ) ) );
 }
 
 template<typename ty>
 mymath::impl::quati<ty> operator*( const mymath::impl::quati<ty>& p, const ty& num )
 {
-  return mymath::impl::quati<ty>(p.value * num);
+  return mymath::impl::quati<ty>( p.value * num );
 }
 
 template<typename ty>
@@ -30,7 +30,7 @@ mymath::impl::quati<ty> operator*( const ty& num, const mymath::impl::quati<ty>&
 template<typename ty>
 mymath::impl::quati<ty> operator/( const mymath::impl::quati<ty>& p, const ty& num )
 {
-  return mymath::impl::quati<ty>(p.value / num);
+  return mymath::impl::quati<ty>( p.value / num );
 }
 
 namespace mymath
@@ -38,7 +38,7 @@ namespace mymath
   template<typename ty>
   impl::quati<ty> conjugate( const impl::quati<ty>& q )
   {
-    return mymath::impl::quati<ty>(mymath::impl::vec4i<ty>(-q.value.xyz, q.value.w));
+    return mymath::impl::quati<ty>( mymath::impl::vec4i<ty>( -q.value.xyz, q.value.w ) );
   }
 
   template<typename ty>
@@ -53,14 +53,14 @@ namespace mymath
   template<typename ty>
   impl::quati<ty> normalize( const impl::quati<ty>& q )
   {
-    return impl::quati<ty>(normalize( q.value ));
+    return impl::quati<ty>( normalize( q.value ) );
   }
 
-  template<typename ty>
-  ty norm( const impl::quati<ty>& q )
-  {
-    return length( q.value );
-  }
+  //template<typename ty>
+  //ty norm( const impl::quati<ty>& q )
+  //{
+  //  return length( q.value );
+  //}
 
   template<typename ty>
   impl::mat3i<ty> mat3_cast( const impl::quati<ty>& q )
@@ -95,7 +95,7 @@ namespace mymath
   template<typename ty>
   impl::quati<ty> mix( const impl::quati<ty>& q1, const impl::quati<ty>& q2, const ty& t )
   {
-    return impl::quati<ty>(normalize( q1.value*( 1 - t ) + q2.value*t ));
+    return impl::quati<ty>( normalize( q1.value*( 1 - t ) + q2.value*t ) );
   }
 
   template<typename ty>
@@ -107,7 +107,7 @@ namespace mymath
     float sintheta = std::sin( theta );
     float wp = std::sin( ( 1 - t ) * theta ) / sintheta;
     float wq = std::sin( t * theta ) / sintheta;
-    return impl::quati<ty>(wp * q1.value + wq * q2.value);
+    return impl::quati<ty>( wp * q1.value + wq * q2.value );
   }
 
   //TODO SLOW

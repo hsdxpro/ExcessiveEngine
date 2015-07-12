@@ -19,7 +19,7 @@ namespace mymath
   { return impl::vec4i<bool>( !a.x, !a.y, !a.z, !a.w ); } \
 
   //any
-  #define MYMATH_ANY_FUNC(t) \
+#define MYMATH_ANY_FUNC(t) \
   MYMATH_INLINE bool any( const impl::vec2i<t>& a ) \
   { return a.x || a.y; } \
   MYMATH_INLINE bool any( const impl::vec3i<t>& a ) \
@@ -28,7 +28,7 @@ namespace mymath
   { return a.x || a.y || a.z || a.w; } \
 
   //all
-  #define MYMATH_ALL_FUNC(t) \
+#define MYMATH_ALL_FUNC(t) \
   MYMATH_INLINE bool all( const impl::vec2i<t>& a ) \
   { return a.x && a.y; } \
   MYMATH_INLINE bool all( const impl::vec3i<t>& a ) \
@@ -55,137 +55,137 @@ namespace mymath
   { return not( equal( a, b ) ); }
 
   MYMATH_NOT_FUNC( bool )
-  MYMATH_ANY_FUNC( bool )
-  MYMATH_ALL_FUNC( bool )
+    MYMATH_ANY_FUNC( bool )
+    MYMATH_ALL_FUNC( bool )
 
 #ifndef MYMATH_USE_SSE2
-  MYMATH_EQUAL_FUNC( float )
+    MYMATH_EQUAL_FUNC( float )
 #endif
-  MYMATH_EQUAL_FUNC( int )
-  MYMATH_EQUAL_FUNC( unsigned int )
-  MYMATH_EQUAL_FUNC( bool )
+    MYMATH_EQUAL_FUNC( int )
+    MYMATH_EQUAL_FUNC( unsigned int )
+    MYMATH_EQUAL_FUNC( bool )
 
 #ifndef MYMATH_USE_SSE2
-  MYMATH_NOTEQUAL_FUNC( float )
+    MYMATH_NOTEQUAL_FUNC( float )
 #endif
-  MYMATH_NOTEQUAL_FUNC( int )
-  MYMATH_NOTEQUAL_FUNC( unsigned int )
-  MYMATH_NOTEQUAL_FUNC( bool )
+    MYMATH_NOTEQUAL_FUNC( int )
+    MYMATH_NOTEQUAL_FUNC( unsigned int )
+    MYMATH_NOTEQUAL_FUNC( bool )
 }
 
 //operator*
 #define MYMATH_OPERATORMUL_FUNC(t) \
   MYMATH_INLINE mm::impl::vec2i<t> operator* ( const mm::impl::vec2i<t>& a, const mm::impl::vec2i<t>& b ) \
-  { return mm::impl::vec2i<t>( a.x * b.x, a.y * b.y ); } \
+    { return mm::impl::vec2i<t>( a.x * b.x, a.y * b.y ); } \
   MYMATH_INLINE mm::impl::vec3i<t> operator* ( const mm::impl::vec3i<t>& a, const mm::impl::vec3i<t>& b ) \
-  { return mm::impl::vec3i<t>( a.x * b.x, a.y * b.y, a.z * b.z ); } \
+    { return mm::impl::vec3i<t>( a.x * b.x, a.y * b.y, a.z * b.z ); } \
   MYMATH_INLINE mm::impl::vec4i<t> operator* ( const mm::impl::vec4i<t>& a, const mm::impl::vec4i<t>& b ) \
-  { return mm::impl::vec4i<t>( a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w ); }
+    { return mm::impl::vec4i<t>( a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w ); }
 
 //operator/
 #define MYMATH_OPERATORDIV_FUNC(t) \
   MYMATH_INLINE mm::impl::vec2i<t> operator/ ( const mm::impl::vec2i<t>& a, const mm::impl::vec2i<t>& b ) \
-  { assert( !mm::impl::is_eq( b.x, (t)0 ) && !mm::impl::is_eq( b.y, (t)0 ) ); \
+    { assert( !mm::impl::is_eq( b.x, (t)0 ) && !mm::impl::is_eq( b.y, (t)0 ) ); \
     mm::impl::vec2i<t> tmp = mm::impl::vec2i<t>( ( t )1 / b.x, ( t )1 / b.y ); \
     return a * tmp; } \
   MYMATH_INLINE mm::impl::vec3i<t> operator/ ( const mm::impl::vec3i<t>& a, const mm::impl::vec3i<t>& b ) \
-  { assert( !mm::impl::is_eq( b.x, (t)0 ) && !mm::impl::is_eq( b.y, (t)0 ) && !mm::impl::is_eq( b.z, (t)0 ) ); \
+    { assert( !mm::impl::is_eq( b.x, (t)0 ) && !mm::impl::is_eq( b.y, (t)0 ) && !mm::impl::is_eq( b.z, (t)0 ) ); \
     mm::impl::vec3i<t> tmp = mm::impl::vec3i<t>( ( t )1 / b.x, ( t )1 / b.y, ( t )1 / b.z ); \
     return a * tmp; } \
   MYMATH_INLINE mm::impl::vec4i<t> operator/ ( const mm::impl::vec4i<t>& a, const mm::impl::vec4i<t>& b ) \
-  { assert( !mm::impl::is_eq( b.x, (t)0 ) && !mm::impl::is_eq( b.y, (t)0 ) && !mm::impl::is_eq( b.z, (t)0 ) && !mm::impl::is_eq( b.w, (t)0 ) ); \
+    { assert( !mm::impl::is_eq( b.x, (t)0 ) && !mm::impl::is_eq( b.y, (t)0 ) && !mm::impl::is_eq( b.z, (t)0 ) && !mm::impl::is_eq( b.w, (t)0 ) ); \
     mm::impl::vec4i<t> tmp = mm::impl::vec4i<t>( ( t )1 / b.x, ( t )1 / b.y, ( t )1 / b.z, ( t )1 / b.w ); \
     return a * tmp; }
 
 //operator+
 #define MYMATH_OPERATORPLUS_FUNC(t) \
   MYMATH_INLINE mm::impl::vec2i<t> operator+ ( const mm::impl::vec2i<t>& a, const mm::impl::vec2i<t>& b ) \
-  { return mm::impl::vec2i<t>( a.x + b.x, a.y + b.y ); } \
+    { return mm::impl::vec2i<t>( a.x + b.x, a.y + b.y ); } \
   MYMATH_INLINE mm::impl::vec3i<t> operator+ ( const mm::impl::vec3i<t>& a, const mm::impl::vec3i<t>& b ) \
-  { return mm::impl::vec3i<t>( a.x + b.x, a.y + b.y, a.z + b.z ); } \
+    { return mm::impl::vec3i<t>( a.x + b.x, a.y + b.y, a.z + b.z ); } \
   MYMATH_INLINE mm::impl::vec4i<t> operator+ ( const mm::impl::vec4i<t>& a, const mm::impl::vec4i<t>& b ) \
-  { return mm::impl::vec4i<t>( a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w ); }
+    { return mm::impl::vec4i<t>( a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w ); }
 
 //operator-
 #define MYMATH_OPERATORMINUS_FUNC(t) \
   MYMATH_INLINE mm::impl::vec2i<t> operator- ( const mm::impl::vec2i<t>& a, const mm::impl::vec2i<t>& b ) \
-  { return mm::impl::vec2i<t>( a.x - b.x, a.y - b.y ); } \
+    { return mm::impl::vec2i<t>( a.x - b.x, a.y - b.y ); } \
   MYMATH_INLINE mm::impl::vec3i<t> operator- ( const mm::impl::vec3i<t>& a, const mm::impl::vec3i<t>& b ) \
-  { return mm::impl::vec3i<t>( a.x - b.x, a.y - b.y, a.z - b.z ); } \
+    { return mm::impl::vec3i<t>( a.x - b.x, a.y - b.y, a.z - b.z ); } \
   MYMATH_INLINE mm::impl::vec4i<t> operator- ( const mm::impl::vec4i<t>& a, const mm::impl::vec4i<t>& b ) \
-  { return mm::impl::vec4i<t>( a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w ); }
+    { return mm::impl::vec4i<t>( a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w ); }
 
 //operator%
 #define MYMATH_OPERATORMOD_FUNC(t) \
   MYMATH_INLINE mm::impl::vec2i<t> operator% ( const mm::impl::vec2i<t>& a, const mm::impl::vec2i<t>& b ) \
-  { return mm::impl::vec2i<t>( a.x % b.x, a.y % b.y ); } \
+    { return mm::impl::vec2i<t>( a.x % b.x, a.y % b.y ); } \
   MYMATH_INLINE mm::impl::vec3i<t> operator% ( const mm::impl::vec3i<t>& a, const mm::impl::vec3i<t>& b ) \
-  { return mm::impl::vec3i<t>( a.x % b.x, a.y % b.y, a.z % b.z ); } \
+    { return mm::impl::vec3i<t>( a.x % b.x, a.y % b.y, a.z % b.z ); } \
   MYMATH_INLINE mm::impl::vec4i<t> operator% ( const mm::impl::vec4i<t>& a, const mm::impl::vec4i<t>& b ) \
-  { return mm::impl::vec4i<t>( a.x % b.x, a.y % b.y, a.z % b.z, a.w % b.w ); }
+    { return mm::impl::vec4i<t>( a.x % b.x, a.y % b.y, a.z % b.z, a.w % b.w ); }
 
 //operator<<
 #define MYMATH_OPERATORBITLEFT_FUNC(t) \
   MYMATH_INLINE mm::impl::vec2i<t> operator<< ( const mm::impl::vec2i<t>& a, const mm::impl::vec2i<t>& b ) \
-  { return mm::impl::vec2i<t>( a.x << b.x, a.y << b.y ); } \
+    { return mm::impl::vec2i<t>( a.x << b.x, a.y << b.y ); } \
   MYMATH_INLINE mm::impl::vec3i<t> operator<< ( const mm::impl::vec3i<t>& a, const mm::impl::vec3i<t>& b ) \
-  { return mm::impl::vec3i<t>( a.x << b.x, a.y << b.y, a.z << b.z ); } \
+    { return mm::impl::vec3i<t>( a.x << b.x, a.y << b.y, a.z << b.z ); } \
   MYMATH_INLINE mm::impl::vec4i<t> operator<< ( const mm::impl::vec4i<t>& a, const mm::impl::vec4i<t>& b ) \
-  { return mm::impl::vec4i<t>( a.x << b.x, a.y << b.y, a.z << b.z, a.w << b.w ); }
+    { return mm::impl::vec4i<t>( a.x << b.x, a.y << b.y, a.z << b.z, a.w << b.w ); }
 
 //operator>>
 #define MYMATH_OPERATORBITRIGHT_FUNC(t) \
   MYMATH_INLINE mm::impl::vec2i<t> operator>> ( const mm::impl::vec2i<t>& a, const mm::impl::vec2i<t>& b ) \
-  { return mm::impl::vec2i<t>( a.x >> b.x, a.y >> b.y ); } \
+    { return mm::impl::vec2i<t>( a.x >> b.x, a.y >> b.y ); } \
   MYMATH_INLINE mm::impl::vec3i<t> operator>> ( const mm::impl::vec3i<t>& a, const mm::impl::vec3i<t>& b ) \
-  { return mm::impl::vec3i<t>( a.x >> b.x, a.y >> b.y, a.z >> b.z ); } \
+    { return mm::impl::vec3i<t>( a.x >> b.x, a.y >> b.y, a.z >> b.z ); } \
   MYMATH_INLINE mm::impl::vec4i<t> operator>> ( const mm::impl::vec4i<t>& a, const mm::impl::vec4i<t>& b ) \
-  { return mm::impl::vec4i<t>( a.x >> b.x, a.y >> b.y, a.z >> b.z, a.w >> b.w ); }
+    { return mm::impl::vec4i<t>( a.x >> b.x, a.y >> b.y, a.z >> b.z, a.w >> b.w ); }
 
 //operator&
 #define MYMATH_OPERATORBITAND_FUNC(t) \
   MYMATH_INLINE mm::impl::vec2i<t> operator& ( const mm::impl::vec2i<t>& a, const mm::impl::vec2i<t>& b ) \
-  { return mm::impl::vec2i<t>( a.x & b.x, a.y & b.y ); } \
+    { return mm::impl::vec2i<t>( a.x & b.x, a.y & b.y ); } \
   MYMATH_INLINE mm::impl::vec3i<t> operator& ( const mm::impl::vec3i<t>& a, const mm::impl::vec3i<t>& b ) \
-  { return mm::impl::vec3i<t>( a.x & b.x, a.y & b.y, a.z & b.z ); } \
+    { return mm::impl::vec3i<t>( a.x & b.x, a.y & b.y, a.z & b.z ); } \
   MYMATH_INLINE mm::impl::vec4i<t> operator& ( const mm::impl::vec4i<t>& a, const mm::impl::vec4i<t>& b ) \
-  { return mm::impl::vec4i<t>( a.x & b.x, a.y & b.y, a.z & b.z, a.w & b.w ); }
+    { return mm::impl::vec4i<t>( a.x & b.x, a.y & b.y, a.z & b.z, a.w & b.w ); }
 
 //operator^
 #define MYMATH_OPERATORBITXOR_FUNC(t) \
   MYMATH_INLINE mm::impl::vec2i<t> operator^( const mm::impl::vec2i<t>& a, const mm::impl::vec2i<t>& b ) \
-  { return mm::impl::vec2i<t>( a.x ^b.x, a.y ^b.y ); } \
+    { return mm::impl::vec2i<t>( a.x ^b.x, a.y ^b.y ); } \
   MYMATH_INLINE mm::impl::vec3i<t> operator^( const mm::impl::vec3i<t>& a, const mm::impl::vec3i<t>& b ) \
-  { return mm::impl::vec3i<t>( a.x ^b.x, a.y ^b.y, a.z ^b.z ); } \
+    { return mm::impl::vec3i<t>( a.x ^b.x, a.y ^b.y, a.z ^b.z ); } \
   MYMATH_INLINE mm::impl::vec4i<t> operator^( const mm::impl::vec4i<t>& a, const mm::impl::vec4i<t>& b ) \
-  { return mm::impl::vec4i<t>( a.x ^b.x, a.y ^b.y, a.z ^b.z, a.w ^b.w ); }
+    { return mm::impl::vec4i<t>( a.x ^b.x, a.y ^b.y, a.z ^b.z, a.w ^b.w ); }
 
 //operator|
 #define MYMATH_OPERATORBITOR_FUNC(t) \
   MYMATH_INLINE mm::impl::vec2i<t> operator| ( const mm::impl::vec2i<t>& a, const mm::impl::vec2i<t>& b ) \
-  { return mm::impl::vec2i<t>( a.x | b.x, a.y | b.y ); } \
+    { return mm::impl::vec2i<t>( a.x | b.x, a.y | b.y ); } \
   MYMATH_INLINE mm::impl::vec3i<t> operator| ( const mm::impl::vec3i<t>& a, const mm::impl::vec3i<t>& b ) \
-  { return mm::impl::vec3i<t>( a.x | b.x, a.y | b.y, a.z | b.z ); } \
+    { return mm::impl::vec3i<t>( a.x | b.x, a.y | b.y, a.z | b.z ); } \
   MYMATH_INLINE mm::impl::vec4i<t> operator| ( const mm::impl::vec4i<t>& a, const mm::impl::vec4i<t>& b ) \
-  { return mm::impl::vec4i<t>( a.x | b.x, a.y | b.y, a.z | b.z, a.w | b.w ); }
+    { return mm::impl::vec4i<t>( a.x | b.x, a.y | b.y, a.z | b.z, a.w | b.w ); }
 
 //negate
 #define MYMATH_NEGATE_FUNC(t) \
   MYMATH_INLINE mm::impl::vec2i<t> operator- ( const mm::impl::vec2i<t>& vec ) \
-  { return mm::impl::vec2i<t>( -vec.x, -vec.y ); } \
+    { return mm::impl::vec2i<t>( -vec.x, -vec.y ); } \
   MYMATH_INLINE mm::impl::vec3i<t> operator- ( const mm::impl::vec3i<t>& vec ) \
-  { return mm::impl::vec3i<t>( -vec.x, -vec.y, -vec.z ); } \
+    { return mm::impl::vec3i<t>( -vec.x, -vec.y, -vec.z ); } \
   MYMATH_INLINE mm::impl::vec4i<t> operator- ( const mm::impl::vec4i<t>& vec ) \
-  { return mm::impl::vec4i<t>( -vec.x, -vec.y, -vec.z, -vec.w ); }
+    { return mm::impl::vec4i<t>( -vec.x, -vec.y, -vec.z, -vec.w ); }
 
 //std::cout <<
 #define MYMATH_COUT_FUNC(t) \
   MYMATH_INLINE std::ostream& operator<< ( std::ostream& output, const mm::impl::vec2i<t>& vec ) \
-  { return output << "( " << vec.x << ", " << vec.y << " )\n"; } \
+    { return output << "( " << vec.x << ", " << vec.y << " )\n"; } \
   MYMATH_INLINE std::ostream& operator<< ( std::ostream& output, const mm::impl::vec3i<t>& vec ) \
-  { return output << "( " << vec.x << ", " << vec.y << ", " << vec.z << " )\n"; } \
+    { return output << "( " << vec.x << ", " << vec.y << ", " << vec.z << " )\n"; } \
   MYMATH_INLINE std::ostream& operator<< ( std::ostream& output, const mm::impl::vec4i<t>& vec ) \
-  { return output << "( " << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w << " )\n"; }
+    { return output << "( " << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w << " )\n"; }
 
 #ifndef MYMATH_USE_SSE2
 MYMATH_OPERATORMUL_FUNC( float )
@@ -560,218 +560,218 @@ namespace mymath
   MYMATH_INLINE impl::vec4i<bool> isinf( const impl::vec4i<t>& vec ) \
   { return impl::vec4i<bool>( isinf( vec.x ), isinf( vec.y ), isinf( vec.z ), isinf( vec.w ) ); }
 
-//cross only vec3
+  //cross only vec3
 #define MYMATH_CROSS_FUNC(t) \
   MYMATH_INLINE impl::vec3i<t> cross( const impl::vec3i<t>& a, const impl::vec3i<t>& b ) \
   { return impl::vec3i<t>( a.y * b.z - b.y * a.z, -( a.x * b.z ) + b.x * a.z, a.x * b.y - b.x * a.y ); }
 
   //Trigonometric functions, only vecn and float is required
-  #ifndef MYMATH_USE_SSE2
+#ifndef MYMATH_USE_SSE2
   MYMATH_STD_VEC_FUNC( sin, float )
 
-  MYMATH_STD_VEC_FUNC( cos, float )
+    MYMATH_STD_VEC_FUNC( cos, float )
 
-  MYMATH_STD_VEC_FUNC( tan, float )
+    MYMATH_STD_VEC_FUNC( tan, float )
 
-  MYMATH_STD_VEC_FUNC( asin, float )
+    MYMATH_STD_VEC_FUNC( asin, float )
 
-  MYMATH_STD_VEC_FUNC( acos, float )
+    MYMATH_STD_VEC_FUNC( acos, float )
 
-  MYMATH_STD_VEC_FUNC( atan, float )
+    MYMATH_STD_VEC_FUNC( atan, float )
 
-  MYMATH_STD_VEC_FUNC( sinh, float )
+    MYMATH_STD_VEC_FUNC( sinh, float )
 
-  MYMATH_STD_VEC_FUNC( cosh, float )
+    MYMATH_STD_VEC_FUNC( cosh, float )
 
-  MYMATH_STD_VEC_FUNC( tanh, float )
+    MYMATH_STD_VEC_FUNC( tanh, float )
 
-  MYMATH_RADIANS_FUNC( float )
+    MYMATH_RADIANS_FUNC( float )
 
-  MYMATH_DEGREES_FUNC( float )
+    MYMATH_DEGREES_FUNC( float )
 
-  MYMATH_ASINH_FUNC( float )
+    MYMATH_ASINH_FUNC( float )
 
-  MYMATH_ACOSH_FUNC( float )
+    MYMATH_ACOSH_FUNC( float )
 
-  MYMATH_ATANH_FUNC( float )
+    MYMATH_ATANH_FUNC( float )
 
-  //Exponential function, float, double, vecn and dvecn is required
-  MYMATH_STD_2_VEC_FUNC( pow, float )
+    //Exponential function, float, double, vecn and dvecn is required
+    MYMATH_STD_2_VEC_FUNC( pow, float )
 
-  MYMATH_STD_VEC_FUNC( exp, float )
+    MYMATH_STD_VEC_FUNC( exp, float )
 
-  MYMATH_STD_VEC_FUNC( log, float )
+    MYMATH_STD_VEC_FUNC( log, float )
 
-  MYMATH_STD_VEC_FUNC( sqrt, float )
-  #endif
-  MYMATH_STD_VEC_FUNC( sqrt, double )
+    MYMATH_STD_VEC_FUNC( sqrt, float )
+#endif
+    MYMATH_STD_VEC_FUNC( sqrt, double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_EXP2_FUNC( float )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_EXP2_FUNC( float )
 
-  MYMATH_LOG2_FUNC( float )
+    MYMATH_LOG2_FUNC( float )
 
-  MYMATH_INVERSESQRT_FUNC( float )
-  #endif
-  MYMATH_INVERSESQRT_FUNC( double )
+    MYMATH_INVERSESQRT_FUNC( float )
+#endif
+    MYMATH_INVERSESQRT_FUNC( double )
 
-  //Common functions, float, double, vecn and dvecn is required
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_STD_VEC_FUNC( abs, float )
-  #endif
-  MYMATH_STD_VEC_FUNC( abs, double )
-  MYMATH_STD_VEC_FUNC( abs, int )
+    //Common functions, float, double, vecn and dvecn is required
+#ifndef MYMATH_USE_SSE2
+    MYMATH_STD_VEC_FUNC( abs, float )
+#endif
+    MYMATH_STD_VEC_FUNC( abs, double )
+    MYMATH_STD_VEC_FUNC( abs, int )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_STD_VEC_FUNC( floor, float )
-  #endif
-  MYMATH_STD_VEC_FUNC( floor, double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_STD_VEC_FUNC( floor, float )
+#endif
+    MYMATH_STD_VEC_FUNC( floor, double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_STD_VEC_FUNC( ceil, float )
-  #endif
-  MYMATH_STD_VEC_FUNC( ceil, double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_STD_VEC_FUNC( ceil, float )
+#endif
+    MYMATH_STD_VEC_FUNC( ceil, double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_STD_2_VEC_FUNC( min, float )
-  #endif
-  MYMATH_STD_2_VEC_FUNC( min, double )
-  MYMATH_STD_2_VEC_FUNC( min, int )
-  MYMATH_STD_2_VEC_FUNC( min, unsigned int )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_STD_2_VEC_FUNC( min, float )
+#endif
+    MYMATH_STD_2_VEC_FUNC( min, double )
+    MYMATH_STD_2_VEC_FUNC( min, int )
+    MYMATH_STD_2_VEC_FUNC( min, unsigned int )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_STD_2_VEC_FUNC( max, float )
-  #endif
-  MYMATH_STD_2_VEC_FUNC( max, double )
-  MYMATH_STD_2_VEC_FUNC( max, int )
-  MYMATH_STD_2_VEC_FUNC( max, unsigned int )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_STD_2_VEC_FUNC( max, float )
+#endif
+    MYMATH_STD_2_VEC_FUNC( max, double )
+    MYMATH_STD_2_VEC_FUNC( max, int )
+    MYMATH_STD_2_VEC_FUNC( max, unsigned int )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_LESSTHAN_FUNC( float )
-  #endif
-  MYMATH_LESSTHAN_FUNC( int )
-  MYMATH_LESSTHAN_FUNC( unsigned int )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_LESSTHAN_FUNC( float )
+#endif
+    MYMATH_LESSTHAN_FUNC( int )
+    MYMATH_LESSTHAN_FUNC( unsigned int )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_GREATERTHAN_FUNC( float )
-  #endif
-  MYMATH_GREATERTHAN_FUNC( int )
-  MYMATH_GREATERTHAN_FUNC( unsigned int )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_GREATERTHAN_FUNC( float )
+#endif
+    MYMATH_GREATERTHAN_FUNC( int )
+    MYMATH_GREATERTHAN_FUNC( unsigned int )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_LESSTHANEQUAL_FUNC( float )
-  #endif
-  MYMATH_LESSTHANEQUAL_FUNC( int )
-  MYMATH_LESSTHANEQUAL_FUNC( unsigned int )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_LESSTHANEQUAL_FUNC( float )
+#endif
+    MYMATH_LESSTHANEQUAL_FUNC( int )
+    MYMATH_LESSTHANEQUAL_FUNC( unsigned int )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_GREATERTHANEQUAL_FUNC( float )
-  #endif
-  MYMATH_GREATERTHANEQUAL_FUNC( int )
-  MYMATH_GREATERTHANEQUAL_FUNC( unsigned int )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_GREATERTHANEQUAL_FUNC( float )
+#endif
+    MYMATH_GREATERTHANEQUAL_FUNC( int )
+    MYMATH_GREATERTHANEQUAL_FUNC( unsigned int )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_SIGN_FUNC( float )
-  #endif
-  MYMATH_SIGN_FUNC( double )
-  MYMATH_SIGN_FUNC( int )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_SIGN_FUNC( float )
+#endif
+    MYMATH_SIGN_FUNC( double )
+    MYMATH_SIGN_FUNC( int )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_TRUNC_FUNC( float )
-  #endif
-  MYMATH_TRUNC_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_TRUNC_FUNC( float )
+#endif
+    MYMATH_TRUNC_FUNC( double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_ROUND_FUNC( float )
-  #endif
-  MYMATH_ROUND_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_ROUND_FUNC( float )
+#endif
+    MYMATH_ROUND_FUNC( double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_FRACT_FUNC( float )
-  #endif
-  MYMATH_FRACT_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_FRACT_FUNC( float )
+#endif
+    MYMATH_FRACT_FUNC( double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_MOD_FUNC( float )
-  #endif
-  MYMATH_MOD_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_MOD_FUNC( float )
+#endif
+    MYMATH_MOD_FUNC( double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_MIX_FUNC( float )
-  #endif
-  MYMATH_MIX_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_MIX_FUNC( float )
+#endif
+    MYMATH_MIX_FUNC( double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_STEP_FUNC( float )
-  #endif
-  MYMATH_STEP_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_STEP_FUNC( float )
+#endif
+    MYMATH_STEP_FUNC( double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_CLAMP_FUNC( float )
-  #endif
-  MYMATH_CLAMP_FUNC( double )
-  MYMATH_CLAMP_FUNC( int )
-  MYMATH_CLAMP_FUNC( unsigned int )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_CLAMP_FUNC( float )
+#endif
+    MYMATH_CLAMP_FUNC( double )
+    MYMATH_CLAMP_FUNC( int )
+    MYMATH_CLAMP_FUNC( unsigned int )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_SMOOTHSTEP_FUNC( float )
-  #endif
-  MYMATH_SMOOTHSTEP_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_SMOOTHSTEP_FUNC( float )
+#endif
+    MYMATH_SMOOTHSTEP_FUNC( double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_FMA_FUNC( float )
-  #endif
-  MYMATH_FMA_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_FMA_FUNC( float )
+#endif
+    MYMATH_FMA_FUNC( double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_DOT_FUNC( float )
-  #endif
-  MYMATH_DOT_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_DOT_FUNC( float )
+#endif
+    MYMATH_DOT_FUNC( double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_LENGTH_FUNC( float )
-  #endif
-  MYMATH_LENGTH_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_LENGTH_FUNC( float )
+#endif
+    MYMATH_LENGTH_FUNC( double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_DISTANCE_FUNC( float )
-  #endif
-  MYMATH_DISTANCE_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_DISTANCE_FUNC( float )
+#endif
+    MYMATH_DISTANCE_FUNC( double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_NORMALIZE_FUNC( float )
-  #endif
-  MYMATH_NORMALIZE_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_NORMALIZE_FUNC( float )
+#endif
+    MYMATH_NORMALIZE_FUNC( double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_REFLECT_FUNC( float )
-  #endif
-  MYMATH_REFLECT_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_REFLECT_FUNC( float )
+#endif
+    MYMATH_REFLECT_FUNC( double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_REFRACT_FUNC( float )
-  #endif
-  MYMATH_REFRACT_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_REFRACT_FUNC( float )
+#endif
+    MYMATH_REFRACT_FUNC( double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_FACEFORWARD_FUNC( float )
-  #endif
-  MYMATH_FACEFORWARD_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_FACEFORWARD_FUNC( float )
+#endif
+    MYMATH_FACEFORWARD_FUNC( double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_ISNAN_FUNC( float )
-  #endif
-  MYMATH_ISNAN_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_ISNAN_FUNC( float )
+#endif
+    MYMATH_ISNAN_FUNC( double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_ISINF_FUNC( float )
-  #endif
-  MYMATH_ISINF_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_ISINF_FUNC( float )
+#endif
+    MYMATH_ISINF_FUNC( double )
 
-  #ifndef MYMATH_USE_SSE2
-  MYMATH_CROSS_FUNC( float )
-  #endif
-  MYMATH_CROSS_FUNC( double )
+#ifndef MYMATH_USE_SSE2
+    MYMATH_CROSS_FUNC( float )
+#endif
+    MYMATH_CROSS_FUNC( double )
 
   namespace impl
   {
@@ -780,7 +780,7 @@ namespace mymath
     const vec2i<ty>& vec2i<ty>::swizzle<at, bt, ct, dt>::operator/=( const vec2i<ty>& other )
     {
       assert( all( notEqual( other, vec2i<ty>( 0 ) ) ) );
-      vec2i<ty> tmp( ( ty )1 / other.x, ( ty )1 / other.y );
+      vec2i<ty> tmp( (ty)1 / other.x, (ty)1 / other.y );
       v[at] *= tmp.x;
       v[bt] *= tmp.y;
       return *( vec2i<ty>* )this;
@@ -791,7 +791,7 @@ namespace mymath
     const vec3i<ty>& vec3i<ty>::swizzle<at, bt, ct, dt>::operator/=( const vec3i<ty>& other )
     {
       assert( all( notEqual( other, vec3i<ty>( 0 ) ) ) );
-      vec3i<ty> tmp( ( ty )1 / other.x, ( ty )1 / other.y, ( ty )1 / other.z );
+      vec3i<ty> tmp( (ty)1 / other.x, (ty)1 / other.y, (ty)1 / other.z );
       v[at] *= tmp.x;
       v[bt] *= tmp.y;
       v[ct] *= tmp.z;
@@ -803,7 +803,7 @@ namespace mymath
     const vec4i<ty>& vec4i<ty>::swizzle<at, bt, ct, dt>::operator/=( const vec4i<ty>& other )
     {
       assert( all( notEqual( other, vec4i<ty>( 0 ) ) ) );
-      vec4i<ty> tmp( ( ty )1 / other.x, ( ty )1 / other.y, ( ty )1 / other.z, ( ty )1 / other.w );
+      vec4i<ty> tmp( (ty)1 / other.x, (ty)1 / other.y, (ty)1 / other.z, (ty)1 / other.w );
       v[at] *= tmp.x;
       v[bt] *= tmp.y;
       v[ct] *= tmp.z;

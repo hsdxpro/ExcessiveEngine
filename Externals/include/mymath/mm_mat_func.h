@@ -14,14 +14,14 @@
 
 #define MYMATH_VECMULMAT_FUNC(t) \
   MYMATH_INLINE mm::impl::vec2i<t> operator*( const mm::impl::vec2i<t>& vec, const mm::impl::mat2i<t>& mat ) \
-  { \
+    { \
     mm::impl::vec4i<t> tmp1 = vec.xxyy; \
     mm::impl::vec4i<t> tmp2( mat[0], mat[1] ); \
     tmp1 *= tmp2.xzyw; \
     return tmp1.xy + tmp1.zw; \
-  } \
+    } \
   MYMATH_INLINE mm::impl::vec3i<t> operator*( const mm::impl::vec3i<t>& vec, const mm::impl::mat3i<t>& mat ) \
-  { \
+    { \
     mm::impl::vec4i<t> tmp1 = mat[0].xxxy; \
     tmp1 *= vec.xxxy; \
     mm::impl::vec4i<t> tmp11 = mat[0].yxxz; \
@@ -49,9 +49,9 @@
     tmp3 = tmp3.xxxx; \
     tmp3 *= mm::impl::vec4i<t>(0,0,1,0); \
     return (tmp1 + tmp2 + tmp3).xyz; \
-  } \
+    } \
   MYMATH_INLINE mm::impl::vec4i<t> operator*( const mm::impl::vec4i<t>& vec, const mm::impl::mat4i<t>& mat ) \
-  { \
+    { \
     mm::impl::vec4i<t> tmp1 = vec; \
     tmp1 *= mat[0]; \
     tmp1 += tmp1.yxwx; \
@@ -73,41 +73,41 @@
     tmp4 += tmp4.xxxy; \
     tmp4 *= mm::impl::vec4i<t>(0, 0, 0, 1); \
     return tmp1 + tmp2 + tmp3 + tmp4; \
-  }
+    }
 
 #define MYMATH_MATMULVEC_FUNC(t) \
   MYMATH_INLINE mm::impl::vec2i<t> operator* ( const mm::impl::mat2i<t>& mat, const mm::impl::vec2i<t>& vec ) \
-  { \
+    { \
     return mm::fma( vec.yy, mat[1], vec.xx * mat[0] ); \
-  } \
+    } \
   MYMATH_INLINE mm::impl::vec3i<t> operator* ( const mm::impl::mat3i<t>& mat, const mm::impl::vec3i<t>& vec ) \
-  { \
+    { \
     return mm::fma( vec.zzz, mat[2], mm::fma( vec.yyy, mat[1], vec.xxx * mat[0] ) ); \
-  } \
+    } \
   MYMATH_INLINE mm::impl::vec4i<t> operator*( const mm::impl::mat4i<t>& mat, const mm::impl::vec4i<t>& vec ) \
-  { \
+    { \
     return mm::fma( vec.wwww, mat[3], mm::fma( vec.zzzz, mat[2], mm::fma( vec.yyyy, mat[1], vec.xxxx * mat[0] ) ) ); \
-  }
+    }
 
 #define MYMATH_VECMULEQUALMAT_FUNC(t) \
   MYMATH_INLINE const mm::impl::vec2i<t>& operator*=( mm::impl::vec2i<t>& vec, const mm::impl::mat2i<t>& mat ) \
-  { \
+    { \
     mm::impl::vec2i<t> res = vec * mat; \
     vec = res; \
     return vec; \
-  } \
+    } \
   MYMATH_INLINE const mm::impl::vec3i<t>& operator*=( mm::impl::vec3i<t>& vec, const mm::impl::mat3i<t>& mat ) \
-  { \
+    { \
     mm::impl::vec3i<t> res = vec * mat; \
     vec = res; \
     return vec; \
-  } \
+    } \
   MYMATH_INLINE const mm::impl::vec4i<t>& operator*=( mm::impl::vec4i<t>& vec, const mm::impl::mat4i<t>& mat ) \
-  { \
+    { \
     mm::impl::vec4i<t> res = vec * mat; \
     vec = res; \
     return vec; \
-  }
+    }
 
 template< typename t >
 MYMATH_INLINE mm::impl::mat2i<t> operator* ( const mm::impl::mat2i<t>& a, const mm::impl::mat2i<t>& b )
@@ -129,8 +129,8 @@ MYMATH_INLINE mm::impl::mat3i<t> operator* ( const mm::impl::mat3i<t>& a, const 
   mm::impl::vec3i<t> tmp3 = a[2];
 
   return mm::impl::mat3i<t>( tmp1 * b[0].xxx + tmp2 * b[0].yyy + tmp3 * b[0].zzz,
-                             tmp1 * b[1].xxx + tmp2 * b[1].yyy + tmp3 * b[1].zzz,
-                             tmp1 * b[2].xxx + tmp2 * b[2].yyy + tmp3 * b[2].zzz );
+    tmp1 * b[1].xxx + tmp2 * b[1].yyy + tmp3 * b[1].zzz,
+    tmp1 * b[2].xxx + tmp2 * b[2].yyy + tmp3 * b[2].zzz );
 }
 
 template< typename t >
@@ -142,9 +142,9 @@ MYMATH_INLINE mm::impl::mat4i<t> operator* ( const mm::impl::mat4i<t>& a, const 
   mm::impl::vec4i<t> tmp4 = a[3];
 
   return mm::impl::mat4i<t>( tmp1 * b[0].xxxx + tmp2 * b[0].yyyy + tmp3 * b[0].zzzz + tmp4 * b[0].wwww,
-                             tmp1 * b[1].xxxx + tmp2 * b[1].yyyy + tmp3 * b[1].zzzz + tmp4 * b[1].wwww,
-                             tmp1 * b[2].xxxx + tmp2 * b[2].yyyy + tmp3 * b[2].zzzz + tmp4 * b[2].wwww,
-                             tmp1 * b[3].xxxx + tmp2 * b[3].yyyy + tmp3 * b[3].zzzz + tmp4 * b[3].wwww );
+    tmp1 * b[1].xxxx + tmp2 * b[1].yyyy + tmp3 * b[1].zzzz + tmp4 * b[1].wwww,
+    tmp1 * b[2].xxxx + tmp2 * b[2].yyyy + tmp3 * b[2].zzzz + tmp4 * b[2].wwww,
+    tmp1 * b[3].xxxx + tmp2 * b[3].yyyy + tmp3 * b[3].zzzz + tmp4 * b[3].wwww );
 }
 
 template< typename t >
@@ -187,24 +187,24 @@ template< typename t >
 MYMATH_INLINE std::ostream& operator<< ( std::ostream& output, const mm::impl::mat2i<t>& mat )
 {
   return output << "( " << mat[0].x << ", " << mat[1].x << "\n  "
-         /*__________*/ << mat[0].y << ", " << mat[1].y << " )\n";
+    /*__________*/ << mat[0].y << ", " << mat[1].y << " )\n";
 }
 
 template< typename t >
 MYMATH_INLINE std::ostream& operator<< ( std::ostream& output, const mm::impl::mat3i<t>& mat )
 {
   return output << "( " << mat[0].x << ", " << mat[1].x << ", " << mat[2].x << "\n  "
-         /*__________*/ << mat[0].y << ", " << mat[1].y << ", " << mat[2].y << "\n  "
-         /*__________*/ << mat[0].z << ", " << mat[1].z << ", " << mat[2].z << " )\n";
+    /*__________*/ << mat[0].y << ", " << mat[1].y << ", " << mat[2].y << "\n  "
+    /*__________*/ << mat[0].z << ", " << mat[1].z << ", " << mat[2].z << " )\n";
 }
 
 template< typename t >
 MYMATH_INLINE std::ostream& operator<< ( std::ostream& output, const mm::impl::mat4i<t>& mat )
 {
   return output << "( " << mat[0].x << ", " << mat[1].x << ", " << mat[2].x << ", " << mat[3].x << "\n  "
-         /*__________*/ << mat[0].y << ", " << mat[1].y << ", " << mat[2].y << ", " << mat[3].y << "\n  "
-         /*__________*/ << mat[0].z << ", " << mat[1].z << ", " << mat[2].z << ", " << mat[3].z << "\n  "
-         /*__________*/ << mat[0].w << ", " << mat[1].w << ", " << mat[2].w << ", " << mat[3].w << " )\n";
+    /*__________*/ << mat[0].y << ", " << mat[1].y << ", " << mat[2].y << ", " << mat[3].y << "\n  "
+    /*__________*/ << mat[0].z << ", " << mat[1].z << ", " << mat[2].z << ", " << mat[3].z << "\n  "
+    /*__________*/ << mat[0].w << ", " << mat[1].w << ", " << mat[2].w << ", " << mat[3].w << " )\n";
 }
 
 MYMATH_VECMULMAT_FUNC( float )
@@ -253,8 +253,8 @@ namespace mymath
     impl::vec4i<t> tmp9 = mat[2].zzzz;
     tmp9 *= impl::vec4i<t>( 0, 0, 1, 0 );
     return impl::mat3i<t>( tmp1.xyz + tmp4.xyz + tmp7.xyz,
-                           tmp2.xyz + tmp5.xyz + tmp8.xyz,
-                           tmp3.xyz + tmp6.xyz + tmp9.xyz );
+      tmp2.xyz + tmp5.xyz + tmp8.xyz,
+      tmp3.xyz + tmp6.xyz + tmp9.xyz );
   }
 
   template< typename t >
@@ -293,9 +293,9 @@ namespace mymath
     impl::vec4i<t> tmp16 = mat[3].wwww;
     tmp16 *= impl::vec4i<t>( 0, 0, 0, 1 );
     return impl::mat4i<t>( tmp1 + tmp5 + tmp9 + tmp13,
-                           tmp2 + tmp6 + tmp10 + tmp14,
-                           tmp3 + tmp7 + tmp11 + tmp15,
-                           tmp4 + tmp8 + tmp12 + tmp16 );
+      tmp2 + tmp6 + tmp10 + tmp14,
+      tmp3 + tmp7 + tmp11 + tmp15,
+      tmp4 + tmp8 + tmp12 + tmp16 );
   }
 
   template< typename t >

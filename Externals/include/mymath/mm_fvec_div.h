@@ -2,28 +2,58 @@ namespace mymath
 {
   namespace impl
   {
-    vec2i<float>::vec2i( const vec2i<int>& v ){ x = v.x; y = v.y; }
-    vec2i<float>::vec2i( const vec2i<unsigned>& v ){ x = v.x; y = v.y; }
-    vec3i<float>::vec3i( const vec3i<int>& v ){ x = v.x; y = v.y; z = v.z; }
-    vec3i<float>::vec3i( const vec3i<unsigned>& v ){ x = v.x; y = v.y; z = v.z; }
-    vec4i<float>::vec4i( const vec4i<int>& v ){ x = v.x; y = v.y; z = v.z; w = v.w; }
-    vec4i<float>::vec4i( const vec4i<unsigned>& v ){ x = v.x; y = v.y; z = v.z; w = v.w; }
+    vec2i<float>::vec2i( const vec2i<int>& v )
+    {
+      x = v.x; y = v.y;
+    }
+    vec2i<float>::vec2i( const vec2i<unsigned>& v )
+    {
+      x = v.x; y = v.y;
+    }
+    vec3i<float>::vec3i( const vec3i<int>& v )
+    {
+      x = v.x; y = v.y; z = v.z;
+    }
+    vec3i<float>::vec3i( const vec3i<unsigned>& v )
+    {
+      x = v.x; y = v.y; z = v.z;
+    }
+    vec4i<float>::vec4i( const vec4i<int>& v )
+    {
+      x = v.x; y = v.y; z = v.z; w = v.w;
+    }
+    vec4i<float>::vec4i( const vec4i<unsigned>& v )
+    {
+      x = v.x; y = v.y; z = v.z; w = v.w;
+    }
   }
 
   MYMATH_INLINE impl::vec2i<bool> isnan( const impl::vec2i<float>& vec )
-  { return impl::vec2i<bool>( isnan( vec.x ), isnan( vec.y ) ); }
+  {
+    return impl::vec2i<bool>( isnan( vec.x ), isnan( vec.y ) );
+  }
   MYMATH_INLINE impl::vec3i<bool> isnan( const impl::vec3i<float>& vec )
-  {  return impl::vec3i<bool>( isnan( vec.x ), isnan( vec.y ), isnan( vec.z ) ); }
+  {
+    return impl::vec3i<bool>( isnan( vec.x ), isnan( vec.y ), isnan( vec.z ) );
+  }
   MYMATH_INLINE impl::vec4i<bool> isnan( const impl::vec4i<float>& vec )
-  { return impl::vec4i<bool>( isnan( vec.x ), isnan( vec.y ), isnan( vec.z ), isnan( vec.w ) ); }
+  {
+    return impl::vec4i<bool>( isnan( vec.x ), isnan( vec.y ), isnan( vec.z ), isnan( vec.w ) );
+  }
 
   //isinf
   MYMATH_INLINE impl::vec2i<bool> isinf( const impl::vec2i<float>& vec )
-  { return impl::vec2i<bool>( isinf( vec.x ), isinf( vec.y ) ); }
+  {
+    return impl::vec2i<bool>( isinf( vec.x ), isinf( vec.y ) );
+  }
   MYMATH_INLINE impl::vec3i<bool> isinf( const impl::vec3i<float>& vec )
-  { return impl::vec3i<bool>( isinf( vec.x ), isinf( vec.y ), isinf( vec.z ) ); }
+  {
+    return impl::vec3i<bool>( isinf( vec.x ), isinf( vec.y ), isinf( vec.z ) );
+  }
   MYMATH_INLINE impl::vec4i<bool> isinf( const impl::vec4i<float>& vec )
-  { return impl::vec4i<bool>( isinf( vec.x ), isinf( vec.y ), isinf( vec.z ), isinf( vec.w ) ); }
+  {
+    return impl::vec4i<bool>( isinf( vec.x ), isinf( vec.y ), isinf( vec.z ), isinf( vec.w ) );
+  }
 
   //less
   MYMATH_INLINE impl::vec2i<bool> lessThan( const mm::impl::vec2i<float>& a, const mm::impl::vec2i<float>& b )
@@ -125,7 +155,7 @@ namespace mymath
     const vec2i<float>& vec2i<float>::swizzle<ta, tb, tc, td>::operator/=( const vec2i<float>& vec )
     {
       assert( all( notEqual( vec, vec2i<float>( 0 ) ) ) );
-      vec2i<float>* tmp = (vec2i<float>*)this;
+      vec2i<float>* tmp = ( vec2i<float>* )this;
       tmp->d = _mm_div_ps( v, _mm_shuffle_ps( vec.d, vec.d, MYMATH_SHUFFLE( ta, tb, 0, 0 ) ) );
       return *( vec2i<float>* )this;
     }
@@ -153,7 +183,7 @@ namespace mymath
     const vec2i<float>& vec2i<float>::operator/=( const vec2i<float>& vec )
     {
       assert( all( notEqual( vec, vec2i<float>( 0 ) ) ) );
-      vec2i<float>* tmp = (vec2i<float>*)this;
+      vec2i<float>* tmp = ( vec2i<float>* )this;
       tmp->d = _mm_div_ps( tmp->d, vec.d );
       return *this;
     }
@@ -161,7 +191,7 @@ namespace mymath
     const vec3i<float>& vec3i<float>::operator/=( const vec3i<float>& vec )
     {
       assert( all( notEqual( vec, vec3i<float>( 0 ) ) ) );
-      vec3i<float>* tmp = (vec3i<float>*)this;
+      vec3i<float>* tmp = ( vec3i<float>* )this;
       tmp->d = _mm_div_ps( tmp->d, vec.d );
       return *this;
     }
@@ -169,7 +199,7 @@ namespace mymath
     const vec4i<float>& vec4i<float>::operator/=( const vec4i<float>& vec )
     {
       assert( all( notEqual( vec, vec4i<float>( 0 ) ) ) );
-      vec4i<float>* tmp = (vec4i<float>*)this;
+      vec4i<float>* tmp = ( vec4i<float>* )this;
       tmp->d = _mm_div_ps( tmp->d, vec.d );
       return *this;
     }

@@ -15,52 +15,52 @@ namespace mymath
     template<int ta>
     class vec2i<ty>::swizzle < ta, ta, ta, -3 >
     {
-      private:
-        ty v[2];
-      public:
-        operator vec3i<ty>() const
-        {
-          return vec3i<ty>( v[ta] );
-        }
+    private:
+      ty v[2];
+    public:
+      operator vec3i<ty>() const
+      {
+        return vec3i<ty>( v[ta] );
+      }
     };
 
     template<typename ty>
     template<int ta, int tb>
     class vec2i<ty>::swizzle < tb, ta, ta, -3 >
     {
-      private:
-        ty v[2];
-      public:
-        operator vec3i<ty>() const
-        {
-          return vec3i<ty>( v[tb], v[ta], v[ta] );
-        }
+    private:
+      ty v[2];
+    public:
+      operator vec3i<ty>() const
+      {
+        return vec3i<ty>( v[tb], v[ta], v[ta] );
+      }
     };
 
     template<typename ty>
     template<int ta, int tb>
     class vec2i<ty>::swizzle < ta, tb, ta, -3 >
     {
-      private:
-        ty v[2];
-      public:
-        operator vec3i<ty>() const
-        {
-          return vec3i<ty>( v[ta], v[tb], v[ta] );
-        }
+    private:
+      ty v[2];
+    public:
+      operator vec3i<ty>() const
+      {
+        return vec3i<ty>( v[ta], v[tb], v[ta] );
+      }
     };
 
     template<typename ty>
     template<int ta, int tb>
     class vec2i<ty>::swizzle < ta, ta, tb, -3 >
     {
-      private:
-        ty v[2];
-      public:
-        operator vec3i<ty>() const
-        {
-          return vec3i<ty>( v[ta], v[ta], v[tb] );
-        }
+    private:
+      ty v[2];
+    public:
+      operator vec3i<ty>() const
+      {
+        return vec3i<ty>( v[ta], v[ta], v[tb] );
+      }
     };
 
     //vec4 swizzlers for vec2
@@ -68,91 +68,91 @@ namespace mymath
     template<int ta>
     class vec2i<ty>::swizzle<ta, ta, ta, ta>
     {
-      private:
-        ty v[2];
-      public:
-        operator vec4i<ty>() const
-        {
-          return vec4i<ty>( v[ta] );
-        }
+    private:
+      ty v[2];
+    public:
+      operator vec4i<ty>() const
+      {
+        return vec4i<ty>( v[ta] );
+      }
     };
 
     template<typename ty>
     template<int ta, int tb>
     class vec2i<ty>::swizzle<tb, ta, ta, ta>
     {
-      private:
-        ty v[2];
-      public:
-        operator vec4i<ty>() const
-        {
-          return vec4i<ty>( v[tb], v[ta], v[ta], v[ta] );
-        }
+    private:
+      ty v[2];
+    public:
+      operator vec4i<ty>() const
+      {
+        return vec4i<ty>( v[tb], v[ta], v[ta], v[ta] );
+      }
     };
 
     template<typename ty>
     template<int ta, int tb>
     class vec2i<ty>::swizzle<ta, tb, ta, ta>
     {
-      private:
-        ty v[2];
-      public:
-        operator vec4i<ty>() const
-        {
-          return vec4i<ty>( v[ta], v[tb], v[ta], v[ta] );
-        }
+    private:
+      ty v[2];
+    public:
+      operator vec4i<ty>() const
+      {
+        return vec4i<ty>( v[ta], v[tb], v[ta], v[ta] );
+      }
     };
 
     template<typename ty>
     template<int ta, int tb>
     class vec2i<ty>::swizzle<ta, ta, tb, ta>
     {
-      private:
-        ty v[2];
-      public:
-        operator vec4i<ty>() const
-        {
-          return vec4i<ty>( v[ta], v[ta], v[tb], v[ta] );
-        }
+    private:
+      ty v[2];
+    public:
+      operator vec4i<ty>() const
+      {
+        return vec4i<ty>( v[ta], v[ta], v[tb], v[ta] );
+      }
     };
 
     template<typename ty>
     template<int ta, int tb>
     class vec2i<ty>::swizzle<ta, ta, ta, tb>
     {
-      private:
-        ty v[2];
-      public:
-        operator vec4i<ty>() const
-        {
-          return vec4i<ty>( v[ta], v[ta], v[ta], v[tb] );
-        }
+    private:
+      ty v[2];
+    public:
+      operator vec4i<ty>() const
+      {
+        return vec4i<ty>( v[ta], v[ta], v[ta], v[tb] );
+      }
     };
 
     template<typename ty>
     template<int ta, int tb>
     class vec2i<ty>::swizzle<ta, tb, ta, tb>
     {
-      private:
-        ty v[2];
-      public:
-        operator vec4i<ty>() const
-        {
-          return vec4i<ty>( v[ta], v[tb], v[ta], v[tb] );
-        }
+    private:
+      ty v[2];
+    public:
+      operator vec4i<ty>() const
+      {
+        return vec4i<ty>( v[ta], v[tb], v[ta], v[tb] );
+      }
     };
 
     template<typename ty>
     template<int ta, int tb>
     class vec2i<ty>::swizzle<ta, ta, tb, tb>
     {
-      private:
-        ty v[2];
-      public:
-        operator vec4i<ty>() const
-        {
-          return vec4i<ty>( v[ta], v[ta], v[tb], v[tb] );
-        }
+    private:
+      ty v[2];
+    public:
+      operator vec4i<ty>() const
+      {
+        return vec4i<ty>( v[ta], v[ta], v[tb], v[tb] );
+      }
     };
 
     //vec4 swizzlers for vec3
@@ -160,104 +160,104 @@ namespace mymath
     template<int ta>
     class vec3i<ty>::swizzle<ta, ta, ta, ta>
     {
-      private:
-        ty v[3];
-      public:
-        operator vec4i<ty>() const
-        {
-          return vec4i<ty>( v[ta] );
-        }
+    private:
+      ty v[3];
+    public:
+      operator vec4i<ty>() const
+      {
+        return vec4i<ty>( v[ta] );
+      }
     };
 
     template<typename ty>
     template<int ta, int tb>
     class vec3i<ty>::swizzle<tb, ta, ta, ta>
     {
-      private:
-        ty v[3];
-      public:
-        operator vec4i<ty>() const
-        {
-          return vec4i<ty>( v[tb], v[ta], v[ta], v[ta] );
-        }
+    private:
+      ty v[3];
+    public:
+      operator vec4i<ty>() const
+      {
+        return vec4i<ty>( v[tb], v[ta], v[ta], v[ta] );
+      }
     };
 
     template<typename ty>
     template<int ta, int tb>
     class vec3i<ty>::swizzle<ta, tb, ta, ta>
     {
-      private:
-        ty v[3];
-      public:
-        operator vec4i<ty>() const
-        {
-          return vec4i<ty>( v[ta], v[tb], v[ta], v[ta] );
-        }
+    private:
+      ty v[3];
+    public:
+      operator vec4i<ty>() const
+      {
+        return vec4i<ty>( v[ta], v[tb], v[ta], v[ta] );
+      }
     };
 
     template<typename ty>
     template<int ta, int tb>
     class vec3i<ty>::swizzle<ta, ta, tb, ta>
     {
-      private:
-        ty v[3];
-      public:
-        operator vec4i<ty>() const
-        {
-          return vec4i<ty>( v[ta], v[ta], v[tb], v[ta] );
-        }
+    private:
+      ty v[3];
+    public:
+      operator vec4i<ty>() const
+      {
+        return vec4i<ty>( v[ta], v[ta], v[tb], v[ta] );
+      }
     };
 
     template<typename ty>
     template<int ta, int tb>
     class vec3i<ty>::swizzle<ta, ta, ta, tb>
     {
-      private:
-        ty v[3];
-      public:
-        operator vec4i<ty>() const
-        {
-          return vec4i<ty>( v[ta], v[ta], v[ta], v[tb] );
-        }
+    private:
+      ty v[3];
+    public:
+      operator vec4i<ty>() const
+      {
+        return vec4i<ty>( v[ta], v[ta], v[ta], v[tb] );
+      }
     };
 
     template<typename ty>
     template<int ta, int tb, int tc>
     class vec3i<ty>::swizzle<tb, tc, ta, ta>
     {
-      private:
-        ty v[3];
-      public:
-        operator vec4i<ty>() const
-        {
-          return vec4i<ty>( v[tb], v[tc], v[ta], v[ta] );
-        }
+    private:
+      ty v[3];
+    public:
+      operator vec4i<ty>() const
+      {
+        return vec4i<ty>( v[tb], v[tc], v[ta], v[ta] );
+      }
     };
 
     template<typename ty>
     template<int ta, int tb, int tc>
     class vec3i<ty>::swizzle<tb, ta, tc, ta>
     {
-      private:
-        ty v[3];
-      public:
-        operator vec4i<ty>() const
-        {
-          return vec4i<ty>( v[tb], v[ta], v[tc], v[ta] );
-        }
+    private:
+      ty v[3];
+    public:
+      operator vec4i<ty>() const
+      {
+        return vec4i<ty>( v[tb], v[ta], v[tc], v[ta] );
+      }
     };
 
     template<typename ty>
     template<int ta, int tb, int tc>
     class vec3i<ty>::swizzle<tb, ta, ta, tc>
     {
-      private:
-        ty v[3];
-      public:
-        operator vec4i<ty>() const
-        {
-          return vec4i<ty>( v[tb], v[ta], v[ta], v[tc] );
-        }
+    private:
+      ty v[3];
+    public:
+      operator vec4i<ty>() const
+      {
+        return vec4i<ty>( v[tb], v[ta], v[ta], v[tc] );
+      }
     };
   }
 }

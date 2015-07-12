@@ -15,24 +15,24 @@ template< typename t >
 MYMATH_INLINE std::ostream& operator<< ( std::ostream& output, const mm::impl::mat2i<t>& mat )
 {
   return output << "( " << mat[0].x << ", " << mat[1].x << "\n  "
-         /*__________*/ << mat[0].y << ", " << mat[1].y << " )\n";
+    /*__________*/ << mat[0].y << ", " << mat[1].y << " )\n";
 }
 
 template< typename t >
 MYMATH_INLINE std::ostream& operator<< ( std::ostream& output, const mm::impl::mat3i<t>& mat )
 {
   return output << "( " << mat[0].x << ", " << mat[1].x << ", " << mat[2].x << "\n  "
-         /*__________*/ << mat[0].y << ", " << mat[1].y << ", " << mat[2].y << "\n  "
-         /*__________*/ << mat[0].z << ", " << mat[1].z << ", " << mat[2].z << " )\n";
+    /*__________*/ << mat[0].y << ", " << mat[1].y << ", " << mat[2].y << "\n  "
+    /*__________*/ << mat[0].z << ", " << mat[1].z << ", " << mat[2].z << " )\n";
 }
 
 template< typename t >
 MYMATH_INLINE std::ostream& operator<< ( std::ostream& output, const mm::impl::mat4i<t>& mat )
 {
   return output << "( " << mat[0].x << ", " << mat[1].x << ", " << mat[2].x << ", " << mat[3].x << "\n  "
-         /*__________*/ << mat[0].y << ", " << mat[1].y << ", " << mat[2].y << ", " << mat[3].y << "\n  "
-         /*__________*/ << mat[0].z << ", " << mat[1].z << ", " << mat[2].z << ", " << mat[3].z << "\n  "
-         /*__________*/ << mat[0].w << ", " << mat[1].w << ", " << mat[2].w << ", " << mat[3].w << " )\n";
+    /*__________*/ << mat[0].y << ", " << mat[1].y << ", " << mat[2].y << ", " << mat[3].y << "\n  "
+    /*__________*/ << mat[0].z << ", " << mat[1].z << ", " << mat[2].z << ", " << mat[3].z << "\n  "
+    /*__________*/ << mat[0].w << ", " << mat[1].w << ", " << mat[2].w << ", " << mat[3].w << " )\n";
 }
 
 namespace mymath
@@ -40,34 +40,34 @@ namespace mymath
   template< typename t >
   MYMATH_INLINE impl::mat2i<t> transpose( const impl::mat2i<t>& mat )
   {
-    impl::vec4i<t> tmp1 = _mm_shuffle_ps( mat[0].d, mat[1].d, MYMATH_SHUFFLE(0, 1, 0, 1) );
+    impl::vec4i<t> tmp1 = _mm_shuffle_ps( mat[0].d, mat[1].d, MYMATH_SHUFFLE( 0, 1, 0, 1 ) );
     return impl::mat2i<t>( tmp1.xz, tmp1.yw );
   }
 
   template< typename t >
   MYMATH_INLINE impl::mat3i<t> transpose( const impl::mat3i<t>& mat )
   {
-    impl::vec4i<t> tmp1 = _mm_shuffle_ps( mat[0].d, mat[1].d, MYMATH_SHUFFLE(0, 1, 0, 1) ); //adbe
+    impl::vec4i<t> tmp1 = _mm_shuffle_ps( mat[0].d, mat[1].d, MYMATH_SHUFFLE( 0, 1, 0, 1 ) ); //adbe
     impl::vec4i<t> tmp2 = mat[2].xyzz;                                                  //cfii
-    impl::vec4i<t> tmp3 = _mm_shuffle_ps( mat[0].d, mat[1].d, MYMATH_SHUFFLE(2, 2, 2, 2) ); //gghh
+    impl::vec4i<t> tmp3 = _mm_shuffle_ps( mat[0].d, mat[1].d, MYMATH_SHUFFLE( 2, 2, 2, 2 ) ); //gghh
 
-    return impl::mat3i<t>( _mm_shuffle_ps( tmp1.d, tmp2.d, MYMATH_SHUFFLE( 0, 2, 0, 0 ) ), 
-                           _mm_shuffle_ps( tmp1.d, tmp2.d, MYMATH_SHUFFLE( 1, 3, 1, 1 ) ),
-                           _mm_shuffle_ps( tmp3.d, tmp2.d, MYMATH_SHUFFLE( 0, 2, 2, 3 ) ) );
+    return impl::mat3i<t>( _mm_shuffle_ps( tmp1.d, tmp2.d, MYMATH_SHUFFLE( 0, 2, 0, 0 ) ),
+      _mm_shuffle_ps( tmp1.d, tmp2.d, MYMATH_SHUFFLE( 1, 3, 1, 1 ) ),
+      _mm_shuffle_ps( tmp3.d, tmp2.d, MYMATH_SHUFFLE( 0, 2, 2, 3 ) ) );
   }
 
   template< typename t >
   MYMATH_INLINE impl::mat4i<t> transpose( const impl::mat4i<t>& mat )
   {
-    impl::vec4i<t> tmp1 = _mm_shuffle_ps( mat[0].d, mat[1].d, MYMATH_SHUFFLE(0, 1, 0, 1) );
-    impl::vec4i<t> tmp2 = _mm_shuffle_ps( mat[0].d, mat[1].d, MYMATH_SHUFFLE(2, 3, 2, 3) );
-    impl::vec4i<t> tmp3 = _mm_shuffle_ps( mat[2].d, mat[3].d, MYMATH_SHUFFLE(0, 1, 0, 1) );
-    impl::vec4i<t> tmp4 = _mm_shuffle_ps( mat[2].d, mat[3].d, MYMATH_SHUFFLE(2, 3, 2, 3) );
+    impl::vec4i<t> tmp1 = _mm_shuffle_ps( mat[0].d, mat[1].d, MYMATH_SHUFFLE( 0, 1, 0, 1 ) );
+    impl::vec4i<t> tmp2 = _mm_shuffle_ps( mat[0].d, mat[1].d, MYMATH_SHUFFLE( 2, 3, 2, 3 ) );
+    impl::vec4i<t> tmp3 = _mm_shuffle_ps( mat[2].d, mat[3].d, MYMATH_SHUFFLE( 0, 1, 0, 1 ) );
+    impl::vec4i<t> tmp4 = _mm_shuffle_ps( mat[2].d, mat[3].d, MYMATH_SHUFFLE( 2, 3, 2, 3 ) );
 
-    return impl::mat4i<t>( _mm_shuffle_ps( tmp1.d, tmp3.d, MYMATH_SHUFFLE(0, 2, 0, 2) ),
-                           _mm_shuffle_ps( tmp1.d, tmp3.d, MYMATH_SHUFFLE(1, 3, 1, 3) ),
-                           _mm_shuffle_ps( tmp2.d, tmp4.d, MYMATH_SHUFFLE(0, 2, 0, 2) ),
-                           _mm_shuffle_ps( tmp2.d, tmp4.d, MYMATH_SHUFFLE(1, 3, 1, 3) ) );
+    return impl::mat4i<t>( _mm_shuffle_ps( tmp1.d, tmp3.d, MYMATH_SHUFFLE( 0, 2, 0, 2 ) ),
+      _mm_shuffle_ps( tmp1.d, tmp3.d, MYMATH_SHUFFLE( 1, 3, 1, 3 ) ),
+      _mm_shuffle_ps( tmp2.d, tmp4.d, MYMATH_SHUFFLE( 0, 2, 0, 2 ) ),
+      _mm_shuffle_ps( tmp2.d, tmp4.d, MYMATH_SHUFFLE( 1, 3, 1, 3 ) ) );
   }
 }
 
@@ -128,8 +128,8 @@ MYMATH_INLINE mm::impl::mat2i<t> operator* ( const mm::impl::mat2i<t>& a, const 
   mm::impl::vec2i<t> tmp1 = a[0];
   mm::impl::vec2i<t> tmp2 = a[1];
 
-  return mm::impl::mat2i<t>( mm::fma(b[0].xx, tmp1, b[0].yy * tmp2), 
-                             mm::fma(b[1].xx, tmp1, b[1].yy * tmp2) );
+  return mm::impl::mat2i<t>( mm::fma( b[0].xx, tmp1, b[0].yy * tmp2 ),
+    mm::fma( b[1].xx, tmp1, b[1].yy * tmp2 ) );
 }
 
 template< typename t >
@@ -140,7 +140,7 @@ MYMATH_INLINE mm::impl::mat3i<t> operator* ( const mm::impl::mat3i<t>& a, const 
   mm::impl::vec3i<t> tmp2 = a[1];
   mm::impl::vec3i<t> tmp3 = a[2];
 
-  return mm::impl::mat3i<t>( mm::fma(b[0].zzz, tmp3, mm::fma(b[0].yyy, tmp2, b[0].xxx * tmp1)),
+  return mm::impl::mat3i<t>( mm::fma( b[0].zzz, tmp3, mm::fma( b[0].yyy, tmp2, b[0].xxx * tmp1 ) ),
     mm::fma( b[1].zzz, tmp3, mm::fma( b[1].yyy, tmp2, b[1].xxx * tmp1 ) ),
     mm::fma( b[2].zzz, tmp3, mm::fma( b[2].yyy, tmp2, b[2].xxx * tmp1 ) ) );
 }
@@ -153,10 +153,10 @@ MYMATH_INLINE mm::impl::mat4i<t> operator* ( const mm::impl::mat4i<t>& a, const 
   mm::impl::vec4i<t> tmp3 = a[2];
   mm::impl::vec4i<t> tmp4 = a[3];
 
-  return mm::impl::mat4i<t>( mm::fma(b[0].wwww, tmp4, mm::fma(b[0].zzzz, tmp3, mm::fma(b[0].yyyy, tmp2, b[0].xxxx * tmp1))),
-                             mm::fma(b[1].wwww, tmp4, mm::fma(b[1].zzzz, tmp3, mm::fma(b[1].yyyy, tmp2, b[1].xxxx * tmp1))),
-                             mm::fma(b[2].wwww, tmp4, mm::fma(b[2].zzzz, tmp3, mm::fma(b[2].yyyy, tmp2, b[2].xxxx * tmp1))),
-                             mm::fma(b[3].wwww, tmp4, mm::fma(b[3].zzzz, tmp3, mm::fma(b[3].yyyy, tmp2, b[3].xxxx * tmp1))) );
+  return mm::impl::mat4i<t>( mm::fma( b[0].wwww, tmp4, mm::fma( b[0].zzzz, tmp3, mm::fma( b[0].yyyy, tmp2, b[0].xxxx * tmp1 ) ) ),
+    mm::fma( b[1].wwww, tmp4, mm::fma( b[1].zzzz, tmp3, mm::fma( b[1].yyyy, tmp2, b[1].xxxx * tmp1 ) ) ),
+    mm::fma( b[2].wwww, tmp4, mm::fma( b[2].zzzz, tmp3, mm::fma( b[2].yyyy, tmp2, b[2].xxxx * tmp1 ) ) ),
+    mm::fma( b[3].wwww, tmp4, mm::fma( b[3].zzzz, tmp3, mm::fma( b[3].yyyy, tmp2, b[3].xxxx * tmp1 ) ) ) );
 }
 
 template< typename t >
@@ -234,7 +234,7 @@ namespace mymath
     return determinant_helper( mat ).x;
   }
 
-//helper for _mm_set_ps()
+  //helper for _mm_set_ps()
 #define MYMATH_SSE_SETTER(x, y, z, w) _mm_set_ps(w, z, y, x)
 
   template< typename t >
@@ -251,21 +251,21 @@ namespace mymath
     ii = ii - ii.xxxy;
 
     //an - bm, aj - bi, en - fm, xx - xx
-    impl::vec4i<t> jj = _mm_shuffle_ps(aa.d, ii.d, MYMATH_SHUFFLE(3, 2, 3, 3));
+    impl::vec4i<t> jj = _mm_shuffle_ps( aa.d, ii.d, MYMATH_SHUFFLE( 3, 2, 3, 3 ) );
     //-k(en - fm), -k(an - bm), -g(an - bm), -g(aj - bi)
     ee = jj.zxxy * mat[2].zzyy;
 
     //in - jm, in - jm, en - fm, ej - fi
-    jj = _mm_shuffle_ps( aa.d, ii.d, MYMATH_SHUFFLE(0, 0, 3, 2) );
+    jj = _mm_shuffle_ps( aa.d, ii.d, MYMATH_SHUFFLE( 0, 0, 3, 2 ) );
     //g(in - jm), c(in - jm), c(en - fm), c(ej - fi)
-    impl::vec4i<t> ww = jj * mat[2].yxxx; 
+    impl::vec4i<t> ww = jj * mat[2].yxxx;
 
     //af - be, aj - bi, ej - fi, ej - fi
-    jj = _mm_shuffle_ps( aa.d, ii.d, MYMATH_SHUFFLE(1, 2, 2, 2) );
+    jj = _mm_shuffle_ps( aa.d, ii.d, MYMATH_SHUFFLE( 1, 2, 2, 2 ) );
     //o(ej - fi), o(aj - bi), o(af - be), k(af - be)
-    jj = jj.zyxx * mat[2].wwwz; 
+    jj = jj.zyxx * mat[2].wwwz;
 
-    jj = mat[3] * MYMATH_SSE_SETTER(-1, 1, -1, 1) * (ww - ee + jj);
+    jj = mat[3] * MYMATH_SSE_SETTER( -1, 1, -1, 1 ) * ( ww - ee + jj );
     jj = jj + jj.wzyx;   //xw, yz, zy, wx
     jj = jj + jj.zxxz;   //xwzy, yzxw, zyxw, wxzy
 
@@ -282,9 +282,9 @@ namespace mymath
   MYMATH_INLINE impl::mat2i<t> inverse( const impl::mat2i<t>& mat )
   {
     assert( determinant( mat ) != 0 );
-    impl::vec4i<t> tmp1 = _mm_shuffle_ps( mat[0].d, mat[1].d, MYMATH_SHUFFLE(0, 1, 0, 1));
+    impl::vec4i<t> tmp1 = _mm_shuffle_ps( mat[0].d, mat[1].d, MYMATH_SHUFFLE( 0, 1, 0, 1 ) );
     impl::vec4i<t> det = _mm_div_ps( impl::one, determinant_helper( mat ).d );
-    tmp1 = tmp1 * MYMATH_SSE_SETTER(1, -1, -1, 1) * det;
+    tmp1 = tmp1 * MYMATH_SSE_SETTER( 1, -1, -1, 1 ) * det;
     return impl::mat2i<t>( tmp1.wy, tmp1.zx );
   }
 
@@ -296,19 +296,19 @@ namespace mymath
 
     impl::vec4i<t> atmp2 = mat[1].zzyy * mat[2].yxxy; //h*f, h*c, e*c, e*f
     //ebb * iif - hhe * fcc
-    impl::vec4i<t> atmp1 = impl::sse_fms_ps( impl::vec4i<t>(mat[1].yxxy).d, impl::vec4i<t>(mat[2].zzyy).d, atmp2.d );
+    impl::vec4i<t> atmp1 = impl::sse_fms_ps( impl::vec4i<t>( mat[1].yxxy ).d, impl::vec4i<t>( mat[2].zzyy ).d, atmp2.d );
 
     impl::vec4i<t> atmp4 = mat[0].zzyy * mat[2].yxxy; //g*f, g*c, d*c, d*f
     //daa * iif - ggd * fcc
-    impl::vec4i<t> atmp3 = impl::sse_fms_ps( impl::vec4i<t>(mat[0].yxxy).d,  impl::vec4i<t>(mat[2].zzyy).d, atmp4.d );
-    
+    impl::vec4i<t> atmp3 = impl::sse_fms_ps( impl::vec4i<t>( mat[0].yxxy ).d, impl::vec4i<t>( mat[2].zzyy ).d, atmp4.d );
+
     impl::vec4i<t> atmp6 = mat[0].zzyy * mat[1].yxxy; //g*e, g*b, d*b, d*e
     //daa * hhe - ggd * ebb
-    impl::vec4i<t> atmp5 = impl::sse_fms_ps( impl::vec4i<t>(mat[0].yxxy).d, impl::vec4i<t>(mat[1].zzyy).d, atmp6.d );
+    impl::vec4i<t> atmp5 = impl::sse_fms_ps( impl::vec4i<t>( mat[0].yxxy ).d, impl::vec4i<t>( mat[1].zzyy ).d, atmp6.d );
 
-    atmp1 *= MYMATH_SSE_SETTER(1, -1, 1, 1);
-    atmp3 *= MYMATH_SSE_SETTER(-1, 1, -1, 1);
-    atmp5 *= MYMATH_SSE_SETTER(1, -1, 1, 1);
+    atmp1 *= MYMATH_SSE_SETTER( 1, -1, 1, 1 );
+    atmp3 *= MYMATH_SSE_SETTER( -1, 1, -1, 1 );
+    atmp5 *= MYMATH_SSE_SETTER( 1, -1, 1, 1 );
 
     impl::mat3i<t> ret( atmp1.xyz, atmp3.xyz, atmp5.xyz );
     ret = transpose( ret );
@@ -328,10 +328,10 @@ namespace mymath
   {
     assert( determinant( mat ) != 0 );
 
-    impl::vec4i<t> pmpm = MYMATH_SSE_SETTER(1, -1, 1, -1);
-    impl::vec4i<t> mpmp = MYMATH_SSE_SETTER(-1, 1, -1, 1);
+    impl::vec4i<t> pmpm = MYMATH_SSE_SETTER( 1, -1, 1, -1 );
+    impl::vec4i<t> mpmp = MYMATH_SSE_SETTER( -1, 1, -1, 1 );
 
-    mat4 m = transpose(mat);
+    mat4 m = transpose( mat );
 
     impl::vec4i<t> shf0yxxx = m[0].yxxx;
     impl::vec4i<t> shf0wwwz = m[0].wwwz;
@@ -340,7 +340,7 @@ namespace mymath
     impl::vec4i<t> shf1yxxx = m[1].yxxx;
     impl::vec4i<t> shf1wwwz = m[1].wwwz;
     impl::vec4i<t> shf1zzyy = m[1].zzyy;
-    
+
     impl::vec4i<t> shf2yxxx = m[2].yxxx;
     impl::vec4i<t> shf2wwwz = m[2].wwwz;
     impl::vec4i<t> shf2zzyy = m[2].zzyy;
@@ -349,17 +349,17 @@ namespace mymath
     impl::vec4i<t> shf3wwwz = m[3].wwwz;
     impl::vec4i<t> shf3zzyy = m[3].zzyy;
 
-    impl::vec4i<t> mul0 = shf0zzyy * shf1wwwz; 
-    impl::vec4i<t> mul1 = shf0yxxx * shf1wwwz; 
+    impl::vec4i<t> mul0 = shf0zzyy * shf1wwwz;
+    impl::vec4i<t> mul1 = shf0yxxx * shf1wwwz;
 
-    impl::vec4i<t> mul2 = shf2wwwz * shf3yxxx; 
-    impl::vec4i<t> mul3 = shf2wwwz * shf3zzyy; 
+    impl::vec4i<t> mul2 = shf2wwwz * shf3yxxx;
+    impl::vec4i<t> mul3 = shf2wwwz * shf3zzyy;
 
-    impl::vec4i<t> mul4 = shf0yxxx * shf1zzyy; 
-    impl::vec4i<t> mul5 = shf0wwwz * shf1zzyy; 
+    impl::vec4i<t> mul4 = shf0yxxx * shf1zzyy;
+    impl::vec4i<t> mul5 = shf0wwwz * shf1zzyy;
 
-    impl::vec4i<t> mul6 = shf0wwwz * shf1yxxx; 
-    impl::vec4i<t> mul7 = shf0zzyy * shf1yxxx; 
+    impl::vec4i<t> mul6 = shf0wwwz * shf1yxxx;
+    impl::vec4i<t> mul7 = shf0zzyy * shf1yxxx;
 
     impl::vec4i<t> atmp3 = mul0 * shf2yxxx;
     impl::vec4i<t> atmp6 = mul1 * shf2zzyy;
@@ -386,16 +386,16 @@ namespace mymath
     impl::vec4i<t> atmp35 = fma( shf1wwwz * shf2zzyy, shf3yxxx, fma( shf1zzyy * shf2yxxx, shf3wwwz, atmp33 ) );
 
     //dhlp
-    impl::vec4i<t> atmp9 = (atmp7 - atmp8) * mpmp;
+    impl::vec4i<t> atmp9 = ( atmp7 - atmp8 ) * mpmp;
 
     //cgko
-    impl::vec4i<t> atmp18 = (atmp16 - atmp17) * pmpm; 
+    impl::vec4i<t> atmp18 = ( atmp16 - atmp17 ) * pmpm;
 
     //bfjn
-    impl::vec4i<t> atmp27 = (atmp25 - atmp26) * mpmp;
+    impl::vec4i<t> atmp27 = ( atmp25 - atmp26 ) * mpmp;
 
     //aeim
-    impl::vec4i<t> atmp36 = (atmp34 - atmp35) * pmpm;
+    impl::vec4i<t> atmp36 = ( atmp34 - atmp35 ) * pmpm;
 
     impl::mat4i<t> ret( atmp36, atmp27, atmp18, atmp9 );
 

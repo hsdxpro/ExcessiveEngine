@@ -72,11 +72,13 @@ namespace mymath
       {
         assert( list.size() == 4 );
 
-        value = type_vec4( *( list.begin() + 0 ), 
-          *( list.begin() + 1 ), 
-          *( list.begin() + 2 ), 
+        value = type_vec4( *( list.begin() + 0 ),
+          *( list.begin() + 1 ),
+          *( list.begin() + 2 ),
           *( list.begin() + 3 ) );
       }
+
+      MM_OVERRIDE_NEW
 
       //Grassman product
       quati& operator*=( const quati& other )

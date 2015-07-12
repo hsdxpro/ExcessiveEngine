@@ -85,29 +85,29 @@ namespace mymath
 
   MYMATH_UNPROJECT_FUNC( float )
 
-  MYMATH_CREATEROTATION_FUNC( float )
+    MYMATH_CREATEROTATION_FUNC( float )
 
-  MYMATH_CREATESCALE_FUNC( float )
+    MYMATH_CREATESCALE_FUNC( float )
 
-  MYMATH_CREATETRANSLATION_FUNC( float )
+    MYMATH_CREATETRANSLATION_FUNC( float )
 
-  MYMATH_GETANGLE_FUNC( vec2i, float )
-  MYMATH_GETANGLE_FUNC( vec3i, float )
-  MYMATH_GETANGLE_FUNC( vec4i, float )
+    MYMATH_GETANGLE_FUNC( vec2i, float )
+    MYMATH_GETANGLE_FUNC( vec3i, float )
+    MYMATH_GETANGLE_FUNC( vec4i, float )
 
 #if MYMATH_DOUBLE_PRECISION == 1
-  MYMATH_CREATEROTATION_FUNC( double )
-  MYMATH_CREATESCALE_FUNC( double )
-  MYMATH_CREATETRANSLATION_FUNC( double )
-  MYMATH_GETANGLE_FUNC( vec2i, double )
-  MYMATH_GETANGLE_FUNC( vec3i, double )
-  MYMATH_GETANGLE_FUNC( vec4i, double )
+    MYMATH_CREATEROTATION_FUNC( double )
+    MYMATH_CREATESCALE_FUNC( double )
+    MYMATH_CREATETRANSLATION_FUNC( double )
+    MYMATH_GETANGLE_FUNC( vec2i, double )
+    MYMATH_GETANGLE_FUNC( vec3i, double )
+    MYMATH_GETANGLE_FUNC( vec4i, double )
 #endif
 
-  MYMATH_INLINE bool is_pow_2( const unsigned int& val )
+    MYMATH_INLINE bool is_pow_2( const unsigned int& val )
   {
     if( val == 0 )
-      return true; 
+      return true;
 
     unsigned int pow2 = 1;
 
@@ -125,16 +125,16 @@ namespace mymath
   }
 
   MYMATH_CLOSEENOUGH_FUNC( float )
-  MYMATH_FINDNORMAL_FUNC( float )
-  MYMATH_CALCTANGENT_FUNC( float )
+    MYMATH_FINDNORMAL_FUNC( float )
+    MYMATH_CALCTANGENT_FUNC( float )
 
 #if MYMATH_DOUBLE_PRECISION == 1
-  MYMATH_CLOSEENOUGH_FUNC( double )
-  MYMATH_FINDNORMAL_FUNC( double )
-  MYMATH_CALCTANGENT_FUNC( double )
+    MYMATH_CLOSEENOUGH_FUNC( double )
+    MYMATH_FINDNORMAL_FUNC( double )
+    MYMATH_CALCTANGENT_FUNC( double )
 #endif
 
-  template< typename t >
+    template< typename t >
   MYMATH_INLINE impl::mat4i<t> perspective( const t& fovy, const t& aspect, const t& near, const t& far )
   {
     t top = near * std::tan( fovy * ( t )0.5 );
@@ -142,14 +142,14 @@ namespace mymath
     t left = bottom * aspect;
     t right = -left;
     impl::mat4i<t> r = mat4::identity;
-    r[0].x = ( ( t )2 * near ) / ( right - left );
-    r[1].y = ( ( t )2 * near ) / ( top - bottom );
+    r[0].x = ( (t)2 * near ) / ( right - left );
+    r[1].y = ( (t)2 * near ) / ( top - bottom );
     r[2].x = ( right + left ) / ( right - left );
     r[2].y = ( top + bottom ) / ( top - bottom );
     r[2].z = -( far + near ) / ( far - near );
-    r[2].w = -( t )1;
-    r[3].z = -( ( t )2 * far * near ) / ( far - near );
-    r[3].w = ( t )0;
+    r[2].w = -(t)1;
+    r[3].z = -( (t)2 * far * near ) / ( far - near );
+    r[3].w = (t)0;
     return r;
   }
 
@@ -157,13 +157,13 @@ namespace mymath
   MYMATH_INLINE impl::mat4i<t> ortographic( const t& left, const t& right, const t& bottom, const t& top, const t& near, const t& far )
   {
     impl::mat4i<t> r = mat4::identity;
-    r[0].x = ( t )2 / ( right - left );
-    r[1].y = ( t )2 / ( top - bottom );
-    r[2].z = -( t )2 / ( far - near );
+    r[0].x = (t)2 / ( right - left );
+    r[1].y = (t)2 / ( top - bottom );
+    r[2].z = -(t)2 / ( far - near );
     r[3].x = -( ( right + left ) / ( right - left ) );
     r[3].y = -( ( top + bottom ) / ( top - bottom ) );
     r[3].z = -( ( far + near ) / ( far - near ) );
-    r[3].w = ( t )1;
+    r[3].w = (t)1;
     return r;
   }
 

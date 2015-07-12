@@ -36,14 +36,14 @@ namespace mymath
     static const __m128i sevenf = _mm_set1_epi32( 0x7f );
     static const __m128 sqrthf = _mm_set_ps1( 0.707106781186547524f );
     static const __m128 log_p0 = _mm_set_ps1( 7.0376836292E-2f );
-    static const __m128 log_p1 = _mm_set_ps1( - 1.1514610310E-1f );
+    static const __m128 log_p1 = _mm_set_ps1( -1.1514610310E-1f );
     static const __m128 log_p2 = _mm_set_ps1( 1.1676998740E-1f );
-    static const __m128 log_p3 = _mm_set_ps1( - 1.2420140846E-1f );
-    static const __m128 log_p4 = _mm_set_ps1( + 1.4249322787E-1f );
-    static const __m128 log_p5 = _mm_set_ps1( - 1.6668057665E-1f );
-    static const __m128 log_p6 = _mm_set_ps1( + 2.0000714765E-1f );
-    static const __m128 log_p7 = _mm_set_ps1( - 2.4999993993E-1f );
-    static const __m128 log_p8 = _mm_set_ps1( + 3.3333331174E-1f );
+    static const __m128 log_p3 = _mm_set_ps1( -1.2420140846E-1f );
+    static const __m128 log_p4 = _mm_set_ps1( +1.4249322787E-1f );
+    static const __m128 log_p5 = _mm_set_ps1( -1.6668057665E-1f );
+    static const __m128 log_p6 = _mm_set_ps1( +2.0000714765E-1f );
+    static const __m128 log_p7 = _mm_set_ps1( -2.4999993993E-1f );
+    static const __m128 log_p8 = _mm_set_ps1( +3.3333331174E-1f );
     static const __m128 log_q1 = _mm_set_ps1( -2.12194440e-4f );
     static const __m128 log_q2 = _mm_set_ps1( 0.693359375f );
     static const __m128 exp_hi = _mm_set_ps1( 88.3762626647949f );
@@ -163,7 +163,7 @@ namespace mymath
       //__m128 mul0 = _mm_mul_ps( y, flr0 );
       //__m128 sub0 = _mm_sub_ps( x, mul0 );
       //return sub0;
-      return sse_fma_ps( sse_neg_ps(y), flr0, x );
+      return sse_fma_ps( sse_neg_ps( y ), flr0, x );
     }
 
     //clamp
@@ -215,10 +215,10 @@ namespace mymath
 
       /* part2:
         if( x < SQRTHF ) {
-          e -= 1;
-          x = x + x - 1.0;
+        e -= 1;
+        x = x + x - 1.0;
         } else { x = x - 1.0; }
-      */
+        */
       __m128 mask = _mm_cmplt_ps( x, sqrthf );
       __m128 tmp = _mm_and_ps( x, mask );
 
@@ -264,7 +264,7 @@ namespace mymath
 
       //tmp = _mm_mul_ps( z, half );
       //y = _mm_sub_ps( y, tmp );
-      y = sse_fma_ps( sse_neg_ps(z), half, y );
+      y = sse_fma_ps( sse_neg_ps( z ), half, y );
 
       //tmp = _mm_mul_ps( e, log_q2 );
       //x = _mm_add_ps( x, tmp );
@@ -290,7 +290,7 @@ namespace mymath
 
       /* how to perform a floorf with SSE: just below */
       emm0 = _mm_cvttps_epi32( fx );
-      tmp  = _mm_cvtepi32_ps( emm0 );
+      tmp = _mm_cvtepi32_ps( emm0 );
       /* if greater, substract 1 */
       __m128 mask = _mm_cmpgt_ps( tmp, fx );
 
@@ -365,7 +365,7 @@ namespace mymath
          and another one for Pi/4<x<=Pi/2
 
          Both branches will be computed.
-      */
+         */
       emm2 = _mm_and_si128( emm2, two_i32 );
       emm2 = _mm_cmpeq_epi32( emm2, _mm_setzero_si128() );
 
@@ -401,7 +401,7 @@ namespace mymath
 
       //__m128 tmp = _mm_mul_ps( z, half );
       //y = _mm_sub_ps( y, tmp ); // y - z * half
-      y = sse_fma_ps( sse_neg_ps(z), half, y );
+      y = sse_fma_ps( sse_neg_ps( z ), half, y );
 
       y = _mm_add_ps( y, one );
 
@@ -488,7 +488,7 @@ namespace mymath
 
       //__m128 tmp = _mm_mul_ps( z, half );
       //y = _mm_sub_ps( y, tmp );
-      y = sse_fma_ps( sse_neg_ps(z), half, y );
+      y = sse_fma_ps( sse_neg_ps( z ), half, y );
 
       y = _mm_add_ps( y, one );
 
@@ -588,7 +588,7 @@ namespace mymath
 
       //__m128 tmp = _mm_mul_ps( z, half );
       //y = _mm_sub_ps( y, tmp );
-      y = sse_fma_ps( sse_neg_ps(z), half, y );
+      y = sse_fma_ps( sse_neg_ps( z ), half, y );
 
       y = _mm_add_ps( y, one );
 
@@ -669,7 +669,7 @@ namespace mymath
 
     MYMATH_INLINE __m128 sse_inversesqrt_ps( __m128 x )
     {
-      return _mm_div_ps(one, _mm_sqrt_ps(x));//the precision of _mm_rsqrt_ps( x ) is not enough...
+      return _mm_div_ps( one, _mm_sqrt_ps( x ) );//the precision of _mm_rsqrt_ps( x ) is not enough...
     }
 
     MYMATH_INLINE __m128 sse_sign_ps( __m128 x )
@@ -695,17 +695,17 @@ namespace mymath
     {
       //return (d>0) ? floor(d) : ceil(d)
       __m128 m = _mm_cmpunord_ps( x, _mm_cmpge_ps( _mm_andnot_ps( _mm_set1_ps( -0.0f ), x ),
-                                  ps_2pow23 ) );
+        ps_2pow23 ) );
       return _mm_or_ps( _mm_andnot_ps( m, _mm_cvtepi32_ps( _mm_cvttps_epi32( x ) ) ), _mm_and_ps( m, x ) );
     }
 
     MYMATH_INLINE __m128 sse_round_ps( __m128 x )
     {
       __m128 m = _mm_cmpunord_ps( x,
-                                  _mm_cmpge_ps( _mm_andnot_ps( _mm_set1_ps( -0.0f ), x ),
-                                      ps_2pow23 ) );
+        _mm_cmpge_ps( _mm_andnot_ps( _mm_set1_ps( -0.0f ), x ),
+        ps_2pow23 ) );
       return _mm_or_ps( _mm_andnot_ps( m, _mm_cvtepi32_ps(
-                                         _mm_cvtps_epi32( x ) ) ), _mm_and_ps( m, x ) );
+        _mm_cvtps_epi32( x ) ) ), _mm_and_ps( m, x ) );
     }
 
     MYMATH_INLINE __m128 sse_fract_ps( __m128 x )
@@ -721,10 +721,10 @@ namespace mymath
     MYMATH_INLINE __m128 sse_smoothstep_ps( __m128 a, __m128 b, __m128 c )
     {
       __m128 cc = _mm_max_ps( _mm_min_ps( _mm_div_ps( _mm_sub_ps( c, a ),
-                                          _mm_sub_ps( b, a ) ), one ),
-                              _mm_setzero_ps() );
+        _mm_sub_ps( b, a ) ), one ),
+        _mm_setzero_ps() );
       return _mm_mul_ps( _mm_mul_ps( cc, cc ),
-                         _mm_sub_ps( three, _mm_add_ps( cc, cc ) ) );
+        _mm_sub_ps( three, _mm_add_ps( cc, cc ) ) );
     }
 
     template< int mask >
@@ -738,14 +738,14 @@ namespace mymath
     template< int mask >
     MYMATH_INLINE float sse_dot_ps( __m128 a, __m128 b )
     {
-      return _mm_cvtss_f32( sse_dot_ps_helper<mask>(a,b) );
+      return _mm_cvtss_f32( sse_dot_ps_helper<mask>( a, b ) );
     }
 
     MYMATH_INLINE __m128 sse_length_ps_helper_vec4( __m128 x )
     {
       __m128 l = _mm_mul_ps( x, x );
-      l = _mm_add_ps( l, _mm_shufd( l, MYMATH_SHUFFLE(2, 3, 0, 1) ) );
-      l = _mm_sqrt_ss( _mm_add_ss( l, _mm_shufd( l, MYMATH_SHUFFLE(1, 0, 1, 0) ) ) );
+      l = _mm_add_ps( l, _mm_shufd( l, MYMATH_SHUFFLE( 2, 3, 0, 1 ) ) );
+      l = _mm_sqrt_ss( _mm_add_ss( l, _mm_shufd( l, MYMATH_SHUFFLE( 1, 0, 1, 0 ) ) ) );
       return _mm_shuffle_ps( l, l, MYMATH_SHUFFLE( 0, 0, 0, 0 ) );
     }
 
@@ -837,7 +837,7 @@ namespace mymath
     template< int mask >
     MYMATH_INLINE __m128 sse_reflect_ps( __m128 a, __m128 b )
     {
-      __m128 l = sse_dot_ps_helper<mask>(a,b);
+      __m128 l = sse_dot_ps_helper<mask>( a, b );
       return _mm_sub_ps( a, _mm_mul_ps( _mm_add_ps( l, l ), b ) );
     }
 
@@ -847,16 +847,16 @@ namespace mymath
       __m128 o = one;
       __m128 e = c;
 
-      __m128 d = sse_dot_ps_helper<mask>(a, b);
+      __m128 d = sse_dot_ps_helper<mask>( a, b );
 
       // -e* (e * (-d*d + o)) + o
       //__m128 k = _mm_sub_ps( o, _mm_mul_ps( _mm_mul_ps( e, e ), _mm_sub_ps( o, _mm_mul_ps( d, d ) ) ) );
-      __m128 k = sse_fma_ps( sse_neg_ps(e), _mm_mul_ps(e, sse_fma_ps(sse_neg_ps(d), d, o)), o );
+      __m128 k = sse_fma_ps( sse_neg_ps( e ), _mm_mul_ps( e, sse_fma_ps( sse_neg_ps( d ), d, o ) ), o );
 
       __m128 tmp1 = _mm_cmpnlt_ps( k, _mm_setzero_ps() );
       //__m128 tmp2 = _mm_mul_ps( e, d );
       //__m128 tmp3 = _mm_add_ps( tmp2, _mm_sqrt_ps( k ) );
-      __m128 tmp3 = sse_fma_ps( e, d, _mm_sqrt_ps(k) );
+      __m128 tmp3 = sse_fma_ps( e, d, _mm_sqrt_ps( k ) );
       __m128 tmp4 = _mm_mul_ps( b, tmp3 );
       //__m128 tmp5 = _mm_mul_ps( e, a );
       //__m128 tmp6 = _mm_sub_ps( tmp5, tmp4 );
@@ -870,8 +870,8 @@ namespace mymath
     {
       __m128 l = sse_dot_ps_helper<mask>( b, c );
       return _mm_xor_ps( _mm_and_ps( _mm_cmpnlt_ps(
-                                       l,
-                                       _mm_setzero_ps() ), _mm_set1_ps( -0.f ) ), a );
+        l,
+        _mm_setzero_ps() ), _mm_set1_ps( -0.f ) ), a );
     }
 
     MYMATH_INLINE __m128 sse_cross_ps( __m128 a, __m128 b )
@@ -881,7 +881,7 @@ namespace mymath
       //         _mm_mul_ps( _mm_shuffle_ps( a, a, MYMATH_SHUFFLE( 1, 2, 0, 3 ) ), _mm_shuffle_ps( b, b, MYMATH_SHUFFLE( 2, 0, 1, 3 ) ) ),
       //        _mm_mul_ps( _mm_shuffle_ps( a, a, MYMATH_SHUFFLE( 2, 0, 1, 3 ) ), _mm_shuffle_ps( b, b, MYMATH_SHUFFLE( 1, 2, 0, 3 ) ) )
       //       );
-      return sse_fma_ps( sse_neg_ps(_mm_shuffle_ps( a, a, MYMATH_SHUFFLE( 2, 0, 1, 3 ) )), _mm_shuffle_ps( b, b, MYMATH_SHUFFLE( 1, 2, 0, 3 ) ),
+      return sse_fma_ps( sse_neg_ps( _mm_shuffle_ps( a, a, MYMATH_SHUFFLE( 2, 0, 1, 3 ) ) ), _mm_shuffle_ps( b, b, MYMATH_SHUFFLE( 1, 2, 0, 3 ) ),
         _mm_mul_ps( _mm_shuffle_ps( a, a, MYMATH_SHUFFLE( 1, 2, 0, 3 ) ), _mm_shuffle_ps( b, b, MYMATH_SHUFFLE( 2, 0, 1, 3 ) ) ) );
     }
 
@@ -946,7 +946,7 @@ namespace mymath
       __m128 r = _mm_rcp_ps( x );
       //r = _mm_sub_ps( _mm_add_ps( r, r ), _mm_mul_ps( _mm_mul_ps( r, x ), r ) );
       //return r;
-      return sse_fma_ps( sse_neg_ps(r), _mm_mul_ps( r, x ), _mm_add_ps( r, r ) );
+      return sse_fma_ps( sse_neg_ps( r ), _mm_mul_ps( r, x ), _mm_add_ps( r, r ) );
     }
 
     MYMATH_INLINE __m128 sse_atan_ps( __m128 x )
