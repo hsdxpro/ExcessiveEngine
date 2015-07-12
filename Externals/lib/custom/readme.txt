@@ -1,0 +1,1 @@
+if external libraries are not readily available for the target platform, custom compiled externals should be put here

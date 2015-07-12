@@ -1,41 +1,51 @@
+#-------------------------------------------------------------------------------
+# PHYSICS ENGINE BULLET
+#
+# Physics engine is responsible for all game physics simulation. May have multiple
+# implementations.
+#-------------------------------------------------------------------------------
+
 message( "-PhysicsEngineBullet" )
 
-#########################################################################
+#---------------------------------------
 # Files
 
-FILE( GLOB_RECURSE sources src/*.c* )
-FILE( GLOB_RECURSE headers src/*.h* )
-FILE( GLOB_RECURSE interfaces ../Interfaces/*)
+FILE( GLOB_RECURSE sources *.c* )
+FILE( GLOB_RECURSE headers *.h* )
 
 include_directories("../../../Externals/include/Bullet3/")
 
 SOURCE_GROUP( Interfaces FILES ${interfaces})
 
-if(BUILD_EXCESSIVE_WITH_DLL)
+
+# Project
+if(EXCESSIVE_DLL_MODULES)
 	add_library( PhysicsEngineBullet SHARED ${sources} ${headers} ${interfaces} )
-	target_link_libraries( PhysicsEngineBullet "-Wl,--whole-archive" Common  "-Wl,--no-whole-archive")
 else()
 	add_library( PhysicsEngineBullet STATIC ${sources} ${headers} ${interfaces} )
 endif()
 
-if(DEBUG_BUILD)
-	target_link_libraries( PhysicsEngineBullet 	Bullet3_d/Bullet3Collision_Debug 
-							Bullet3_d/Bullet3Common_Debug
-							Bullet3_d/Bullet3Dynamics_Debug
-							Bullet3_d/Bullet3Geometry_Debug
-							Bullet3_d/Bullet3OpenCL_clew_Debug
-							Bullet3_d/BulletCollision_Debug
-							Bullet3_d/BulletDynamics_Debug
-							Bullet3_d/BulletSoftBody_Debug
-							Bullet3_d/LinearMath_Debug )
-else()
-	target_link_libraries( PhysicsEngineBullet 	Bullet3_r/Bullet3Collision 
-							Bullet3_r/Bullet3Common
-							Bullet3_r/Bullet3Dynamics
-							Bullet3_r/Bullet3Geometry
-							Bullet3_r/Bullet3OpenCL_clew
-							Bullet3_r/BulletCollision
-							Bullet3_r/BulletDynamics
-							Bullet3_r/BulletSoftBody
-							Bullet3_r/LinearMath )
-endif()
+# link stuff anyway
+target_link_libraries( PhysicsEngineBullet PlatformLibrary SupportLibrary)
+# link stuff in debug builds
+target_link_libraries( PhysicsEngineBullet 	
+	debug Bullet3_d/Bullet3Collision_Debug 
+	debug Bullet3_d/Bullet3Common_Debug
+	debug Bullet3_d/Bullet3Dynamics_Debug
+	debug Bullet3_d/Bullet3Geometry_Debug
+	debug Bullet3_d/Bullet3OpenCL_clew_Debug
+	debug Bullet3_d/BulletCollision_Debug
+	debug Bullet3_d/BulletDynamics_Debug
+	debug Bullet3_d/BulletSoftBody_Debug
+	debug Bullet3_d/LinearMath_Debug )
+#link stuff in release builds
+target_link_libraries( PhysicsEngineBullet 
+	optimized Bullet3_r/Bullet3Collision 
+	optimized Bullet3_r/Bullet3Common
+	optimized Bullet3_r/Bullet3Dynamics
+	optimized Bullet3_r/Bullet3Geometry
+	optimized Bullet3_r/Bullet3OpenCL_clew
+	optimized Bullet3_r/BulletCollision
+	optimized Bullet3_r/BulletDynamics
+	optimized Bullet3_r/BulletSoftBody
+	optimized Bullet3_r/LinearMath )

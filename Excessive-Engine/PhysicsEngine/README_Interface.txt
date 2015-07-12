@@ -1,1 +1,0 @@
-Common interface for the PhysicsEngine component. Implemented by another project in a DLL or STATIC library.

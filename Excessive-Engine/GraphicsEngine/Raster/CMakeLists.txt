@@ -1,60 +1,85 @@
+#-------------------------------------------------------------------------------
+# GRAPICS ENGINE RASTER
+#
+# Rasterization based graphics engine implementation.
+#-------------------------------------------------------------------------------
+
 message( "-GraphicsEngineRaster" )
 
-#########################################################################
+#---------------------------------------
 # Files
 
-FILE( GLOB_RECURSE sources src/*.c* )
-FILE( GLOB_RECURSE headers src/*.h* )
-FILE( GLOB_RECURSE interfaces ../Interfaces/*)
+FILE( GLOB_RECURSE sources *.c* )
+FILE( GLOB_RECURSE headers *.h* )
 
-#########################################################################
+#---------------------------------------
 # Filters
 
 # Global filter
 SOURCE_GROUP(\\ FILES $(sources) $(headers))
 
 # Main
-SOURCE_GROUP(Main FILES src/GraphicsEngineRaster.h src/GraphicsEngineRaster.cpp)
+SOURCE_GROUP(Main FILES GraphicsEngineRaster.h GraphicsEngineRaster.cpp)
 
 # Utility
-SOURCE_GROUP(Utility FILES src/utility/ref_ptr.h)
+SOURCE_GROUP(Utility FILES utility/ref_ptr.h)
 
 # Scene
-SOURCE_GROUP(Scene FILES src/Scene.h src/Scene.cpp)
+SOURCE_GROUP(Scene FILES Scene.h Scene.cpp)
 
 # Interface
 SOURCE_GROUP(Interfaces FILES ${interfaces})
 
+# Pipeline graph stuff
+SOURCE_GROUP(PipelineGraph FILES 
+PipelineData.cpp
+PipelineData.h
+PipelineNode.cpp
+PipelineNode.h
+PipelineNodeFactory.cpp
+PipelineNodeFactory.h
+PipelinePorts.cpp
+PipelinePorts.h
+)
+
 # Resource management files filter
 SOURCE_GROUP("Resources" FILES
-src/Texture.h
-src/Texture.cpp
-src/Mesh.h
-src/Mesh.cpp
-src/Material.h
-src/Material.cpp
-src/ResourceManager.h
-src/ResourceManager.cpp
+Texture.h
+Texture.cpp
+Mesh.h
+Mesh.cpp
+Material.h
+Material.cpp
+ResourceManager.h
+ResourceManager.cpp
 )
 
-#Scene management files filter
+# Scene management files filter
 SOURCE_GROUP("Scene" FILES
-src/SceneManager.h
-src/SceneManager.cpp
-src/Light.h
-src/Light.cpp
-src/Entity.h
-src/Entity.cpp
-src/Camera.h
-src/Camera.cpp
+SceneManager.h
+SceneManager.cpp
+Light.h
+Light.cpp
+Entity.h
+Entity.cpp
+Camera.h
+Camera.cpp
 )
 
-#########################################################################
+#---------------------------------------
 # Project
 
-if(BUILD_EXCESSIVE_WITH_DLL)
+if(EXCESSIVE_DLL_MODULES)
 	add_library( GraphicsEngineRaster SHARED ${sources} ${headers} ${interfaces} )
-	target_link_libraries( GraphicsEngineRaster "-Wl,--whole-archive" Common  "-Wl,--no-whole-archive")
 else()
 	add_library( GraphicsEngineRaster STATIC ${sources} ${headers} ${interfaces} )
 endif()
+
+target_link_libraries(GraphicsEngineRaster PlatformLibrary SupportLibrary)
+target_link_libraries(GraphicsEngineRaster
+	debug sfml-graphics-d 
+	debug sfml-system-d 
+	optimized sfml-graphics 
+	optimized sfml-system)
+
+

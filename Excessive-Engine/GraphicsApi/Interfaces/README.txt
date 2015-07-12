@@ -1,1 +1,0 @@
-Common interface for GraphicsApi wrappers. These interfaces are used by third party, and are implemented by GraphicsApiGL, GraphicsApiD3D11 and the like.

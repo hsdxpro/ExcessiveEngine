@@ -1,87 +1,174 @@
-message( "-root" )
+#-------------------------------------------------------------------------------
+# ROOT
+#
+# This file is the root CMake file. 
+# Contains basic stuff like platform definition, global preprocessor definitions,
+# configuration types.
+#-------------------------------------------------------------------------------
 
-cmake_minimum_required( VERSION 2.6 )
+message("-Root")
 
-set( project_name Excessive-Team )
-set( ARCH_32BIT true )
-set( CMAKE_VERBOSE_MAKEFILE ON )
+cmake_minimum_required(VERSION 3.2)
 
-OPTION(BUILD_EXCESSIVE_WITH_DLL "BUILD_EXCESSIVE_WITH_DLL" ON)
-OPTION(DEBUG_BUILD "DEBUG_BUILD" ON)
+#---------------------------------------
+# create project
+#---------------------------------------
+set(EXCESSIVE_PROJECT_NAME "Excessive-Team")
+project(${EXCESSIVE_PROJECT_NAME})
 
+#---------------------------------------
+# set build configurations
+#---------------------------------------
 
-if(BUILD_EXCESSIVE_WITH_DLL)
-	add_definitions( -DBUILD_DLL )
-else()
-	add_definitions( -DBUILD_STATIC )
+# build configs
+set(CMAKE_CONFIGURATION_TYPES Debug PerfDebug Release CACHE TYPE INTERNAL FORCE )
+
+# add flags for perf debug, other should have it right
+set(CMAKE_CXX_FLAGS_PERFDEBUG ${CMAKE_CXX_FLAGS_RELWITHDEBINFO})
+set(CMAKE_EXE_LINKER_FLAGS_PERFDEBUG ${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} )
+set(CMAKE_MODULE_LINKER_FLAGS_PERFDEBUG ${CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO})
+set(CMAKE_SHARED_LINKER_FLAGS_PERFDEBUG ${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO})
+
+# add preprocessor definitions for configs
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DEXCESSIVE_DEBUG")
+set(CMAKE_CXX_FLAGS_PERFDEBUG "${CMAKE_CXX_FLAGS_PERFDEBUG} -DEXCESSIVE_PERFDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DEXCESSIVE_RELEASE")
+
+set(DEBUG_CONFIGURATIONS Debug;PerfDebug)
+
+# make modules as DLLs
+option(EXCESSIVE_DLL_MODULES "Chooses whether to create static libs for the submodules, or make them as DLLs." ON)
+if (EXCESSIVE_DLL_MODULES)
+	add_definitions(-DEXCESSIVE_DLL_MODULES)
 endif()
 
+#---------------------------------------
+# platform detection
+#---------------------------------------
+
+# operating system
 if(WIN32)
-	add_definitions( -DWIN )
-elseif(UNIX)
-	add_definitions( -DLIN )
-elseif(APPLE)
-	add_definitions( -DMAC )
+	set(EXCESSIVE_WINDOWS 1)
+	message("Operating system is: Windows")
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+	set(EXCESSIVE_LINUX 1)
+	message("Operating system is: Linux")
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+	set(EXCESSIVE_OSX 1)
+	message("Operating system is: OSX")
 endif()
 
-if(DEBUG_BUILD)
-	set(BUILD_CONFIG_LIST_DEBUG 	D_32) #D_64
-else()
-	set(BUILD_CONFIG_LIST_RELEASE 	R_32) #R_64
+# 32 or 64 bit
+if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
+	set(EXCESSIVE_64BIT 1)
+	message("Architecture is 64 bits")
+else ()
+	set(EXCESSIVE_32BIT 1)
+	message("Architecture is 32 bits")
+endif ()
+
+#---------------------------------------
+# output directories
+#---------------------------------------
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+
+#---------------------------------------
+# preprocessor definitions
+#---------------------------------------
+if (EXCESSIVE_64BIT)
+	add_definitions(-DEXCESSIVE_64BIT)
+else ()
+	add_definitions(-DEXCESSIVE_32BIT)
 endif()
 
-foreach(buildName ${BUILD_CONFIG_LIST_DEBUG})
-	string(TOUPPER ${buildName} buildName)
-
-	set(CMAKE_CXX_FLAGS_${buildName} ${CMAKE_CXX_FLAGS_DEBUG})
-	set(CMAKE_EXE_LINKER_FLAGS_${buildName} ${CMAKE_EXE_LINKER_FLAGS_DEBUG})
-	set(CMAKE_MODULE_LINKER_FLAGS_${buildName} ${CMAKE_MODULE_LINKER_FLAGS_DEBUG})
-	set(CMAKE_SHARED_LINKER_FLAGS_${buildName} ${CMAKE_SHARED_LINKER_FLAGS_DEBUG})
-endforeach()
-
-foreach(buildName ${BUILD_CONFIG_LIST_RELEASE})
-	string(TOUPPER ${buildName} buildName)
-
-	set(CMAKE_CXX_FLAGS_${buildName} ${CMAKE_CXX_FLAGS_RELEASE})
-	set(CMAKE_EXE_LINKER_FLAGS_${buildName} ${CMAKE_EXE_LINKER_FLAGS_RELEASE} )
-	set(CMAKE_MODULE_LINKER_FLAGS_${buildName} ${CMAKE_MODULE_LINKER_FLAGS_RELEASE})
-	set(CMAKE_SHARED_LINKER_FLAGS_${buildName} ${CMAKE_SHARED_LINKER_FLAGS_RELEASE})
-endforeach()
-
-# Solution Configurations
-if(CMAKE_CONFIGURATION_TYPES)
-   Set(CMAKE_CONFIGURATION_TYPES ${BUILD_CONFIG_LIST_DEBUG} ${BUILD_CONFIG_LIST_RELEASE} )
-   Set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING
-     "Reset the configurations to what we need"
-     FORCE)
+if(EXCESSIVE_WINDOWS)
+	add_definitions(-DEXCESSIVE_WINDOWS)
+elseif(EXCESSIVE_LINUX)
+	add_definitions(-DEXCESSIVE_LINUX)
+elseif(EXCESSIVE_OSX)
+	add_definitions(-DEXCESSIVE_OSX)
 endif()
 
-project( ${project_name} )
 
-#set platform detection etc.
-include( Excessive-Engine/PIL/platform_detection.cmake )
+#---------------------------------------
+# add external libraries
+#---------------------------------------
 
-if( WIN_BUILD )
-  Set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../ )
-  Set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../ )
-  Set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../ )
-else()
-  Set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR} )
-  Set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR} )
-  Set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR} )
-endif()
+include_directories(${CMAKE_CURRENT_LIST_DIR}/Externals/include)
 
-#add externals
-include( Externals/externals.cmake )
+# get platform
+if (EXCESSIVE_WINDOWS)
+	set(EXCESSIVE_LINK_OS "win")
+elseif (EXCESSIVE_LINUX)
+	set(EXCESSIVE_LINK_OS "linux")
+elseif (EXCESSIVE_OSX)
+	set(EXCESSIVE_LINK_OS "osx")
+else ()
+	set(EXCESSIVE_LINK_OS "unknown")
+endif () 
+
+# get compiler
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+	set(EXCESSIVE_LINK_COMPILER "gcc")
+elseif ("MSVC" STREQUAL "${CMAKE_CXX_COMPILER_ID}")
+	if (MSVC12)
+		set(EXCESSIVE_LINK_COMPILER "msvc12")
+	elseif (MSVC14)
+		set(EXCESSIVE_LINK_COMPILER "msvc14")
+	endif ()
+else ()
+	set(EXCESSIVE_LINK_COMPILER "unknown")
+endif ()
+
+# get architecture
+if (EXCESSIVE_64BIT)
+	set(EXCESSIVE_LINK_ARCHITECTURE "64")
+elseif (EXCESSIVE_32BIT)
+	set(EXCESSIVE_LINK_ARCHITECTURE "32")
+else ()
+	set(EXCESSIVE_LINK_ARCHITECTURE "unknown")
+endif ()
+
+# display information 
+set(EXCESSIVE_LINK_PLATFORM "${EXCESSIVE_LINK_OS}_${EXCESSIVE_LINK_COMPILER}_${EXCESSIVE_LINK_ARCHITECTURE}")
+message("Looking for externals in: ${EXCESSIVE_LINK_PLATFORM}")
+
+# set up externals path
+if ((${EXCESSIVE_LINK_PLATFORM} MATCHES ".*unknown.*") OR NOT IS_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/Externals/lib/${EXCESSIVE_LINK_PLATFORM})
+	set(EXCESSIVE_LINK_PATH custom)
+else ()
+	set(EXCESSIVE_LINK_PATH ${CMAKE_CURRENT_LIST_DIR}/Externals/lib/${EXCESSIVE_LINK_PLATFORM})
+endif ()
+
+link_directories(${EXCESSIVE_LINK_PATH})
+
+message("External link path: ${EXCESSIVE_LINK_PATH}")
+
+
+#---------------------------------------
+# add sub-folders
+#---------------------------------------
+
+include_directories(${CMAKE_CURRENT_LIST_DIR}/Excessive-Engine)
 
 # Engine
 add_subdirectory( Excessive-Engine )
-
 # Editor
 add_subdirectory( Excessive-Editor )
-
 # Game
 add_subdirectory( Games )
 
-# tools
-add_subdirectory( Tools )
+
+
+
+
+
+
+
+
+
+
