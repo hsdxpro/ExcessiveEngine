@@ -9,6 +9,9 @@ public:
 	void AddActorScript(ActorScript* s);
 
 	void SetActor(Actor* a);
+
+	__inline std::vector<ActorScript*> GetActorScripts() {return actorScripts;}
+
 protected:
 	std::vector<ActorScript*> actorScripts;
 };

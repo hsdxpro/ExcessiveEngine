@@ -12,31 +12,29 @@ Window::Window(const rWindow& d)
 	w.setVerticalSyncEnabled(true);
 }
 
-bool Window::PopEvent(rWindowEvent* evt_out)
+bool Window::PopEvent(rWindowEvent& evt_out)
 {
-	assert(evt_out);
-
 	sf::Event evt;
 	if (!w.pollEvent(evt))
 		return false;
 
-	evt_out->msg = (eWindowMsg)(evt.type);
+	evt_out.msg = (eWindowMsg)(evt.type);
 
 	// Key press release
 	if (evt.type == sf::Event::EventType::KeyPressed || evt.type == sf::Event::EventType::KeyReleased) 
 	{
-		evt_out->mouseBtn = eMouseBtn::INVALID;
+		evt_out.mouseBtn = eMouseBtn::INVALID;
 
-		evt_out->key = (eKey)((int)evt.key.code);
-		evt_out->deltaX = 0;
-		evt_out->deltaY = 0;
-		evt_out->x = 0;
-		evt_out->y = 0;
+		evt_out.key = (eKey)((int)evt.key.code);
+		evt_out.deltaX = 0;
+		evt_out.deltaY = 0;
+		evt_out.x = 0;
+		evt_out.y = 0;
 	}
 	else if (evt.type == sf::Event::EventType::MouseMoved) 
 	{
-		evt_out->key = eKey::INVALID;
-		evt_out->mouseBtn = eMouseBtn::INVALID;
+		evt_out.key = eKey::INVALID;
+		evt_out.mouseBtn = eMouseBtn::INVALID;
 
 		// TODO: worst idea ever
 		if (lastMousePos.x == std::numeric_limits<int>::min()) 
@@ -45,11 +43,11 @@ bool Window::PopEvent(rWindowEvent* evt_out)
 			lastMousePos.y = evt.mouseMove.y;
 		}
 
-		evt_out->deltaX = evt.mouseMove.x - lastMousePos.x;
-		evt_out->deltaY = evt.mouseMove.y - lastMousePos.y;
+		evt_out.deltaX = evt.mouseMove.x - lastMousePos.x;
+		evt_out.deltaY = evt.mouseMove.y - lastMousePos.y;
 		
-		evt_out->x = evt.mouseMove.x;
-		evt_out->y = evt.mouseMove.y;
+		evt_out.x = evt.mouseMove.x;
+		evt_out.y = evt.mouseMove.y;
 
 		lastMousePos.x = evt.mouseMove.x;
 		lastMousePos.y = evt.mouseMove.y;
@@ -63,17 +61,17 @@ bool Window::PopEvent(rWindowEvent* evt_out)
 	}
 	else if (evt.type == sf::Event::EventType::MouseButtonPressed || evt.type == sf::Event::EventType::MouseButtonReleased)	
 	{
-		evt_out->key = eKey::INVALID;
-		evt_out->deltaX = 0;
-		evt_out->deltaY = 0;
+		evt_out.key = eKey::INVALID;
+		evt_out.deltaX = 0;
+		evt_out.deltaY = 0;
 
-		evt_out->x = evt.mouseButton.x;
-		evt_out->y = evt.mouseButton.y;
-		evt_out->mouseBtn = (eMouseBtn)((int)evt.mouseButton.button + 1); //  1 cuz our enum start with (out of sfml custom "INVALID" enum member)
+		evt_out.x = evt.mouseButton.x;
+		evt_out.y = evt.mouseButton.y;
+		evt_out.mouseBtn = (eMouseBtn)((int)evt.mouseButton.button + 1); //  1 cuz our enum start with (out of sfml custom "INVALID" enum member)
 	}
 	else if (evt.type == sf::Event::EventType::MouseWheelMoved)
 	{
-		evt_out->deltaY = evt.mouseWheel.delta;
+		evt_out.deltaY = evt.mouseWheel.delta;
 	}
 	else if (evt.type == sf::Event::EventType::Closed) 
 	{
@@ -81,8 +79,8 @@ bool Window::PopEvent(rWindowEvent* evt_out)
 	}
 	else if (evt.type == sf::Event::EventType::Resized) 
 	{
-		evt_out->x = evt.size.width;
-		evt_out->y = evt.size.height;
+		evt_out.x = evt.size.width;
+		evt_out.y = evt.size.height;
 	}
 
 	return true;

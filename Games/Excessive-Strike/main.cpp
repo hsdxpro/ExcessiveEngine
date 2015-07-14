@@ -51,6 +51,7 @@
 #include "SupportLibrary\VisualCpuProfiler.h"
 #include "PlayerScript.h"
 #include "TestLevelScript.h"
+#include "Core\Input.h"
 
 void InitScript();
 
@@ -72,7 +73,7 @@ int main()
 		graphicsDesc.targetWindow = window;
 	gCore.InitGraphicsEngineRaster(graphicsDesc);
 	gCore.InitPhysicsEngineBullet();
-	gCore.InitSoundEngine();
+	gCore.InitSoundEngineSFML();
 	
 	ITimer* timer = new Timer();
 	timer->Start();
@@ -81,6 +82,52 @@ int main()
 
 	while (window->IsOpen())
 	{
+		// Prepare for input processing
+		gInput.ClearFrameData();
+
+		// Process input events coming from O.S.-> Window
+		rWindowEvent evt;
+		while(window->PopEvent(evt))
+		{
+			switch(evt.msg)
+			{
+			case eWindowMsg::KEY_PRESS:
+				gInput.KeyPress(evt.key);
+				break;
+
+			case eWindowMsg::KEY_RELEASE:
+				gInput.KeyRelease(evt.key);
+				break;
+
+			case eWindowMsg::MOUSE_MOVE:
+			{
+				assert(evt.x >= 0 && evt.y >= 0);
+				gInput.MouseMove(mm::ivec2(evt.deltaX, evt.deltaY), mm::uvec2((u32)evt.x, (u32)evt.y));
+				break;
+			}
+
+			case eWindowMsg::MOUSE_PRESS:
+				switch (evt.mouseBtn)
+				{
+				case eMouseBtn::LEFT:  gInput.MouseLeftPress();  break;
+				case eMouseBtn::MID:   gInput.MouseMidPress();	 break;
+				case eMouseBtn::RIGHT: gInput.MouseRightPress(); break;
+				}
+				break;
+
+			case eWindowMsg::MOUSE_RELEASE:
+				switch (evt.mouseBtn)
+				{
+				case eMouseBtn::LEFT:  gInput.MouseLeftRelease();  break;
+				case eMouseBtn::MID:   gInput.MouseMidRelease();   break;
+				case eMouseBtn::RIGHT: gInput.MouseRightRelease(); break;
+				}
+				break;
+			}
+		}
+
+		gInput.Update();
+
 		float deltaSeconds = timer->GetSecondsPassed();
 		timer->Reset();
 

@@ -26,29 +26,28 @@ int Ricsi()
 	Window window(d);
 
 	// Init engine core (graphics, physics, sound, network
-	Core core;
-		core.InitSoundEngine();
-		core.InitNetworkEngine();
-		core.InitPhysicsEngineBullet();
-			rGraphicsEngineRaster gDesc;
-			gDesc.gapiType = eGapiType::OPENGL_4_5;
-			gDesc.targetWindow = &window;
-		graphics::IEngine* gEngine = core.InitGraphicsEngineRaster(gDesc);
+	gCore.InitSoundEngineSFML();
+	gCore.InitNetworkEngine();
+	gCore.InitPhysicsEngineBullet();
+		rGraphicsEngineRaster gDesc;
+		gDesc.gapiType = eGapiType::OPENGL_4_5;
+		gDesc.targetWindow = &window;
+	graphics::IEngine* gEngine = gCore.InitGraphicsEngineRaster(gDesc);
 
 	// Create camera
-	CameraComponent* cam = core.SpawnCompCamera();
+	CameraComponent* cam = gCore.SpawnCompCamera();
 		cam->SetFOV(70 / 180.f*3.1415926f);
 		cam->SetNearPlane(0.2f);
 		cam->SetFarPlane(2000);
 		cam->SetPos(mm::vec3(0, -3, 1));
-	core.SetCam(cam);
+	gCore.SetCam(cam);
 
-	static const wchar_t assetName[] = L"../Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
-	static const wchar_t teapotModelPath[] = L"../Assets/box.dae"; // Assets/teapot.dae
-	static const wchar_t ak47ModelPath[] = L"../Assets/ak47/ak.obj"; // Assets/teapot.dae
+	static const wchar_t assetName[] = L"Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
+	static const wchar_t teapotModelPath[] = L"Assets/box.dae"; // Assets/teapot.dae
+	static const wchar_t ak47ModelPath[] = L"Assets/ak47/ak.obj"; // Assets/teapot.dae
 
-	core.SpawnCompRigidBodyFromFile(Sys::GetWorkDir() + assetName, 0)->Attach(core.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + assetName));
-	core.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + L"../Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
+	gCore.SpawnCompRigidBodyFromFile(Sys::GetWorkDir() + assetName, 0)->Attach(gCore.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + assetName));
+	gCore.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + L"Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
 
 	// Run the main loop
 	rWindowEvent ev;
@@ -91,7 +90,7 @@ int Ricsi()
 		title_ss << L"Excessive-Engine - Ricsi teszt | FPS=" << fps << L" | Pitch=" << camAngleX * 180 / 3.141592653f << L"° Facing=" << camAngleZ * 180 / 3.141592653f << L"°";
 		window.SetTitle(title_ss.str().c_str());
 
-		while (window.PopEvent(&ev))
+		while (window.PopEvent(ev))
 		switch (ev.msg)
 		{
 			case eWindowMsg::MOUSE_PRESS:
@@ -99,8 +98,8 @@ int Ricsi()
 					bRMBDown = true;
 				else if (ev.mouseBtn == eMouseBtn::LEFT)
 				{
-					auto box = core.SpawnCompRigidBodyFromFile(Sys::GetWorkDir() + teapotModelPath, 10);
-					box->Attach(core.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + teapotModelPath));
+					auto box = gCore.SpawnCompRigidBodyFromFile(Sys::GetWorkDir() + teapotModelPath, 10);
+					box->Attach(gCore.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + teapotModelPath));
 
 					box->SetPos(cam->GetPos() + cam->GetCam()->GetDirFrontNormed() * 3); // 3 méterrel elénk
 					box->SetScaleLocal(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
@@ -189,9 +188,7 @@ int Ricsi()
 			cam->SetPos(cam->GetPos() + cam->GetCam()->GetDirRightNormed() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 
 		// Update core
-		core.Update(elapsed/*, scene*/);
-
-		window.Present();
+		gCore.Update(elapsed/*, scene*/);
 	}
 	std::cout << std::endl;
 

@@ -28,14 +28,13 @@ namespace testartur
 		Window window(d);
 
 		// Init engine core (graphics, physics, sound, network
-		Core core;
-		sound::IEngine* sEngine = core.InitSoundEngine();
-		core.InitNetworkEngine();
-		core.InitPhysicsEngineBullet();
+		sound::IEngine* sEngine = gCore.InitSoundEngineSFML();
+		gCore.InitNetworkEngine();
+		gCore.InitPhysicsEngineBullet();
 		rGraphicsEngineRaster gDesc;
 		gDesc.gapiType = eGapiType::OPENGL_4_5;
 		gDesc.targetWindow = &window;
-		graphics::IEngine* gEngine = core.InitGraphicsEngineRaster(gDesc);
+		graphics::IEngine* gEngine = gCore.InitGraphicsEngineRaster(gDesc);
 
 		// Create camera
 		CameraComponent* cam = gCore.SpawnCompCamera();
@@ -52,39 +51,40 @@ namespace testartur
 		//gEngine->AddLayer(layer);
 
 		//*/
-		static const wchar_t assetName[] = L"../Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
-		static const wchar_t teapotModelPath[] = L"../Assets/box.dae"; // Assets/teapot.dae
+		static const wchar_t assetName[] = L"Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
+		static const wchar_t teapotModelPath[] = L"Assets/box.dae"; // Assets/teapot.dae
 		/*/
-		static const wchar_t assetName[] = L"../Assets/teapot.dae";
+		static const wchar_t assetName[] = L"Assets/teapot.dae";
 		//*/
-		//Actor* simpleEntity = core.AddActor();
-		core.SpawnCompRigidBodyFromFile(Sys::GetWorkDir() + assetName, 0)->Attach(core.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + assetName));
+		//Actor* simpleEntity = gCore.AddActor();
+		gCore.SpawnCompRigidBodyFromFile(Sys::GetWorkDir() + assetName, 0)->Attach(gCore.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + assetName));
 
-		core.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + L"../Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
+		gCore.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + L"Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
 
-		auto pMusicSourceRepresenterModel = core.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + teapotModelPath);
+		auto pMusicSourceRepresenterModel = gCore.SpawnCompGraphicsFromFile(Sys::GetWorkDir() + teapotModelPath);
 		pMusicSourceRepresenterModel->SetScaleLocal({ 0.1f, 0.1f, 0.1f });
 		pMusicSourceRepresenterModel->SetPos(musicPosition);
 
-		sound::IListener* listener = sEngine->CreateListener();
-		listener->SetUpwards(mm::vec3(0, 0, 1));
-		listener->SetDir(mm::vec3(0, 1, 0));
+		//sound::IListener* listener = sEngine->CreateListener();
+		//listener->SetUpwards(mm::vec3(0, 0, 1));
+		//listener->SetDir(mm::vec3(0, 1, 0));
 		sound::IScene* soundScene = sEngine->CreateScene();
-		soundScene->SetListener(listener);
-		sound::IEmitter* pMusicSource = soundScene->AddEmitter();
-		sound::ISoundData* pMusicData = sEngine->CreateSoundData();
-		auto musicFilePath = Sys::GetWorkDir() + L"../Assets/PurgatorysMansion-mono.ogg";
-		if (!pMusicData->Load(musicFilePath.c_str(), sound::StoreMode::STREAMED)) {
-			std::cout << "Failed to load: " << musicFilePath.c_str() << std::endl;
-			return 1;
-		}
-		pMusicSource->SetSoundData(pMusicData);
-		pMusicSource->SetPos(musicPosition);
-		pMusicSource->SetLooped(true);
-		pMusicSource->Start();
+		//soundScene->SetListener(listener);
+		//sound::IEmitter* pMusicSource = soundScene->AddEmitter();
+		//sound::ISoundData* pMusicData = sEngine->CreateSoundData();
+		//auto musicFilePath = Sys::GetWorkDir() + L"Assets/PurgatorysMansion-mono.ogg";
+		//if (!pMusicData->Load(musicFilePath.c_str(), sound::StoreMode::STREAMED)) {
+		//	std::cout << "Failed to load: " << musicFilePath.c_str() << std::endl;
+		//	return 1;
+		//}
+		//pMusicSource->SetSoundData(pMusicData);
+		//pMusicSource->SetPos(musicPosition);
+		//pMusicSource->SetLooped(true);
+		//pMusicSource->Start();
+
 		sound::IEmitter* pFireSound = soundScene->AddEmitter();
 		sound::ISoundData* pFireSoundData = sEngine->CreateSoundData();
-		auto fireSoundFilePath = Sys::GetWorkDir() + L"../Assets/GUN_FIRE-stereo.ogg";
+		auto fireSoundFilePath = Sys::GetWorkDir() + L"Assets/GUN_FIRE-stereo.ogg";
 		if (!pFireSoundData->Load(fireSoundFilePath.c_str(), sound::StoreMode::BUFFERED)) {
 			std::cout << "Failed to load: " << fireSoundFilePath.c_str() << std::endl;
 			return 1;
@@ -127,7 +127,7 @@ namespace testartur
 			title_ss << L"Excessive-Engine - artur test | FPS=" << fps << L" | Pitch=" << camAngleX * 180 / 3.141592653f << L"° Facing=" << camAngleZ * 180 / 3.141592653f << L"°";
 			window.SetTitle(title_ss.str().c_str());
 
-			while (window.PopEvent(&ev))
+			while (window.PopEvent(ev))
 				switch (ev.msg)
 			{
 				case eWindowMsg::MOUSE_PRESS:
@@ -182,7 +182,7 @@ namespace testartur
 					case eKey::SPACE: {
 						musicPosition = cam->GetPos() + cam->GetDirFrontNormed() * 3;
 						pMusicSourceRepresenterModel->SetPos(musicPosition);
-						pMusicSource->SetPos(musicPosition);
+						//pMusicSource->SetPos(musicPosition);
 					} break;
 
 					} break;
@@ -211,16 +211,16 @@ namespace testartur
 			if (bDDown) // D									 
 				cam->SetPos(cam->GetPos() + cam->GetDirRightNormed() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 
-			listener->SetPos(cam->GetPos());
+//			listener->SetPos(cam->GetPos());
 			// Update everything
 
 			//float deltaT = t->GetElapsedSinceReset();
 
 			// Update core
-			core.Update(elapsed/*, scene*/);
+			gCore.Update(elapsed/*, scene*/);
 
 			// Call that after OpenGL "finish" all of it's rendering
-			window.Present();
+			//window.Present();
 
 			// keep 60 fps
 			//std::chrono::time_point<std::chrono::high_resolution_clock> now = std::chrono::high_resolution_clock::now();

@@ -121,12 +121,45 @@ network::IEngine* Core::InitNetworkEngine(const rNetworkEngine& d /*= rNetworkEn
 	return networkEngine = Factory::CreateNetworkEngine(d);
 }
 
-sound::IEngine* Core::InitSoundEngine(const rSoundEngine& d /*= rSoundEngine()*/) 
+sound::IEngine* Core::InitSoundEngineSFML(const rSoundEngine& d /*= rSoundEngine()*/) 
 {
 	if (soundEngine)
 		soundEngine->Release();
 
-	return soundEngine = Factory::CreateSoundEngine(d);
+	soundEngine = Factory::CreateSoundEngine(d);
+
+	defaultSoundScene = soundEngine->CreateScene();
+
+	return soundEngine;
+}
+
+bool Core::PlaySoundMono(const std::wstring& filePath, float volumeNormedPercent /*= 1*/)
+{
+	sound::IEmitter* soundEmitter;
+	sound::ISoundData* soundData;
+	bool bLoadSuccess = false;
+	auto it = importedSounds.find(filePath);
+	if(it != importedSounds.end())
+	{
+		soundData = it->second.first;
+		soundEmitter = it->second.second;
+		bLoadSuccess = true;
+	}
+	else
+	{
+		soundEmitter = defaultSoundScene->AddEmitter();
+		soundData = soundEngine->CreateSoundData();
+		bLoadSuccess = soundData->Load((Sys::GetWorkDir() + filePath).c_str(), sound::StoreMode::BUFFERED);
+		assert(bLoadSuccess); // tmp
+		soundEmitter->SetSoundData(soundData);
+
+		importedSounds[filePath] = std::make_pair(soundData, soundEmitter);
+	}
+
+	soundEmitter->SetVolume(volumeNormedPercent);
+	soundEmitter->Start();
+
+	return bLoadSuccess;
 }
 
 Thing* Core::SpawnThing(ActorScript* s)
@@ -141,6 +174,7 @@ Thing* Core::SpawnThing(ActorScript* s)
 	thing->AddBehavior(behav);
 	thing->SetActor(s->GetActor());
 
+	things.push_back(thing);
 	return thing;
 }
 
@@ -367,28 +401,32 @@ void Core::Update(float deltaTime)
 	delete[] indices;
 	*/
 
+	// Update game logic
+	{
+		PROFILE_SCOPE("Script");
+		for (auto& actorScript : actorScripts)
+			actorScript->Update(deltaTime);
+	}
+	
+
+	// Update physics
 	if (physicsEngine)
 	{
-		PROFILE_SCOPE("PhysicsEngine");
+		PROFILE_SCOPE("Physics");
 		physicsEngine->Update(deltaTime);
 	}
 
-	// Okay physics simulation done, move high level physics component's attached WorldComponents
-	// TODO, ez kibaszottul nem mukodik jol es redundans tree call - t csinál WorldComponent - eken belül
-
-	// TODO
-	//PROFILE_SECTION_BEGIN("EngineCore Component Update After Physics");
+	// Update components after physics simulation
 	{
-		PROFILE_SCOPE("EngineCore Component Update After Physics");
+		PROFILE_SCOPE("Component Update After Physics");
 		for (auto a : worldComponents)
 			a->UpdateAfterPhysicsSimulate();
 	}
-	//PROFILE_SECTION_END();
 	
-
+	// Update graphics
 	if (graphicsEngine)
 	{
-		PROFILE_SCOPE("GraphicsEngine");
+		PROFILE_SCOPE("Graphics");
 
 #ifdef PROFILE_ENGINE
 		graphicsEngine->GetGapi()->ResetStatesToDefault(); // Jesus the profiler also uses OpenGL temporarily, and mess up the binds etc...
@@ -396,19 +434,21 @@ void Core::Update(float deltaTime)
 		graphicsEngine->Update(deltaTime);
 	}
 
+	// Update sound
 	if (soundEngine)
 	{
-		PROFILE_SCOPE("SoundEngine");
+		PROFILE_SCOPE("Sound");
 		soundEngine->Update(deltaTime);
 	}
 		
-
+	// Update network
 	if (networkEngine)
 	{
-		PROFILE_SCOPE("NetworkEngine");
+		PROFILE_SCOPE("Network");
 		networkEngine->Update(deltaTime);
 	}
 
+	// Profiling engine
 #ifdef PROFILE_ENGINE
 	VisualCpuProfiler::UpdateAndPresent();
 #endif

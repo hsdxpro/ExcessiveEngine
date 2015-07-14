@@ -1,6 +1,7 @@
 #include "PlayerScript.h"
 #include "PlatformLibrary\Sys.h"
 #include "Core\Core.h"
+#include "Core\Input.h"
 
 PlayerScript::PlayerScript(Actor* actor)
 :ActorScript(actor)
@@ -40,59 +41,61 @@ PlayerScript::PlayerScript(Actor* actor)
 	// Mouse recenter
 	mm::vec2 windowCenter = gCore.GetTargetWindow()->GetCenterPos();
 	Sys::SetCursorPos(mm::uvec2((u32)windowCenter.x, (u32)windowCenter.y));
+
+	gCore.PlaySoundMono(L"Assets/PurgatorysMansion-mono.ogg");
 }
 
 void PlayerScript::Update(float deltaSeconds)
 {
-	//// W,S,A,D Moving
-	//mm::vec3 dMove(0, 0, 0);
-	//if(gInput.IsKeyDown(eKey::W))
-	//	dMove += camComp->GetDirFrontNormed() * deltaSeconds * playerMoveSpeed;
-	//if(gInput.IsKeyDown(eKey::S))
-	//	dMove += camComp->GetDirBackNormed() * deltaSeconds * playerMoveSpeed;
-	//if(gInput.IsKeyDown(eKey::A))
-	//	dMove += camComp->GetDirLeftNormed() * deltaSeconds * playerMoveSpeed;
-	//if(gInput.IsKeyDown(eKey::D))
-	//	dMove += camComp->GetDirRightNormed() * deltaSeconds * playerMoveSpeed;
-	//dMove.z = 0;
-	//playerCapsule->Move(dMove);
-	//
-	//// Jump
-	//if(gInput.IsKeyPressed(eKey::SPACE))
-	//{
-	//	bCanJump = false;
-	//	playerCapsule->AddForce({ 0, 0, 5100 });
-	//}
+	// W,S,A,D Moving
+	mm::vec3 dMove(0, 0, 0);
+	if(gInput.IsKeyDown(eKey::W))
+		dMove += camComp->GetDirFrontNormed() * deltaSeconds * playerMoveSpeed;
+	if(gInput.IsKeyDown(eKey::S))
+		dMove += camComp->GetDirBackNormed() * deltaSeconds * playerMoveSpeed;
+	if(gInput.IsKeyDown(eKey::A))
+		dMove += camComp->GetDirLeftNormed() * deltaSeconds * playerMoveSpeed;
+	if(gInput.IsKeyDown(eKey::D))
+		dMove += camComp->GetDirRightNormed() * deltaSeconds * playerMoveSpeed;
+	dMove.z = 0;
+	playerCapsule->Move(dMove);
 
-	//rWindowEvent evt;
-	//while (gWindow->PopEvent(&evt))
-	//{
-	//	//// Look around with camera
-	//	//if (evt.msg == eWindowMsg::MOUSE_MOVE)
-	//	//{
-	//	//	static float angleZ = 0;
-	//	//	static float angleX = 0;
-	//	//
-	//	//	// Input read up finished, now we can recenter cursor for our fps game
-	//	//	auto mousePos = Sys::GetCursorPos();
-	//	//
-	//	//	float mouseDx = mousePos.x - windowCenter.x;
-	//	//	float mouseDy = mousePos.y - windowCenter.y;
-	//	//
-	//	//	angleZ += -(float)mouseDx / pixelsToRot360 * 6.28;
-	//	//	angleX += -(float)mouseDy / pixelsToRot360 * 6.28;
-	//	//
-	//	//	// Clamp angleX
-	//	//	float angleSign = angleX >= 0 ? 1 : -1;
-	//	//	if (angleX * angleSign >= 3.14159265 / 2 * 0.95)
-	//	//		angleX = 3.14159265 / 2 * 0.95 * angleSign;
-	//	//
-	//	//	mm::quat rotAroundZ(angleZ, { 0, 0, 1 });
-	//	//	mm::quat rotAroundX(angleX, { 1, 0, 0 });
-	//	//
-	//	//	gMainCam->SetRot(rotAroundZ * rotAroundX);
-	//	//}
-	//}
+	// Jump
+	if(gInput.IsKeyPressed(eKey::SPACE))
+	{
+		bCanJump = false;
+		playerCapsule->AddForce({ 0, 0, 5100 });
+	}
+
+	// Roting camera
+	mm::uvec2 mouseDelta;
+	if(gInput.IsMouseMove(mouseDelta))
+	{
+		static float angleZ = 0;
+		static float angleX = 0;
+
+		// Input read up finished, now we can recenter cursor for our fps game
+		auto mousePos = Sys::GetCursorPos();
+
+		float mouseDx = mousePos.x - windowCenter.x;
+		float mouseDy = mousePos.y - windowCenter.y;
+
+		angleZ += -(float)mouseDx / pixelsToRot360 * 6.28;
+		angleX += -(float)mouseDy / pixelsToRot360 * 6.28;
+
+		// Clamp angleX
+		float angleSign = angleX >= 0 ? 1 : -1;
+		if (angleX * angleSign >= 3.14159265 / 2 * 0.95)
+			angleX = 3.14159265 / 2 * 0.95 * angleSign;
+
+		mm::quat rotAroundZ(angleZ, { 0, 0, 1 });
+		mm::quat rotAroundX(angleX, { 1, 0, 0 });
+
+		camComp->SetRot(rotAroundZ * rotAroundX);
+	}
+
+	if(gInput.IsMouseLeftPressed())
+		gCore.PlaySoundMono(L"Assets/GUN_FIRE-stereo.ogg", 0.5);
 
 	// Mouse recenter
 	Sys::SetCursorPos(mm::uvec2((u32)windowCenter.x, (u32)windowCenter.y));

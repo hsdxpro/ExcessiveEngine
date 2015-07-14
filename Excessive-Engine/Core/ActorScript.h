@@ -9,7 +9,7 @@ public:
 	ActorScript(Actor* actor);
 
 public:
-	virtual void Update(float deltaSeconds){}
+	virtual void Update(float deltaTime){}
 
 	__inline void	SetActor(Actor* a) {actor = a;}
 	__inline Actor* GetActor() {return actor;}

@@ -12,7 +12,6 @@
 #include <functional>
 #include <GL/glew.h>
 #include <SupportLibrary/custom_assert.h>
-#include <SupportLibrary/VisualCpuProfiler.h>
 
 using namespace std;
 
@@ -812,7 +811,6 @@ void GapiGL::DrawIndexed(u32 num_indices, u32 index_byte_offset /*= 0*/)
 		BindInputLayout();
 	}
 
-	PROFILE_SCOPE_SUM("glDrawElements");
 	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, (void*)index_byte_offset);
 }
 

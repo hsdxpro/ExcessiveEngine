@@ -73,7 +73,7 @@ int main()
 	while (window.IsOpen())
 	{
 		rWindowEvent evt;
-		while (window.PopEvent(&evt))
+		while (window.PopEvent(evt))
 		{
 			if (evt.msg == eWindowMsg::MOUSE_MOVE)
 			{

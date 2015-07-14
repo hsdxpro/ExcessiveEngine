@@ -71,7 +71,7 @@ public:
 	virtual void Close() = 0;
 
 	// This will give you the next event in the queue that Operating System transmitted to the window, and will be Removed from queue (pop)
-	virtual bool PopEvent(rWindowEvent* evt_out) = 0;
+	virtual bool PopEvent(rWindowEvent& evt_out) = 0;
 
 	// U need to call that function after some DrawingAPI finishe s Draw on window client region, this will BLIT the content to your monitor where client region is defined
 	virtual void Present() = 0;

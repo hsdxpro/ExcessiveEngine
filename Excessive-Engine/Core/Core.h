@@ -47,13 +47,15 @@ public:
 	network::IEngine* InitNetworkEngine(const rNetworkEngine& d = rNetworkEngine());
 
 	// Init network engine, if one already exists will be destroyed, then instantiate it
-	sound::IEngine* InitSoundEngine(const rSoundEngine& d = rSoundEngine());
+	sound::IEngine* InitSoundEngineSFML(const rSoundEngine& d = rSoundEngine());
 
 	// TODO!
 	//ThingType*			  CreateThingType(Thing* t);
 	//GraphicsComponentType*  CreateCompGraphicsType(GraphicsComponent* comp);
 	//RigidBodyComponentType* CreateCompRigidBodyType(RigidBodyComponent* comp);
 	//CameraComponentType*	  CreateCompCameraType(CameraComponent* comp);
+
+	bool PlaySoundMono(const std::wstring& filePath, float volumeNormedPercent = 1);
 
 	Thing* SpawnThing(ActorScript* s);
 
@@ -105,14 +107,18 @@ protected:
 	// Imported models
 	std::unordered_map<std::wstring, rImporter3DData*> importedModels;
 
-	// The default graphicsScene we add things to
+	// Imported mono sounds
+	std::unordered_map<std::wstring, std::pair<sound::ISoundData*, sound::IEmitter*>> importedSounds;
+
+	// The default graphicsScene Core creates for us to spawn graphics things into
 	graphics::IScene* defaultGraphicsScene;
+
+	// The default soundScene Core creates for us to spawn sound things into
+	sound::IScene* defaultSoundScene;
 
 	// Error diffuse texture for failed texture loads
 	graphics::ITexture* texError;
 };
-
-extern Core gCore;
 
 template<class ScriptClass>
 Script* Core::AddScript()
@@ -129,3 +135,5 @@ ActorScript* Core::AddActorScript()
 		actorScripts.push_back(p);
 	return p;
 }
+
+extern Core gCore;

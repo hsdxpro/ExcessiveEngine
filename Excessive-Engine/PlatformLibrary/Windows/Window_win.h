@@ -11,7 +11,7 @@ class Window : public IWindow
 public:
 	Window(const rWindow& d);
 
-	bool PopEvent(rWindowEvent* evt_out) override;
+	bool PopEvent(rWindowEvent& evt_out) override;
 
 	void Close() override;
 
