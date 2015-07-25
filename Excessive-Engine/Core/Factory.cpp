@@ -99,7 +99,7 @@ ISoundEngine* Factory::CreateSoundEngine(const rSoundEngine& d)
 IGapi* Factory::CreateGapiGL() 
 {
 #ifdef EXCESSIVE_DLL_MODULES
-	return ((IGapi*(*)())Sys::GetDLLProcAddress(Sys::LoadDLL((Sys::GetWorkDir() + L"GraphicsApiGL").c_str()), "createGraphicsApi"))();
+	return ((IGapi*(*)())Sys::GetDLLProcAddress(Sys::LoadDLL((Sys::GetWorkDir() + L"GraphicsApiGL").c_str()), "CreateGraphicsApi"))();
 #else
 	return (IGapi*)new GapiGL();
 #endif
