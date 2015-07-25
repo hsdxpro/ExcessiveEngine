@@ -96,14 +96,9 @@ void Window::Present()
 	w.display();
 }
 
-void Window::HideCursor()
+void Window::SetCursorVisible(bool bVisible)
 {
-	w.setMouseCursorVisible(false);
-}
-
-void Window::ShowCursor()
-{
-	w.setMouseCursorVisible(true);
+	w.setMouseCursorVisible(bVisible);
 }
 
 void Window::SetTitle(const wchar_t* text)

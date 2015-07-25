@@ -3,7 +3,7 @@
 #include "SupportLibrary\VisualCpuProfiler.h"
 #include "Factory.h"
 
-Core gCore;
+Core* gCore = nullptr;
 
 //////////////////////////////////////////////////
 //                                              //
@@ -45,7 +45,7 @@ Core::~Core()
 	for (auto& a : worldComponents)
 		delete a;
 
-	for (auto& a : actorScripts)
+	for (auto& a : entityScripts)
 		delete a;
 
 	for (auto& a : actors)
@@ -60,7 +60,7 @@ Core::~Core()
 	if (soundEngine)	soundEngine->Release();
 }
 
-graphics::IEngine* Core::InitGraphicsEngineRaster(const rGraphicsEngineRaster& d /*= rGraphicsEngineRaster()*/) 
+IGraphicsEngine* Core::InitGraphicsEngineRaster(const rGraphicsEngineRaster& d /*= rGraphicsEngineRaster()*/) 
 {
 	if (graphicsEngine)
 		graphicsEngine->Release();
@@ -90,22 +90,22 @@ graphics::IEngine* Core::InitGraphicsEngineRaster(const rGraphicsEngineRaster& d
 
 	// Default scene and layer for GraphicsEngine
 	defaultGraphicsScene = graphicsEngine->CreateScene();
-	graphics::IEngine::Layer layer;
+	IGraphicsEngine::Layer layer;
 	layer.scene = defaultGraphicsScene;
 	graphicsEngine->AddLayer(layer);
 
 	return graphicsEngine;
 }
 
-graphics::IEngine* Core::InitGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/) 
+IGraphicsEngine* Core::InitGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/) 
 {
-	if (graphicsEngine) 
-		graphicsEngine->Release(); 
+	if (graphicsEngine)
+		graphicsEngine->Release();
 	
 	return graphicsEngine = Factory::CreateGraphicsEngineRT(d);
 }
 
-physics::IEngine* Core::InitPhysicsEngineBullet(const rPhysicsEngineBullet& d /*= rPhysicsEngineBullet()*/) 
+IPhysicsEngine* Core::InitPhysicsEngineBullet(const rPhysicsEngineBullet& d /*= rPhysicsEngineBullet()*/) 
 {
 	if (physicsEngine)
 		physicsEngine->Release();
@@ -113,7 +113,7 @@ physics::IEngine* Core::InitPhysicsEngineBullet(const rPhysicsEngineBullet& d /*
 	return physicsEngine = Factory::CreatePhysicsEngineBullet(d);
 }
 
-network::IEngine* Core::InitNetworkEngine(const rNetworkEngine& d /*= rNetworkEngine()*/) 
+INetworkEngine* Core::InitNetworkEngine(const rNetworkEngine& d /*= rNetworkEngine()*/) 
 {
 	if (networkEngine)
 		networkEngine->Release();
@@ -121,7 +121,7 @@ network::IEngine* Core::InitNetworkEngine(const rNetworkEngine& d /*= rNetworkEn
 	return networkEngine = Factory::CreateNetworkEngine(d);
 }
 
-sound::IEngine* Core::InitSoundEngineSFML(const rSoundEngine& d /*= rSoundEngine()*/) 
+ISoundEngine* Core::InitSoundEngineSFML(const rSoundEngine& d /*= rSoundEngine()*/) 
 {
 	if (soundEngine)
 		soundEngine->Release();
@@ -133,59 +133,143 @@ sound::IEngine* Core::InitSoundEngineSFML(const rSoundEngine& d /*= rSoundEngine
 	return soundEngine;
 }
 
-bool Core::PlaySoundMono(const std::wstring& filePath, float volumeNormedPercent /*= 1*/)
+bool Core::PlaySoundMono(const std::wstring& filePath, float volumeNormedPercent /*= 1*/, bool bLoop /*= false*/)
 {
 	sound::IEmitter* soundEmitter;
 	sound::ISoundData* soundData;
-	bool bLoadSuccess = false;
+
 	auto it = importedSounds.find(filePath);
 	if(it != importedSounds.end())
 	{
-		soundData = it->second.first;
-		soundEmitter = it->second.second;
-		bLoadSuccess = true;
+		soundData = it->second.soundData;
+		soundEmitter = it->second.soundEmitter;
 	}
 	else
 	{
-		soundEmitter = defaultSoundScene->AddEmitter();
 		soundData = soundEngine->CreateSoundData();
-		bLoadSuccess = soundData->Load((Sys::GetWorkDir() + filePath).c_str(), sound::StoreMode::BUFFERED);
-		assert(bLoadSuccess); // tmp
-		soundEmitter->SetSoundData(soundData);
+		if (!soundData->Load((Sys::GetWorkDir() + filePath).c_str(), sound::StoreMode::BUFFERED))
+		{
+			soundData->Release();
+			return false;
+		}
 
-		importedSounds[filePath] = std::make_pair(soundData, soundEmitter);
+		soundEmitter = defaultSoundScene->AddEmitter();
+		soundEmitter->SetSoundData(soundData);
+		soundEmitter->SetLooped(bLoop);
+
+		rMonoSound d;
+			d.soundData = soundData;
+			d.soundEmitter = soundEmitter;
+		importedSounds[filePath] = d;
 	}
 
 	soundEmitter->SetVolume(volumeNormedPercent);
 	soundEmitter->Start();
 
-	return bLoadSuccess;
+	return true;
 }
 
-Thing* Core::SpawnThing(ActorScript* s)
+Actor* Core::SpawnActor(EntityScript* s)
 {
-	// New thing
-	Thing* thing = new Thing();
+	// New actor
+	Actor* actor = new Actor();
 
 		// Behavior from script
-		ActorBehavior* behav = new ActorBehavior();
-		behav->AddActorScript(s);
+		Behavior* behav = new Behavior();
+		behav->AddScript(s);
 
-	thing->AddBehavior(behav);
-	thing->SetActor(s->GetActor());
+		actor->AddBehavior(behav);
+		actor->SetEntity(s->GetEntity());
 
-	things.push_back(thing);
-	return thing;
+		actors.push_back(actor);
+	return actor;
 }
 
-Actor* Core::AddActor()
+void Core::DestroyActor(Actor* a)
 {
-	Actor* p = new Actor();
-		actors.push_back(p);
+	actorsToDestroy.push_back(a);
+}
+
+void Core::DestroyComp(WorldComponent* c)
+{
+	if (dynamic_cast<GraphicsComponent*>(c))
+		defaultGraphicsScene->Remove(((GraphicsComponent*)c)->GetEntity());
+	else if (dynamic_cast<RigidBodyComponent*>(c))
+		physicsEngine->RemoveEntity(((RigidBodyComponent*)c)->GetEntity());
+	else
+		assert(0);
+
+	auto it = std::find(worldComponents.begin(), worldComponents.end(), c);
+	if (it != worldComponents.end())
+	{
+		delete *it;
+		worldComponents.erase(it);
+	}
+}
+
+Actor* Core::SpawnActor()
+{
+	Actor* actor = new Actor();
+		actors.push_back(actor);
+		return actor;
+}
+
+Actor* Core::SpawnActor_MeshFromFile(const std::wstring& modelFilePath)
+{
+	auto actor = SpawnActor();
+		auto entity = AddEntity();
+		entity->SetRootComp(SpawnComp_MeshFromFile(modelFilePath));
+
+	actor->SetEntity(entity);
+	return actor;
+}
+
+Actor* Core::SpawnActor_RigidBodyFromFile(const std::wstring& modelFilePath, float mass)
+{
+	auto actor = SpawnActor();
+		auto entity = AddEntity();
+		entity->SetRootComp(SpawnComp_RigidBodyFromFile(modelFilePath, mass));
+
+	actor->SetEntity(entity);
+	return actor;
+}
+
+Actor* Core::SpawnActor_RigidBodyCapsule(float height, float radius, float mass /*= 0*/)
+{
+	auto actor = SpawnActor();
+		auto entity = AddEntity();
+		entity->SetRootComp(SpawnComp_RigidBodyCapsule(height, radius, mass));
+
+	actor->SetEntity(entity);
+	return actor;
+}
+
+Actor* Core::SpawnActor_Camera()
+{
+	auto actor = SpawnActor();
+		auto entity = AddEntity();
+		entity->SetRootComp(SpawnComp_Camera());
+
+	actor->SetEntity(entity);
+	return actor;
+}
+
+void Core::AddTask(const std::function<void()>& callb, float timeToProceed)
+{
+	rTask task;
+		task.callb = callb;
+		task.timeLeft = timeToProceed;
+	tasks.push_back(task); // TODO slow
+}
+
+Entity* Core::AddEntity()
+{
+	Entity* p = new Entity();
+		entities.push_back(p);
 	return p;
 }
 
-GraphicsComponent* Core::SpawnCompGraphicsFromFile(const std::wstring& modelFilePath)
+GraphicsComponent* Core::SpawnComp_MeshFromFile(const std::wstring& modelFilePath)
 {
 	// Check if model already loaded somehow
 	rImporter3DData* modelDesc;
@@ -204,7 +288,7 @@ GraphicsComponent* Core::SpawnCompGraphicsFromFile(const std::wstring& modelFile
 			eImporter3DFlag::PIVOT_RECENTER });
 
 		modelDesc = new rImporter3DData();
-		Importer3D::LoadModelFromFile(modelFilePath, cfg, *modelDesc);
+		Importer3D::LoadModelFromFile(Sys::GetWorkDir() + modelFilePath, cfg, *modelDesc);
 
 		importedModels[modelFilePath] = modelDesc;
 	}
@@ -287,7 +371,7 @@ GraphicsComponent* Core::SpawnCompGraphicsFromFile(const std::wstring& modelFile
 	return c;
 }
 
-RigidBodyComponent* Core::SpawnCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass)
+RigidBodyComponent* Core::SpawnComp_RigidBodyFromFile(const std::wstring& modelFilePath, float mass)
 {
 	// Check if model already loaded somehow
 	rImporter3DData* modelDesc;
@@ -306,17 +390,17 @@ RigidBodyComponent* Core::SpawnCompRigidBodyFromFile(const std::wstring& modelFi
 			eImporter3DFlag::PIVOT_RECENTER });
 
 		modelDesc = new rImporter3DData();
-		Importer3D::LoadModelFromFile(modelFilePath, cfg, *modelDesc);
+		Importer3D::LoadModelFromFile(Sys::GetWorkDir() + modelFilePath, cfg, *modelDesc);
 
 		importedModels[modelFilePath] = modelDesc;
 	}
 
-	physics::IRigidEntity* rigidEntity = nullptr;
+	physics::IRigidBodyEntity* rigidEntity = nullptr;
 
 	auto mesh = modelDesc->meshes[0];
 
 	mm::vec3* vertices;
-	// Little hekk, we know it's INTERLEAVED, cuz  SpawnCompRigidBodyFromFile and SpawnCompGraphicsFromFile implementation
+	// Little hekk, we know it's INTERLEAVED, cuz  SpawnCompRigidBodyFromFile and SpawnCompMeshFromFile implementation
 	//if (cfg.isContain(eImporter3DFlag::VERT_BUFF_INTERLEAVED)) // Interleaved buffer? Okay gather positions from vertices stepping with vertex stride
 	{
 		vertices = new mm::vec3[mesh.nVertices];
@@ -341,7 +425,7 @@ RigidBodyComponent* Core::SpawnCompRigidBodyFromFile(const std::wstring& modelFi
 	return c;
 }
 
-RigidBodyComponent* Core::SpawnCompRigidBodyCapsule(float height, float radius, float mass /* = 0*/)
+RigidBodyComponent* Core::SpawnComp_RigidBodyCapsule(float height, float radius, float mass /* = 0*/)
 {
 	auto capsuleEntity = physicsEngine->AddEntityRigidCapsule(height, radius, mass);
 
@@ -350,7 +434,7 @@ RigidBodyComponent* Core::SpawnCompRigidBodyCapsule(float height, float radius, 
 	return c;
 }
 
-CameraComponent* Core::SpawnCompCamera()
+CameraComponent* Core::SpawnComp_Camera()
 {
 	auto c = new CameraComponent(graphicsEngine->CreateCam());
 	worldComponents.push_back(c);
@@ -401,13 +485,20 @@ void Core::Update(float deltaTime)
 	delete[] indices;
 	*/
 
-	// Update game logic
+	// Destroy actors which on destroy queue
+	for (auto& a : actorsToDestroy)
 	{
-		PROFILE_SCOPE("Script");
-		for (auto& actorScript : actorScripts)
-			actorScript->Update(deltaTime);
+		// Remove from list
+		auto it = std::find(actors.begin(), actors.end(), a);
+		if (it != actors.end())
+			actors.erase(it);
+
+		for (auto& comp : a->GetComponents())
+			DestroyComp(comp);
+
+		delete a;
 	}
-	
+	actorsToDestroy.clear();
 
 	// Update physics
 	if (physicsEngine)
@@ -448,10 +539,54 @@ void Core::Update(float deltaTime)
 		networkEngine->Update(deltaTime);
 	}
 
+	// Update actors
+	{
+		PROFILE_SCOPE("Actors Update");
+		for (auto& a : actors)
+			a->Update(deltaTime);
+	}
+
+	// Update game logic
+	{
+		PROFILE_SCOPE("Scripts");
+		for (auto& s : scripts)
+			s->Update(deltaTime);
+	}
+
+	{
+		PROFILE_SCOPE("Entity Scripts");
+		for (auto& s : entityScripts)
+			s->Update(deltaTime);
+	}
+
+	// TODO optimize
+	// Process Tasks if time passed, and remove after dispatch
+	{
+		PROFILE_SCOPE("AddTask Dispatch");
+		std::vector<size_t> indicesToDelete;
+		size_t oldSize = tasks.size(); // Cuz you can AddTask in AddTask ^^, tasks.size() can change in loop body
+		for (size_t i = 0; i < oldSize; i++)
+		{
+			tasks[i].timeLeft -= deltaTime;
+
+			if (tasks[i].timeLeft <= 0)
+			{
+				tasks[i].callb();
+				indicesToDelete.push_back(i);
+			}
+		}
+
+		// Remove dispatched taks, reverse iteration for: indices don't slip away
+		for (i32 i = indicesToDelete.size(); --i >= 0;)
+			tasks.erase(tasks.begin() + indicesToDelete[i]);
+	}
+
+
 	// Profiling engine
 #ifdef PROFILE_ENGINE
 	VisualCpuProfiler::UpdateAndPresent();
 #endif
+
 
 	// Present opengl window
 	graphicsEngine->GetTargetWindow()->Present();
@@ -462,22 +597,22 @@ IWindow* Core::GetTargetWindow()
 	return graphicsEngine->GetTargetWindow();
 }
 
-graphics::IEngine* Core::GetGraphicsEngine()
+IGraphicsEngine* Core::GetGraphicsEngine()
 { 
 	return graphicsEngine; 
 }
 
-physics::IEngine* Core::GetPhysicsEngine() 
+IPhysicsEngine* Core::GetPhysicsEngine() 
 { 
 	return physicsEngine; 
 }
 
-network::IEngine* Core::GetNetworkEngine() 
+INetworkEngine* Core::GetNetworkEngine() 
 { 
 	return networkEngine; 
 }
 
-sound::IEngine*	Core::GetSoundEngine()
+ISoundEngine*	Core::GetSoundEngine()
 { 
 	return soundEngine; 
 }

@@ -4,26 +4,20 @@
 
 class IGapi;
 
-// namespace
 namespace graphics {
-
-class IScene;
-class IMesh;
-class IMaterial;
-class ITexture;
-class ICamera;
-
-//struct rGraphicsEngine {
-//	IGapi* gapi;
-//};
-
+	class IScene;
+	class IMesh;
+	class IMaterial;
+	class ITexture;
+	class ICamera;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 /// GraphicsEngine manages and displays the graphical world.
 /// No descrption yet.
 ////////////////////////////////////////////////////////////////////////////////
 
-class IEngine
+class IGraphicsEngine
 {
 public:
 	/// Layer properties.
@@ -40,7 +34,7 @@ public:
 
 		Layer() : blendMode(OVERLAY), scene(nullptr), opacity(1.0f), visible(true), preserve_depth(false) {}
 
-		IScene* scene; ///< this scene yields the image for this layer.
+		graphics::IScene* scene; ///< this scene yields the image for this layer.
 		float opacity;
 		bool visible; ///< weather to render and Add the layer
 		bool preserve_depth; ///< re-uses the below layer's depth map for rendering.
@@ -59,19 +53,19 @@ public:
 	/// Create a new empty scene.
 	/// You may Add objects and other things to the scene.
 	/// The scene can be rendered by the engine. To Get it rendered, Set it in a Layer.
-	virtual IScene* CreateScene() = 0;
+	virtual graphics::IScene* CreateScene() = 0;
 
 	/// Create a new mesh resource.
-	virtual IMesh* CreateMesh() = 0;
+	virtual graphics::IMesh* CreateMesh() = 0;
 
 	/// Create new material resource.
-	virtual IMaterial* CreateMaterial() = 0;
+	virtual graphics::IMaterial* CreateMaterial() = 0;
 
 	/// Create new texture resource.
-	virtual ITexture* CreateTexture() = 0;
+	virtual graphics::ITexture* CreateTexture() = 0;
 
 	/// Create new virtual camera.
-	virtual ICamera* CreateCam() = 0;
+	virtual graphics::ICamera* CreateCam() = 0;
 
 
 	///////////////////////////////////////
@@ -91,6 +85,3 @@ public:
 	// interact
 	virtual void Update(float deltaTime) = 0;
 };
-
-
-} // namespace

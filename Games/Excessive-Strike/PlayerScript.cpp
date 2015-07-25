@@ -2,9 +2,9 @@
 #include "PlatformLibrary\Sys.h"
 #include "Core\Core.h"
 #include "Core\Input.h"
+#include "ExcessiveStrikeCommon.h"
 
-PlayerScript::PlayerScript(Actor* actor)
-:ActorScript(actor)
+PlayerScript::PlayerScript()
 {
 	bMovingFront = false;
 	bMovingBack = false;
@@ -13,17 +13,17 @@ PlayerScript::PlayerScript(Actor* actor)
 	bCanJump = true;
 	playerMoveSpeed = 10;
 	pixelsToRot360 = 1000;
-	windowCenter = gCore.GetTargetWindow()->GetCenterPos();
+	windowCenter = gCore->GetTargetWindow()->GetCenterPos();
 
 	// Weapon model
-	auto& ak47ModelPath = Sys::GetWorkDir() + L"Assets/ak47/ak.obj";
+	auto& ak47ModelPath = L"Assets/ak47/ak.obj";
 	
 	// Camera
-	camComp = gCore.SpawnCompCamera();
-	gCore.SetCam(camComp);
+	camComp = gCore->SpawnComp_Camera();
+	gCore->SetCam(camComp);
 	
 	//// Player components
-	playerCapsule = gCore.SpawnCompRigidBodyCapsule(2, 0.2f, 20);
+	playerCapsule = gCore->SpawnComp_RigidBodyCapsule(2, 0.2f, 20);
 	playerCapsule->SetAngularFactor(0);
 	
 	// Attach camera to player physics
@@ -31,7 +31,7 @@ PlayerScript::PlayerScript(Actor* actor)
 	playerCapsule->Attach(camComp);
 	playerCapsule->SetPos({ 0, 0, 2 });
 	
-	auto ak47Graphics = gCore.SpawnCompGraphicsFromFile(ak47ModelPath);
+	ak47Graphics = gCore->SpawnComp_MeshFromFile(ak47ModelPath);
 	ak47Graphics->SetScaleLocal({ 1.f / 1500, 1.f / 1500, 1.f / 1500 });
 	ak47Graphics->SetRot(mm::quat(-0.05f, { 1, 0, 0 }) * mm::quat(3.1415f - 0.08f, { 0, 0, 1 }) * mm::quat(3.1415f / 2, { 1, 0, 0 })); // Need quaternion rework, multiply swapped, mm::quat(angle) rots with -angle, why?
 	ak47Graphics->SetPos(camComp->GetPos() + mm::vec3(0.7f, 1.05f, -0.6f));
@@ -39,10 +39,10 @@ PlayerScript::PlayerScript(Actor* actor)
 	camComp->Attach(ak47Graphics); // Attach weapon to player physics
 	
 	// Mouse recenter
-	mm::vec2 windowCenter = gCore.GetTargetWindow()->GetCenterPos();
+	mm::vec2 windowCenter = gCore->GetTargetWindow()->GetCenterPos();
 	Sys::SetCursorPos(mm::uvec2((u32)windowCenter.x, (u32)windowCenter.y));
 
-	gCore.PlaySoundMono(L"Assets/PurgatorysMansion-mono.ogg");
+	gCore->PlaySoundMono(L"Assets/PurgatorysMansion-mono.ogg", 1, true);
 }
 
 void PlayerScript::Update(float deltaSeconds)
@@ -94,8 +94,51 @@ void PlayerScript::Update(float deltaSeconds)
 		camComp->SetRot(rotAroundZ * rotAroundX);
 	}
 
-	if(gInput.IsMouseLeftPressed())
-		gCore.PlaySoundMono(L"Assets/GUN_FIRE-stereo.ogg", 0.5);
+	if (gInput.IsMouseLeftPressed())
+	{
+		gCore->PlaySoundMono(L"Assets/GUN_FIRE-stereo.ogg", 0.5);
+
+		
+		// Falling bullet shell, and it's sound
+		//Actor* bulletShell = gCore->SpawnActor_RigidBodyCapsule(0.09, 0.04, 0.02);
+		//bulletShell->SetTrigger(true);
+		//bulletShell->SetCollisionGroup(eES_CollisionGroup::SHELL);
+		//bulletShell->SetPos(ak47Graphics->GetPos());
+		//bulletShell->SetOnCollisionEnter([=](const rCollision& info)
+		//{
+		//	gCore->PlaySoundMono(L"Assets/shell_fall.ogg", 0.5);
+		//	gCore->DestroyActor(bulletShell);
+		//});
+
+		// Shooted bullet
+		Actor* bullet = gCore->SpawnActor_RigidBodyFromFile(L"Assets/box.DAE", 1);
+		bullet->Attach(gCore->SpawnComp_MeshFromFile(L"Assets/box.DAE"));
+		bullet->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
+
+		bullet->SetCollisionGroup(eES_CollisionGroup::SHELL);
+
+ 		//bullet->SetTrigger(true);
+
+		mm::vec3 bulletDir = ak47Graphics->GetDirUpNormed();
+		bullet->SetPos(ak47Graphics->GetPos() + bulletDir * 2);
+
+		mm::vec3 bulletStartPos = bullet->GetPos();
+		const float bulletSpeed = 100;
+		const float distAfterDisappear = 200;
+		bullet->SetOnUpdate([=](float deltaSeconds)
+		{
+			//bullet->Move(deltaSeconds * bulletDir * bulletSpeed);
+		
+			if (mm::length(bulletStartPos - bullet->GetPos()) >= distAfterDisappear)
+				gCore->DestroyActor(bullet);
+		});
+		// TMP
+		bullet->SetOnCollisionEnter([=](const rCollision& info)
+		{
+			gCore->PlaySoundMono(L"Assets/shell_fall.ogg", 0.5);
+			gCore->DestroyActor(bullet);
+		});
+	}
 
 	// Mouse recenter
 	Sys::SetCursorPos(mm::uvec2((u32)windowCenter.x, (u32)windowCenter.y));

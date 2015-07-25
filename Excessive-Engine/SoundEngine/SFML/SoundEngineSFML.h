@@ -1,5 +1,5 @@
 #pragma once
-#include "..\IEngine.h"
+#include "..\ISoundEngine.h"
 
 #include "SoundScene.h"
 #include "SoundData.h"
@@ -10,7 +10,7 @@ struct rSoundEngine {
 
 };
 
-class SoundEngineSFML : public sound::IEngine
+class SoundEngineSFML : public ISoundEngine
 {
 public:
 	// ctor, dtor, release

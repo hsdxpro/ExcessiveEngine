@@ -76,11 +76,11 @@ public:
 	// U need to call that function after some DrawingAPI finishe s Draw on window client region, this will BLIT the content to your monitor where client region is defined
 	virtual void Present() = 0;
 
-	// Hide cursor only, when above window client area
-	virtual void HideCursor() = 0;
+	// Set window title
+	virtual void SetTitle(const wchar_t* text) = 0;
 
-	// Show cursor when above window client area
-	virtual void ShowCursor() = 0;
+	// Show, Hide cursor
+	virtual void SetCursorVisible(bool bVisible) = 0;
 
 	// Window client surface width
 	virtual u16 GetClientW() const = 0;
@@ -96,7 +96,4 @@ public:
 
 	// Returns true if the window is currently opened
 	virtual bool IsOpen() const = 0;
-
-	/// Set window title
-	virtual void SetTitle(const wchar_t* text) = 0;
 };

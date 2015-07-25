@@ -1,5 +1,5 @@
 #pragma once
-#include "../IEngine.h"
+#include "../IGraphicsEngine.h"
 
 // must be included because of covariant return type override
 #include "../IScene.h"
@@ -20,7 +20,7 @@ struct rGraphicsEngineRT {
 
 };
 
-class GraphicsEngineRT : public graphics::IEngine
+class GraphicsEngineRT : public IGraphicsEngine
 {
 public:
 	// ctor, dtor, release

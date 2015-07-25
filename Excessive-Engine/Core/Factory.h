@@ -12,11 +12,11 @@
 class Factory
 {
 public:
-	static graphics::IEngine*	CreateGraphicsEngineRaster(const rGraphicsEngineRasterData& d);
-	static graphics::IEngine*	CreateGraphicsEngineRT(const rGraphicsEngineRT& d);
-	static physics::IEngine*	CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d);
-	static network::IEngine*	CreateNetworkEngine(const rNetworkEngine& d);
-	static sound::IEngine*		CreateSoundEngine(const rSoundEngine& d);
+	static IGraphicsEngine*	CreateGraphicsEngineRaster(const rGraphicsEngineRasterData& d);
+	static IGraphicsEngine*	CreateGraphicsEngineRT(const rGraphicsEngineRT& d);
+	static IPhysicsEngine*	CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d);
+	static INetworkEngine*	CreateNetworkEngine(const rNetworkEngine& d);
+	static ISoundEngine*	CreateSoundEngine(const rSoundEngine& d);
 
 	static IGapi*				CreateGapiGL();
 };

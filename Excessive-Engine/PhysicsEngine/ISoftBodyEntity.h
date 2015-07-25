@@ -3,7 +3,7 @@
 
 namespace physics {
 
-class ISoftEntity
+class ISoftBodyEntity
 {
 };
 }

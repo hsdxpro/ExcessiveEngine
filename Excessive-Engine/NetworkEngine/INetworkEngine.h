@@ -1,9 +1,6 @@
 #pragma once
 
-// namespace
-namespace network {
-
-class IEngine
+class INetworkEngine
 {
 public:
 	// interface
@@ -12,6 +9,3 @@ public:
 	// interact
 	virtual void Update(float deltaTime) = 0;
 };
-
-
-} // namespace

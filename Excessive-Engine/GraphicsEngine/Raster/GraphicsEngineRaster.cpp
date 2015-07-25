@@ -95,7 +95,7 @@ static const char pixelShaderCode[] =
 ////////////////////////////////////////////////////////////////////////////////
 
 extern "C"
-EXPORT graphics::IEngine* CreateGraphicsEngineRaster(const rGraphicsEngineRasterData& d) {
+EXPORT IGraphicsEngine* CreateGraphicsEngineRaster(const rGraphicsEngineRasterData& d) {
 	auto myEngine = new GraphicsEngineRaster(d);
 	if (myEngine->isConstructionSucceeded()) {
 		return myEngine;

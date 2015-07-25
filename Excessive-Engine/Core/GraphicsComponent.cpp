@@ -2,22 +2,22 @@
 #include "GraphicsEngine\IEntity.h"
 
 GraphicsComponent::GraphicsComponent(graphics::IEntity* e) 
-:entityGraphics(e)
+:entity(e)
 {
 
 }
 
 void GraphicsComponent::_InnerReflectPos()
 {
-	entityGraphics->SetPos(transform.GetPos());
+	entity->SetPos(transform.GetPos());
 }
 
 void GraphicsComponent::_InnerReflectRot()
 {
-	entityGraphics->SetRot(transform.GetRot());
+	entity->SetRot(transform.GetRot());
 }
 
 void GraphicsComponent::_InnerReflectSkew()
 {
-	entityGraphics->SetSkew(transform.GetSkew());
+	entity->SetSkew(transform.GetSkew());
 }

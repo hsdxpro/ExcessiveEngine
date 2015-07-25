@@ -40,7 +40,7 @@ int main()
 	rGraphicsEngineRaster gDesc;
 		gDesc.gapiType = eGapiType::OPENGL_4_5;
 		gDesc.targetWindow = &window;
-	graphics::IEngine* gEngine = gCore.InitGraphicsEngineRaster(gDesc);
+	IGraphicsEngine* gEngine = gCore->InitGraphicsEngineRaster(gDesc);
 
 // GAPI HACKED THINGS
 	auto gapi = gEngine->GetGapi();

@@ -2,10 +2,10 @@
 // The purpose of this class is to take the most minimal input from the user to (startup, use) engine
 
 // Modules
-#include "GraphicsEngine\IEngine.h"
-#include "PhysicsEngine\IEngine.h"
-#include "NetworkEngine\IEngine.h"
-#include "SoundEngine\IEngine.h"
+#include "GraphicsEngine\IGraphicsEngine.h"
+#include "PhysicsEngine\IPhysicsEngine.h"
+#include "NetworkEngine\INetworkEngine.h"
+#include "SoundEngine\ISoundEngine.h"
 #include "GraphicsEngine\Raster\GraphicsEngineRaster.h"
 #include "GraphicsEngine\RT\GraphicsEngineRT.h"
 #include "PhysicsEngine\Bullet\PhysicsEngineBullet.h"
@@ -13,9 +13,9 @@
 #include "SoundEngine\SFML\SoundEngineSFML.h"
 
 #include "Script.h"
-#include "Thing.h"
-#include "ActorScript.h"
 #include "Actor.h"
+#include "EntityScript.h"
+#include "Entity.h"
 #include "GraphicsComponent.h"
 #include "RigidBodyComponent.h"
 #include "CameraComponent.h"
@@ -24,30 +24,45 @@
 
 #include <unordered_map>
 #include <vector>
+#include <functional>
 
+struct rMonoSound
+{
+	sound::ISoundData* soundData;
+	sound::IEmitter* soundEmitter;
+};
 
+struct rTask
+{
+	std::function<void()> callb;
+	float timeLeft;
+};
+
+extern class Core* gCore;
 
 class Core
 {
 public:
 	// Nearly do nothing, null out vars
+	static void Instantiate(){ if(!gCore)gCore = new Core(); }
+
 	Core();
 	~Core();
 
 	// Init raster graphics engine, if one already exists will be destroyed, then instantiate it
-	graphics::IEngine* InitGraphicsEngineRaster(const rGraphicsEngineRaster& d = rGraphicsEngineRaster());
+	IGraphicsEngine* InitGraphicsEngineRaster(const rGraphicsEngineRaster& d = rGraphicsEngineRaster());
 
 	// Init raytracer graphics engine, if one already exists will be destroyed, then instantiate it
-	graphics::IEngine* InitGraphicsEngineRT(const rGraphicsEngineRT& d = rGraphicsEngineRT());
+	IGraphicsEngine* InitGraphicsEngineRT(const rGraphicsEngineRT& d = rGraphicsEngineRT());
 
 	// Init physics engine, if one already exists will be destroyed, then instantiate it
-	physics::IEngine* InitPhysicsEngineBullet(const rPhysicsEngineBullet& d = rPhysicsEngineBullet());
+	IPhysicsEngine* InitPhysicsEngineBullet(const rPhysicsEngineBullet& d = rPhysicsEngineBullet());
 
 	// Init network engine, if one already exists will be destroyed, then instantiate it
-	network::IEngine* InitNetworkEngine(const rNetworkEngine& d = rNetworkEngine());
+	INetworkEngine* InitNetworkEngine(const rNetworkEngine& d = rNetworkEngine());
 
 	// Init network engine, if one already exists will be destroyed, then instantiate it
-	sound::IEngine* InitSoundEngineSFML(const rSoundEngine& d = rSoundEngine());
+	ISoundEngine* InitSoundEngineSFML(const rSoundEngine& d = rSoundEngine());
 
 	// TODO!
 	//ThingType*			  CreateThingType(Thing* t);
@@ -55,65 +70,79 @@ public:
 	//RigidBodyComponentType* CreateCompRigidBodyType(RigidBodyComponent* comp);
 	//CameraComponentType*	  CreateCompCameraType(CameraComponent* comp);
 
-	bool PlaySoundMono(const std::wstring& filePath, float volumeNormedPercent = 1);
+	bool PlaySoundMono(const std::wstring& filePath, float volumeNormedPercent = 1, bool bLoop = false);
 
-	Thing* SpawnThing(ActorScript* s);
+	Actor* SpawnActor();
+	Actor* SpawnActor(EntityScript* s);
 
-	Actor* AddActor();
+	void DestroyActor(Actor* a);
+	void DestroyComp(WorldComponent* c);
+
+	Actor* SpawnActor_MeshFromFile(const std::wstring& modelFilePath);
+	Actor* SpawnActor_RigidBodyFromFile(const std::wstring& modelFilePath, float mass);
+	Actor* SpawnActor_RigidBodyCapsule(float height, float radius, float mass = 0);
+	Actor* SpawnActor_Camera();
+
+	void AddTask(const std::function<void()>& callb, float timeToProceed);
+
+	Entity* AddEntity();
 
 	template<class ScriptClass>
 	Script* AddScript();
 
 	template<class ActorScriptClass>
-	ActorScript* AddActorScript();
+	EntityScript* AddEntityScript();
 
-	//Actor* AddActor();
-	GraphicsComponent*  SpawnCompGraphicsFromFile(const std::wstring& modelFilePath);
-	RigidBodyComponent* SpawnCompRigidBodyFromFile(const std::wstring& modelFilePath, float mass);
-	RigidBodyComponent* SpawnCompRigidBodyCapsule(float height, float radius, float mass = 0);
-	CameraComponent*	SpawnCompCamera();
+	GraphicsComponent*  SpawnComp_MeshFromFile(const std::wstring& modelFilePath);
+	RigidBodyComponent* SpawnComp_RigidBodyFromFile(const std::wstring& modelFilePath, float mass);
+	RigidBodyComponent* SpawnComp_RigidBodyCapsule(float height, float radius, float mass = 0);
+	CameraComponent*	SpawnComp_Camera();
 
 	void SetCam(CameraComponent* c);
 	void Update(float deltaTime);
 
 	IWindow* GetTargetWindow();
 
-	graphics::IEngine*	GetGraphicsEngine();
-	physics::IEngine*	GetPhysicsEngine();
-	network::IEngine*	GetNetworkEngine();
-	sound::IEngine*		GetSoundEngine();
+	IGraphicsEngine*	GetGraphicsEngine();
+	IPhysicsEngine*	GetPhysicsEngine();
+	INetworkEngine*	GetNetworkEngine();
+	ISoundEngine*		GetSoundEngine();
 
 protected:
-	graphics::IEngine*	graphicsEngine;
-	physics::IEngine*	physicsEngine;
-	network::IEngine*	networkEngine;
-	sound::IEngine*		soundEngine;
+	IGraphicsEngine*	graphicsEngine;
+	IPhysicsEngine*	physicsEngine;
+	INetworkEngine*	networkEngine;
+	ISoundEngine*		soundEngine;
 
 	// Scripts
 	std::vector<Script*> scripts;
 
-	// Things
-	std::vector<Thing*> things;
-
-	// Actor scripts
-	std::vector<ActorScript*> actorScripts;
-
 	// Actors
 	std::vector<Actor*> actors;
+	std::vector<Actor*> actorsToDestroy;
+
+	// Entity scripts
+	std::vector<EntityScript*> entityScripts;
+
+	// Entities
+	std::vector<Entity*> entities;
 
 	// World components
 	std::vector<WorldComponent*> worldComponents;
+
+	// Tasks
+	std::vector<rTask> tasks;
 
 	// Imported models
 	std::unordered_map<std::wstring, rImporter3DData*> importedModels;
 
 	// Imported mono sounds
-	std::unordered_map<std::wstring, std::pair<sound::ISoundData*, sound::IEmitter*>> importedSounds;
+	std::unordered_map<std::wstring, rMonoSound> importedSounds;
 
-	// The default graphicsScene Core creates for us to spawn graphics things into
+	// The default graphicsScene Core created for us to spawn graphics things into
 	graphics::IScene* defaultGraphicsScene;
 
-	// The default soundScene Core creates for us to spawn sound things into
+	// The default soundScene Core created for us to spawn sound things into
 	sound::IScene* defaultSoundScene;
 
 	// Error diffuse texture for failed texture loads
@@ -129,11 +158,11 @@ Script* Core::AddScript()
 }
 
 template<class ActorScriptClass>
-ActorScript* Core::AddActorScript()
+EntityScript* Core::AddEntityScript()
 {
-	ActorScriptClass* p = new ActorScriptClass(gCore.AddActor());
-		actorScripts.push_back(p);
+	ActorScriptClass* p = new ActorScriptClass();
+	p->SetEntity(gCore->AddEntity());
+
+	entityScripts.push_back(p);
 	return p;
 }
-
-extern Core gCore;

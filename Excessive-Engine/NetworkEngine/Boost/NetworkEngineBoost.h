@@ -1,11 +1,11 @@
 #pragma once
-#include "..\IEngine.h"
+#include "..\INetworkEngine.h"
 
 struct rNetworkEngine {
 
 };
 
-class NetworkEngineBoost : public network::IEngine
+class NetworkEngineBoost : public INetworkEngine
 {
 public:
 	// ctor, dtor, release

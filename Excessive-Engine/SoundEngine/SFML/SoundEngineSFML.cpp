@@ -17,7 +17,7 @@ using namespace std;
 #endif
 
 extern "C"
-EXPORT sound::IEngine* CreateSoundEngine(const rSoundEngine& d) {
+EXPORT ISoundEngine* CreateSoundEngine(const rSoundEngine& d) {
 	return new SoundEngineSFML(d);
 }
 

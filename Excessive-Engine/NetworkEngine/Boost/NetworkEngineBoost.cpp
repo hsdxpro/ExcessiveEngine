@@ -12,7 +12,7 @@
 #endif
 
 extern "C"
-EXPORT network::IEngine* CreateNetworkEngine(const rNetworkEngine& d) {
+EXPORT INetworkEngine* CreateNetworkEngine(const rNetworkEngine& d) {
 	return new NetworkEngineBoost(d);
 }
 

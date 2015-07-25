@@ -13,7 +13,7 @@
 #endif
 
 extern "C"
-EXPORT graphics::IEngine* CreateGraphicsEngineRT(const rGraphicsEngineRT& d) {
+EXPORT IGraphicsEngine* CreateGraphicsEngineRT(const rGraphicsEngineRT& d) {
 	return new GraphicsEngineRT(d);
 }
 

@@ -1,27 +1,27 @@
 #include "RigidBodyComponent.h"
 
-RigidBodyComponent::RigidBodyComponent(physics::IRigidEntity* a)
-:RigidEntity(a)
+RigidBodyComponent::RigidBodyComponent(physics::IRigidBodyEntity* a)
+:entity(a)
 {
 }
 
 void RigidBodyComponent::UpdateAfterPhysicsSimulate()
 {
-	WorldComponent::SetPos(RigidEntity->GetPos());
-	WorldComponent::SetRot(RigidEntity->GetRot());
+	WorldComponent::SetPos(entity->GetPos());
+	WorldComponent::SetRot(entity->GetRot());
 }
 
 void RigidBodyComponent::_InnerReflectPos()
 {
-	RigidEntity->SetPos(transform.GetPos());
+	entity->SetPos(transform.GetPos());
 }
 
 void RigidBodyComponent::_InnerReflectRot()
 {
-	RigidEntity->SetRot(transform.GetRot());
+	entity->SetRot(transform.GetRot());
 }
 
 void RigidBodyComponent::_InnerReflectSkew()
 {
-	assert(0);
+	entity->SetScaleLocal(transform.GetScaleLocal());
 }

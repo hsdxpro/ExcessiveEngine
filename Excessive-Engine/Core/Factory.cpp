@@ -6,10 +6,10 @@
 #include "PlatformLibrary/Sys.h"
 
 
-graphics::IEngine* Factory::CreateGraphicsEngineRaster(const rGraphicsEngineRasterData& d) 
+IGraphicsEngine* Factory::CreateGraphicsEngineRaster(const rGraphicsEngineRasterData& d) 
 {
 #ifdef EXCESSIVE_DLL_MODULES
-	using CreateT = graphics::IEngine*(*)(const rGraphicsEngineRasterData& d);
+	using CreateT = IGraphicsEngine*(*)(const rGraphicsEngineRasterData& d);
 	auto module = Sys::LoadDLL(L"GraphicsEngineRaster");
 	if (!module) {
 		return nullptr;
@@ -24,10 +24,10 @@ graphics::IEngine* Factory::CreateGraphicsEngineRaster(const rGraphicsEngineRast
 #endif
 }
 
-graphics::IEngine* Factory::CreateGraphicsEngineRT(const rGraphicsEngineRT& d) 
+IGraphicsEngine* Factory::CreateGraphicsEngineRT(const rGraphicsEngineRT& d) 
 {
 #ifdef EXCESSIVE_DLL_MODULES
-	using CreateT = graphics::IEngine*(*)(const rGraphicsEngineRT& d);
+	using CreateT = IGraphicsEngine*(*)(const rGraphicsEngineRT& d);
 	auto module = Sys::LoadDLL(L"GraphicsEngineRasterRT");
 	if (!module) {
 		return nullptr;
@@ -42,10 +42,10 @@ graphics::IEngine* Factory::CreateGraphicsEngineRT(const rGraphicsEngineRT& d)
 #endif
 }
 
-physics::IEngine* Factory::CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d) 
+IPhysicsEngine* Factory::CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d) 
 {
 #ifdef EXCESSIVE_DLL_MODULES
-	using CreateT = physics::IEngine*(*)(const rPhysicsEngineBullet& d);
+	using CreateT = IPhysicsEngine*(*)(const rPhysicsEngineBullet& d);
 	auto module = Sys::LoadDLL(L"PhysicsEngineBullet");
 	if (!module) {
 		return nullptr;
@@ -60,10 +60,10 @@ physics::IEngine* Factory::CreatePhysicsEngineBullet(const rPhysicsEngineBullet&
 #endif
 }
 
-network::IEngine* Factory::CreateNetworkEngine(const rNetworkEngine& d) 
+INetworkEngine* Factory::CreateNetworkEngine(const rNetworkEngine& d) 
 {
 #ifdef EXCESSIVE_DLL_MODULES
-	using CreateT = network::IEngine*(*)(const rNetworkEngine& d);
+	using CreateT = INetworkEngine*(*)(const rNetworkEngine& d);
 	auto module = Sys::LoadDLL(L"NetworkEngineBoost");
 	if (!module) {
 		return nullptr;
@@ -78,10 +78,10 @@ network::IEngine* Factory::CreateNetworkEngine(const rNetworkEngine& d)
 #endif
 }
 
-sound::IEngine* Factory::CreateSoundEngine(const rSoundEngine& d) 
+ISoundEngine* Factory::CreateSoundEngine(const rSoundEngine& d) 
 {
 #ifdef EXCESSIVE_DLL_MODULES
-	using CreateT = sound::IEngine*(*)(const rSoundEngine& d);
+	using CreateT = ISoundEngine*(*)(const rSoundEngine& d);
 	auto module = Sys::LoadDLL(L"SoundEngineSFML");
 	if (!module) {
 		return nullptr;

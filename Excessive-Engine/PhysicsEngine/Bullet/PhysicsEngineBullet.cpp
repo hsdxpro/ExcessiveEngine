@@ -10,7 +10,7 @@
 #include "Bullet3/BulletSoftBody/btSoftBodyHelpers.h"
 #include "Bullet3/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h"
 
-#include "RigidEntity.h"
+#include "RigidBodyEntity.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Export Create function
@@ -23,8 +23,10 @@
 #define EXPORT
 #endif
 
+using namespace physics::bullet;
+
 extern "C"
-EXPORT physics::IEngine* CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d) 
+EXPORT IPhysicsEngine* CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d) 
 {
 	return new PhysicsEngineBullet(d);
 }
@@ -54,21 +56,38 @@ void PhysicsEngineBullet::Update(float deltaTime)
 {
 	world->stepSimulation(1.f / 30, 5);
 
-	// Contact mainfolds for debugging
-	//auto overlappingPairCache = world->GetBroadphase()->GetOverlappingPairCache();
-	//auto nPairs = overlappingPairCache->GetNumOverlappingPairs();
-	//for (u32 i = 0; i < nPairs; i++)
-	//{
-	//	btManifoldArray array;
-	//	overlappingPairCache->GetOverlappingPairArray()[i].m_algorithm->GetAllContactManifolds(array);
-	//	for (u32 j = 0; j < array.size(); j++)
-	//	{
-	//		auto& maniFold = array.at(j);
-	//	}
-	//}
+	//contactList.clear();
+
+	int numManifolds = world->getDispatcher()->getNumManifolds();
+	for (int i = 0; i < numManifolds; i++)
+	{
+		btPersistentManifold* contactManifold = world->getDispatcher()->getManifoldByIndexInternal(i);
+		const btCollisionObject* colA = static_cast<const btCollisionObject*>(contactManifold->getBody0());
+		const btCollisionObject* colB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
+
+		int numContacts = contactManifold->getNumContacts();
+		for (int j = 0; j < numContacts; j++)
+		{
+			btManifoldPoint& pt = contactManifold->getContactPoint(j);
+			if (pt.getDistance() < 0.f)
+			{
+				// Okay bit brute force (tmp)
+				//i64* collisionGroupA = dynamic_cast<RigidBodyEntity*>(colA->getUserPointer());
+				//i64* collisionGroupB = (i64*)colB->getUserPointer();
+
+				//rContactInfo info;
+					
+				//contactList.push_back(info);
+
+				const btVector3& ptA = pt.getPositionWorldOnA();
+				const btVector3& ptB = pt.getPositionWorldOnB();
+				const btVector3& normalOnB = pt.m_normalWorldOnB;
+			}
+		}
+	}
 }
 
-physics::IRigidEntity* PhysicsEngineBullet::AddEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) 
+physics::IRigidBodyEntity* PhysicsEngineBullet::AddEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) 
 {
 	// You should call PhysicsEngineBullet::CreateEntityRigidStatic
 	assert(mass != 0);
@@ -83,17 +102,16 @@ physics::IRigidEntity* PhysicsEngineBullet::AddEntityRigidDynamic(mm::vec3* vert
 
 	// Create rigid body
 	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), colShape, localInertia);
-	world->addRigidBody(body);
 		body->setFriction(1);
-
-	RigidEntity* e = new RigidEntity(body);
+	world->addRigidBody(body);
+	
+	RigidBodyEntity* e = new RigidBodyEntity(body);
 		entities.push_back(e);
 	return e;
 }
 
-physics::IRigidEntity* PhysicsEngineBullet::AddEntityRigidStatic(mm::vec3* vertices, u32 nVertices, void* indices, u32 indexSize, u32 nIndices) 
+physics::IRigidBodyEntity* PhysicsEngineBullet::AddEntityRigidStatic(mm::vec3* vertices, u32 nVertices, void* indices, u32 indexSize, u32 nIndices) 
 {
-
 	btTriangleIndexVertexArray* VBIB;
 
 	// Indices need copy, signed unsigne differences -.-
@@ -120,12 +138,12 @@ physics::IRigidEntity* PhysicsEngineBullet::AddEntityRigidStatic(mm::vec3* verti
 	btRigidBody* body = new btRigidBody(0, new btDefaultMotionState(), new btBvhTriangleMeshShape(VBIB, true), btVector3(0, 0, 0));
 	world->addRigidBody(body);
 
-	RigidEntity* e = new RigidEntity(body);
+	RigidBodyEntity* e = new RigidBodyEntity(body);
 		entities.push_back(e);
 	return e;
 }
 
-physics::IRigidEntity* PhysicsEngineBullet::AddEntityRigidCapsule(float height, float radius, float mass)
+physics::IRigidBodyEntity* PhysicsEngineBullet::AddEntityRigidCapsule(float height, float radius, float mass)
 {
 	btCapsuleShapeZ* capsuleShape = new btCapsuleShapeZ(radius, height);
 	capsuleShape->setSafeMargin(0, 0); // Thanks convex hull for your imprecision...
@@ -138,9 +156,26 @@ physics::IRigidEntity* PhysicsEngineBullet::AddEntityRigidCapsule(float height, 
 	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), capsuleShape, localInertia);
 	world->addRigidBody(body);
 
-	RigidEntity* e = new RigidEntity(body);
+	RigidBodyEntity* e = new RigidBodyEntity(body);
 		entities.push_back(e);
 	return e;
+}
+
+bool PhysicsEngineBullet::RemoveEntity(physics::IRigidBodyEntity* e)
+{
+	auto it = std::find(entities.begin(), entities.end(), e);
+	if (it != entities.end())
+	{
+		auto entity = (RigidBodyEntity*)*it;
+		auto rigidBody = entity->GetBody();
+
+		entities.erase(it);
+		world->removeRigidBody(rigidBody);
+
+		delete entity->GetBody();
+		delete entity;
+	}
+	return false;
 }
 
 void PhysicsEngineBullet::GetDebugData(mm::vec3* nonIndexedVertices, uint32_t vertsByteSize, uint32_t& nVertices)

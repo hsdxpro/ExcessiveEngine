@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../IEngine.h"
+#include "../IGraphicsEngine.h"
 
 
 // must be included because of covariant return type override
@@ -51,7 +51,7 @@ struct rGraphicsEngineRasterData
 	rRectNormed		renderRegion;
 };
 
-class GraphicsEngineRaster : public graphics::IEngine
+class GraphicsEngineRaster : public IGraphicsEngine
 {
 public:
 	// ctor, dtor, release

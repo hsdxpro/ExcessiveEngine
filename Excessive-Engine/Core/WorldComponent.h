@@ -57,6 +57,8 @@ public:
 	__inline mm::vec3 GetDirRightNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3( 1,  0,  0));}
 	__inline mm::vec3 GetDirLeftNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3(-1,  0,  0));}
 
+	__inline std::vector<WorldComponent*>& GetChilds() { return childs; }
+
 protected:
 	virtual void _InnerReflectPos() = 0;
 	virtual void _InnerReflectRot() = 0;

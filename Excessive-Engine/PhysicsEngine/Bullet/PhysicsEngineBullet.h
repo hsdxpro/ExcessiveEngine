@@ -1,6 +1,6 @@
 #pragma once
-#include "../IEngine.h"
-#include "../IRigidEntity.h"
+#include "../IPhysicsEngine.h"
+#include "../IRigidBodyEntity.h"
 
 #include "SupportLibrary/BasicTypes.h"
 #include "mymath/mymath.h"
@@ -15,7 +15,7 @@ struct rPhysicsEngineBullet
 
 };
 
-class PhysicsEngineBullet : public physics::IEngine
+class PhysicsEngineBullet : public IPhysicsEngine
 {
 public:
 	PhysicsEngineBullet(const rPhysicsEngineBullet& d);
@@ -25,19 +25,20 @@ public:
 	void Update(float deltaTime) override;
 
 	// Create, Add DYNAMIC rigid body to physics world
-	physics::IRigidEntity* AddEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass = 1) override;
+	physics::IRigidBodyEntity* AddEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass = 1) override;
 
 	// Create, Add STATIC rigid body to physics world
-	physics::IRigidEntity* AddEntityRigidStatic(mm::vec3* vertices, u32 nVertices, void* indices, u32 indexStride, u32 nIndices) override;
+	physics::IRigidBodyEntity* AddEntityRigidStatic(mm::vec3* vertices, u32 nVertices, void* indices, u32 indexStride, u32 nIndices) override;
 
 	// Create, Add capsule rigid body to physics world
-	physics::IRigidEntity* AddEntityRigidCapsule(float height, float radius, float mass);
+	physics::IRigidBodyEntity* AddEntityRigidCapsule(float height, float radius, float mass) override;
+
+	bool RemoveEntity(physics::IRigidBodyEntity* e) override;
 
 	void GetDebugData(mm::vec3* nonIndexedVertices, uint32_t vertsByteSize, uint32_t& nVertices) override;
 
 private:
 	btDiscreteDynamicsWorld* world;
 
-	std::vector<physics::IRigidEntity*> entities;
+	std::vector<physics::IRigidBodyEntity*> entities;
 };
-

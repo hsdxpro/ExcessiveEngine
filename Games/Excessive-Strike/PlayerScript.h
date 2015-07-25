@@ -3,18 +3,21 @@
 #include "mymath\mymath.h"
 #include "Core\CameraComponent.h"
 #include "Core\RigidBodyComponent.h"
-#include "Core\ActorScript.h"
+#include "Core\EntityScript.h"
+#include "Core\GraphicsComponent.h"
 
-class PlayerScript : public ActorScript
+class PlayerScript : public Script
 {
 public:
-	PlayerScript(Actor* actor);
+	PlayerScript();
 
 	void Update(float deltaSeconds);
 
 protected:
 	// Components
 	CameraComponent* camComp;
+
+	GraphicsComponent* ak47Graphics;
 
 	RigidBodyComponent* playerCapsule;
 

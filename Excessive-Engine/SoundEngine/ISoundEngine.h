@@ -1,13 +1,12 @@
 #pragma once
 
-// namespace
 namespace sound {
+	class IScene;
+	class ISoundData;
+	class IListener;
+}
 
-class IScene;
-class ISoundData;
-class IListener;
-
-class IEngine
+class ISoundEngine
 {
 public:
 	// interface
@@ -17,18 +16,18 @@ public:
 	// creators
 	
 	/// Create a new scene.
-	virtual IScene* CreateScene() = 0;
+	virtual sound::IScene* CreateScene() = 0;
 	
 	/// Create a new sound resource.
-	virtual ISoundData* CreateSoundData() = 0;
+	virtual sound::ISoundData* CreateSoundData() = 0;
 	
 	/// Create a new listener.
-	virtual IListener* CreateListener() = 0;
+	virtual sound::IListener* CreateListener() = 0;
 	
 	///////////////////////////////////////
 	// states
 
-	virtual void SetScene(IScene* scene) = 0;
+	virtual void SetScene(sound::IScene* scene) = 0;
 
 	/// Set the volume. Will affect every sound that comes from this sound engine.
 	/// volume should be a positive real number.
@@ -41,6 +40,3 @@ public:
 	// interact
 	virtual void Update(float deltaTime) = 0;
 };
-
-
-} // namespace

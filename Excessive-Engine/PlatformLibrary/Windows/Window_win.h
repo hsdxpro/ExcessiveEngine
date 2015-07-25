@@ -17,10 +17,9 @@ public:
 
 	void Present() override;
 
-	void HideCursor() override;
-	void ShowCursor() override;
-
 	void SetTitle(const wchar_t* text) override;
+
+	void SetCursorVisible(bool bVisible) override;
 
 	// Getters
 	bool IsOpen() const override;

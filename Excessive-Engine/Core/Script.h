@@ -3,5 +3,5 @@
 class Script
 {
 public:
-	virtual void Update(float deltaSeconds){}
+	virtual void Update(float deltaSeconds)	{}
 };
