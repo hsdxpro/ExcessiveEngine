@@ -22,20 +22,21 @@ void SoundData::Release() {
 }
 
 bool SoundData::Load(const wchar_t* file_path, sound::StoreMode mode) {
+
 	std::string narrow_file_path;
+
 	//FIXME probably a bad way to convert wide string to standard
 	for (int i = 0; file_path[i] != L'\0'; i++) {
 		narrow_file_path += (char)(file_path[i]);
 	}
 
+	sf::Music audioFile;
+	if (!audioFile.openFromFile(narrow_file_path)) {
+		return false;
+	}
+
 	if (mode == sound::StoreMode::AUTOMATIC) {
 		//determine audio length
-		sf::Music audioFile;
-		
-		if (!audioFile.openFromFile(narrow_file_path)) {
-			return false;
-		}
-
 		if (audioFile.getDuration().asSeconds() > 5) {
 			mode = sound::StoreMode::STREAMED;
 		} else {
@@ -53,7 +54,9 @@ bool SoundData::Load(const wchar_t* file_path, sound::StoreMode mode) {
 
 	case sound::StoreMode::BUFFERED: {
 		sf::SoundBuffer buffer;
-		buffer.loadFromFile(narrow_file_path);
+		if (!buffer.loadFromFile(narrow_file_path)) {
+			return false;
+		}
 		pSFMLSoundData = new SFMLSoundData(buffer);
 		break;
 	}
