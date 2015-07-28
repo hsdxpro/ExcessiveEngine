@@ -11,6 +11,7 @@
 #include "Bullet3/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h"
 
 #include "RigidBodyEntity.h"
+#include "PhysicsEngineBulletDebugGatherer.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Export Create function
@@ -34,13 +35,24 @@ EXPORT IPhysicsEngine* CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d)
 PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d) 
 {
 	world = new btDiscreteDynamicsWorld(new	btCollisionDispatcher(new btDefaultCollisionConfiguration),
-										//new btDbvtBroadphase,
-										new btAxisSweep3({ -1000, -1000, -1000 }, { 1000, 1000, 1000 }),
+										new btDbvtBroadphase,
 										new btSequentialImpulseConstraintSolver,
 										new btDefaultCollisionConfiguration);
 
-	//world->setGravity(btVector3(0, 0, -9.81));
-	world->setGravity(btVector3(0, 0, -9.81));
+	world->setGravity(btVector3(d.gravity.x, d.gravity.y, d.gravity.z));
+
+	btIDebugDraw* debugDrawer = (btIDebugDraw*)new PhysicsEngineBulletDebugGatherer();
+	debugDrawer->setDebugMode(btIDebugDraw::DBG_DrawAabb);
+
+	world->setDebugDrawer(debugDrawer);
+
+	// Populate collisionMatrix with true values, everything can collide with everything by default
+	nLayerCollisionMatrixRows = 32;
+	layerCollisionMatrix.resize(nLayerCollisionMatrixRows * nLayerCollisionMatrixRows);
+	memset(layerCollisionMatrix.data(), 1, nLayerCollisionMatrixRows * nLayerCollisionMatrixRows);
+
+	btOverlapFilterCallback * filterCallback = new BulletBroadPhaseCallback(this);
+	world->getBroadphase()->getOverlappingPairCache()->setOverlapFilterCallback(filterCallback);
 }
 
 PhysicsEngineBullet::~PhysicsEngineBullet()
@@ -56,7 +68,7 @@ void PhysicsEngineBullet::Update(float deltaTime)
 {
 	world->stepSimulation(1.f / 30, 5);
 
-	//contactList.clear();
+	contactList.clear();
 
 	int numManifolds = world->getDispatcher()->getNumManifolds();
 	for (int i = 0; i < numManifolds; i++)
@@ -66,24 +78,39 @@ void PhysicsEngineBullet::Update(float deltaTime)
 		const btCollisionObject* colB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
 
 		int numContacts = contactManifold->getNumContacts();
-		for (int j = 0; j < numContacts; j++)
+		if (numContacts != 0)
 		{
-			btManifoldPoint& pt = contactManifold->getContactPoint(j);
-			if (pt.getDistance() < 0.f)
+			// Fill up our structure with contact informations
+			rPhysicsCollision colInfo;
+				colInfo.entityA = (RigidBodyEntity*)colA->getUserPointer();
+				colInfo.entityB = (RigidBodyEntity*)colB->getUserPointer();
+
+			for (int j = 0; j < numContacts; j++)
 			{
-				// Okay bit brute force (tmp)
-				//i64* collisionGroupA = dynamic_cast<RigidBodyEntity*>(colA->getUserPointer());
-				//i64* collisionGroupB = (i64*)colB->getUserPointer();
+				btManifoldPoint& pt = contactManifold->getContactPoint(j);
+				if (pt.getDistance() < 0.f)
+				{
+					//Fill contact data
+					rContactPoint c;
+						c.normalA = -mm::vec3(pt.m_normalWorldOnB.x(), pt.m_normalWorldOnB.y(), pt.m_normalWorldOnB.z());
+						c.normalB =  mm::vec3(pt.m_normalWorldOnB.x(), pt.m_normalWorldOnB.y(), pt.m_normalWorldOnB.z());
+						c.posA = mm::vec3(pt.m_positionWorldOnA.x(), pt.m_positionWorldOnA.y(), pt.m_positionWorldOnA.z());
+						c.posB = mm::vec3(pt.m_positionWorldOnB.x(), pt.m_positionWorldOnB.y(), pt.m_positionWorldOnB.z());
+					colInfo.contacts.push_back(c);
 
-				//rContactInfo info;
-					
-				//contactList.push_back(info);
-
-				const btVector3& ptA = pt.getPositionWorldOnA();
-				const btVector3& ptB = pt.getPositionWorldOnB();
-				const btVector3& normalOnB = pt.m_normalWorldOnB;
+					const btVector3& ptA = pt.getPositionWorldOnA();
+					const btVector3& ptB = pt.getPositionWorldOnB();
+					const btVector3& normalOnB = pt.m_normalWorldOnB;
+				}
 			}
+			contactList.push_back(colInfo);
 		}
+	}
+
+	if (world->getDebugDrawer())
+	{
+		((PhysicsEngineBulletDebugGatherer*)world->getDebugDrawer())->ClearFrameData();
+		world->debugDrawWorld();
 	}
 }
 
@@ -178,56 +205,46 @@ bool PhysicsEngineBullet::RemoveEntity(physics::IRigidBodyEntity* e)
 	return false;
 }
 
-void PhysicsEngineBullet::GetDebugData(mm::vec3* nonIndexedVertices, uint32_t vertsByteSize, uint32_t& nVertices)
+void PhysicsEngineBullet::SetLayerCollision(size_t ID0, size_t ID1, bool bEnableCollision)
 {
-	nVertices = 0;
-	const btCollisionObjectArray& colObjArray = world->getCollisionWorld()->getCollisionObjectArray();
-	u32 nObjs = world->getNumCollisionObjects();
-
-	for (size_t i = 0; i < nObjs; i++)
+	if (ID0 > nLayerCollisionMatrixRows - 1 || ID1 > nLayerCollisionMatrixRows - 1)
 	{
-		btCollisionShape* colShape = colObjArray[i]->getCollisionShape();
-		btTransform worldTrans = colObjArray[i]->getWorldTransform();
+		// Reallocate larger matrix
+		size_t nRows = std::max(ID0, ID1) + 1;
+		layerCollisionMatrix.resize(nRows * nRows);
 
-		if (colShape->isPolyhedral())
+		// Move old datas to correct places
+		// i = 0 will not run, cuz 0th will remain good in memory
+		for (size_t i = nLayerCollisionMatrixRows - 1; i > 0; i--)
 		{
-			int asd = 5;
-			asd++;
+			u8* src = i * nLayerCollisionMatrixRows + (u8*)layerCollisionMatrix.data();
+			u8* dst = src + i * (nRows - nLayerCollisionMatrixRows);
+			memmove(dst, src, nLayerCollisionMatrixRows);
+
+			// Set newly allocated bytes to 1 (part0)
+			// [src, dst[ set 1 these byte are the newly allocated ones, ID0 can collide with everything, and ID1 also
+			memset(src, 1, dst - src);
 		}
 
-		if (colShape->isCompound())
-		{
-			int asd = 5;
-			asd++;
-		}
+		// Set newly allocated bytes to 1 (part1)
+		size_t asd = nRows + (nRows - nLayerCollisionMatrixRows);
+		memset((u8*)layerCollisionMatrix.data() + (nRows *  nRows) - asd, 1, asd);
 
-		if (colShape->isConcave())
-		{
-			int asd = 5;
-			asd++;
-		}
-
-		if (colShape->isInfinite())
-		{
-			int asd = 5;
-			asd++;
-		}
-
-		// Add each edge from convex Shape to the list
-		if (colShape->isConvex())
-		{
-			btConvexHullShape* col = (btConvexHullShape*)colShape;
-
-			u32 nVerts = col->getNumVertices();
-
-			for (u32 j = 0; j < nVerts; j++)
-			{
-				btVector3 vtx;
-				col->getVertex(j, vtx);
-				vtx = worldTrans * vtx;
-				nonIndexedVertices[nVertices + j] = { vtx.x(), vtx.y(), vtx.z() };
-			}
-			nVertices += nVerts;
-		}
+		nLayerCollisionMatrixRows = nRows;
 	}
+
+	layerCollisionMatrix[ID0 + nLayerCollisionMatrixRows * ID1] = bEnableCollision;
+	layerCollisionMatrix[ID1 + nLayerCollisionMatrixRows * ID0] = bEnableCollision;
+}
+
+bool PhysicsEngineBullet::GetDebugData(mm::vec3*& linesFromNonUniqPoints_out, size_t& nLines_out) const
+{
+	PhysicsEngineBulletDebugGatherer* debugInfoGatherer = (PhysicsEngineBulletDebugGatherer*)world->getDebugDrawer();
+	if (debugInfoGatherer)
+	{
+		debugInfoGatherer->GetDebugData(linesFromNonUniqPoints_out, nLines_out);
+		return true;
+	}
+	
+	return false;
 }

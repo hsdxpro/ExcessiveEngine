@@ -1,16 +1,22 @@
 #pragma once
 #include "Behavior.h"
 #include <functional>
-#include "RigidBodyComponent.h"
+#include "PhysicsEngine\PhysicsCommon.h"
 
 class Actor;
+
+// TODO, create something for that struct like CoreCommon.h
 struct rCollision
 {
-	rCollision()
-		:self(0), other(0){}
+	rCollision(): self(0), other(0), selfBody(0), otherBody(0){}
 
 	Actor*  self;
 	Actor*  other;
+
+	physics::IRigidBodyEntity* selfBody;
+	physics::IRigidBodyEntity* otherBody;
+
+	std::vector<rContactPoint> contacts;
 };
 
 class Actor
@@ -19,8 +25,6 @@ public:
 	Actor();
 
 public:
-	__inline void Update(float deltaSeconds) { if (onUpdate)onUpdate(deltaSeconds); }
-
 	__inline void AddBehavior(Behavior* b)	{behaviors.push_back(b);}
 
 	__inline WorldComponent* AttachTo(WorldComponent* c) { return entity->AttachTo(c); }
@@ -36,31 +40,41 @@ public:
 		return false;
 	}
 
-	__inline void SetEntity(Entity* e) { entity = e; for (auto& b : behaviors)b->SetEntity(e); }
+	__inline void SetPendingKill(bool bKill)
+	{
+		bPendingKill = bKill;
+	}
+
+	__inline void SetEntity(Entity* e) 
+	{
+		entity = e; 
+		
+		for (auto& b : behaviors)
+			b->SetEntity(e); 
+	}
 
 	__inline bool SetTrigger(bool bTrigger)
 	{ 
-		return RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
-		{
-			c->SetTrigger(bTrigger);
-		});
+		if (entity)
+			entity->SetTrigger(true);
+
+		return false;
+	}
+
+	__inline bool SetGravityScale(float s)
+	{
+		if (entity)
+			return entity->SetGravityScale(s);
+
+		return false;
 	}
 
 	__inline bool SetCollisionGroup(i64 ID)
 	{
-		return RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
-		{
-			c->SetCollisionGroup(ID);
-		});
+		if (entity)
+			return entity->SetCollisionGroup(ID);
 
-		//// Collect RigidBodyComponents - s
-		//auto& comps = GetComponents<RigidBodyComponent>();
-		//
-		//// Set all RigidBodyComponent to trigger
-		//for (auto& c : comps)
-		//	c->SetCollisionGroup(ID);
-		//
-		//return comps.size() != 0;
+		return false;
 	}
 
 	__inline void SetOnUpdate(const std::function<void(float deltaSeconds)>& callb) { onUpdate = callb; }
@@ -129,6 +143,12 @@ public:
 	__inline std::vector<Behavior*>& GetBehaviors() {return behaviors;}
 	__inline Entity* GetEntity() const {return entity;}
 
+	__inline const std::function<void(float deltaSeconds)>& GetOnUpdate() { return onUpdate; }
+	__inline const std::function<void(const rCollision& col)>& GetOnCollision() { return onCollision; }
+	__inline const std::function<void(const rCollision& col)>& GetOnCollisionEnter() { return onCollisionEnter; }
+	__inline const std::function<void(const rCollision& col)>& GetOnCollisionExit() { return onCollisionExit; }
+
+	__inline bool IsPendingKill() { return bPendingKill; }
 protected:
 	Entity* entity;
 
@@ -138,4 +158,7 @@ protected:
 	std::function<void(const rCollision& col)> onCollision;
 	std::function<void(const rCollision& col)> onCollisionEnter;
 	std::function<void(const rCollision& col)> onCollisionExit;
+
+	// Lifecycle
+	bool bPendingKill;
 };

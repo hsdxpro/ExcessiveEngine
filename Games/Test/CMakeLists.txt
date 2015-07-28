@@ -9,6 +9,8 @@ message( "-Test" )
 FILE( GLOB_RECURSE sources *.c* )
 FILE( GLOB_RECURSE headers *.h* )
 
+include_directories("../../Externals/include/Bullet3/")
+
 add_executable( Test ${sources} ${headers} )
 
 target_link_libraries( Test debug jsoncpp-d )

@@ -1,6 +1,8 @@
 #pragma once
 #include "WorldComponent.h"
 #include <functional>
+#include "SupportLibrary\BasicTypes.h"
+#include "RigidBodyComponent.h"
 
 void CollectComponentsRecursively(WorldComponent* c, std::vector<WorldComponent*>& comps);
 
@@ -22,6 +24,30 @@ public:
 			lambda(comp);
 
 		return specTypeComps.size() != 0;
+	}
+
+	__inline bool SetTrigger(bool bTrigger)
+	{
+		return RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		{
+			c->SetTrigger(bTrigger);
+		});
+	}
+
+	__inline bool SetGravityScale(float s)
+	{
+		return RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		{
+			c->SetGravityScale(s);
+		});
+	}
+
+	__inline bool SetCollisionGroup(i64 ID)
+	{
+		return RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		{
+			c->SetCollisionGroup(ID);
+		});
 	}
 
 	__inline WorldComponent* SetParent(WorldComponent* c) { return rootComp->SetParent(c); }

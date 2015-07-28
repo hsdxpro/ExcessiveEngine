@@ -5,9 +5,6 @@
 #include <map>
 #include "mymath\mm_quat_func.h"
 #include "PlatformLibrary\IWindow.h"
-#include "Core\Factory.h"
-using std::cout;
-using std::endl;
 
 
 #ifdef WIN32
@@ -225,7 +222,7 @@ void GraphicsEngineRaster::Update(float deltaTime) {
 	// just render the first scene, entity by entity
 
 	if (layers.empty() || !layers.begin()->scene) {
-		cout << "No scene were found :(" << endl;
+		std::cout << "No scene were found :(" << std::endl;
 		return;
 	}
 

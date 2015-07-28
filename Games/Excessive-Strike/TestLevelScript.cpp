@@ -13,6 +13,13 @@ TestLevelScript::TestLevelScript()
 
 	// Add sky to game
 	gCore->SpawnComp_MeshFromFile(L"Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
+
+	// Set up collision layers..
+	//gCore->SetLayerCollision(eES_CollisionGroup::GROUND, eES_CollisionGroup::SHELL, true);
+
+	// disable self collide
+	gCore->SetLayerCollision(eES_CollisionGroup::GROUND, eES_CollisionGroup::GROUND, false);
+	gCore->SetLayerCollision(eES_CollisionGroup::SHELL, eES_CollisionGroup::SHELL, false);
 }
 
 void TestLevelScript::Update(float deltaSeconds)

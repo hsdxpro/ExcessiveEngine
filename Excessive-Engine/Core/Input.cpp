@@ -107,7 +107,7 @@ void Input::MouseMidRelease()
 
 void Input::MouseMove(const mm::ivec2& mouseDelta, const mm::uvec2& clientMousePos)
 {
-	this->mouseDelta = mouseDelta;
+	this->mouseDelta += mouseDelta;
 	this->clientMousePos = clientMousePos;
 
 	// Dispatch registered mouseMove callbacks

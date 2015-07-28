@@ -98,26 +98,22 @@ void PlayerScript::Update(float deltaSeconds)
 	{
 		gCore->PlaySoundMono(L"Assets/GUN_FIRE-stereo.ogg", 0.5);
 
-		
 		// Falling bullet shell, and it's sound
-		//Actor* bulletShell = gCore->SpawnActor_RigidBodyCapsule(0.09, 0.04, 0.02);
-		//bulletShell->SetTrigger(true);
-		//bulletShell->SetCollisionGroup(eES_CollisionGroup::SHELL);
-		//bulletShell->SetPos(ak47Graphics->GetPos());
-		//bulletShell->SetOnCollisionEnter([=](const rCollision& info)
-		//{
-		//	gCore->PlaySoundMono(L"Assets/shell_fall.ogg", 0.5);
-		//	gCore->DestroyActor(bulletShell);
-		//});
+		Actor* bulletShell = gCore->SpawnActor_RigidBodyCapsule(0.09, 0.04, 0.02);
+		bulletShell->SetTrigger(true);
+		bulletShell->SetCollisionGroup(eES_CollisionGroup::SHELL);
+		bulletShell->SetPos(ak47Graphics->GetPos());
+		bulletShell->SetOnCollisionEnter([=](const rCollision& info)
+		{
+			gCore->PlaySoundMono(L"Assets/shell_fall.ogg", 0.5);
+			gCore->DestroyActor(bulletShell);
+		});
 
 		// Shooted bullet
 		Actor* bullet = gCore->SpawnActor_RigidBodyFromFile(L"Assets/box.DAE", 1);
 		bullet->Attach(gCore->SpawnComp_MeshFromFile(L"Assets/box.DAE"));
 		bullet->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
-
-		bullet->SetCollisionGroup(eES_CollisionGroup::SHELL);
-
- 		//bullet->SetTrigger(true);
+		bullet->SetGravityScale(0);
 
 		mm::vec3 bulletDir = ak47Graphics->GetDirUpNormed();
 		bullet->SetPos(ak47Graphics->GetPos() + bulletDir * 2);
@@ -127,16 +123,10 @@ void PlayerScript::Update(float deltaSeconds)
 		const float distAfterDisappear = 200;
 		bullet->SetOnUpdate([=](float deltaSeconds)
 		{
-			//bullet->Move(deltaSeconds * bulletDir * bulletSpeed);
+			bullet->Move(deltaSeconds * bulletDir * bulletSpeed);
 		
 			if (mm::length(bulletStartPos - bullet->GetPos()) >= distAfterDisappear)
 				gCore->DestroyActor(bullet);
-		});
-		// TMP
-		bullet->SetOnCollisionEnter([=](const rCollision& info)
-		{
-			gCore->PlaySoundMono(L"Assets/shell_fall.ogg", 0.5);
-			gCore->DestroyActor(bullet);
 		});
 	}
 

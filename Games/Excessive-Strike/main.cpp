@@ -31,11 +31,13 @@ int main()
 
 	// Init Engine core
 	Core::Instantiate();
-	rGraphicsEngineRaster graphicsDesc;
-		graphicsDesc.gapiType = eGapiType::OPENGL_4_5;
-		graphicsDesc.targetWindow = window;
+		rGraphicsEngineRaster graphicsDesc;
+			graphicsDesc.gapiType = eGapiType::OPENGL_4_5;
+			graphicsDesc.targetWindow = window;
 	gCore->InitGraphicsEngineRaster(graphicsDesc);
-	gCore->InitPhysicsEngineBullet();
+		rPhysicsEngineBullet physicsDesc;
+			physicsDesc.gravity = mm::vec3(0, 0, -9.81);
+	gCore->InitPhysicsEngineBullet(physicsDesc);
 	gCore->InitSoundEngineSFML();
 	
 	ITimer* timer = new Timer();

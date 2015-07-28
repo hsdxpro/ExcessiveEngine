@@ -1,8 +1,9 @@
 #pragma once
 #include "mymath/mymath.h"
 #include "SupportLibrary/BasicTypes.h"
+#include "PhysicsCommon.h"
 
-namespace physics { class IRigidBodyEntity; }
+#include <vector>
 
 class IPhysicsEngine
 {
@@ -23,5 +24,11 @@ public:
 	// Remove rigidBody entity from world
 	virtual bool RemoveEntity(physics::IRigidBodyEntity* e) = 0;
 
-	virtual void GetDebugData(mm::vec3* nonIndexedVertices, uint32_t vertsByteSize, uint32_t& nVertices) = 0;
+	virtual void SetLayerCollision(size_t ID0, size_t ID1, bool bEnableCollision) = 0;
+
+	virtual bool CheckLayerCollision(size_t ID0, size_t ID1) const = 0;
+
+	virtual const std::vector<rPhysicsCollision>& GetCollisionList() const = 0;
+
+	virtual bool GetDebugData(mm::vec3*& linesFromNonUniqPoints_out, size_t& nLines_out) const = 0;
 };

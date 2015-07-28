@@ -1,9 +1,9 @@
 #pragma once
 #include "..\IRigidBodyEntity.h"
+
 #include "SupportLibrary\BasicTypes.h"
+#include "BulletDynamics\Dynamics\btRigidBody.h"
 
-
-class btRigidBody;
 
 namespace physics { namespace bullet {
 
@@ -14,6 +14,7 @@ public:
 
 	void AddForce(const mm::vec3& force, const mm::vec3& relPos = { 0, 0, 0 }) override;
 
+	void SetGravityScale(float s) override;
 	void SetTrigger(bool bTrigger) override;
 	void SetCollisionGroup(i64 ID) override;
 
@@ -27,6 +28,9 @@ public:
 	const mm::vec3 GetPos() const override;
 	const mm::quat GetRot() const override;
 	const mm::vec3 GetScaleLocal() const override;
+
+	__inline i64 GetCollisionGroup() const override { return collisionGroupID; }
+	__inline bool GetIsTrigger() const override { return body->getCollisionFlags() & btRigidBody::CF_NO_CONTACT_RESPONSE; }
 
 	btRigidBody* GetBody();
 

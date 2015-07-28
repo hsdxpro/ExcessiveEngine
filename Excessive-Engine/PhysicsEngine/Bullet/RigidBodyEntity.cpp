@@ -1,6 +1,4 @@
 #include "RigidBodyEntity.h"
-
-#include "BulletDynamics/Dynamics/btRigidBody.h"
 #include "BulletCollision/CollisionShapes/btCollisionShape.h"
 
 using namespace physics::bullet;
@@ -8,13 +6,18 @@ using namespace physics::bullet;
 RigidBodyEntity::RigidBodyEntity(btRigidBody* body) 
 :body(body), collisionGroupID(-1) // -1 default means can collide with everything
 {
-	//body->setUserPointer(&collisionGroupID);
+	body->setUserPointer(this);
 }
 
 void RigidBodyEntity::AddForce(const mm::vec3& force, const mm::vec3& relPos /*= {0,0,0}*/)
 {
 	body->applyForce({force.x, force.y, force.z}, {relPos.x, relPos.y, relPos.z});
 	body->activate();
+}
+
+void RigidBodyEntity::SetGravityScale(float s)
+{
+	body->setGravity(body->getGravity() * s);
 }
 
 void RigidBodyEntity::SetTrigger(bool bTrigger)

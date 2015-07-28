@@ -98,7 +98,10 @@ public:
 	RigidBodyComponent* SpawnComp_RigidBodyCapsule(float height, float radius, float mass = 0);
 	CameraComponent*	SpawnComp_Camera();
 
+	bool SetLayerCollision(size_t ID0, size_t ID1, bool bEnableCollision);
+
 	void SetCam(CameraComponent* c);
+
 	void Update(float deltaTime);
 
 	IWindow* GetTargetWindow();
@@ -120,6 +123,9 @@ protected:
 	// Actors
 	std::vector<Actor*> actors;
 	std::vector<Actor*> actorsToDestroy;
+
+	std::unordered_map<Actor*, Actor*> prevFrameActorCollideList;
+	std::vector<rCollision> prevFrameActorCollisionData;
 
 	// Entity scripts
 	std::vector<EntityScript*> entityScripts;

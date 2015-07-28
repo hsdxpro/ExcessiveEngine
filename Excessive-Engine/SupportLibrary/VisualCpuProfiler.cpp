@@ -4,6 +4,7 @@
 #include "GL\glew.h"
 #include "PlatformLibrary\Timer.h"
 #include "PlatformLibrary\Sys.h"
+#include <functional>
 
 VisualCpuProfiler* VisualCpuProfiler::instance = nullptr;
 VisualCpuProfiler::ProfilerNode* VisualCpuProfiler::lastConstructedTreeNode = nullptr;
@@ -13,26 +14,71 @@ size_t VisualCpuProfiler::IDGenerator = 0;
 VisualCpuProfiler::Scope::Scope(const std::string& name)
 :name(name)
 {
-	IDGenerator++;
-
 	timer = new Timer();
 	
 	// Add that Section to tree
 	ProfilerNode* node = new ProfilerNode();
+		node->ID = IDGenerator;
 		node->name = name;
 	
 	// This is a root node !
 	if (lastConstructedTreeNode == nullptr)
 	{
 		node->parent = nullptr;
-		VisualCpuProfiler::GetSingletonInstance()->treeRootComponents.push_back(node);
+
+		auto& treeComps = VisualCpuProfiler::GetSingletonInstance()->treeRootComponents;
+
+		// Search with ID
+		auto it = std::find_if(treeComps.begin(), treeComps.end(), [&](ProfilerNode* node) -> bool
+		{
+			return node->ID == IDGenerator;/* && node->levelOfDeepness == levelOfDeepness*/;
+		});
+
+		if (it == treeComps.end())
+			VisualCpuProfiler::GetSingletonInstance()->treeRootComponents.push_back(node);
+		else
+		{
+			ProfilerNode* tmp = (*it);
+
+			auto savedChilds = tmp->childs;
+
+			if (!tmp->bSelfDelete)
+				delete tmp;
+
+			(*it) = node;
+			(*it)->childs = savedChilds;
+		}
 	}
 	else // This is a child node
 	{
 		node->parent = lastConstructedTreeNode;
-		lastConstructedTreeNode->childs.push_back(node);
+
+		auto& lastConstructedsChilds = lastConstructedTreeNode->childs;
+
+		auto it = std::find_if(lastConstructedsChilds.begin(), lastConstructedsChilds.end(), [&](ProfilerNode* node) -> bool
+		{
+			return node->ID == IDGenerator;
+		});
+
+		if (it == lastConstructedsChilds.end())
+		{
+			lastConstructedsChilds.push_back(node);
+		}
+		else
+		{
+			ProfilerNode* tmp = (*it);
+
+			auto savedChilds = tmp->childs;
+
+			if (!tmp->bSelfDelete)
+				delete tmp;
+
+			(*it) = node;
+			(*it)->childs = savedChilds;
+		}
 	}
 	
+	IDGenerator++;
 	lastConstructedTreeNode = node;
 
 	timer->Start();
@@ -57,17 +103,60 @@ VisualCpuProfiler::ScopeSum::LifeCycleHelper::LifeCycleHelper(ScopeSum* scopeSum
 	if (!lastConstructedTreeNode)
 	{
 		scopeSumProfiler->profilerNode->parent = nullptr;
-		VisualCpuProfiler::GetSingletonInstance()->treeRootComponents.push_back(scopeSumProfiler->profilerNode);
-	}
-	else if (scopeSumProfiler->ID == IDGenerator++)
-	{
-		// scopeSumProfiler static who made "new profilerNode()", so we need to clear it
-		scopeSumProfiler->profilerNode->profiledSeconds = 0;
-		scopeSumProfiler->profilerNode->childs.clear();
-		scopeSumProfiler->profilerNode->parent = nullptr;
 
+		auto& treeComps = VisualCpuProfiler::GetSingletonInstance()->treeRootComponents;
+
+		// Search with ID
+		auto it = std::find_if(treeComps.begin(), treeComps.end(), [&](ProfilerNode* node) -> bool
+		{
+			return node->name == scopeSumProfiler->profilerNode->name;/* && node->levelOfDeepness == levelOfDeepness*/;
+		});
+
+		if (it == treeComps.end())
+		{
+			treeComps.push_back(scopeSumProfiler->profilerNode);
+		}
+		else
+		{
+			ProfilerNode* tmp = (*it);
+
+			auto savedChilds = tmp->childs;
+
+			if (!tmp->bSelfDelete)
+				delete tmp;
+
+			(*it) = scopeSumProfiler->profilerNode;
+			(*it)->childs = savedChilds;
+		}
+	}
+	else// if (scopeSumProfiler->ID == IDGenerator++)
+	{
 		scopeSumProfiler->profilerNode->parent = lastConstructedTreeNode;
-		lastConstructedTreeNode->childs.push_back(scopeSumProfiler->profilerNode);
+
+		auto& lastConstructedsChilds = lastConstructedTreeNode->childs;
+
+		auto it = std::find_if(lastConstructedsChilds.begin(), lastConstructedsChilds.end(), [&](ProfilerNode* node) -> bool
+		{
+			return node->name == scopeSumProfiler->profilerNode->name;
+		});
+
+		if (it == lastConstructedsChilds.end())
+		{
+			scopeSumProfiler->profilerNode->profiledSeconds = 0;
+			lastConstructedTreeNode->childs.push_back(scopeSumProfiler->profilerNode);
+		}
+		else
+		{
+			ProfilerNode* tmp = (*it);
+
+			auto savedChilds = tmp->childs;
+
+			if (!tmp->bSelfDelete)
+				delete tmp;
+
+			(*it) = scopeSumProfiler->profilerNode;
+			(*it)->childs = savedChilds;
+		}
 	}
 
 	lastConstructedTreeNode = scopeSumProfiler->profilerNode;
@@ -92,12 +181,15 @@ VisualCpuProfiler::ScopeSum::ScopeSum(const std::string& name)
 	timer = new Timer();
 
 	profilerNode = new ProfilerNode();
+		profilerNode->bSelfDelete = true;
 		profilerNode->name = name;
+		profilerNode->ID = IDGenerator;
 }
 
 VisualCpuProfiler::ScopeSum::~ScopeSum()
 {
-
+	delete profilerNode;
+	delete timer;
 }
 
 VisualCpuProfiler::VisualCpuProfiler()
@@ -173,10 +265,19 @@ void VisualCpuProfiler::_internalupdateAndPresent()
 		window.setActive(false);
 	}
 
-	for (auto& a : treeRootComponents)
-		delete a;
+	// Traverse tree recursivel
+	//recursiveJob;
+	static std::function<void(ProfilerNode* a)> recursiveJob = [&](ProfilerNode* a)
+	{
+		if (a->bSelfDelete)
+			a->profiledSeconds = 0;
 
-	treeRootComponents.clear();
+		for (auto c : a->childs)
+			recursiveJob(c);
+	};
+
+	for (auto a : treeRootComponents)
+		recursiveJob(a);
 }
 
 void VisualCpuProfiler::_internalDrawSectionTreeRecursively(ProfilerNode* node, size_t& curNodePosY_inout, size_t depth)

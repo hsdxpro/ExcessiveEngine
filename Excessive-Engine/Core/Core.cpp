@@ -187,7 +187,11 @@ Actor* Core::SpawnActor(EntityScript* s)
 
 void Core::DestroyActor(Actor* a)
 {
-	actorsToDestroy.push_back(a);
+	if (!a->IsPendingKill())
+	{
+		a->SetPendingKill(true);
+		actorsToDestroy.push_back(a);
+	}
 }
 
 void Core::DestroyComp(WorldComponent* c)
@@ -446,147 +450,241 @@ void Core::SetCam(CameraComponent* c)
 	defaultGraphicsScene->SetCamera(c->GetCam());
 }
 
-void Core::Update(float deltaTime)
+bool Core::SetLayerCollision(size_t ID0, size_t ID1, bool bEnableCollision)
 {
-	/*
-	// Debugging fcking bullet physics
-	static graphics::IMesh* debugRenderMesh = graphicsEngine->CreateMesh();
-
-	uint32_t nVertices;
-	mm::vec3* nonIndexedVertices = new mm::vec3[999999];
-	u32* indices = new u32[999999];
-	physicsEngine->GetDebugData(nonIndexedVertices, 0, nVertices);
-
-	for (u32 i = 0; i < nVertices; i++)
-		indices[i] = i;
-
-	graphics::IMesh::MeshData data;
-		data.index_data = indices;
-		data.index_num = nVertices;
-		data.vertex_bytes = nVertices * sizeof(mm::vec3);
-		data.vertex_data = nonIndexedVertices;
-		data.vertex_elements_num = 1;
-		graphics::IMesh::ElementDesc d;
-			d.num_components = 3;
-			d.semantic = graphics::IMesh::POSITION;
-		data.vertex_elements = &d;
-		data.mat_ids_num = 1;
-		graphics::IMesh::MaterialGroup matGroup;
-			matGroup.beginFace = 0;
-			matGroup.endFace = nVertices / 3;
-			matGroup.id = 0;
-		data.mat_ids = &matGroup;
-	debugRenderMesh->Update(data);
-	
-	static graphics::IEntity* entity = defaultGraphicsScene->AddEntity();
-	entity->SetMesh(debugRenderMesh);
-
-	delete[] nonIndexedVertices;
-	delete[] indices;
-	*/
-
-	// Destroy actors which on destroy queue
-	for (auto& a : actorsToDestroy)
-	{
-		// Remove from list
-		auto it = std::find(actors.begin(), actors.end(), a);
-		if (it != actors.end())
-			actors.erase(it);
-
-		for (auto& comp : a->GetComponents())
-			DestroyComp(comp);
-
-		delete a;
-	}
-	actorsToDestroy.clear();
-
-	// Update physics
 	if (physicsEngine)
 	{
-		PROFILE_SCOPE("Physics");
-		physicsEngine->Update(deltaTime);
-	}
-
-	// Update components after physics simulation
-	{
-		PROFILE_SCOPE("Component Update After Physics");
-		for (auto a : worldComponents)
-			a->UpdateAfterPhysicsSimulate();
+		physicsEngine->SetLayerCollision(ID0, ID1, bEnableCollision);
+		return true;
 	}
 	
-	// Update graphics
-	if (graphicsEngine)
+	return false;
+}
+
+void Core::Update(float deltaTime)
+{
+	// TODO: Physics engine debug draw
+	mm::vec3* linesFromNonUniqPoints_out;
+	size_t nLines_out;
+	if (physicsEngine->GetDebugData(linesFromNonUniqPoints_out, nLines_out))
 	{
-		PROFILE_SCOPE("Graphics");
+
+	}
+
+
+	// Destroy actors which on destroy queue
+	{
+		PROFILE_SCOPE("Destroying Actors");
+		for (auto& a : actorsToDestroy)
+		{
+			// Remove from list
+			auto it = std::find(actors.begin(), actors.end(), a);
+			if (it != actors.end())
+				actors.erase(it);
+
+			for (auto& comp : a->GetComponents())
+				DestroyComp(comp);
+
+			delete a;
+		}
+		actorsToDestroy.clear();
+	}
+	
+	{
+		PROFILE_SCOPE("Modules Update");
+
+		// Update physics
+		if (physicsEngine)
+		{
+			PROFILE_SCOPE("Physics");
+			physicsEngine->Update(deltaTime);
+		}
+
+		// Update components after physics simulation
+		{
+			PROFILE_SCOPE("Components Update After Physics");
+			for (auto a : worldComponents)
+				a->UpdateAfterPhysicsSimulate();
+		}
+
+		// Update graphics
+		if (graphicsEngine)
+		{
+			PROFILE_SCOPE("Graphics");
 
 #ifdef PROFILE_ENGINE
-		graphicsEngine->GetGapi()->ResetStatesToDefault(); // Jesus the profiler also uses OpenGL temporarily, and mess up the binds etc...
+			graphicsEngine->GetGapi()->ResetStatesToDefault(); // Jesus the profiler also uses OpenGL temporarily, and mess up the binds etc...
 #endif
-		graphicsEngine->Update(deltaTime);
-	}
+			graphicsEngine->Update(deltaTime);
+		}
 
-	// Update sound
-	if (soundEngine)
-	{
-		PROFILE_SCOPE("Sound");
-		soundEngine->Update(deltaTime);
-	}
-		
-	// Update network
-	if (networkEngine)
-	{
-		PROFILE_SCOPE("Network");
-		networkEngine->Update(deltaTime);
-	}
+		// Update sound
+		if (soundEngine)
+		{
+			PROFILE_SCOPE("Sound");
+			soundEngine->Update(deltaTime);
+		}
 
-	// Update actors
-	{
-		PROFILE_SCOPE("Actors Update");
-		for (auto& a : actors)
-			a->Update(deltaTime);
+		// Update network
+		if (networkEngine)
+		{
+			PROFILE_SCOPE("Network");
+			networkEngine->Update(deltaTime);
+		}
 	}
 
 	// Update game logic
 	{
-		PROFILE_SCOPE("Scripts");
-		for (auto& s : scripts)
-			s->Update(deltaTime);
-	}
+		PROFILE_SCOPE("Game Logic");
 
-	{
-		PROFILE_SCOPE("Entity Scripts");
-		for (auto& s : entityScripts)
-			s->Update(deltaTime);
-	}
-
-	// TODO optimize
-	// Process Tasks if time passed, and remove after dispatch
-	{
-		PROFILE_SCOPE("AddTask Dispatch");
-		std::vector<size_t> indicesToDelete;
-		size_t oldSize = tasks.size(); // Cuz you can AddTask in AddTask ^^, tasks.size() can change in loop body
-		for (size_t i = 0; i < oldSize; i++)
+		// Collision, enter, exit calls
 		{
-			tasks[i].timeLeft -= deltaTime;
+			PROFILE_SCOPE("Core & onCollision(Enter, Exit, ...)");
 
-			if (tasks[i].timeLeft <= 0)
+			const std::vector<rPhysicsCollision>& collisionList = physicsEngine->GetCollisionList();
+
+			std::unordered_map<Actor*, Actor*> curFrameActorCollideList;
+			std::vector<rCollision> curFrameActorCollisionData;
+
+			for (auto& collision : collisionList)
 			{
-				tasks[i].callb();
-				indicesToDelete.push_back(i);
+				rCollision colData;
+				colData.contacts = collision.contacts;
+
+				for (auto& a : actors)
+				{
+					if (a->IsPendingKill()) // Leave actors already destroying
+						continue;
+
+					auto& rigidComponents = a->GetComponents<RigidBodyComponent>();
+
+					for (auto& comp : rigidComponents)
+					{
+						if (comp->GetEntity() == collision.entityA)
+						{
+							colData.self = a;
+							colData.selfBody = comp->GetEntity();
+							break;
+						}
+						else if (comp->GetEntity() == collision.entityB)
+						{
+							colData.other = a;
+							colData.otherBody = comp->GetEntity();
+							break;
+						}
+					}
+
+					if (reinterpret_cast<size_t>(colData.self) & reinterpret_cast<size_t>(colData.other))
+						break;
+				}
+
+				Actor* twoActor[2] = { 0, 0 };
+				twoActor[0] = colData.self;
+				twoActor[1] = colData.other;
+
+				for (auto& a : twoActor)
+				{
+					if (!a)
+						continue;
+				
+					// NO prev frame data, YES cur frame data for actor (OnCollisionEnter)
+					if (prevFrameActorCollideList.find(a) == prevFrameActorCollideList.end())
+					{
+						if (a->GetOnCollisionEnter())
+						{
+							PROFILE_SCOPE_SUM("ActorLambda onCollisionEnter");
+							a->GetOnCollisionEnter()(colData);
+						}
+					}
+				
+					// YES cur frame data (OnCollision)
+					if (a->GetOnCollision())
+					{
+						PROFILE_SCOPE_SUM("ActorLambda onCollision");
+						a->GetOnCollision()(colData);
+					}
+				
+					curFrameActorCollideList[a] = a;
+
+					curFrameActorCollisionData.push_back(colData);
+				}
 			}
+
+			// If previous frame collided actor not found in current list, then Call OnCollisionExit
+			for (auto& a : prevFrameActorCollideList)
+			{
+				if (a.first->IsPendingKill())
+					continue;
+
+				auto it = curFrameActorCollideList.find(a.first);
+
+				if (it == curFrameActorCollideList.end())
+				{
+					for (auto& collision : prevFrameActorCollisionData)
+					{
+						if (collision.self == a.first && collision.self->GetOnCollisionExit() != nullptr)
+							collision.self->GetOnCollisionExit()(collision);
+						else if (collision.other == a.first && collision.other->GetOnCollisionExit() != nullptr)
+							collision.other->GetOnCollisionExit()(collision);
+					}
+				}
+			}
+			prevFrameActorCollideList = curFrameActorCollideList;
+			prevFrameActorCollisionData = curFrameActorCollisionData;
 		}
 
-		// Remove dispatched taks, reverse iteration for: indices don't slip away
-		for (i32 i = indicesToDelete.size(); --i >= 0;)
-			tasks.erase(tasks.begin() + indicesToDelete[i]);
-	}
 
+		{
+			PROFILE_SCOPE("Scripts");
+			for (auto& s : scripts)
+				s->Update(deltaTime);
+		}
+
+
+		{
+			PROFILE_SCOPE("Entity Scripts");
+			for (auto& s : entityScripts)
+				s->Update(deltaTime);
+		}
+
+
+		// IMPORTANT: TODO, if we A parent, B child actor attached together, then actorA and actorB will have the same component in the tree
+		// So if B have rigidComponent colliding, ActorA also receive OnCollisionEvent, i don't know if it's expected result...
+		{
+			PROFILE_SCOPE("ActorLambda onUpdate");
+			for (auto& a : actors)
+				if (!a->IsPendingKill() && a->GetOnUpdate())
+					a->GetOnUpdate()(deltaTime);
+		}
+
+		// TODO optimize
+		// Process Tasks if time passed, and remove after dispatch
+		{
+			PROFILE_SCOPE("AddTask Dispatch");
+
+			std::vector<size_t> indicesToDelete;
+			size_t oldSize = tasks.size(); // Cuz you can AddTask in AddTask ^^, tasks.size() can change in loop body
+			for (size_t i = 0; i < oldSize; i++)
+			{
+				tasks[i].timeLeft -= deltaTime;
+
+				if (tasks[i].timeLeft <= 0)
+				{
+					tasks[i].callb();
+					indicesToDelete.push_back(i);
+				}
+			}
+
+			// Remove dispatched taks, reverse iteration for: indices don't slip away
+			for (i32 i = indicesToDelete.size(); --i >= 0;)
+				tasks.erase(tasks.begin() + indicesToDelete[i]);
+		}
+	}
 
 	// Profiling engine
 #ifdef PROFILE_ENGINE
 	VisualCpuProfiler::UpdateAndPresent();
 #endif
-
 
 	// Present opengl window
 	graphicsEngine->GetTargetWindow()->Present();

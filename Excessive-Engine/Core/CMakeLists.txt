@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------------
 # CORE
 #
 # Ricsi kérlek ide írj valami rövid információt!
@@ -8,6 +8,8 @@ message( "-Core: @RICSI A CMAKELISTS-BE IRJ FILE HEADERT!" )
 
 FILE( GLOB_RECURSE sources *.c* )
 FILE( GLOB_RECURSE headers *.h* )
+
+include_directories("../../Externals/include/Bullet3/")
 
 add_library( Core STATIC ${sources} ${headers} )
 

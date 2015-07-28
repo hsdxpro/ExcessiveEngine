@@ -6,6 +6,7 @@
 
 #include <assert.h>
 #include <string>
+#include "BasicTypes.h"
 
 #ifndef BUILD_DLL
 	#define PROFILE_ENGINE
@@ -36,13 +37,17 @@ class VisualCpuProfiler
 public:
 	struct ProfilerNode
 	{
-		ProfilerNode():name("INVALID"), profiledSeconds(0), parent(0){}
+		ProfilerNode() :name("INVALID"), ID(-1), profiledSeconds(0), parent(0), bSelfDelete(false){}
 
 		std::string name;
+		i64 ID;
 
 		double profiledSeconds;
 		std::vector<ProfilerNode*> childs;
 		ProfilerNode* parent;
+
+		// TODO spec
+		bool bSelfDelete;
 	};
 
 	class Scope
@@ -100,6 +105,5 @@ protected:
 public:
 	// Profiler node tree
 	std::vector<ProfilerNode*> treeRootComponents;
-
 	ProfilerNode* lowestPerfSectionNode;
 };
