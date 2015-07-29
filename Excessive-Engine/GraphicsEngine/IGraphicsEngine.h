@@ -1,6 +1,6 @@
 #pragma once
 #include "SupportLibrary\BasicTypes.h"
-#include "PlatformLibrary\IWindow.h"
+#include "PlatformLibrary\Window.h"
 
 class IGapi;
 
@@ -79,7 +79,7 @@ public:
 
 	virtual IGapi* GetGapi() = 0;
 
-	virtual IWindow* GetTargetWindow() = 0;
+	virtual Window* GetTargetWindow() = 0;
 
 	///////////////////////////////////////
 	// interact

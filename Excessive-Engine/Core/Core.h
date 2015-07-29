@@ -78,8 +78,8 @@ public:
 	void DestroyActor(Actor* a);
 	void DestroyComp(WorldComponent* c);
 
-	Actor* SpawnActor_MeshFromFile(const std::wstring& modelFilePath);
-	Actor* SpawnActor_RigidBodyFromFile(const std::wstring& modelFilePath, float mass);
+	Actor* SpawnActor_MeshFromFile(const std::string& modelFilePath);
+	Actor* SpawnActor_RigidBodyFromFile(const std::string& modelFilePath, float mass);
 	Actor* SpawnActor_RigidBodyCapsule(float height, float radius, float mass = 0);
 	Actor* SpawnActor_Camera();
 
@@ -93,8 +93,8 @@ public:
 	template<class ActorScriptClass>
 	EntityScript* AddEntityScript();
 
-	GraphicsComponent*  SpawnComp_MeshFromFile(const std::wstring& modelFilePath);
-	RigidBodyComponent* SpawnComp_RigidBodyFromFile(const std::wstring& modelFilePath, float mass);
+	GraphicsComponent*  SpawnComp_MeshFromFile(const std::string& modelFilePath);
+	RigidBodyComponent* SpawnComp_RigidBodyFromFile(const std::string& modelFilePath, float mass);
 	RigidBodyComponent* SpawnComp_RigidBodyCapsule(float height, float radius, float mass = 0);
 	CameraComponent*	SpawnComp_Camera();
 
@@ -104,7 +104,7 @@ public:
 
 	void Update(float deltaTime);
 
-	IWindow* GetTargetWindow();
+	Window* GetTargetWindow();
 
 	IGraphicsEngine*	GetGraphicsEngine();
 	IPhysicsEngine*	GetPhysicsEngine();
@@ -140,7 +140,7 @@ protected:
 	std::vector<rTask> tasks;
 
 	// Imported models
-	std::unordered_map<std::wstring, rImporter3DData*> importedModels;
+	std::unordered_map<std::string, rImporter3DData*> importedModels;
 
 	// Imported mono sounds
 	std::unordered_map<std::wstring, rMonoSound> importedSounds;

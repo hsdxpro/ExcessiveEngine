@@ -3,6 +3,7 @@
 #include <functional>
 #include "SupportLibrary\BasicTypes.h"
 #include "RigidBodyComponent.h"
+#include <algorithm>
 
 void CollectComponentsRecursively(WorldComponent* c, std::vector<WorldComponent*>& comps);
 
@@ -15,8 +16,16 @@ public:
 	__inline WorldComponent* Attach(WorldComponent* c) { return rootComp->Attach(c); }
 	__inline WorldComponent* Detach() { return rootComp->Detach(); }
 
+	__inline bool AddForce(const mm::vec3& force, const mm::vec3& relPos = { 0, 0, 0 })
+	{
+		return RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		{
+			c->AddForce(force, relPos);
+		});
+	}
+
 	template<class T>
-	__inline bool RunLambdaOnComponents(const std::function<void(T*)>& lambda)
+	__inline bool RunLambdaOnComponents(const std::function<void(T*)>& lambda) const
 	{
 		auto& specTypeComps = GetComponents<T>();
 
@@ -50,6 +59,30 @@ public:
 		});
 	}
 
+	__inline bool SetAngularFactor(float f)
+	{
+		return RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		{
+			c->SetAngularFactor(f);
+		});
+	}
+
+	__inline bool SetKinematic(bool b)
+	{
+		return RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		{
+			c->SetKinematic(b);
+		});
+	}
+
+	__inline bool SetVelocity(const mm::vec3& v)
+	{
+		return RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		{
+			c->SetVelocity(v);
+		});
+	}
+
 	__inline WorldComponent* SetParent(WorldComponent* c) { return rootComp->SetParent(c); }
 
 	__inline void SetRootComp(WorldComponent* c) { rootComp = c; }
@@ -72,12 +105,12 @@ public:
 
 	__inline WorldComponent* GetParent() const { return rootComp->GetParent(); }
 
-	__inline const mm::vec3& GetScaleLocal() const		{ return rootComp->GetScaleLocal(); }
+	__inline const mm::vec3  GetScaleLocal() const		{ return rootComp->GetScaleLocal(); }
 	__inline const mm::mat3& GetSkew()		 const		{ return rootComp->GetSkew(); }
 	__inline const mm::vec3& GetPos()		 const		{ return rootComp->GetPos(); }
 	__inline const mm::quat& GetRot()		 const		{ return rootComp->GetRot(); }
 
-	__inline const mm::vec3& GetRelScaleLocal() const	{ return rootComp->GetScaleLocal(); }
+	__inline const mm::vec3  GetRelScaleLocal() const	{ return rootComp->GetScaleLocal(); }
 	__inline const mm::vec3& GetRelPos()		const	{ return rootComp->GetPos(); }
 	__inline const mm::quat& GetRelRot()		const	{ return rootComp->GetRot(); }
 
@@ -92,7 +125,25 @@ public:
 	__inline mm::vec3 GetDirRightNormed()	const { return rootComp->GetDirRightNormed(); }
 	__inline mm::vec3 GetDirLeftNormed()	const { return rootComp->GetDirLeftNormed(); }
 
-	__inline std::vector<WorldComponent*> GetComponents()
+
+	__inline mm::vec3 GetVelocity() const 
+	{ 
+		mm::vec3 vel(0,0,0);
+		size_t nRigids = 0;
+		RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		{
+			nRigids++;
+			vel += c->GetVelocity();
+		});
+
+		if (nRigids == 0)
+			return vel;
+
+		vel /= nRigids;
+		return vel;
+	}
+
+	__inline std::vector<WorldComponent*> GetComponents() const
 	{ 
 		std::vector<WorldComponent*> result;
 
@@ -103,7 +154,7 @@ public:
 	}
 
 	template<class T>
-	__inline std::vector<T*> GetComponents()
+	__inline std::vector<T*> GetComponents() const
 	{ 
 		auto& allComps = GetComponents();
 

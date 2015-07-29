@@ -4,7 +4,6 @@
 #include <unordered_map>
 #include <map>
 #include "mymath\mm_quat_func.h"
-#include "PlatformLibrary\IWindow.h"
 
 
 #ifdef WIN32
@@ -430,6 +429,6 @@ IGapi* GraphicsEngineRaster::GetGapi() {
 	return gapi;
 }
 
-IWindow* GraphicsEngineRaster::GetTargetWindow() {
+Window* GraphicsEngineRaster::GetTargetWindow() {
 	return targetWindow;
 }

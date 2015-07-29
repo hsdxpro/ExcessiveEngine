@@ -18,11 +18,14 @@ public:
 
 	__inline void SetAngularFactor(float factor)	{ entity->SetAngularFactor(factor); }
 	__inline void SetKinematic(bool bKinematic)		{ entity->SetKinematic(bKinematic); }
+	__inline void SetVelocity(const mm::vec3& v)  { entity->SetVelocity(v); }
 
 	__inline i64 GetCollisionGroup() const { return entity->GetCollisionGroup(); }
 	__inline bool GetIsTrigger() const { return entity->GetIsTrigger(); }
 
 	__inline physics::IRigidBodyEntity* GetEntity() { return entity; }
+
+	__inline mm::vec3 GetVelocity() const { return entity->GetVelocity(); }
 
 public:
 	void _InnerReflectPos() override;

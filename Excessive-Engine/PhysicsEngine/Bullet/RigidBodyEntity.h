@@ -18,8 +18,9 @@ public:
 	void SetTrigger(bool bTrigger) override;
 	void SetCollisionGroup(i64 ID) override;
 
-	void SetAngularFactor(float factor) override;
-	void SetKinematic(bool bKinematic) override;
+	void SetAngularFactor(float f) override;
+	void SetKinematic(bool b) override;
+	void SetVelocity(const mm::vec3& v) override;
 
 	void SetPos(const mm::vec3& v) override;
 	void SetRot(const mm::quat& q) override;
@@ -30,7 +31,9 @@ public:
 	const mm::vec3 GetScaleLocal() const override;
 
 	__inline i64 GetCollisionGroup() const override { return collisionGroupID; }
-	__inline bool GetIsTrigger() const override { return body->getCollisionFlags() & btRigidBody::CF_NO_CONTACT_RESPONSE; }
+	__inline bool GetIsTrigger() const override { return (body->getCollisionFlags() & btRigidBody::CF_NO_CONTACT_RESPONSE) != 0; }
+
+	__inline mm::vec3 GetVelocity() const { return mm::vec3(body->getLinearVelocity().x(), body->getLinearVelocity().y(), body->getLinearVelocity().z()); }
 
 	btRigidBody* GetBody();
 

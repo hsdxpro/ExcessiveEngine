@@ -101,7 +101,7 @@ void Window::SetCursorVisible(bool bVisible)
 	w.setMouseCursorVisible(bVisible);
 }
 
-void Window::SetTitle(const wchar_t* text)
+void Window::SetTitle(const std::string& text)
 {
 	w.setTitle(text);
 }

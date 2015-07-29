@@ -8,6 +8,7 @@
 #include "../Raster/Camera.h"
 
 #include <unordered_set>
+#include "PlatformLibrary/Window.h"
 
 
 
@@ -46,6 +47,6 @@ public:
 	void Update(float deltaTime) override;
 
 	IGapi* GetGapi() override			{return nullptr;}
-	IWindow* GetTargetWindow() override {return nullptr;}
+	Window* GetTargetWindow() override {return nullptr;}
 };
 

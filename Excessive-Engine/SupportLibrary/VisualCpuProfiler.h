@@ -4,6 +4,8 @@
 #include "SFML/Graphics/Text.hpp"
 #include "SFML/Graphics/Font.hpp"
 
+#include "PlatformLibrary/Timer.h"
+
 #include <assert.h>
 #include <string>
 #include "BasicTypes.h"
@@ -57,7 +59,7 @@ public:
 		~Scope();
 
 	protected:
-		ITimer* timer;
+		Timer* timer;
 		std::string name;
 	};
 
@@ -79,7 +81,7 @@ public:
 
 	protected:
 		std::string name;
-		ITimer* timer;
+		Timer* timer;
 		ProfilerNode* profilerNode;
 		size_t ID;
 	};

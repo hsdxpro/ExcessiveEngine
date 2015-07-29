@@ -5,6 +5,7 @@
 #include "Core\RigidBodyComponent.h"
 #include "Core\EntityScript.h"
 #include "Core\GraphicsComponent.h"
+#include "Core\Actor.h"
 
 class PlayerScript : public Script
 {
@@ -19,7 +20,7 @@ protected:
 
 	GraphicsComponent* ak47Graphics;
 
-	RigidBodyComponent* playerCapsule;
+	Actor* playerCapsule;
 
 	// Moving
 	bool bMovingFront;

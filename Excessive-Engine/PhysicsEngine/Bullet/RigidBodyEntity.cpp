@@ -33,17 +33,22 @@ void RigidBodyEntity::SetCollisionGroup(i64 ID)
 	collisionGroupID = ID;
 }
 
-void RigidBodyEntity::SetAngularFactor(float factor)
+void RigidBodyEntity::SetAngularFactor(float f)
 {
-	body->setAngularFactor(factor);
+	body->setAngularFactor(f);
 }
 
-void RigidBodyEntity::SetKinematic(bool bKinematic)
+void RigidBodyEntity::SetKinematic(bool b)
 {
-	if (bKinematic)
+	if (b)
 		body->setFlags(body->getFlags() | btRigidBody::CF_KINEMATIC_OBJECT);
 	else
 		body->setFlags(body->getFlags() & ~btRigidBody::CF_KINEMATIC_OBJECT);
+}
+
+void RigidBodyEntity::SetVelocity(const mm::vec3& v)
+{
+	body->setLinearVelocity({ v.x, v.y, v.z });
 }
 
 void RigidBodyEntity::SetPos(const mm::vec3& v)

@@ -15,6 +15,7 @@ public:
 
 	virtual void SetAngularFactor(float factor) = 0;
 	virtual void SetKinematic(bool bKinematic) = 0;
+	virtual void SetVelocity(const mm::vec3& v) = 0;
 
 	virtual void SetPos(const mm::vec3& v) = 0;
 	virtual void SetRot(const mm::quat& q) = 0;
@@ -26,5 +27,7 @@ public:
 
 	virtual i64 GetCollisionGroup() const = 0;
 	virtual bool GetIsTrigger() const = 0;
+
+	virtual mm::vec3 GetVelocity() const = 0;
 };
 }

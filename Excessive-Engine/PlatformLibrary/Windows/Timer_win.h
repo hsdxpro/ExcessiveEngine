@@ -1,19 +1,18 @@
 // Windows implementation of high resolution timer
 #pragma once
-#include "..\ITimer.h"
 #include "..\..\SupportLibrary\BasicTypes.h"
 #include <chrono>
 
-class Timer : public ITimer
+class Timer
 {
 public:
 	Timer();
 
-	void Start() override;
-	void Reset() override;
+	void Start();
+	void Reset();
 
-	double GetSecondsPassed() override;
-	double GetMicroSecondsPassed() override;
+	double GetSecondsPassed();
+	double GetMicroSecondsPassed();
 
 private:
 	// std::chrono::system_clock::time_point startTime;

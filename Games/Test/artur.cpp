@@ -72,7 +72,7 @@ namespace testartur
 		//soundScene->SetListener(listener);
 		//sound::IEmitter* pMusicSource = soundScene->AddEmitter();
 		//sound::ISoundData* pMusicData = sEngine->CreateSoundData();
-		//auto musicFilePath = Sys::GetWorkDir() + L"Assets/PurgatorysMansion-mono.ogg";
+		//auto musicFilePath = Sys::GetWorkDirW() + L"Assets/PurgatorysMansion-mono.ogg";
 		//if (!pMusicData->Load(musicFilePath.c_str(), sound::StoreMode::STREAMED)) {
 		//	std::cout << "Failed to load: " << musicFilePath.c_str() << std::endl;
 		//	return 1;

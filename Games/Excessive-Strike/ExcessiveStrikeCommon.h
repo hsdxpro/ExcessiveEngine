@@ -5,4 +5,5 @@ enum eES_CollisionGroup : i64
 {
 	GROUND = 0,
 	SHELL,
+	PLAYER,
 };

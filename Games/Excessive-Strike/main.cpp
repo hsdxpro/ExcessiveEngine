@@ -6,7 +6,6 @@
 //3. Próbálj találni végre olyan játék logikai dolgot amire hasznos lehet a WorldComponent mutálás, nem csak az Entity mutálás...
 
 #include "Core\Core.h"
-#include "PlatformLibrary\IWindow.h"
 #include "Core\CameraComponent.h"
 #include "PlatformLibrary\Window.h"
 #include "PlatformLibrary\Timer.h"
@@ -14,6 +13,7 @@
 #include "PlayerScript.h"
 #include "TestLevelScript.h"
 #include "Core\Input.h"
+#include "PlatformLibrary\File.h"
 
 void InitScript();
 
@@ -24,7 +24,7 @@ int main()
 		d.clientW = Sys::GetScreenSize().x; //FULL SCREEN props
 		d.clientH = Sys::GetScreenSize().y; //FULL SCREEN props
 		d.style = eWindowStyle::FULLSCREEN; //FULL SCREEN props
-	IWindow* window = new Window(d);
+	Window* window = new Window(d);
 
 	// Hide hardware cursor for our game on window
 	window->SetCursorVisible(false);
@@ -40,7 +40,7 @@ int main()
 	gCore->InitPhysicsEngineBullet(physicsDesc);
 	gCore->InitSoundEngineSFML();
 	
-	ITimer* timer = new Timer();
+	Timer* timer = new Timer();
 	timer->Start();
 
 	InitScript(); // Manual bullshit, TODO !!!
@@ -57,11 +57,13 @@ int main()
 			switch(evt.msg)
 			{
 			case eWindowMsg::KEY_PRESS:
-				gInput.KeyPress(evt.key);
+				if (evt.key != eKey::INVALID)
+					gInput.KeyPress(evt.key);
 				break;
 
 			case eWindowMsg::KEY_RELEASE:
-				gInput.KeyRelease(evt.key);
+				if (evt.key != eKey::INVALID)
+					gInput.KeyRelease(evt.key);
 				break;
 
 			case eWindowMsg::MOUSE_MOVE:

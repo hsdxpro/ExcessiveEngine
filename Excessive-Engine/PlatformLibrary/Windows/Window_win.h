@@ -1,35 +1,35 @@
 // Windows O.S window
 #pragma once
 
-#include "../IWindow.h"
+#include "../WindowCommon.h"
 
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/Window/Event.hpp"
 
-class Window : public IWindow
+class Window
 {
 public:
 	Window(const rWindow& d);
 
-	bool PopEvent(rWindowEvent& evt_out) override;
+	bool PopEvent(rWindowEvent& evt_out);
 
-	void Close() override;
+	void Close();
 
-	void Present() override;
+	void Present();
 
-	void SetTitle(const wchar_t* text) override;
+	void SetTitle(const std::string& text);
 
-	void SetCursorVisible(bool bVisible) override;
+	void SetCursorVisible(bool bVisible);
 
 	// Getters
-	bool IsOpen() const override;
+	bool IsOpen() const;
 
-	u16 GetClientW() const override;
-	u16 GetClientH() const override;
+	u16 GetClientW() const;
+	u16 GetClientH() const;
 
-	float GetClientAspectRatio() const override;
+	float GetClientAspectRatio() const;
 
-	mm::vec2 GetCenterPos() const override;
+	mm::vec2 GetCenterPos() const;
 
 protected:
 	sf::Window w;

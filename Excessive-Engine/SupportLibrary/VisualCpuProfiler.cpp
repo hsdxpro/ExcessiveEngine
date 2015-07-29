@@ -197,7 +197,7 @@ VisualCpuProfiler::VisualCpuProfiler()
 	window.create(sf::VideoMode(600, 600), "Engine - CpuProfiler");
 	window.setPosition({ 0, 0 });
 
-	bool b = fontArial.loadFromFile(Sys::GetWorkDir() + sf::String("arial.ttf"));
+	bool b = fontArial.loadFromFile(Sys::GetWorkDirW() + sf::String("arial.ttf"));
 	assert(b);
 }
 

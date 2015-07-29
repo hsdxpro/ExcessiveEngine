@@ -55,9 +55,11 @@
 #include "BasicTypes.h"
 #include "mymath/mymath.h"
 #include <vector>
+#include "PlatformLibrary/Windows/File_win.h"
 
 // Flags for importing
-enum class eImporter3DFlag : u32 {
+enum class eImporter3DFlag : u32 
+{
 	VERT_ATTR_POS,
 	VERT_ATTR_TEX0,
 	VERT_ATTR_NORM,
@@ -105,53 +107,161 @@ struct rImporter3DCfg
 
 
 // Output meshes
-struct rImporter3DMesh {
-		rImporter3DMesh(): nVertices(0), vertexSize(0){}
+struct rImporter3DMesh 
+{
+	rImporter3DMesh(): nVertices(0), vertexSize(0){}
+
+
+	~rImporter3DMesh()
+	{
+		delete[] indices; // Delete indices
+
+		for (auto& v : vertexBuffers)
+			delete[] v;
+	}
+
+	bool Serialize(File& file)
+	{
+		file << nVertices;
+		file << vertexSize;
+
+		file << (u64)vertexBuffers.size();
+		for (auto& ptr : vertexBuffers)
+			file.Write(ptr, nVertices * vertexSize);
+
+		file << indexSize;
+		file << nIndices;
+
+		file.Write(indices, indexSize * nIndices);
+
+		bool bSuccess = true;
+		file << (u64)materials.size();
+
+		for (auto& mat : materials)
+			bSuccess &= mat.Serialize(file);
+		return bSuccess;
+	}
+
+	bool DeSerialize(File& file)
+	{
+		nVertices << file;
+		vertexSize << file;
+
+		size_t nVertexBuffers = file.Read<u64>();
+
+		vertexBuffers.resize(nVertexBuffers);
+
+		for (auto& ptr : vertexBuffers)
+		{
+			ptr = new u8[nVertices * vertexSize];
+			file.Read(ptr, nVertices * vertexSize);
+		}
+			
+		indexSize << file;
+		nIndices << file;
+
+		indices = new u8[indexSize * nIndices];
+		file.Read(indices, indexSize * nIndices);
+
+		materials.resize(file.Read<u64>());
+
+		bool bSuccess = true;
+		for (auto& mat : materials)
+			bSuccess &= mat.DeSerialize(file);
+		return bSuccess;
+	}
 
 	// Output material for mesh
-	struct rMaterial {
-			rMaterial(): faceStartIdx(std::numeric_limits<u32>::max()), faceEndIdx(std::numeric_limits<u32>::max()){}
-		u32 faceStartIdx;
-		u32 faceEndIdx;
+	struct rMaterial
+	{
+		rMaterial(): faceStartIdx(std::numeric_limits<u32>::max()), faceEndIdx(std::numeric_limits<u32>::max()){}
 
-		std::wstring texPathDiffuse;
-		std::wstring texPathNormal;
+		bool Serialize(File& file)
+		{
+			file << faceStartIdx;
+			file << faceEndIdx;
+
+			file << texPathDiffuse;
+			file << texPathNormal;
+			return true;
+		}
+
+		bool DeSerialize(File& file)
+		{
+			faceStartIdx << file;
+			faceEndIdx << file;
+
+			texPathDiffuse << file;
+			texPathNormal << file;
+			return true;
+		}
+
+		u64 faceStartIdx;
+		u64 faceEndIdx;
+
+		std::string texPathDiffuse;
+		std::string texPathNormal;
 	};
 
 	// Vertices
-	u32 nVertices;
-	u32 vertexSize;
+	u64 nVertices;
+	u64 vertexSize;
 	std::vector<void*> vertexBuffers;
 
 	// Indices
-	void* indices;// std::vector<u32> indices;
-	u32 indexSize;
-	u32 nIndices;
+	void* indices;
+	u64 indexSize;
+	u64 nIndices;
 
 	// Materials
 	std::vector<rMaterial> materials;
 };
 
 // Importer output 
-struct rImporter3DData {
-		~rImporter3DData() {
+struct rImporter3DData 
+{
+	~rImporter3DData()
+	{
+		for (auto& a : meshes)
+			delete a;
+	}
 
-			for (auto& a : meshes) {
-				delete[] a.indices; // Delete indices
-				a.indices = nullptr;
+	bool Serialize(const std::string& filePath)
+	{
+		File file(filePath, eIO::OUT_BIN_TRUNC);
 
-				for (auto& b : a.vertexBuffers) {
-					delete[] b;
-					b = nullptr;
-				}
-			}
+		file << (u64)meshes.size();
+
+		bool bSuccess = true;
+		for (auto& mesh : meshes)
+			bSuccess &= mesh->Serialize(file);
+
+		file.Close();
+		return bSuccess;
+	}
+
+	bool DeSerialize(const std::string& filePath)
+	{
+		File file(filePath, eIO::IN_BIN);
+
+		meshes.resize(file.Read<u64>());
+
+		bool bSuccess = true;
+		for (auto& mesh : meshes)
+		{
+			mesh = new rImporter3DMesh();
+			bSuccess &= mesh->DeSerialize(file);
 		}
 
-	std::vector<rImporter3DMesh> meshes;
+		file.Close();
+		return bSuccess;
+	}
+
+	std::vector<rImporter3DMesh*> meshes;
 };
 
 class Importer3D
 {
 public:
-	static bool LoadModelFromFile(const std::wstring& path, const rImporter3DCfg& cfg, rImporter3DData& data_out);
+	static bool LoadModelFromFile(const std::string& path, const rImporter3DCfg& cfg, rImporter3DData& data_out);
 };

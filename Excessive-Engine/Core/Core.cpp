@@ -2,6 +2,7 @@
 #include "PlatformLibrary\Sys.h"
 #include "SupportLibrary\VisualCpuProfiler.h"
 #include "Factory.h"
+#include "PlatformLibrary\File.h"
 
 Core* gCore = nullptr;
 
@@ -85,7 +86,7 @@ IGraphicsEngine* Core::InitGraphicsEngineRaster(const rGraphicsEngineRaster& d /
 	// Load error diffuse texture, that we place on materials which fails load their own texture by path
 	texError = graphicsEngine->CreateTexture();
 	
-	bool bSuccess = texError->Load(Sys::GetWorkDir() + L"Assets/error.jpg");
+	bool bSuccess = texError->Load(Sys::GetWorkDir() + "Assets/error.jpg");
 	assert(bSuccess);
 
 	// Default scene and layer for GraphicsEngine
@@ -147,7 +148,7 @@ bool Core::PlaySoundMono(const std::wstring& filePath, float volumeNormedPercent
 	else
 	{
 		soundData = soundEngine->CreateSoundData();
-		if (!soundData->Load((Sys::GetWorkDir() + filePath).c_str(), sound::StoreMode::BUFFERED))
+		if (!soundData->Load((Sys::GetWorkDirW() + filePath).c_str(), sound::StoreMode::BUFFERED))
 		{
 			soundData->Release();
 			return false;
@@ -214,47 +215,37 @@ void Core::DestroyComp(WorldComponent* c)
 Actor* Core::SpawnActor()
 {
 	Actor* actor = new Actor();
-		actors.push_back(actor);
-		return actor;
-}
+	actor->SetEntity(AddEntity());
 
-Actor* Core::SpawnActor_MeshFromFile(const std::wstring& modelFilePath)
-{
-	auto actor = SpawnActor();
-		auto entity = AddEntity();
-		entity->SetRootComp(SpawnComp_MeshFromFile(modelFilePath));
-
-	actor->SetEntity(entity);
+	actors.push_back(actor);
 	return actor;
 }
 
-Actor* Core::SpawnActor_RigidBodyFromFile(const std::wstring& modelFilePath, float mass)
+Actor* Core::SpawnActor_MeshFromFile(const std::string& modelFilePath)
 {
 	auto actor = SpawnActor();
-		auto entity = AddEntity();
-		entity->SetRootComp(SpawnComp_RigidBodyFromFile(modelFilePath, mass));
+		actor->GetEntity()->SetRootComp(SpawnComp_MeshFromFile(modelFilePath));
+	return actor;
+}
 
-	actor->SetEntity(entity);
+Actor* Core::SpawnActor_RigidBodyFromFile(const std::string& modelFilePath, float mass)
+{
+	auto actor = SpawnActor();
+		actor->GetEntity()->SetRootComp(SpawnComp_RigidBodyFromFile(modelFilePath, mass));
 	return actor;
 }
 
 Actor* Core::SpawnActor_RigidBodyCapsule(float height, float radius, float mass /*= 0*/)
 {
 	auto actor = SpawnActor();
-		auto entity = AddEntity();
-		entity->SetRootComp(SpawnComp_RigidBodyCapsule(height, radius, mass));
-
-	actor->SetEntity(entity);
+		actor->GetEntity()->SetRootComp(SpawnComp_RigidBodyCapsule(height, radius, mass));
 	return actor;
 }
 
 Actor* Core::SpawnActor_Camera()
 {
 	auto actor = SpawnActor();
-		auto entity = AddEntity();
-		entity->SetRootComp(SpawnComp_Camera());
-
-	actor->SetEntity(entity);
+		actor->GetEntity()->SetRootComp(SpawnComp_Camera());
 	return actor;
 }
 
@@ -273,8 +264,9 @@ Entity* Core::AddEntity()
 	return p;
 }
 
-GraphicsComponent* Core::SpawnComp_MeshFromFile(const std::wstring& modelFilePath)
+GraphicsComponent* Core::SpawnComp_MeshFromFile(const std::string& modelFilePath)
 {
+	// Check if model already loaded somehow
 	// Check if model already loaded somehow
 	rImporter3DData* modelDesc;
 	auto it = importedModels.find(modelFilePath);
@@ -282,17 +274,29 @@ GraphicsComponent* Core::SpawnComp_MeshFromFile(const std::wstring& modelFilePat
 	{
 		modelDesc = it->second;
 	}
-	else // Not found, import it...
+	else // Not loaded, check bin format first
 	{
-		// Config for importing
-		rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED,
-			eImporter3DFlag::VERT_ATTR_POS,
-			eImporter3DFlag::VERT_ATTR_NORM,
-			eImporter3DFlag::VERT_ATTR_TEX0,
-			eImporter3DFlag::PIVOT_RECENTER });
+		std::string binPath = Sys::GetWorkDir() + modelFilePath.substr(0, modelFilePath.rfind('.')) + ".exm"; // Excessive Mesh
 
-		modelDesc = new rImporter3DData();
-		Importer3D::LoadModelFromFile(Sys::GetWorkDir() + modelFilePath, cfg, *modelDesc);
+		if (File::IsExist(binPath))
+		{
+			modelDesc = new rImporter3DData();
+			modelDesc->DeSerialize(binPath);
+		}
+		else
+		{
+			// Config for importing
+			rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED,
+				eImporter3DFlag::VERT_ATTR_POS,
+				eImporter3DFlag::VERT_ATTR_NORM,
+				eImporter3DFlag::VERT_ATTR_TEX0,
+				eImporter3DFlag::PIVOT_RECENTER });
+
+			modelDesc = new rImporter3DData();
+			Importer3D::LoadModelFromFile(Sys::GetWorkDir() + modelFilePath, cfg, *modelDesc);
+
+			modelDesc->Serialize(binPath);
+		}
 
 		importedModels[modelFilePath] = modelDesc;
 	}
@@ -313,21 +317,21 @@ GraphicsComponent* Core::SpawnComp_MeshFromFile(const std::wstring& modelFilePat
 		graphicsEntity->SetMesh(graphicsMesh);
 
 		// Materials
-		for (auto& importedMaterial : importedMesh.materials)
+		for (auto& importedMaterial : importedMesh->materials)
 		{
 			auto& subMat = material->AddSubMaterial();
 			subMat.base = mm::vec4(1, 1, 1, 1);
 			subMat.t_diffuse = texError; // Default is error texture !!
 
-			if (importedMaterial.texPathDiffuse != L"")
+			if (importedMaterial.texPathDiffuse != "")
 			{
 				// TODO:
 				// turn .bmp references into .jpg (UGLY TMP)
-				std::wstring finalPath;
-				if (importedMaterial.texPathDiffuse.rfind(L".bmp"))
+				std::string finalPath;
+				if (importedMaterial.texPathDiffuse.rfind(".bmp"))
 				{
 					auto idx = importedMaterial.texPathDiffuse.rfind('.');
-					auto jpgExtension = importedMaterial.texPathDiffuse.substr(0, idx + 1) + L"jpg";
+					auto jpgExtension = importedMaterial.texPathDiffuse.substr(0, idx + 1) + "jpg";
 					finalPath = jpgExtension;
 				}
 				else
@@ -336,27 +340,27 @@ GraphicsComponent* Core::SpawnComp_MeshFromFile(const std::wstring& modelFilePat
 				}
 
 				auto texDiffuse = graphicsEngine->CreateTexture();
-				if (texDiffuse->Load(finalPath.c_str()))
+				if (texDiffuse->Load(finalPath))
 					subMat.t_diffuse = texDiffuse;
 			}
 		}
 
 		// Material groups (face assignment)
 		std::vector<graphics::IMesh::MaterialGroup> matIDs;
-		matIDs.resize(importedMesh.materials.size());
+		matIDs.resize(importedMesh->materials.size());
 		for (u32 i = 0; i < matIDs.size(); i++) {
-			matIDs[i].beginFace = importedMesh.materials[i].faceStartIdx;
-			matIDs[i].endFace = importedMesh.materials[i].faceEndIdx;
+			matIDs[i].beginFace = importedMesh->materials[i].faceStartIdx;
+			matIDs[i].endFace = importedMesh->materials[i].faceEndIdx;
 			matIDs[i].id = i;
 		}
 
 		graphics::IMesh::MeshData meshData;
-		meshData.index_data = (u32*)importedMesh.indices;
-		meshData.index_num = importedMesh.nIndices;
+		meshData.index_data = (u32*)importedMesh->indices;
+		meshData.index_num = importedMesh->nIndices;
 		meshData.mat_ids = matIDs.data();
 		meshData.mat_ids_num = matIDs.size();
-		meshData.vertex_bytes = importedMesh.nVertices * importedMesh.vertexSize;
-		meshData.vertex_data = importedMesh.vertexBuffers[0];
+		meshData.vertex_bytes = importedMesh->nVertices * importedMesh->vertexSize;
+		meshData.vertex_data = importedMesh->vertexBuffers[0];
 
 		graphics::IMesh::ElementDesc elements[] = {
 			graphics::IMesh::POSITION, 3,
@@ -375,7 +379,7 @@ GraphicsComponent* Core::SpawnComp_MeshFromFile(const std::wstring& modelFilePat
 	return c;
 }
 
-RigidBodyComponent* Core::SpawnComp_RigidBodyFromFile(const std::wstring& modelFilePath, float mass)
+RigidBodyComponent* Core::SpawnComp_RigidBodyFromFile(const std::string& modelFilePath, float mass)
 {
 	// Check if model already loaded somehow
 	rImporter3DData* modelDesc;
@@ -384,17 +388,29 @@ RigidBodyComponent* Core::SpawnComp_RigidBodyFromFile(const std::wstring& modelF
 	{
 		modelDesc = it->second;
 	}
-	else // Not found, import it...
+	else // Not loaded, check bin format first
 	{
-		// Config for importing
-		rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED,
-			eImporter3DFlag::VERT_ATTR_POS,
-			eImporter3DFlag::VERT_ATTR_NORM,
-			eImporter3DFlag::VERT_ATTR_TEX0,
-			eImporter3DFlag::PIVOT_RECENTER });
+		std::string binPath = Sys::GetWorkDir() + modelFilePath.substr(0, modelFilePath.rfind('.')) + ".exm"; // Excessive Mesh
 
-		modelDesc = new rImporter3DData();
-		Importer3D::LoadModelFromFile(Sys::GetWorkDir() + modelFilePath, cfg, *modelDesc);
+		if (File::IsExist(binPath))
+		{
+			modelDesc = new rImporter3DData();
+			modelDesc->DeSerialize(binPath);
+		}
+		else
+		{
+			// Config for importing
+			rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED,
+				eImporter3DFlag::VERT_ATTR_POS,
+				eImporter3DFlag::VERT_ATTR_NORM,
+				eImporter3DFlag::VERT_ATTR_TEX0,
+				eImporter3DFlag::PIVOT_RECENTER });
+
+			modelDesc = new rImporter3DData();
+			Importer3D::LoadModelFromFile(Sys::GetWorkDir() + modelFilePath, cfg, *modelDesc);
+
+			modelDesc->Serialize(binPath);
+		}
 
 		importedModels[modelFilePath] = modelDesc;
 	}
@@ -407,19 +423,15 @@ RigidBodyComponent* Core::SpawnComp_RigidBodyFromFile(const std::wstring& modelF
 	// Little hekk, we know it's INTERLEAVED, cuz  SpawnCompRigidBodyFromFile and SpawnCompMeshFromFile implementation
 	//if (cfg.isContain(eImporter3DFlag::VERT_BUFF_INTERLEAVED)) // Interleaved buffer? Okay gather positions from vertices stepping with vertex stride
 	{
-		vertices = new mm::vec3[mesh.nVertices];
-		for (u32 i = 0; i < mesh.nVertices; i++)
-			vertices[i] = *(mm::vec3*)((u8*)mesh.vertexBuffers[0] + i * mesh.vertexSize);
+		vertices = new mm::vec3[mesh->nVertices];
+		for (u32 i = 0; i < mesh->nVertices; i++)
+			vertices[i] = *(mm::vec3*)((u8*)mesh->vertexBuffers[0] + i * mesh->vertexSize);
 	}
-	//else
-	//{
-	//	vertices = (mm::vec3*)mesh.vertexBuffers[0]; // Non interleaved buffers, cool 0.th buffer will be position
-	//}
 
 	if (mass == 0)
-		rigidEntity = physicsEngine->AddEntityRigidStatic(vertices, mesh.nVertices, mesh.indices, mesh.indexSize, mesh.nIndices);
+		rigidEntity = physicsEngine->AddEntityRigidStatic(vertices, mesh->nVertices, mesh->indices, mesh->indexSize, mesh->nIndices);
 	else
-		rigidEntity = physicsEngine->AddEntityRigidDynamic(vertices, mesh.nVertices, mass);
+		rigidEntity = physicsEngine->AddEntityRigidDynamic(vertices, mesh->nVertices, mass);
 
 	delete vertices;
 	vertices = nullptr; // Important
@@ -477,10 +489,37 @@ void Core::Update(float deltaTime)
 		PROFILE_SCOPE("Destroying Actors");
 		for (auto& a : actorsToDestroy)
 		{
-			// Remove from list
+			// Remove from actors
 			auto it = std::find(actors.begin(), actors.end(), a);
 			if (it != actors.end())
 				actors.erase(it);
+
+			// Remove from prevFrameCollision datas (Actor*)
+			auto it2 = prevFrameActorCollideList.begin();
+			while (it2 != prevFrameActorCollideList.end())
+			{
+				if (it2->first == a)
+				{
+					it2 = prevFrameActorCollideList.erase(it2);
+					continue;
+				}
+
+				it2++;
+			}
+				
+
+			// Remove from prev frame collisionData
+			auto it3 = prevFrameActorCollisionData.begin();
+			while (it3 != prevFrameActorCollisionData.end())
+			{
+				if (it3->self == a || it3->other == a)
+				{
+					it3 = prevFrameActorCollisionData.erase(it3);
+					continue;
+				}
+					
+				it3++;
+			}
 
 			for (auto& comp : a->GetComponents())
 				DestroyComp(comp);
@@ -690,7 +729,7 @@ void Core::Update(float deltaTime)
 	graphicsEngine->GetTargetWindow()->Present();
 }
 
-IWindow* Core::GetTargetWindow()
+Window* Core::GetTargetWindow()
 {
 	return graphicsEngine->GetTargetWindow();
 }

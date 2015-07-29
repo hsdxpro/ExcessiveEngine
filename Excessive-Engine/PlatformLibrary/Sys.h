@@ -136,7 +136,8 @@ public:
 	static void			SetCursorPos(const mm::uvec2& pos);
 
 	static void*		GetDLLProcAddress(DLLHandle h, const std::string& procName);
-	static std::wstring	GetWorkDir();
+	static std::wstring	GetWorkDirW();
+	static std::string	GetWorkDir();
 	static mm::ivec2	GetCursorPos();
 	static mm::ivec2	GetScreenSize();
 };

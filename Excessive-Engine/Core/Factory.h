@@ -1,4 +1,4 @@
-﻿// IWindow, IEngine, etc interfacek mögött levő példányok létrehozására használatos
+﻿// Window, IEngine, etc interfacek mögött levő példányok létrehozására használatos
 #pragma once
 
 #include "GraphicsEngine/Raster/GraphicsEngineRaster.h"

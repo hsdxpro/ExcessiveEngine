@@ -37,12 +37,12 @@ public:
 
 	__inline WorldComponent* GetParent() const {return parent;}
 
-	__inline const mm::vec3& GetScaleLocal() const		{return transform.GetScaleLocal();}
+	__inline const mm::vec3  GetScaleLocal() const		{return transform.GetScaleLocal();}
 	__inline const mm::mat3& GetSkew()		 const		{return transform.GetSkew();}
 	__inline const mm::vec3& GetPos()		 const		{return transform.GetPos();}
 	__inline const mm::quat& GetRot()		 const		{return transform.GetRot();}
 
-	__inline const mm::vec3& GetRelScaleLocal() const	{return relTransform.GetScaleLocal();}
+	__inline const mm::vec3  GetRelScaleLocal() const	{return relTransform.GetScaleLocal();}
 	__inline const mm::vec3& GetRelPos()		const	{return relTransform.GetPos();}
 	__inline const mm::quat& GetRelRot()		const	{return relTransform.GetRot();}
 	

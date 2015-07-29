@@ -32,11 +32,36 @@ void* Sys::GetDLLProcAddress(DLLHandle h, const std::string& procName)
 	return (void*)GetProcAddress((HMODULE)h, procName.c_str());
 }
 
-std::wstring Sys::GetWorkDir() 
+std::wstring Sys::GetWorkDirW() 
 {
 	// TODO make define or constant somewhere (128)
 	wchar_t path[128];
 	GetModuleFileNameW(0, path, 128);
+
+	// Preserve only directory
+	for (int i = 127; i > 0; i--)
+		if (path[i] == '\\' && i < 127)
+		{
+			path[i + 1] = 0;
+			break;
+		}
+
+	// TODO: lassít, de legalább szép replace '\\' with '/'
+	int idx = 0;
+	while (path[idx] != '\0') {
+		if (path[idx] == '\\')
+			path[idx] = '/';
+		idx++;
+	}
+
+	return path;
+}
+
+std::string	Sys::GetWorkDir()
+{
+	// TODO make define or constant somewhere (128)
+	char path[128];
+	GetModuleFileNameA(0, path, 128);
 
 	// Preserve only directory
 	for (int i = 127; i > 0; i--)

@@ -40,14 +40,14 @@ struct rRectNormed
 struct rGraphicsEngineRaster 
 {
 	eGapiType		gapiType;
-	IWindow*		targetWindow;
+	Window*			targetWindow;
 	rRectNormed		renderRegion;
 };
 
 struct rGraphicsEngineRasterData
 {
 	IGapi*			gapi;
-	IWindow*		targetWindow;
+	Window*		targetWindow;
 	rRectNormed		renderRegion;
 };
 
@@ -80,13 +80,12 @@ public:
 
 	IGapi* GetGapi() override;
 
-	IWindow* GetTargetWindow() override;
+	Window* GetTargetWindow() override;
 private:
 	IGapi* gapi;
 	std::vector<Layer> layers;
 
-	// ? TMP
-	IWindow* targetWindow;
+	Window* targetWindow;
 	rRectNormed	renderRegion;
 
 	// WARNING: temporary code

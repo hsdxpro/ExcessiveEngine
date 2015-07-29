@@ -44,23 +44,23 @@ void Texture::Release() {
 ////////////////////////////////////////////////////////////////////////////////
 // load
 
-bool Texture::Load(const std::wstring& file_path) {
+bool Texture::Load(const std::string& file_path) {
 	// clean up old contents, if any
 	if (tex) {
 		Reset();
 	}
 
-	const wchar_t* path = file_path.c_str();
-
-	// load image with sfml
-	size_t len = wcslen(path);
-	char* ansiPath = new char[len+1];
-	size_t conved;
-	wcstombs_s(&conved, ansiPath, len + 1, path, len + 1);
+	//const wchar_t* path = file_path.c_str();
+	//
+	//// load image with sfml
+	//size_t len = wcslen(path);
+	//char* ansiPath = new char[len+1];
+	//size_t conved;
+	//wcstombs_s(&conved, ansiPath, len + 1, path, len + 1);
 
 	sf::Image im;
-	bool isLoaded = im.loadFromFile(ansiPath);
-	delete[] ansiPath;
+	bool isLoaded = im.loadFromFile(file_path.c_str());
+	
 	if (!isLoaded) {
 		return false;
 	}

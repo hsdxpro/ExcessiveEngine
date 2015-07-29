@@ -9,7 +9,7 @@
 #include <fstream>
 #include <map>
 
-bool Importer3D::LoadModelFromFile(const std::wstring& path, const rImporter3DCfg& cfg, rImporter3DData& data_out) {
+bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg& cfg, rImporter3DData& data_out) {
 	Assimp::Importer importer;
 
 	std::ifstream is(path, std::ios::ate);
@@ -93,8 +93,8 @@ bool Importer3D::LoadModelFromFile(const std::wstring& path, const rImporter3DCf
 	size_t vertexOffset = 0;
 
 	// TODO: hack, will be combined to 1 mesh always, todo
-	rImporter3DMesh mesh_out;
-		mesh_out.materials.resize(nMeshes);
+	rImporter3DMesh* mesh_out = new rImporter3DMesh();
+		mesh_out->materials.resize(nMeshes);
 
 	// Each mesh
 	for (size_t i = 0; i < nMeshes; i++)
@@ -103,44 +103,44 @@ bool Importer3D::LoadModelFromFile(const std::wstring& path, const rImporter3DCf
 
 		// Get mesh material infos
 		//rImporter3DMesh::rMaterial material;
-		mesh_out.materials[i].faceStartIdx = globalIndicesIdx / 3;
-		mesh_out.materials[i].faceEndIdx = globalIndicesIdx / 3 + mesh->mNumFaces;
+		mesh_out->materials[i].faceStartIdx = globalIndicesIdx / 3;
+		mesh_out->materials[i].faceEndIdx = globalIndicesIdx / 3 + mesh->mNumFaces;
 
 		// Get Diffuse texture path
 		aiString diffusePath;
 		if (aiReturn_SUCCESS == scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &diffusePath)) 
 		{
-			wchar_t unicodePath[256];
-			size_t nConvertedChar;
-			mbstowcs_s(&nConvertedChar, unicodePath, diffusePath.C_Str(), 256);
+			//wchar_t unicodePath[256];
+			//size_t nConvertedChar;
+			//mbstowcs_s(&nConvertedChar, unicodePath, diffusePath.C_Str(), 256);
 
-			std::wstring unicodePathStr = unicodePath;
+			std::string unicodePathStr = diffusePath.C_Str();
 			auto pos = unicodePathStr.rfind('\\');
 
 			if (pos != std::wstring::npos)
 				unicodePathStr = unicodePathStr.substr(pos + 1, unicodePathStr.size());
 
-			std::wstring modelDirectory = path;
+			std::string modelDirectory = path;
 			auto chIdx = modelDirectory.rfind('/');
 			modelDirectory = modelDirectory.substr(0, chIdx + 1);
 
 			// Really fucking absolute path
-			mesh_out.materials[i].texPathDiffuse = modelDirectory + unicodePathStr;
+			mesh_out->materials[i].texPathDiffuse = modelDirectory + unicodePathStr;
 		}
 
 		// Get Normal texture path
 		aiString normalPath;
 		if (aiReturn_SUCCESS == scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_NORMALS, 0, &normalPath)) 
 		{
-			wchar_t unicodePath[256];
-			size_t nConvertedChar;
-			mbstowcs_s(&nConvertedChar, unicodePath, normalPath.C_Str(), 256);
+			/// wchar_t unicodePath[256];
+			/// size_t nConvertedChar;
+			/// mbstowcs_s(&nConvertedChar, unicodePath, normalPath.C_Str(), 256);
 
-			std::wstring modelDirectory = path;
+			std::string modelDirectory = path;
 			auto chIdx = modelDirectory.rfind('/');
 			modelDirectory = modelDirectory.substr(0, chIdx);
 
-			mesh_out.materials[i].texPathNormal = modelDirectory + unicodePath;
+			mesh_out->materials[i].texPathNormal = modelDirectory + normalPath.C_Str();
 		}
 
 		bool bHasPos = mesh->HasPositions();
@@ -229,13 +229,14 @@ bool Importer3D::LoadModelFromFile(const std::wstring& path, const rImporter3DCf
 		}
 	}
 	
-	mesh_out.indices = indices;
-	mesh_out.nIndices = nIndices;
-	mesh_out.indexSize = sizeof(indices[0]);
-	mesh_out.nVertices = nVertices;
-	mesh_out.vertexSize = vertexSize;
-	mesh_out.vertexBuffers = { vertices };
-		data_out.meshes = { mesh_out };
+	mesh_out->indices = indices;
+	mesh_out->nIndices = nIndices;
+	mesh_out->indexSize = sizeof(indices[0]);
+	mesh_out->nVertices = nVertices;
+	mesh_out->vertexSize = vertexSize;
+	mesh_out->vertexBuffers = { vertices };
+
+	data_out.meshes = { mesh_out };
 
 	return true;
 }

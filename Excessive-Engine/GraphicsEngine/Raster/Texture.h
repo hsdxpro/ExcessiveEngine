@@ -14,7 +14,7 @@ public:
 	void Acquire();
 	void Release() override;
 
-	bool Load(const std::wstring& file_path) override;
+	bool Load(const std::string& file_path) override;
 
 	void Reset() override;
 
