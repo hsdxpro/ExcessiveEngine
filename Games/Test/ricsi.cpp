@@ -35,19 +35,19 @@ int Ricsi()
 	IGraphicsEngine* gEngine = gCore->InitGraphicsEngineRaster(gDesc);
 
 	// Create camera
-	CameraComponent* cam = gCore->SpawnCompCamera();
+	CameraComponent* cam = gCore->SpawnComp_Camera();
 		cam->SetFOV(70 / 180.f*3.1415926f);
 		cam->SetNearPlane(0.2f);
 		cam->SetFarPlane(2000);
 		cam->SetPos(mm::vec3(0, -3, 1));
 	gCore->SetCam(cam);
 
-	static const wchar_t assetName[] = L"Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
-	static const wchar_t teapotModelPath[] = L"Assets/box.dae"; // Assets/teapot.dae
-	static const wchar_t ak47ModelPath[] = L"Assets/ak47/ak.obj"; // Assets/teapot.dae
+	static const char assetName[] = "Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
+	static const char teapotModelPath[] = "Assets/box.dae"; // Assets/teapot.dae
+	static const char ak47ModelPath[] = "Assets/ak47/ak.obj"; // Assets/teapot.dae
 
-	gCore->SpawnCompRigidBodyFromFile(assetName, 0)->Attach(gCore->SpawnCompMeshFromFile(assetName));
-	gCore->SpawnCompMeshFromFile(L"Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
+	gCore->SpawnComp_RigidBodyFromFile(assetName, 0)->Attach(gCore->SpawnComp_MeshFromFile(assetName));
+	gCore->SpawnComp_MeshFromFile("Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
 
 	// Run the main loop
 	rWindowEvent ev;
@@ -84,7 +84,7 @@ int Ricsi()
 		last_frame = now;
 
 		int fps = 1 / elapsed + 0.5;
-		std::wstringstream title_ss;
+		std::stringstream title_ss;
 		static float camAngleX = 0; // upwards/downwards looking
 		static float camAngleZ = 0; // orientation
 		title_ss << L"Excessive-Engine - Ricsi teszt | FPS=" << fps << L" | Pitch=" << camAngleX * 180 / 3.141592653f << L"° Facing=" << camAngleZ * 180 / 3.141592653f << L"°";
@@ -98,8 +98,8 @@ int Ricsi()
 					bRMBDown = true;
 				else if (ev.mouseBtn == eMouseBtn::LEFT)
 				{
-					auto box = gCore->SpawnCompRigidBodyFromFile(teapotModelPath, 10);
-					box->Attach(gCore->SpawnCompMeshFromFile(teapotModelPath));
+					auto box = gCore->SpawnComp_RigidBodyFromFile(teapotModelPath, 10);
+					box->Attach(gCore->SpawnComp_MeshFromFile(teapotModelPath));
 
 					box->SetPos(cam->GetPos() + cam->GetCam()->GetDirFrontNormed() * 3); // 3 méterrel elénk
 					box->SetScaleLocal(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
@@ -131,7 +131,7 @@ int Ricsi()
 					mm::vec3 newViewDir(0, 1, 0);
 
 					// MY HEKK
-					angleZ = 3.1415 / 2;
+					angleZ = 3.1415f / 2;
 
 					mm::mat3 rotAroundX(1,		0,			0,
 										0, cos(angleX), -sin(angleX),

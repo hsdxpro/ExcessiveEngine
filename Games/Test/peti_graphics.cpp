@@ -2,14 +2,13 @@
 
 #include <iostream>
 
-#include <GraphicsEngine/IEngine.h>
-using namespace graphics;
 
 #ifdef _MSC_VER
 #define _WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
 #endif
+#include "GraphicsEngine\IGraphicsEngine.h"
 
 using namespace std;
 
@@ -23,7 +22,7 @@ int PetiGraphics() {
 		return 1;
 	}
 	// load function
-	IEngine*(*CreateGraphicsEngine)() = (IEngine*(*)())GetProcAddress(module, "CreateGraphicsEngine");
+	IGraphicsEngine*(*CreateGraphicsEngine)() = (IGraphicsEngine*(*)())GetProcAddress(module, "CreateGraphicsEngine");
 	if (CreateGraphicsEngine == nullptr) {
 		cout << "Could not find function in module, code " << GetLastError() << endl;
 		return 2;

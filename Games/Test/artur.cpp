@@ -37,7 +37,7 @@ namespace testartur
 		IGraphicsEngine* gEngine = gCore->InitGraphicsEngineRaster(gDesc);
 
 		// Create camera
-		CameraComponent* cam = gCore->SpawnCompCamera();
+		CameraComponent* cam = gCore->SpawnComp_Camera();
 		cam->SetFOV(70 / 180.f*3.1415926f);
 		//cam->SetAspectRatio(window->GetClientAspectRatio());
 		cam->SetNearPlane(0.2f);
@@ -51,17 +51,17 @@ namespace testartur
 		//gEngine->AddLayer(layer);
 
 		//*/
-		static const wchar_t assetName[] = L"Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
-		static const wchar_t teapotModelPath[] = L"Assets/box.dae"; // Assets/teapot.dae
+		static const char assetName[] = "Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
+		static const char teapotModelPath[] = "Assets/box.dae"; // Assets/teapot.dae
 		/*/
 		static const wchar_t assetName[] = L"Assets/teapot.dae";
 		//*/
 		//Entity* simpleEntity = gCore->AddActor();
-		gCore->SpawnCompRigidBodyFromFile(assetName, 0)->Attach(gCore->SpawnCompMeshFromFile(assetName));
+		gCore->SpawnComp_RigidBodyFromFile(assetName, 0)->Attach(gCore->SpawnComp_MeshFromFile(assetName));
 
-		gCore->SpawnCompMeshFromFile(L"Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
+		gCore->SpawnComp_MeshFromFile("Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
 
-		auto pMusicSourceRepresenterModel = gCore->SpawnCompMeshFromFile(teapotModelPath);
+		auto pMusicSourceRepresenterModel = gCore->SpawnComp_MeshFromFile(teapotModelPath);
 		pMusicSourceRepresenterModel->SetScaleLocal({ 0.1f, 0.1f, 0.1f });
 		pMusicSourceRepresenterModel->SetPos(musicPosition);
 
@@ -84,9 +84,9 @@ namespace testartur
 
 		sound::IEmitter* pFireSound = soundScene->AddEmitter();
 		sound::ISoundData* pFireSoundData = sEngine->CreateSoundData();
-		auto fireSoundFilePath = L"Assets/GUN_FIRE-stereo.ogg";
-		if (!pFireSoundData->Load(fireSoundFilePath.c_str(), sound::StoreMode::BUFFERED)) {
-			std::cout << "Failed to load: " << fireSoundFilePath.c_str() << std::endl;
+		auto fireSoundFilePath = "Assets/GUN_FIRE-stereo.ogg";
+		if (!pFireSoundData->Load(fireSoundFilePath, sound::StoreMode::BUFFERED)) {
+			std::cout << "Failed to load: " << fireSoundFilePath << std::endl;
 			return 1;
 		}
 		pFireSound->SetSoundData(pFireSoundData);
@@ -121,7 +121,7 @@ namespace testartur
 			last_frame = now;
 
 			int fps = 1 / elapsed + 0.5;
-			std::wstringstream title_ss;
+			std::stringstream title_ss;
 			static float camAngleX = 0; // upwards/downwards looking
 			static float camAngleZ = 0; // orientation
 			title_ss << L"Excessive-Engine - artur test | FPS=" << fps << L" | Pitch=" << camAngleX * 180 / 3.141592653f << L"° Facing=" << camAngleZ * 180 / 3.141592653f << L"°";
