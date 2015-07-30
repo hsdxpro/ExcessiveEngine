@@ -26,7 +26,6 @@ Input::Input()
 void Input::KeyPress(eKey key)
 {
 	keyDownArray[(size_t)key].bDownCurFrame = true;
-	keyDownArray[(size_t)key].bDownPrevFrame = false;
 
 	// Dispatch registered callbacks binded to that key
 	for (auto& info : onKeyPressedCallbacks)
@@ -197,7 +196,7 @@ void Input::ClearFrameData()
 	// Updating key downs with general equation
 	for (auto& keyDownInfo : keyDownArray)
 		keyDownInfo.bDownPrevFrame = keyDownInfo.bDownCurFrame | (keyDownInfo.bDownPrevFrame & keyDownInfo.bDownCurFrame);
-		
+	
 	// Updating mouse downs with general equation
 	bMouseRightDownPrevFrame = bMouseRightDownCurFrame | (bMouseRightDownPrevFrame & bMouseRightDownCurFrame);
 	bMouseLeftDownPrevFrame = bMouseLeftDownCurFrame | (bMouseLeftDownPrevFrame & bMouseLeftDownCurFrame);

@@ -70,7 +70,7 @@ public:
 	//RigidBodyComponentType* CreateCompRigidBodyType(RigidBodyComponent* comp);
 	//CameraComponentType*	  CreateCompCameraType(CameraComponent* comp);
 
-	bool PlaySoundMono(const std::wstring& filePath, float volumeNormedPercent = 1, bool bLoop = false);
+	sound::IEmitter* CreateSoundMono(const std::string& filePath, float volumeNormedPercent = 1, bool bLoop = false);
 
 	Actor* SpawnActor();
 	Actor* SpawnActor(EntityScript* s);
@@ -143,7 +143,7 @@ protected:
 	std::unordered_map<std::string, rImporter3DData*> importedModels;
 
 	// Imported mono sounds
-	std::unordered_map<std::wstring, rMonoSound> importedSounds;
+	std::unordered_map<std::string, rMonoSound> importedSounds;
 
 	// The default graphicsScene Core created for us to spawn graphics things into
 	graphics::IScene* defaultGraphicsScene;

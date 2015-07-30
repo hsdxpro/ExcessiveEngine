@@ -32,6 +32,7 @@ public:
 	mm::vec3 GetVel() const override;
 	float GetVolume() const override;
 	bool GetLooped() const override;
+	bool IsEmitting() const override;
 
 	void SetSoundData(sound::ISoundData* data) override;
 	
@@ -42,6 +43,7 @@ public:
 protected:
 	mm::vec3 pos;
 	mm::vec3 vel;
+	bool bEmitting;
 
 	ref_ptr<SoundData> soundData;
 	SFMLCommonSoundEmitter* pSFMLSoundSource;

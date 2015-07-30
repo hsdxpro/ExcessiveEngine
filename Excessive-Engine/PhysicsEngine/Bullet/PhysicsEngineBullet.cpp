@@ -66,7 +66,7 @@ void PhysicsEngineBullet::Release()
 
 void PhysicsEngineBullet::Update(float deltaTime)
 {
-	world->stepSimulation(1.f / 30, 5);
+	world->stepSimulation(1.f / 30, 20);
 
 	contactList.clear();
 
@@ -88,7 +88,7 @@ void PhysicsEngineBullet::Update(float deltaTime)
 			for (int j = 0; j < numContacts; j++)
 			{
 				btManifoldPoint& pt = contactManifold->getContactPoint(j);
-				if (pt.getDistance() < 0.f)
+				//if (pt.getDistance() < 0.f)
 				{
 					//Fill contact data
 					rContactPoint c;
@@ -103,6 +103,8 @@ void PhysicsEngineBullet::Update(float deltaTime)
 					const btVector3& normalOnB = pt.m_normalWorldOnB;
 				}
 			}
+
+			//if (colInfo.contacts.size() != 0)
 			contactList.push_back(colInfo);
 		}
 	}

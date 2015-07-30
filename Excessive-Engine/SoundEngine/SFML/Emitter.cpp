@@ -8,6 +8,7 @@
 Emitter::Emitter() {
 	//TODO initialize sound source to a valid, but meaningless instance, so that it doesnt have to check for null pointer every time
 	pSFMLSoundSource = nullptr;
+	bEmitting = false;
 }
 
 Emitter::~Emitter() {
@@ -32,14 +33,17 @@ void Emitter::SetVolume(float volume) {
 
 void Emitter::Start() {
 	pSFMLSoundSource->Start();
+	bEmitting = true;
 }
 
 void Emitter::Pause() {
 	pSFMLSoundSource->Pause();
+	bEmitting = false;
 }
 
 void Emitter::Stop() {
 	pSFMLSoundSource->Stop();
+	bEmitting = false;
 }
 
 mm::vec3 Emitter::GetPos() const {
@@ -56,6 +60,10 @@ float Emitter::GetVolume() const {
 
 bool Emitter::GetLooped() const {
 	return pSFMLSoundSource->GetLooped();
+}
+
+bool Emitter::IsEmitting() const {
+	return bEmitting;
 }
 
 void Emitter::SetSoundData(sound::ISoundData* data)  {

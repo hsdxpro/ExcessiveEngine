@@ -134,7 +134,7 @@ ISoundEngine* Core::InitSoundEngineSFML(const rSoundEngine& d /*= rSoundEngine()
 	return soundEngine;
 }
 
-bool Core::PlaySoundMono(const std::wstring& filePath, float volumeNormedPercent /*= 1*/, bool bLoop /*= false*/)
+sound::IEmitter* Core::CreateSoundMono(const std::string& filePath, float volumeNormedPercent /*= 1*/, bool bLoop /*= false*/)
 {
 	sound::IEmitter* soundEmitter;
 	sound::ISoundData* soundData;
@@ -148,7 +148,7 @@ bool Core::PlaySoundMono(const std::wstring& filePath, float volumeNormedPercent
 	else
 	{
 		soundData = soundEngine->CreateSoundData();
-		if (!soundData->Load((Sys::GetWorkDirW() + filePath).c_str(), sound::StoreMode::BUFFERED))
+		if (!soundData->Load((Sys::GetWorkDir() + filePath).c_str(), sound::StoreMode::BUFFERED))
 		{
 			soundData->Release();
 			return false;
@@ -165,9 +165,7 @@ bool Core::PlaySoundMono(const std::wstring& filePath, float volumeNormedPercent
 	}
 
 	soundEmitter->SetVolume(volumeNormedPercent);
-	soundEmitter->Start();
-
-	return true;
+	return soundEmitter;
 }
 
 Actor* Core::SpawnActor(EntityScript* s)
@@ -589,6 +587,8 @@ void Core::Update(float deltaTime)
 			{
 				rCollision colData;
 				colData.contacts = collision.contacts;
+				colData.selfBody = collision.entityA;
+				colData.otherBody = collision.entityB;
 
 				for (auto& a : actors)
 				{
@@ -602,13 +602,11 @@ void Core::Update(float deltaTime)
 						if (comp->GetEntity() == collision.entityA)
 						{
 							colData.self = a;
-							colData.selfBody = comp->GetEntity();
 							break;
 						}
 						else if (comp->GetEntity() == collision.entityB)
 						{
 							colData.other = a;
-							colData.otherBody = comp->GetEntity();
 							break;
 						}
 					}
@@ -668,6 +666,7 @@ void Core::Update(float deltaTime)
 					}
 				}
 			}
+
 			prevFrameActorCollideList = curFrameActorCollideList;
 			prevFrameActorCollisionData = curFrameActorCollisionData;
 		}

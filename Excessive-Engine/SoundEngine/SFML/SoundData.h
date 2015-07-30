@@ -15,7 +15,7 @@ public:
 	void Acquire();
 	void Release() override;
 	
-	bool Load(const wchar_t* file_path, sound::StoreMode mode = sound::StoreMode::AUTOMATIC) override;
+	bool Load(const std::string& file_path, sound::StoreMode mode = sound::StoreMode::AUTOMATIC) override;
 
 	const SFMLCommonSoundData* GetSFMLSoundData() const;
 	

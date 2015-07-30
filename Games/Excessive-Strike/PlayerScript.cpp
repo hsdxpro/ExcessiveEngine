@@ -4,14 +4,23 @@
 #include "Core\Input.h"
 #include "ExcessiveStrikeCommon.h"
 
+sound::IEmitter* walkSound;
+sound::IEmitter* gunSound;
+sound::IEmitter* shellSound;
+
+//W, S, A, D down count
+size_t nButtonsDown;
+
 PlayerScript::PlayerScript()
 {
+	nButtonsDown = 0;
+
 	bMovingFront = false;
 	bMovingBack = false;
 	bMovingLeft = false;
 	bMovingRight = false;
 	bCanJump = true;
-	playerMoveSpeed = 2;
+	playerMoveSpeed = 2.6;
 	pixelsToRot360 = 1000;
 	windowCenter = gCore->GetTargetWindow()->GetCenterPos();
 
@@ -26,11 +35,15 @@ PlayerScript::PlayerScript()
 	playerCapsule = gCore->SpawnActor_RigidBodyCapsule(2, 0.2f, 20);
 	playerCapsule->SetOnCollisionEnter([&](const rCollision& col)
 	{
+		if (nButtonsDown > 0 && !walkSound->IsEmitting())
+			walkSound->Start();
+
 		bCanJump = true;
 	});
 	
 	playerCapsule->SetAngularFactor(0);
-	
+	playerCapsule->SetKinematic(true);
+
 	// Attach camera to player physics
 	camComp->Move({ 0, 0, 1 });
 	playerCapsule->Attach(camComp);
@@ -51,27 +64,53 @@ PlayerScript::PlayerScript()
 
 	// Ha ez a sor bevan tolva akkor debug - ban lezuhanunk, olyan mintha scale = 0 lenne
 	playerCapsule->ScaleLocal({ 1.f / 3.5f, 1.f / 3.5f, 1.f / 3.5f });
+
+	walkSound = gCore->CreateSoundMono("Assets/walk_sound.ogg", 1, true);
+	gunSound = gCore->CreateSoundMono("Assets/GUN_FIRE-stereo.ogg", 0.5);
+	shellSound = gCore->CreateSoundMono("Assets/shell_fall.ogg", 0.5);
 }
 
 void PlayerScript::Update(float deltaSeconds)
 {
 	// W,S,A,D Moving
-	mm::vec3 vel(0, 0, 0);
-	if(gInput.IsKeyDown(eKey::W))
-		vel += camComp->GetDirFrontNormed() * playerMoveSpeed;
-	if(gInput.IsKeyDown(eKey::S))
-		vel += camComp->GetDirBackNormed() * playerMoveSpeed;
-	if(gInput.IsKeyDown(eKey::A))
-		vel += camComp->GetDirLeftNormed() * playerMoveSpeed;
-	if(gInput.IsKeyDown(eKey::D))
-		vel += camComp->GetDirRightNormed() * playerMoveSpeed;
-	playerCapsule->SetVelocity(mm::vec3(vel.x, vel.y, playerCapsule->GetVelocity().z));
+	nButtonsDown = 0;
+	mm::vec3 newVel(0, 0, 0);
+	if (gInput.IsKeyDown(eKey::W))
+	{
+		newVel += camComp->GetDirFrontNormed() * playerMoveSpeed;
+		nButtonsDown++;
+	}
+	if (gInput.IsKeyDown(eKey::S))
+	{
+		newVel += camComp->GetDirBackNormed() * playerMoveSpeed;
+		nButtonsDown++;
+	}
+	if (gInput.IsKeyDown(eKey::A))
+	{
+		newVel += camComp->GetDirLeftNormed() * playerMoveSpeed;
+		nButtonsDown++;
+	}
+	if (gInput.IsKeyDown(eKey::D))
+	{
+		newVel += camComp->GetDirRightNormed() * playerMoveSpeed;
+		nButtonsDown++;
+	}
+
+	playerCapsule->SetVelocity(mm::vec3(newVel.x, newVel.y, playerCapsule->GetVelocity().z));
+
+
+	if (nButtonsDown == 1 && gInput.IsKeyPressed(eKey::W) | gInput.IsKeyPressed(eKey::S) | gInput.IsKeyPressed(eKey::A) | gInput.IsKeyPressed(eKey::D))
+		walkSound->Start();
+
+	if (nButtonsDown == 0 && gInput.IsKeyReleased(eKey::W) | gInput.IsKeyReleased(eKey::S) | gInput.IsKeyReleased(eKey::A) | gInput.IsKeyReleased(eKey::D))
+		walkSound->Stop();
 
 	// Jump
 	if (bCanJump && gInput.IsKeyPressed(eKey::SPACE))
 	{
 		bCanJump = false;
 		playerCapsule->AddForce({ 0, 0, 3850 });
+		walkSound->Stop();
 	}
 
 	// Roting camera
@@ -103,7 +142,7 @@ void PlayerScript::Update(float deltaSeconds)
 
 	if (gInput.IsMouseLeftPressed())
 	{
-		gCore->PlaySoundMono(L"Assets/GUN_FIRE-stereo.ogg", 0.5);
+		gunSound->Start();
 
 		// Falling bullet shell, and it's sound
 		Actor* bulletShell = gCore->SpawnActor_RigidBodyCapsule(0.09, 0.04, 0.02);
@@ -112,7 +151,7 @@ void PlayerScript::Update(float deltaSeconds)
 		bulletShell->SetPos(ak47Graphics->GetPos());
 		bulletShell->SetOnCollisionEnter([=](const rCollision& info)
 		{
-			gCore->PlaySoundMono(L"Assets/shell_fall.ogg", 0.5);
+			shellSound->Start();
 			gCore->DestroyActor(bulletShell);
 		});
 

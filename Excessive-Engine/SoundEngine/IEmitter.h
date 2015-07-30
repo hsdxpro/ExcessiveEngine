@@ -22,6 +22,7 @@ public:
 	virtual mm::vec3 GetVel() const = 0;
 	virtual float GetVolume() const = 0;
 	virtual bool GetLooped() const = 0;
+	virtual bool IsEmitting() const = 0;
 
 	virtual void SetSoundData(ISoundData* data) = 0;
 	virtual ISoundData* GetSoundData()  = 0;

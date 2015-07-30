@@ -1,5 +1,6 @@
 #pragma once
 #include "SupportLibrary\BasicTypes.h"
+#include <string>
 
 // namespace
 namespace sound {
@@ -14,7 +15,7 @@ class ISoundData {
 public:
 	virtual void Release() = 0;
 	
-	virtual bool Load(const wchar_t* file_path, StoreMode mode = StoreMode::AUTOMATIC) = 0;
+	virtual bool Load(const std::string& file_path, StoreMode mode = StoreMode::AUTOMATIC) = 0;
 };
 
 } // namespace
