@@ -6,6 +6,7 @@
 #include "Core\EntityScript.h"
 #include "Core\GraphicsComponent.h"
 #include "Core\Actor.h"
+#include "SoundEngine\IEmitter.h"
 
 class PlayerScript : public Script
 {
@@ -29,7 +30,8 @@ protected:
 	bool bMovingRight;
 	
 	float playerMoveSpeed;
-	
+	float playerMaxMoveSpeed;
+
 	// Jump
 	bool bCanJump;
 
@@ -37,4 +39,16 @@ protected:
 	float pixelsToRot360;
 
 	mm::vec2 windowCenter;
+
+	sound::IEmitter* walkSound;
+	sound::IEmitter* gunSound;
+	sound::IEmitter* shellSound;
+
+	//W, S, A, D down count
+	size_t nButtonsDown;
+
+	float shootTimer;
+	float rateOfFire;
+
+	bool bSquatting;
 };

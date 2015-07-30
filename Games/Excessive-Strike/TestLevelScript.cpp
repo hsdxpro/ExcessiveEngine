@@ -18,11 +18,19 @@ TestLevelScript::TestLevelScript()
 	// Set up collision layers..
 	//gCore->SetLayerCollision(eES_CollisionGroup::GROUND, eES_CollisionGroup::SHELL, true);
 
-	// disable self collide
-	gCore->SetLayerCollision(eES_CollisionGroup::GROUND, eES_CollisionGroup::GROUND, false);
-	gCore->SetLayerCollision(eES_CollisionGroup::SHELL, eES_CollisionGroup::SHELL, false);
+	gCore->SetLayerCollision(eES_CollisionGroup::PLAYER, eES_CollisionGroup::SHELL, false);
+	gCore->SetLayerCollision(eES_CollisionGroup::PLAYER, eES_CollisionGroup::BULLET, false);
 
+	gCore->SetLayerCollision(eES_CollisionGroup::GROUND, eES_CollisionGroup::GROUND, false);
+
+	gCore->SetLayerCollision(eES_CollisionGroup::SHELL, eES_CollisionGroup::SHELL, false);
 	gCore->SetLayerCollision(eES_CollisionGroup::SHELL, eES_CollisionGroup::PLAYER, false);
+
+	gCore->SetLayerCollision(eES_CollisionGroup::BULLET, eES_CollisionGroup::BULLET, false);
+	gCore->SetLayerCollision(eES_CollisionGroup::BULLET, eES_CollisionGroup::PLAYER, false);
+	gCore->SetLayerCollision(eES_CollisionGroup::BULLET, eES_CollisionGroup::SHELL, false);
+
+	gCore->SetLayerCollision(eES_CollisionGroup::BULLET, eES_CollisionGroup::GROUND, true);
 }
 
 void TestLevelScript::Update(float deltaSeconds)

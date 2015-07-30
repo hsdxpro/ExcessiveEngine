@@ -48,7 +48,7 @@ public:
 		return layerCollisionMatrix[ID0 + ID1 * nLayerCollisionMatrixRows] > 0;
 	}
 
-	__inline const std::vector<rPhysicsCollision>& GetCollisionList() const override { return contactList; }
+	__inline std::vector<rPhysicsCollision>& GetCollisionList() override { return contactList; }
 
 	bool GetDebugData(mm::vec3*& linesFromNonUniqPoints_out, size_t& nLines_out) const override;
 
@@ -72,16 +72,14 @@ public:
 	// return true when pairs need collision
 	virtual bool	needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const
 	{
+		
 		RigidBodyEntity* entityA = (RigidBodyEntity*)((btCollisionObject*)proxy0->m_clientObject)->getUserPointer();
 		RigidBodyEntity* entityB = (RigidBodyEntity*)((btCollisionObject*)proxy1->m_clientObject)->getUserPointer();
 
-		if (entityA && entityA->GetCollisionGroup() == -1)
+		if (!entityA || !entityB)
 			return true;
 
-		if (entityB && entityB->GetCollisionGroup() == -1)
-			return true;
-
-		return entityB && entityA && physicsEngine->CheckLayerCollision(entityA->GetCollisionGroup(), entityB->GetCollisionGroup());
+		return physicsEngine->CheckLayerCollision(entityA->GetCollisionGroup(), entityB->GetCollisionGroup());
 	}
 protected:
 	PhysicsEngineBullet* physicsEngine;

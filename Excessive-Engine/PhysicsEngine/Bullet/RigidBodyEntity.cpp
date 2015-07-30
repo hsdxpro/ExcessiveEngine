@@ -1,5 +1,6 @@
 #include "RigidBodyEntity.h"
 #include "BulletCollision/CollisionShapes/btCollisionShape.h"
+#include "SupportLibrary/VisualCpuProfiler.h"
 
 using namespace physics::bullet;
 

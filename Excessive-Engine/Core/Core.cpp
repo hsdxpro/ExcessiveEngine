@@ -55,6 +55,9 @@ Core::~Core()
 	for (auto& a : importedModels)
 		delete a.second;
 
+	for (auto& a : importedTextures)
+		a.second->Release();
+
 	if (graphicsEngine)	graphicsEngine->Release();
 	if (physicsEngine)	physicsEngine->Release();
 	if (networkEngine)	networkEngine->Release();
@@ -337,9 +340,19 @@ GraphicsComponent* Core::SpawnComp_MeshFromFile(const std::string& modelFilePath
 					finalPath = importedMaterial.texPathDiffuse;
 				}
 
-				auto texDiffuse = graphicsEngine->CreateTexture();
-				if (texDiffuse->Load(finalPath))
-					subMat.t_diffuse = texDiffuse;
+				graphics::ITexture* texDiffuse;
+				auto it = importedTextures.find(finalPath);
+				if (it != importedTextures.end())
+				{
+					texDiffuse = it->second;
+				}
+				else
+				{
+					texDiffuse = graphicsEngine->CreateTexture();
+					texDiffuse->Load(finalPath);
+					importedTextures[finalPath] = texDiffuse;
+				}
+				subMat.t_diffuse = texDiffuse;
 			}
 		}
 
@@ -583,6 +596,12 @@ void Core::Update(float deltaTime)
 			std::unordered_map<Actor*, Actor*> curFrameActorCollideList;
 			std::vector<rCollision> curFrameActorCollisionData;
 
+			if (collisionList.size() > 1)
+			{
+				int asd = 5;
+				asd++;
+			}
+
 			for (auto& collision : collisionList)
 			{
 				rCollision colData;
@@ -666,6 +685,13 @@ void Core::Update(float deltaTime)
 					}
 				}
 			}
+
+			// TODO, walking on floor -> should not break in that if
+			//if (curFrameActorCollideList.size() == 0)
+			//{
+			//	int asd = 5;
+			//	asd++;
+			//}
 
 			prevFrameActorCollideList = curFrameActorCollideList;
 			prevFrameActorCollisionData = curFrameActorCollisionData;

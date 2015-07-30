@@ -28,7 +28,7 @@ public:
 
 	virtual bool CheckLayerCollision(size_t ID0, size_t ID1) const = 0;
 
-	virtual const std::vector<rPhysicsCollision>& GetCollisionList() const = 0;
+	virtual std::vector<rPhysicsCollision>& GetCollisionList() = 0;
 
 	virtual bool GetDebugData(mm::vec3*& linesFromNonUniqPoints_out, size_t& nLines_out) const = 0;
 };

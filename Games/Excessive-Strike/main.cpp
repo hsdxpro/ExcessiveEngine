@@ -36,15 +36,14 @@ int main()
 			graphicsDesc.targetWindow = window;
 	gCore->InitGraphicsEngineRaster(graphicsDesc);
 		rPhysicsEngineBullet physicsDesc;
-			physicsDesc.gravity = mm::vec3(0, 0, -9.81);
+			physicsDesc.gravity = mm::vec3(0, 0, -9.81f);
 	gCore->InitPhysicsEngineBullet(physicsDesc);
 	gCore->InitSoundEngineSFML();
-	
-	Timer* timer = new Timer();
-	timer->Start();
 
 	InitScript(); // Manual bullshit, TODO !!!
 
+	Timer* timer = new Timer();
+	timer->Start();
 	while (window->IsOpen())
 	{
 		// Prepare for input processing

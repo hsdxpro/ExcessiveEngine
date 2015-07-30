@@ -4,15 +4,13 @@
 #include "Core\Input.h"
 #include "ExcessiveStrikeCommon.h"
 
-sound::IEmitter* walkSound;
-sound::IEmitter* gunSound;
-sound::IEmitter* shellSound;
-
-//W, S, A, D down count
-size_t nButtonsDown;
-
 PlayerScript::PlayerScript()
 {
+	bSquatting = false;
+
+	rateOfFire = 0.1f;
+	shootTimer = rateOfFire;
+
 	nButtonsDown = 0;
 
 	bMovingFront = false;
@@ -20,7 +18,8 @@ PlayerScript::PlayerScript()
 	bMovingLeft = false;
 	bMovingRight = false;
 	bCanJump = true;
-	playerMoveSpeed = 2.6;
+	playerMaxMoveSpeed = 2.6f;
+	playerMoveSpeed = playerMaxMoveSpeed;
 	pixelsToRot360 = 1000;
 	windowCenter = gCore->GetTargetWindow()->GetCenterPos();
 
@@ -32,7 +31,8 @@ PlayerScript::PlayerScript()
 	gCore->SetCam(camComp);
 	
 	// Player components
-	playerCapsule = gCore->SpawnActor_RigidBodyCapsule(2, 0.2f, 20);
+	playerCapsule = gCore->SpawnActor_RigidBodyCapsule(2, 0.2f, 70);
+	playerCapsule->SetCollisionGroup(eES_CollisionGroup::PLAYER);
 	playerCapsule->SetOnCollisionEnter([&](const rCollision& col)
 	{
 		if (nButtonsDown > 0 && !walkSound->IsEmitting())
@@ -42,7 +42,7 @@ PlayerScript::PlayerScript()
 	});
 	
 	playerCapsule->SetAngularFactor(0);
-	playerCapsule->SetKinematic(true);
+	//playerCapsule->SetKinematic(true);
 
 	// Attach camera to player physics
 	camComp->Move({ 0, 0, 1 });
@@ -68,6 +68,8 @@ PlayerScript::PlayerScript()
 	walkSound = gCore->CreateSoundMono("Assets/walk_sound.ogg", 1, true);
 	gunSound = gCore->CreateSoundMono("Assets/GUN_FIRE-stereo.ogg", 0.5);
 	shellSound = gCore->CreateSoundMono("Assets/shell_fall.ogg", 0.5);
+
+	playerCapsule->SetPos(mm::vec3(0, 0, 10));
 }
 
 void PlayerScript::Update(float deltaSeconds)
@@ -109,8 +111,22 @@ void PlayerScript::Update(float deltaSeconds)
 	if (bCanJump && gInput.IsKeyPressed(eKey::SPACE))
 	{
 		bCanJump = false;
-		playerCapsule->AddForce({ 0, 0, 3850 });
+		playerCapsule->AddForce({ 0, 0, 15000 });
 		walkSound->Stop();
+	}
+
+	// Squat
+	if (!bSquatting && gInput.IsKeyPressed(eKey::LCONTROL))
+	{
+		camComp->MoveRel(mm::vec3(0, 0, -0.8f));
+		bSquatting = true;
+		playerMoveSpeed /= 2;
+	}
+	else if (bSquatting && gInput.IsKeyReleased(eKey::LCONTROL))
+	{
+		camComp->MoveRel(mm::vec3(0, 0, 0.8f));
+		bSquatting = false;
+		playerMoveSpeed = playerMaxMoveSpeed;
 	}
 
 	// Roting camera
@@ -140,8 +156,13 @@ void PlayerScript::Update(float deltaSeconds)
 		camComp->SetRot(rotAroundZ * rotAroundX);
 	}
 
-	if (gInput.IsMouseLeftPressed())
+	if (shootTimer > 0)
+		shootTimer -= deltaSeconds;
+
+	if (gInput.IsMouseLeftDown() && shootTimer <= 0)
 	{
+		shootTimer =+ rateOfFire;
+
 		gunSound->Start();
 
 		// Falling bullet shell, and it's sound
@@ -154,26 +175,27 @@ void PlayerScript::Update(float deltaSeconds)
 			shellSound->Start();
 			gCore->DestroyActor(bulletShell);
 		});
-
-		// Shooted bullet
-		Actor* bullet = gCore->SpawnActor_RigidBodyFromFile("Assets/box.DAE", 1);
+		
+		//// Shooted bullet
+		Actor* bullet = gCore->SpawnActor_RigidBodyFromFile("Assets/box.DAE", 100); // mass = 1
 		bullet->Attach(gCore->SpawnComp_MeshFromFile("Assets/box.DAE"));
 		bullet->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
-		bullet->SetGravityScale(0);
+		bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);
 
 		mm::vec3 bulletDir = ak47Graphics->GetDirUpNormed();
 		bullet->SetPos(ak47Graphics->GetPos());
+		bullet->SetVelocity(bulletDir * 7);
 
-		mm::vec3 bulletStartPos = bullet->GetPos();
-		const float bulletSpeed = 100;
-		const float distAfterDisappear = 200;
-		bullet->SetOnUpdate([=](float deltaSeconds)
-		{
-			bullet->Move(deltaSeconds * bulletDir * bulletSpeed);
-		
-			if (mm::length(bulletStartPos - bullet->GetPos()) >= distAfterDisappear)
-				gCore->DestroyActor(bullet);
-		});
+		//mm::vec3 bulletStartPos = bullet->GetPos();
+		//const float bulletSpeed = 100;
+		//const float distAfterDisappear = 200;
+		//bullet->SetOnUpdate([=](float deltaSeconds)
+		//{
+		//	bullet->Move(deltaSeconds * bulletDir * bulletSpeed);
+		//
+		//	if (mm::length(bulletStartPos - bullet->GetPos()) >= distAfterDisappear)
+		//		gCore->DestroyActor(bullet);
+		//});
 	}
 
 	// Mouse recenter

@@ -47,7 +47,7 @@ PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d)
 	world->setDebugDrawer(debugDrawer);
 
 	// Populate collisionMatrix with true values, everything can collide with everything by default
-	nLayerCollisionMatrixRows = 32;
+	nLayerCollisionMatrixRows = 4;
 	layerCollisionMatrix.resize(nLayerCollisionMatrixRows * nLayerCollisionMatrixRows);
 	memset(layerCollisionMatrix.data(), 1, nLayerCollisionMatrixRows * nLayerCollisionMatrixRows);
 
@@ -57,6 +57,40 @@ PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d)
 
 PhysicsEngineBullet::~PhysicsEngineBullet()
 {
+	/* Clean up	*/
+	for (int i = world->getNumCollisionObjects() - 1; i >= 0; i--)
+	{
+		btCollisionObject*	obj = world->getCollisionObjectArray()[i];
+		btRigidBody*		body = btRigidBody::upcast(obj);
+
+		if (body && body->getMotionState())
+		{
+			delete body->getMotionState();
+		}
+		while (world->getNumConstraints())
+		{
+			btTypedConstraint*	pc = world->getConstraint(0);
+			world->removeConstraint(pc);
+			delete pc;
+		}
+		btSoftBody* softBody = btSoftBody::upcast(obj);
+		if (softBody)
+		{
+			//world->removeSoftBody(softBody);
+		}
+		else
+		{
+			btRigidBody* body = btRigidBody::upcast(obj);
+			if (body)
+				world->removeRigidBody(body);
+			else
+				world->removeCollisionObject(obj);
+		}
+		world->removeCollisionObject(obj);
+		delete obj;
+	}
+
+	delete world;
 }
 
 void PhysicsEngineBullet::Release()
@@ -66,7 +100,7 @@ void PhysicsEngineBullet::Release()
 
 void PhysicsEngineBullet::Update(float deltaTime)
 {
-	world->stepSimulation(1.f / 30, 20);
+	world->stepSimulation(deltaTime, 0);
 
 	contactList.clear();
 
@@ -74,12 +108,13 @@ void PhysicsEngineBullet::Update(float deltaTime)
 	for (int i = 0; i < numManifolds; i++)
 	{
 		btPersistentManifold* contactManifold = world->getDispatcher()->getManifoldByIndexInternal(i);
-		const btCollisionObject* colA = static_cast<const btCollisionObject*>(contactManifold->getBody0());
-		const btCollisionObject* colB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
 
 		int numContacts = contactManifold->getNumContacts();
 		if (numContacts != 0)
 		{
+			const btCollisionObject* colA = static_cast<const btCollisionObject*>(contactManifold->getBody0());
+			const btCollisionObject* colB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
+
 			// Fill up our structure with contact informations
 			rPhysicsCollision colInfo;
 				colInfo.entityA = (RigidBodyEntity*)colA->getUserPointer();
@@ -88,7 +123,7 @@ void PhysicsEngineBullet::Update(float deltaTime)
 			for (int j = 0; j < numContacts; j++)
 			{
 				btManifoldPoint& pt = contactManifold->getContactPoint(j);
-				//if (pt.getDistance() < 0.f)
+				if (pt.getDistance() <= 0.f)
 				{
 					//Fill contact data
 					rContactPoint c;
@@ -104,8 +139,8 @@ void PhysicsEngineBullet::Update(float deltaTime)
 				}
 			}
 
-			//if (colInfo.contacts.size() != 0)
-			contactList.push_back(colInfo);
+			if (colInfo.contacts.size() != 0)
+				contactList.push_back(colInfo);
 		}
 	}
 

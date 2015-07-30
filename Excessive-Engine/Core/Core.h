@@ -145,6 +145,9 @@ protected:
 	// Imported mono sounds
 	std::unordered_map<std::string, rMonoSound> importedSounds;
 
+	// Imported textures...
+	std::unordered_map<std::string, graphics::ITexture*> importedTextures;
+
 	// The default graphicsScene Core created for us to spawn graphics things into
 	graphics::IScene* defaultGraphicsScene;
 
