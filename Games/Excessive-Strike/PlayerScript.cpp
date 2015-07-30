@@ -25,7 +25,8 @@ PlayerScript::PlayerScript()
 
 	// Weapon model
 	auto& ak47ModelPath = "Assets/ak47/ak.obj";
-	
+	//auto& ak47ModelPath = "Assets/ak47/ak47.obj";
+
 	// Camera
 	camComp = gCore->SpawnComp_Camera();
 	gCore->SetCam(camComp);
@@ -42,7 +43,6 @@ PlayerScript::PlayerScript()
 	});
 	
 	playerCapsule->SetAngularFactor(0);
-	//playerCapsule->SetKinematic(true);
 
 	// Attach camera to player physics
 	camComp->Move({ 0, 0, 1 });
@@ -50,6 +50,13 @@ PlayerScript::PlayerScript()
 	playerCapsule->SetPos({ 0, 0, 2 });
 	
 	ak47Graphics = gCore->SpawnComp_MeshFromFile(ak47ModelPath);
+
+	//ak47Graphics->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
+	//ak47Graphics->SetPos(camComp->GetPos() + mm::vec3(0.7f, 1.5f, -0.6f));
+	//ak47Graphics->Rot(mm::quat(-90.f / 180.f * 3.1415f, { 0, 0, 1 }));
+	//ak47Graphics->Rot(mm::quat(-90.f / 180.f * 3.1415f, { 0, 1, 0 }));
+
+	// Old trans
 	ak47Graphics->SetScaleLocal({ 1.f / 1800, 1.f / 1800, 1.f / 1800 });
 	ak47Graphics->SetRot(mm::quat(-0.05f, { 1, 0, 0 }) * mm::quat(3.1415f - 0.08f, { 0, 0, 1 }) * mm::quat(3.1415f / 2, { 1, 0, 0 })); // Need quaternion rework, multiply swapped, mm::quat(angle) rots with -angle, why?
 	ak47Graphics->SetPos(camComp->GetPos() + mm::vec3(0.7f, 1.05f - 0.15f, -0.6f));
@@ -182,7 +189,7 @@ void PlayerScript::Update(float deltaSeconds)
 		bullet->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
 		bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);
 
-		mm::vec3 bulletDir = ak47Graphics->GetDirUpNormed();
+		mm::vec3 bulletDir = camComp->GetDirFrontNormed();
 		bullet->SetPos(ak47Graphics->GetPos());
 		bullet->SetVelocity(bulletDir * 7);
 

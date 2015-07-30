@@ -324,24 +324,24 @@ GraphicsComponent* Core::SpawnComp_MeshFromFile(const std::string& modelFilePath
 			subMat.base = mm::vec4(1, 1, 1, 1);
 			subMat.t_diffuse = texError; // Default is error texture !!
 
-			if (importedMaterial.texPathDiffuse != "")
+			if (importedMaterial.relTexPathDiffuse != "")
 			{
 				// TODO:
 				// turn .bmp references into .jpg (UGLY TMP)
-				std::string finalPath;
-				if (importedMaterial.texPathDiffuse.rfind(".bmp"))
+				std::string relPath;
+				if (importedMaterial.relTexPathDiffuse.rfind(".bmp"))
 				{
-					auto idx = importedMaterial.texPathDiffuse.rfind('.');
-					auto jpgExtension = importedMaterial.texPathDiffuse.substr(0, idx + 1) + "jpg";
-					finalPath = jpgExtension;
+					auto idx = importedMaterial.relTexPathDiffuse.rfind('.');
+					auto jpgExtension = importedMaterial.relTexPathDiffuse.substr(0, idx + 1) + "jpg";
+					relPath = jpgExtension;
 				}
 				else
 				{
-					finalPath = importedMaterial.texPathDiffuse;
+					relPath = importedMaterial.relTexPathDiffuse;
 				}
 
 				graphics::ITexture* texDiffuse;
-				auto it = importedTextures.find(finalPath);
+				auto it = importedTextures.find(relPath);
 				if (it != importedTextures.end())
 				{
 					texDiffuse = it->second;
@@ -349,8 +349,8 @@ GraphicsComponent* Core::SpawnComp_MeshFromFile(const std::string& modelFilePath
 				else
 				{
 					texDiffuse = graphicsEngine->CreateTexture();
-					texDiffuse->Load(finalPath);
-					importedTextures[finalPath] = texDiffuse;
+					texDiffuse->Load(Sys::GetWorkDir() + relPath);
+					importedTextures[relPath] = texDiffuse;
 				}
 				subMat.t_diffuse = texDiffuse;
 			}

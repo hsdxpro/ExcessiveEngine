@@ -12,6 +12,7 @@
 
 #include "RigidBodyEntity.h"
 #include "PhysicsEngineBulletDebugGatherer.h"
+#include "SupportLibrary/VisualCpuProfiler.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Export Create function
@@ -100,47 +101,53 @@ void PhysicsEngineBullet::Release()
 
 void PhysicsEngineBullet::Update(float deltaTime)
 {
-	world->stepSimulation(deltaTime, 0);
-
-	contactList.clear();
-
-	int numManifolds = world->getDispatcher()->getNumManifolds();
-	for (int i = 0; i < numManifolds; i++)
 	{
-		btPersistentManifold* contactManifold = world->getDispatcher()->getManifoldByIndexInternal(i);
+		PROFILE_SCOPE("Simulate");
+		world->stepSimulation(deltaTime, 0);
+	}
+	
+	{
+		PROFILE_SCOPE("Contact List Query");
+		contactList.clear();
 
-		int numContacts = contactManifold->getNumContacts();
-		if (numContacts != 0)
+		int numManifolds = world->getDispatcher()->getNumManifolds();
+		for (int i = 0; i < numManifolds; i++)
 		{
-			const btCollisionObject* colA = static_cast<const btCollisionObject*>(contactManifold->getBody0());
-			const btCollisionObject* colB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
+			btPersistentManifold* contactManifold = world->getDispatcher()->getManifoldByIndexInternal(i);
 
-			// Fill up our structure with contact informations
-			rPhysicsCollision colInfo;
+			int numContacts = contactManifold->getNumContacts();
+			if (numContacts != 0)
+			{
+				const btCollisionObject* colA = static_cast<const btCollisionObject*>(contactManifold->getBody0());
+				const btCollisionObject* colB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
+
+				// Fill up our structure with contact informations
+				rPhysicsCollision colInfo;
 				colInfo.entityA = (RigidBodyEntity*)colA->getUserPointer();
 				colInfo.entityB = (RigidBodyEntity*)colB->getUserPointer();
 
-			for (int j = 0; j < numContacts; j++)
-			{
-				btManifoldPoint& pt = contactManifold->getContactPoint(j);
-				if (pt.getDistance() <= 0.f)
+				for (int j = 0; j < numContacts; j++)
 				{
-					//Fill contact data
-					rContactPoint c;
+					btManifoldPoint& pt = contactManifold->getContactPoint(j);
+					if (pt.getDistance() <= 0.f)
+					{
+						//Fill contact data
+						rContactPoint c;
 						c.normalA = -mm::vec3(pt.m_normalWorldOnB.x(), pt.m_normalWorldOnB.y(), pt.m_normalWorldOnB.z());
-						c.normalB =  mm::vec3(pt.m_normalWorldOnB.x(), pt.m_normalWorldOnB.y(), pt.m_normalWorldOnB.z());
+						c.normalB = mm::vec3(pt.m_normalWorldOnB.x(), pt.m_normalWorldOnB.y(), pt.m_normalWorldOnB.z());
 						c.posA = mm::vec3(pt.m_positionWorldOnA.x(), pt.m_positionWorldOnA.y(), pt.m_positionWorldOnA.z());
 						c.posB = mm::vec3(pt.m_positionWorldOnB.x(), pt.m_positionWorldOnB.y(), pt.m_positionWorldOnB.z());
-					colInfo.contacts.push_back(c);
+						colInfo.contacts.push_back(c);
 
-					const btVector3& ptA = pt.getPositionWorldOnA();
-					const btVector3& ptB = pt.getPositionWorldOnB();
-					const btVector3& normalOnB = pt.m_normalWorldOnB;
+						const btVector3& ptA = pt.getPositionWorldOnA();
+						const btVector3& ptB = pt.getPositionWorldOnB();
+						const btVector3& normalOnB = pt.m_normalWorldOnB;
+					}
 				}
-			}
 
-			if (colInfo.contacts.size() != 0)
-				contactList.push_back(colInfo);
+				if (colInfo.contacts.size() != 0)
+					contactList.push_back(colInfo);
+			}
 		}
 	}
 

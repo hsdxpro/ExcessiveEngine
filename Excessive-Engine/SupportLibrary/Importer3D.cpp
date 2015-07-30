@@ -8,6 +8,7 @@
 // Util
 #include <fstream>
 #include <map>
+#include "PlatformLibrary/Sys.h"
 
 bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg& cfg, rImporter3DData& data_out) {
 	Assimp::Importer importer;
@@ -106,41 +107,55 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 		mesh_out->materials[i].faceStartIdx = globalIndicesIdx / 3;
 		mesh_out->materials[i].faceEndIdx = globalIndicesIdx / 3 + mesh->mNumFaces;
 
-		// Get Diffuse texture path
 		aiString diffusePath;
-		if (aiReturn_SUCCESS == scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &diffusePath)) 
+		aiString normalPath;
+		bool bHaveDiffuseTexture = aiReturn_SUCCESS == scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &diffusePath);
+		bool bHaveNormalTexture = aiReturn_SUCCESS == scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_NORMALS, 0, &normalPath);
+
+
+		// Calc absolute model path if we have any textures associated with that model
+		std::string relModelPath;
+		if (bHaveDiffuseTexture || bHaveNormalTexture)
 		{
-			//wchar_t unicodePath[256];
-			//size_t nConvertedChar;
-			//mbstowcs_s(&nConvertedChar, unicodePath, diffusePath.C_Str(), 256);
-
-			std::string unicodePathStr = diffusePath.C_Str();
-			auto pos = unicodePathStr.rfind('\\');
-
-			if (pos != std::wstring::npos)
-				unicodePathStr = unicodePathStr.substr(pos + 1, unicodePathStr.size());
-
 			std::string modelDirectory = path;
 			auto chIdx = modelDirectory.rfind('/');
 			modelDirectory = modelDirectory.substr(0, chIdx + 1);
 
-			// Really fucking absolute path
-			mesh_out->materials[i].texPathDiffuse = modelDirectory + unicodePathStr;
+			size_t offs = Sys::GetWorkDir().length();
+			relModelPath = modelDirectory.substr(offs, modelDirectory.length() - offs);
 		}
 
-		// Get Normal texture path
-		aiString normalPath;
-		if (aiReturn_SUCCESS == scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_NORMALS, 0, &normalPath)) 
+		// Get Diffuse texture path relative to work dir
+		if (bHaveDiffuseTexture)
 		{
-			/// wchar_t unicodePath[256];
-			/// size_t nConvertedChar;
-			/// mbstowcs_s(&nConvertedChar, unicodePath, normalPath.C_Str(), 256);
+			size_t idx = 0;
+			while (diffusePath.data[idx] == '.' || diffusePath.data[idx] == '\\' || diffusePath.data[idx] == '/')
+				idx++;
 
-			std::string modelDirectory = path;
-			auto chIdx = modelDirectory.rfind('/');
-			modelDirectory = modelDirectory.substr(0, chIdx);
+			if (idx != 0)
+			{
+				memmove(diffusePath.data, diffusePath.data + idx, diffusePath.length - idx);
+				diffusePath.data[diffusePath.length - idx] = 0;
+			}
 
-			mesh_out->materials[i].texPathNormal = modelDirectory + normalPath.C_Str();
+			mesh_out->materials[i].relTexPathDiffuse = relModelPath + diffusePath.C_Str();
+		}
+			
+
+		// Get Normal texture path relative to work dir
+		if (bHaveNormalTexture)
+		{
+			size_t idx = 0;
+			while (normalPath.data[idx] == '.' || normalPath.data[idx] == '\\' || normalPath.data[idx] == '/')
+				idx++;
+
+			if (idx != 0)
+			{
+				memmove(normalPath.data, normalPath.data + idx, normalPath.length - idx);
+				normalPath.data[normalPath.length - idx] = 0;
+			}
+
+			mesh_out->materials[i].relTexPathNormal = relModelPath + normalPath.C_Str();
 		}
 
 		bool bHasPos = mesh->HasPositions();

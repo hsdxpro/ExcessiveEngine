@@ -181,8 +181,8 @@ struct rImporter3DMesh
 			file << faceStartIdx;
 			file << faceEndIdx;
 
-			file << texPathDiffuse;
-			file << texPathNormal;
+			file << relTexPathDiffuse;
+			file << relTexPathNormal;
 			return true;
 		}
 
@@ -191,16 +191,16 @@ struct rImporter3DMesh
 			faceStartIdx << file;
 			faceEndIdx << file;
 
-			texPathDiffuse << file;
-			texPathNormal << file;
+			relTexPathDiffuse << file;
+			relTexPathNormal << file;
 			return true;
 		}
 
 		u64 faceStartIdx;
 		u64 faceEndIdx;
 
-		std::string texPathDiffuse;
-		std::string texPathNormal;
+		std::string relTexPathDiffuse;
+		std::string relTexPathNormal;
 	};
 
 	// Vertices
