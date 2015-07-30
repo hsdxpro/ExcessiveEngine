@@ -349,8 +349,10 @@ GraphicsComponent* Core::SpawnComp_MeshFromFile(const std::string& modelFilePath
 				else
 				{
 					texDiffuse = graphicsEngine->CreateTexture();
-					texDiffuse->Load(Sys::GetWorkDir() + relPath);
-					importedTextures[relPath] = texDiffuse;
+					if (texDiffuse->Load(Sys::GetWorkDir() + relPath))
+						importedTextures[relPath] = texDiffuse;
+					else
+						texDiffuse = texError;
 				}
 				subMat.t_diffuse = texDiffuse;
 			}

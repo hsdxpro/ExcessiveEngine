@@ -193,6 +193,7 @@ struct rImporter3DMesh
 
 			relTexPathDiffuse << file;
 			relTexPathNormal << file;
+
 			return true;
 		}
 

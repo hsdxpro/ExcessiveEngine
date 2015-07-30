@@ -60,22 +60,22 @@ std::wstring Sys::GetWorkDirW()
 std::string	Sys::GetWorkDir()
 {
 	// TODO make define or constant somewhere (128)
-	char path[128];
-	GetModuleFileNameA(0, path, 128);
+	char path[256];
+	memset(path, 0, sizeof(path));
+	GetModuleFileNameA(0, path, 256);
 
-	// Preserve only directory
-	for (int i = 127; i > 0; i--)
-		if (path[i] == '\\' && i < 127)
-		{
-			path[i + 1] = 0;
-			break;
-		}
+	size_t i = 255;
+	while (i > 0 && path[i] != '/' && path[i] != '\\')
+		i--;
 
-	// TODO: lassít, de legalább szép replace '\\' with '/'
-	int idx = 0;
-	while (path[idx] != '\0') {
+	path[i + 1] = 0;
+
+	size_t idx = 0;
+	while (path[idx] != '\0') 
+	{
 		if (path[idx] == '\\')
 			path[idx] = '/';
+
 		idx++;
 	}
 
