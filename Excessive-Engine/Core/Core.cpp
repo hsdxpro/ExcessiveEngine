@@ -3,6 +3,7 @@
 #include "SupportLibrary\VisualCpuProfiler.h"
 #include "Factory.h"
 #include "PlatformLibrary\File.h"
+#include <array>
 
 Core* gCore = nullptr;
 
@@ -595,47 +596,67 @@ void Core::Update(float deltaTime)
 
 			const std::vector<rPhysicsCollision>& collisionList = physicsEngine->GetCollisionList();
 
-			std::unordered_map<Actor*, Actor*> curFrameActorCollideList;
-			std::vector<rCollision> curFrameActorCollisionData;
-
-			if (collisionList.size() > 1)
+			static std::unordered_map<Actor*, Actor*> curFrameActorCollideList;
+			static std::vector<rCollision> curFrameActorCollisionData;
+			static bool b = true;
+			if (b)
 			{
-				int asd = 5;
-				asd++;
+				curFrameActorCollideList.reserve(1000);
+				curFrameActorCollisionData.reserve(1000);
+				b = false;
 			}
+			curFrameActorCollideList.clear();
+			curFrameActorCollisionData.clear();
 
 			for (auto& collision : collisionList)
 			{
 				rCollision colData;
-				colData.contacts = collision.contacts;
-				colData.selfBody = collision.entityA;
-				colData.otherBody = collision.entityB;
 
 				for (auto& a : actors)
 				{
+					//PROFILE_SCOPE_SUM("actor0");
 					if (a->IsPendingKill()) // Leave actors already destroying
 						continue;
 
-					auto& rigidComponents = a->GetComponents<RigidBodyComponent>();
 
-					for (auto& comp : rigidComponents)
+					static std::vector<WorldComponent*> allComps;
+					static bool b = true;
+					if (b)
 					{
-						if (comp->GetEntity() == collision.entityA)
+						allComps.reserve(10);
+						b = false;
+					}
+					allComps.clear();
+					a->GetComponents(allComps);
+
+					//PROFILE_SCOPE_SUM("comp iter");
+					for (auto comp : allComps)
+					{
+						if (!dynamic_cast<RigidBodyComponent*>(comp))
+							continue;
+
+						if (((RigidBodyComponent*)comp)->GetEntity() == collision.entityA)
 						{
 							colData.self = a;
+							colData.contacts = collision.contacts;
+							colData.selfBody = collision.entityA;
+							colData.otherBody = collision.entityB;
 							break;
 						}
-						else if (comp->GetEntity() == collision.entityB)
+						else if (((RigidBodyComponent*)comp)->GetEntity() == collision.entityB)
 						{
 							colData.other = a;
+							colData.contacts = collision.contacts;
+							colData.selfBody = collision.entityA;
+							colData.otherBody = collision.entityB;
 							break;
 						}
 					}
 
-					if (reinterpret_cast<size_t>(colData.self) & reinterpret_cast<size_t>(colData.other))
+					if (colData.self && colData.other)
 						break;
 				}
-
+				
 				Actor* twoActor[2] = { 0, 0 };
 				twoActor[0] = colData.self;
 				twoActor[1] = colData.other;
@@ -644,7 +665,7 @@ void Core::Update(float deltaTime)
 				{
 					if (!a)
 						continue;
-				
+
 					// NO prev frame data, YES cur frame data for actor (OnCollisionEnter)
 					if (prevFrameActorCollideList.find(a) == prevFrameActorCollideList.end())
 					{
@@ -654,19 +675,20 @@ void Core::Update(float deltaTime)
 							a->GetOnCollisionEnter()(colData);
 						}
 					}
-				
+
 					// YES cur frame data (OnCollision)
 					if (a->GetOnCollision())
 					{
 						PROFILE_SCOPE_SUM("ActorLambda onCollision");
 						a->GetOnCollision()(colData);
 					}
-				
-					curFrameActorCollideList[a] = a;
 
+					curFrameActorCollideList[a] = a;
 					curFrameActorCollisionData.push_back(colData);
 				}
 			}
+
+			//PROFILE_SCOPE("OnCollisionExit");
 
 			// If previous frame collided actor not found in current list, then Call OnCollisionExit
 			for (auto& a : prevFrameActorCollideList)

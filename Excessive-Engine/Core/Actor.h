@@ -90,7 +90,8 @@ public:
 
 	__inline mm::vec3 GetVelocity() const { return worldEntity->GetVelocity(); }
 
-	__inline std::vector<WorldComponent*> GetComponents() const { return worldEntity->GetComponents(); }
+	__inline const std::vector<WorldComponent*> GetComponents() const { return worldEntity->GetComponents(); }
+	__inline void GetComponents(std::vector<WorldComponent*>& allComp) const { worldEntity->GetComponents(allComp); }
 
 	template<class T>
 	__inline std::vector<T*> GetComponents() const { return worldEntity->GetComponents<T>(); }

@@ -153,6 +153,12 @@ public:
 		return result;
 	}
 
+	__inline void GetComponents(std::vector<WorldComponent*>& allComp) const
+	{
+		if (rootComp)
+			CollectComponentsRecursively(rootComp, allComp);
+	}
+
 	template<class T>
 	__inline std::vector<T*> GetComponents() const
 	{ 
@@ -167,6 +173,7 @@ public:
 		return compsWithMatchedType;
 	}
 
+	__inline WorldComponent* GetRootComp() { return rootComp; }
 protected:
 	WorldComponent* rootComp;
 };
