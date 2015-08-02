@@ -38,6 +38,20 @@ struct rTask
 	float timeLeft;
 };
 
+enum eScene
+{
+	PHYSICS,
+	GRAPHICS
+};
+
+struct rTraceInfo
+{
+	Actor* actor;
+
+	mm::vec3 pos;
+	mm::vec3 normal;
+};
+
 extern class Core* gCore;
 
 class Core
@@ -63,6 +77,8 @@ public:
 
 	// Init network engine, if one already exists will be destroyed, then instantiate it
 	ISoundEngine* InitSoundEngineSFML(const rSoundEngine& d = rSoundEngine());
+
+	bool TraceClosestPoint(eScene traceInScene, const mm::vec3& from, const mm::vec3& to, rTraceInfo& traceInfo_out);
 
 	// TODO!
 	//ThingType*			  CreateThingType(Thing* t);

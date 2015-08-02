@@ -12,6 +12,8 @@ public:
 
 	virtual void Update(float deltaTime) = 0;
 
+	virtual bool TraceClosestPoint(const mm::vec3& from, const mm::vec3& to, rPhysicsTraceInfo& traceInfo_out) = 0;
+
 	// Create, Add DYNAMIC rigid body to physics world
 	virtual physics::IRigidBodyEntity* AddEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass = 1) = 0;
 

@@ -118,12 +118,12 @@ public:
 	__inline const Transform3D& GetRelTransform()	const { return rootComp->GetRelTransform(); }
 	__inline const Transform3D& GetTransform()		const { return rootComp->GetTransform(); }
 
-	__inline mm::vec3 GetDirFrontNormed()	const { return rootComp->GetDirFrontNormed(); }
-	__inline mm::vec3 GetDirBackNormed()	const { return rootComp->GetDirBackNormed(); }
-	__inline mm::vec3 GetDirUpNormed()		const { return rootComp->GetDirUpNormed(); }
-	__inline mm::vec3 GetDirDownNormed()	const { return rootComp->GetDirDownNormed(); }
-	__inline mm::vec3 GetDirRightNormed()	const { return rootComp->GetDirRightNormed(); }
-	__inline mm::vec3 GetDirLeftNormed()	const { return rootComp->GetDirLeftNormed(); }
+	__inline mm::vec3 GetFrontDirNormed()	const { return rootComp->GetFrontDirNormed(); }
+	__inline mm::vec3 GetBackDirNormed()	const { return rootComp->GetBackDirNormed(); }
+	__inline mm::vec3 GetUpDirNormed()		const { return rootComp->GetUpDirNormed(); }
+	__inline mm::vec3 GetDownDirNormed()	const { return rootComp->GetDownDirNormed(); }
+	__inline mm::vec3 GetRightDirNormed()	const { return rootComp->GetRightDirNormed(); }
+	__inline mm::vec3 GetLeftDirNormed()	const { return rootComp->GetLeftDirNormed(); }
 
 
 	__inline mm::vec3 GetVelocity() const 

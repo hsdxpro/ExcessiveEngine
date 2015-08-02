@@ -101,7 +101,7 @@ int Ricsi()
 					auto box = gCore->SpawnComp_RigidBodyFromFile(teapotModelPath, 10);
 					box->Attach(gCore->SpawnComp_MeshFromFile(teapotModelPath));
 
-					box->SetPos(cam->GetPos() + cam->GetCam()->GetDirFrontNormed() * 3); // 3 méterrel elénk
+					box->SetPos(cam->GetPos() + cam->GetCam()->GetFrontDirNormed() * 3); // 3 méterrel elénk
 					box->SetScaleLocal(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
 				}
 				break;
@@ -179,13 +179,13 @@ int Ricsi()
 
 		// Camera move
 		if (bWDown) // W
-			cam->SetPos(cam->GetPos() + cam->GetCam()->GetDirFrontNormed() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+			cam->SetPos(cam->GetPos() + cam->GetCam()->GetFrontDirNormed() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 		if (bSDown) // S									 
-			cam->SetPos(cam->GetPos() + cam->GetCam()->GetDirBackNormed()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+			cam->SetPos(cam->GetPos() + cam->GetCam()->GetBackDirNormed()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 		if (bADown) // A									 
-			cam->SetPos(cam->GetPos() + cam->GetCam()->GetDirLeftNormed()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+			cam->SetPos(cam->GetPos() + cam->GetCam()->GetLeftDirNormed()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 		if (bDDown) // D									 
-			cam->SetPos(cam->GetPos() + cam->GetCam()->GetDirRightNormed() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+			cam->SetPos(cam->GetPos() + cam->GetCam()->GetRightDirNormed() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 
 		// Update core
 		gCore->Update(elapsed/*, scene*/);

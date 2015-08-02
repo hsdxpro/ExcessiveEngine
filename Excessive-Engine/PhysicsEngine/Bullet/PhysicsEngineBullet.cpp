@@ -155,6 +155,24 @@ void PhysicsEngineBullet::Update(float deltaTime)
 	}
 }
 
+bool PhysicsEngineBullet::TraceClosestPoint(const mm::vec3& from, const mm::vec3& to, rPhysicsTraceInfo& traceInfo_out)
+{
+	btCollisionWorld::ClosestRayResultCallback callb({ from.x, from.y, from.z }, { to.x, to.y, to.z });
+	world->rayTest({ from.x, from.y, from.z }, { to.x, to.y, to.z }, callb);
+
+	if (callb.hasHit())
+	{
+		traceInfo_out.normal = mm::vec3(callb.m_hitNormalWorld.x(), callb.m_hitNormalWorld.y(), callb.m_hitNormalWorld.z());
+		traceInfo_out.pos = mm::vec3(callb.m_hitPointWorld.x(), callb.m_hitPointWorld.y(), callb.m_hitPointWorld.z());
+		traceInfo_out.userPointer = callb.m_collisionObject->getUserPointer();
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 physics::IRigidBodyEntity* PhysicsEngineBullet::AddEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass /*= 1*/) 
 {
 	// You should call PhysicsEngineBullet::CreateEntityRigidStatic

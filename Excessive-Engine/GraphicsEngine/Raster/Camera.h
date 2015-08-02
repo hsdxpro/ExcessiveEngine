@@ -23,12 +23,12 @@ public:
 	mm::mat4 GetViewMatrix() const override;
 	mm::mat4 GetProjMatrix(float aspectRatio) const override;
 
-	mm::vec3 GetDirFrontNormed() const override;
-	mm::vec3 GetDirBackNormed() const override;
-	mm::vec3 GetDirUpNormed() const override;
-	mm::vec3 GetDirDownNormed() const override;
-	mm::vec3 GetDirRightNormed() const override;
-	mm::vec3 GetDirLeftNormed() const override;
+	mm::vec3 GetFrontDirNormed() const override;
+	mm::vec3 GetBackDirNormed() const override;
+	mm::vec3 GetUpDirNormed() const override;
+	mm::vec3 GetDownDirNormed() const override;
+	mm::vec3 GetRightDirNormed() const override;
+	mm::vec3 GetLeftDirNormed() const override;
 
 	const mm::vec3& GetPos() const override;
 	const mm::quat& GetRot() const override;

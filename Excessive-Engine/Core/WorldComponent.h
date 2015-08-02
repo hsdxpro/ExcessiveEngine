@@ -50,12 +50,12 @@ public:
 	__inline const Transform3D& GetRelTransform()	const {return relTransform;}
 	__inline const Transform3D& GetTransform()		const {return transform;}
 
-	__inline mm::vec3 GetDirFrontNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3( 0,  1,  0));}
-	__inline mm::vec3 GetDirBackNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3( 0, -1,  0));}
-	__inline mm::vec3 GetDirUpNormed()		const {return mm::rotate_vector(GetRot(), mm::vec3( 0,  0,  1));}
-	__inline mm::vec3 GetDirDownNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3( 0,  0, -1));}
-	__inline mm::vec3 GetDirRightNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3( 1,  0,  0));}
-	__inline mm::vec3 GetDirLeftNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3(-1,  0,  0));}
+	__inline mm::vec3 GetFrontDirNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3( 0,  1,  0));}
+	__inline mm::vec3 GetBackDirNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3( 0, -1,  0));}
+	__inline mm::vec3 GetUpDirNormed()		const {return mm::rotate_vector(GetRot(), mm::vec3( 0,  0,  1));}
+	__inline mm::vec3 GetDownDirNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3( 0,  0, -1));}
+	__inline mm::vec3 GetRightDirNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3( 1,  0,  0));}
+	__inline mm::vec3 GetLeftDirNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3(-1,  0,  0));}
 
 	__inline std::vector<WorldComponent*>& GetChilds() { return childs; }
 

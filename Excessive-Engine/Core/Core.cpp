@@ -139,6 +139,34 @@ ISoundEngine* Core::InitSoundEngineSFML(const rSoundEngine& d /*= rSoundEngine()
 	return soundEngine;
 }
 
+bool Core::TraceClosestPoint(eScene traceInScene, const mm::vec3& from, const mm::vec3& to, rTraceInfo& traceInfo_out)
+{
+	if (traceInScene == eScene::GRAPHICS)
+	{
+		// TODO
+		return false;
+	}
+	else if (traceInScene == eScene::PHYSICS)
+	{
+		rPhysicsTraceInfo info;
+		if (physicsEngine->TraceClosestPoint(from, to, info))
+		{
+			traceInfo_out.pos = info.pos;
+			traceInfo_out.normal = info.normal;
+
+			RigidBodyEntity* entity = (RigidBodyEntity*)info.userPointer;
+
+			if (entity)
+				traceInfo_out.actor = (Actor*)entity->GetUserPointer();
+			else
+				traceInfo_out.actor = nullptr;
+
+			return true;
+		}
+		return false;
+	}
+}
+
 sound::IEmitter* Core::CreateSoundMono(const std::string& filePath, float volumeNormedPercent /*= 1*/, bool bLoop /*= false*/)
 {
 	sound::IEmitter* soundEmitter;

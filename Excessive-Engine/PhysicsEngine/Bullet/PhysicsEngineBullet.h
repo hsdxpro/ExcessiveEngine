@@ -28,6 +28,8 @@ public:
 
 	void Update(float deltaTime) override;
 
+	bool TraceClosestPoint(const mm::vec3& from, const mm::vec3& to, rPhysicsTraceInfo& traceInfo_out) override;
+
 	// Create, Add DYNAMIC rigid body to physics world
 	physics::IRigidBodyEntity* AddEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass = 1) override;
 

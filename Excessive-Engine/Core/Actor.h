@@ -83,12 +83,12 @@ public:
 	__inline const Transform3D& GetRelTransform()	const { return worldEntity->GetRelTransform(); }
 	__inline const Transform3D& GetTransform()		const { return worldEntity->GetTransform(); }
 
-	__inline mm::vec3 GetDirFrontNormed()	const { return worldEntity->GetDirFrontNormed(); }
-	__inline mm::vec3 GetDirBackNormed()	const { return worldEntity->GetDirBackNormed(); }
-	__inline mm::vec3 GetDirUpNormed()		const { return worldEntity->GetDirUpNormed(); }
-	__inline mm::vec3 GetDirDownNormed()	const { return worldEntity->GetDirDownNormed(); }
-	__inline mm::vec3 GetDirRightNormed()	const { return worldEntity->GetDirRightNormed(); }
-	__inline mm::vec3 GetDirLeftNormed()	const { return worldEntity->GetDirLeftNormed(); }
+	__inline mm::vec3 GetFrontDirNormed()	const { return worldEntity->GetFrontDirNormed(); }
+	__inline mm::vec3 GetBackDirNormed()	const { return worldEntity->GetBackDirNormed(); }
+	__inline mm::vec3 GetUpDirNormed()		const { return worldEntity->GetUpDirNormed(); }
+	__inline mm::vec3 GetDownDirNormed()	const { return worldEntity->GetDownDirNormed(); }
+	__inline mm::vec3 GetRightDirNormed()	const { return worldEntity->GetRightDirNormed(); }
+	__inline mm::vec3 GetLeftDirNormed()	const { return worldEntity->GetLeftDirNormed(); }
 
 	__inline mm::vec3 GetVelocity() const { return worldEntity->GetVelocity(); }
 

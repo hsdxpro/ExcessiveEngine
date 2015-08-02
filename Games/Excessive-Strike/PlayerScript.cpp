@@ -4,8 +4,6 @@
 #include "Core\Input.h"
 #include "ExcessiveStrikeCommon.h"
 
-rCollision playerCollisionData;
-
 PlayerScript::PlayerScript()
 {
 	bSquatting = false;
@@ -26,8 +24,8 @@ PlayerScript::PlayerScript()
 	windowCenter = gCore->GetTargetWindow()->GetCenterPos();
 
 	// Weapon model
-	auto& ak47ModelPath = "Assets/ak47/ak.obj";
-	//auto& ak47ModelPath = "Assets/ak47/ak47.obj";
+	//auto& ak47ModelPath = "Assets/ak47/ak.obj";
+	auto& ak47ModelPath = "Assets/ak47/ak47.dae";
 
 	// Camera
 	camComp = gCore->SpawnComp_Camera();
@@ -68,16 +66,15 @@ PlayerScript::PlayerScript()
 	
 	ak47Graphics = gCore->SpawnComp_MeshFromFile(ak47ModelPath);
 
-	//ak47Graphics->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
-	//ak47Graphics->SetPos(camComp->GetPos() + mm::vec3(0.7f, 1.5f, -0.6f));
-	//ak47Graphics->Rot(mm::quat(-90.f / 180.f * 3.1415f, { 0, 0, 1 }));
-	//ak47Graphics->Rot(mm::quat(-90.f / 180.f * 3.1415f, { 0, 1, 0 }));
+	ak47Graphics->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
+	ak47Graphics->SetPos(camComp->GetPos() + mm::vec3(0.7f, 1.5f, -0.6f));
+	ak47Graphics->Rot(mm::quat(-90.f / 180.f * 3.1415f, { 0, 0, 1 }));
 
 	// Old trans
-	ak47Graphics->SetScaleLocal({ 1.f / 1800, 1.f / 1800, 1.f / 1800 });
-	ak47Graphics->SetRot(mm::quat(-0.05f, { 1, 0, 0 }) * mm::quat(3.1415f - 0.08f, { 0, 0, 1 }) * mm::quat(3.1415f / 2, { 1, 0, 0 })); // Need quaternion rework, multiply swapped, mm::quat(angle) rots with -angle, why?
-	ak47Graphics->SetPos(camComp->GetPos() + mm::vec3(0.7f, 1.05f - 0.15f, -0.6f));
-	ak47Graphics->Rot(mm::quat(7.f / 180.f * 3.1415f, { 0, 0, 1 }) * mm::quat(-3.f / 180.f * 3.1415f, { 1, 0, 0 }));
+	//ak47Graphics->SetScaleLocal({ 1.f / 1800, 1.f / 1800, 1.f / 1800 });
+	//ak47Graphics->SetRot(mm::quat(-0.05f, { 1, 0, 0 }) * mm::quat(3.1415f - 0.08f, { 0, 0, 1 }) * mm::quat(3.1415f / 2, { 1, 0, 0 })); // Need quaternion rework, multiply swapped, mm::quat(angle) rots with -angle, why?
+	//ak47Graphics->SetPos(camComp->GetPos() + mm::vec3(0.7f, 1.05f - 0.15f, -0.6f));
+	//ak47Graphics->Rot(mm::quat(7.f / 180.f * 3.1415f, { 0, 0, 1 }) * mm::quat(-3.f / 180.f * 3.1415f, { 1, 0, 0 }));
 	camComp->Attach(ak47Graphics); // Attach weapon to player physics
 	
 	// Mouse recenter
@@ -103,22 +100,22 @@ void PlayerScript::Update(float deltaSeconds)
 	mm::vec3 move(0, 0, 0);
 	if (gInput.IsKeyDown(eKey::W))
 	{
-		move += camComp->GetDirFrontNormed();
+		move += camComp->GetFrontDirNormed();
 		nButtonsDown++;
 	}
 	if (gInput.IsKeyDown(eKey::S))
 	{
-		move += camComp->GetDirBackNormed();
+		move += camComp->GetBackDirNormed();
 		nButtonsDown++;
 	}
 	if (gInput.IsKeyDown(eKey::A))
 	{
-		move += camComp->GetDirLeftNormed();
+		move += camComp->GetLeftDirNormed();
 		nButtonsDown++;
 	}
 	if (gInput.IsKeyDown(eKey::D))
 	{
-		move += camComp->GetDirRightNormed();
+		move += camComp->GetRightDirNormed();
 		nButtonsDown++;
 	}
 
@@ -131,7 +128,8 @@ void PlayerScript::Update(float deltaSeconds)
 		// plane(playerToOtherContactNormal, contact.posA)
 	}
 
-	if (move.x != 0 || move.y != 0 || move.z != 0)
+	move.z = 0;
+	if (move.x != 0 || move.y != 0)
 		move = mm::normalize(move);
 
 	move *= playerMoveSpeed;
@@ -214,15 +212,22 @@ void PlayerScript::Update(float deltaSeconds)
 			gCore->DestroyActor(bulletShell);
 		});
 		
-		//// Shooted bullet
-		Actor* bullet = gCore->SpawnActor_RigidBodyFromFile("Assets/box.DAE", 100); // mass = 1
-		bullet->Attach(gCore->SpawnComp_MeshFromFile("Assets/box.DAE"));
-		bullet->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
-		bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);
+		
+		rTraceInfo p;
+		if (gCore->TraceClosestPoint(eScene::PHYSICS, camComp->GetPos(), camComp->GetPos() + camComp->GetFrontDirNormed() * 999999, p))
+		{
+			GraphicsComponent* boxComp = gCore->SpawnComp_MeshFromFile("Assets/box.DAE");
+			boxComp->SetScaleLocal({ 1.f / 200, 1.f / 200, 1.f / 200 });
+			boxComp->SetPos(p.pos);
+		}
+		
+		//bullet->Attach(gCore->SpawnComp_MeshFromFile("Assets/box.DAE"));
+		//bullet->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
+		//bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);
 
-		mm::vec3 bulletDir = camComp->GetDirFrontNormed();
-		bullet->SetPos(ak47Graphics->GetPos());
-		bullet->SetVelocity(bulletDir * 7);
+		//mm::vec3 bulletDir = camComp->GetFrontDirNormed();
+		//bullet->SetPos(ak47Graphics->GetPos());
+		//bullet->SetVelocity(bulletDir * 7);
 
 		//mm::vec3 bulletStartPos = bullet->GetPos();
 		//const float bulletSpeed = 100;

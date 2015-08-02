@@ -19,3 +19,11 @@ struct rPhysicsCollision
 
 	std::vector<rContactPoint> contacts;
 };
+
+struct rPhysicsTraceInfo
+{
+	void* userPointer;
+
+	mm::vec3 pos;
+	mm::vec3 normal;
+};

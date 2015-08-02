@@ -180,7 +180,7 @@ namespace testartur
 					case eKey::D: bDDown = true; break;
 					case eKey::LSHIFT: gCamSpeedMultiplier = 5; break;
 					case eKey::SPACE: {
-						musicPosition = cam->GetPos() + cam->GetDirFrontNormed() * 3;
+						musicPosition = cam->GetPos() + cam->GetFrontDirNormed() * 3;
 						pMusicSourceRepresenterModel->SetPos(musicPosition);
 						//pMusicSource->SetPos(musicPosition);
 					} break;
@@ -203,13 +203,13 @@ namespace testartur
 
 			// Camera move
 			if (bWDown) // W
-				cam->SetPos(cam->GetPos() + cam->GetDirFrontNormed() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+				cam->SetPos(cam->GetPos() + cam->GetFrontDirNormed() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 			if (bSDown) // S									 
-				cam->SetPos(cam->GetPos() + cam->GetDirBackNormed()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+				cam->SetPos(cam->GetPos() + cam->GetBackDirNormed()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 			if (bADown) // A									 
-				cam->SetPos(cam->GetPos() + cam->GetDirLeftNormed()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+				cam->SetPos(cam->GetPos() + cam->GetLeftDirNormed()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 			if (bDDown) // D									 
-				cam->SetPos(cam->GetPos() + cam->GetDirRightNormed() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+				cam->SetPos(cam->GetPos() + cam->GetRightDirNormed() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 
 //			listener->SetPos(cam->GetPos());
 			// Update everything
