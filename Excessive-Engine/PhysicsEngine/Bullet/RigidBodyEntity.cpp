@@ -5,7 +5,7 @@
 using namespace physics::bullet;
 
 RigidBodyEntity::RigidBodyEntity(btRigidBody* body) 
-:body(body), collisionGroupID(-1) // -1 default means can collide with everything
+:body(body), collisionGroupID(-1), userPointer(0) // -1 default means can collide with everything
 {
 	body->setUserPointer(this);
 }

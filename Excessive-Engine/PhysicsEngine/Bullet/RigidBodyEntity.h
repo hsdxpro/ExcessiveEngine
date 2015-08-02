@@ -14,6 +14,8 @@ public:
 
 	void AddForce(const mm::vec3& force, const mm::vec3& relPos = { 0, 0, 0 }) override;
 
+	__inline void SetUserPointer(void* p) { userPointer = p; }
+
 	void SetGravityScale(float s) override;
 	void SetTrigger(bool bTrigger) override;
 	void SetCollisionGroup(i64 ID) override;
@@ -31,9 +33,12 @@ public:
 	const mm::vec3 GetScaleLocal() const override;
 
 	__inline i64 GetCollisionGroup() const override { return collisionGroupID; }
-	__inline bool GetIsTrigger() const override { return (body->getCollisionFlags() & btRigidBody::CF_NO_CONTACT_RESPONSE) != 0; }
-
 	__inline mm::vec3 GetVelocity() const { return mm::vec3(body->getLinearVelocity().x(), body->getLinearVelocity().y(), body->getLinearVelocity().z()); }
+	__inline void* GetUserPointer() { return userPointer; }
+
+	__inline bool IsTrigger() const override { return (body->getCollisionFlags() & btRigidBody::CF_NO_CONTACT_RESPONSE) != 0; }
+	__inline bool IsStatic() const { return body->isStaticObject(); }
+	__inline bool IsDynamic() const { return !body->isStaticObject(); }
 
 	btRigidBody* GetBody();
 
@@ -41,6 +46,7 @@ protected:
 	btRigidBody* body;
 
 	i64 collisionGroupID;
+	void* userPointer;
 };
 
 }} // Namespace end  physics::bullet

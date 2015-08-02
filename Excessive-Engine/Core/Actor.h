@@ -20,6 +20,8 @@ public:
 	template<class T>
 	__inline bool RunLambdaOnComponents(const std::function<void(T*)>& lambda) { return worldEntity->RunLambdaOnComponents<T>(lambda); }
 
+	__inline void SetName(const std::string& s) { name = s; }
+
 	__inline void SetPendingKill(bool bKill) { bPendingKill = bKill; }
 
 	__inline void SetEntity(Entity* e)
@@ -104,8 +106,11 @@ public:
 	__inline const std::function<void(const rCollision& col)>& GetOnCollisionEnter() { return onCollisionEnter; }
 	__inline const std::function<void(const rCollision& col)>& GetOnCollisionExit() { return onCollisionExit; }
 
+	__inline const std::string& GetName() { return name; }
 	__inline bool IsPendingKill() { return bPendingKill; }
 protected:
+	std::string name;
+
 	Entity* worldEntity;
 
 	std::vector<Behavior*> behaviors;

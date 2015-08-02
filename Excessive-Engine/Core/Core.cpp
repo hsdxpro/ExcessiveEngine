@@ -36,7 +36,8 @@ Core* gCore = nullptr;
 Core::Core() 
 :graphicsEngine(0), physicsEngine(0), soundEngine(0), networkEngine(0)
 {
-
+	prevFrameActorCollideList.reserve(1000);
+	curFrameActorCollideList.reserve(1000);
 }
 
 Core::~Core()
@@ -225,28 +226,32 @@ Actor* Core::SpawnActor()
 
 Actor* Core::SpawnActor_MeshFromFile(const std::string& modelFilePath)
 {
-	auto actor = SpawnActor();
+	Actor* actor = SpawnActor();
 		actor->GetEntity()->SetRootComp(SpawnComp_MeshFromFile(modelFilePath));
 	return actor;
 }
 
 Actor* Core::SpawnActor_RigidBodyFromFile(const std::string& modelFilePath, float mass)
 {
-	auto actor = SpawnActor();
-		actor->GetEntity()->SetRootComp(SpawnComp_RigidBodyFromFile(modelFilePath, mass));
+	Actor* actor = SpawnActor();
+		RigidBodyComponent* rigidComp = SpawnComp_RigidBodyFromFile(modelFilePath, mass);
+		rigidComp->SetUserPointer(actor);
+		actor->GetEntity()->SetRootComp(rigidComp);
 	return actor;
 }
 
 Actor* Core::SpawnActor_RigidBodyCapsule(float height, float radius, float mass /*= 0*/)
 {
-	auto actor = SpawnActor();
-		actor->GetEntity()->SetRootComp(SpawnComp_RigidBodyCapsule(height, radius, mass));
+	Actor* actor = SpawnActor();
+		RigidBodyComponent* rigidComp = SpawnComp_RigidBodyCapsule(height, radius, mass);
+		rigidComp->SetUserPointer(actor);
+		actor->GetEntity()->SetRootComp(rigidComp);
 	return actor;
 }
 
 Actor* Core::SpawnActor_Camera()
 {
-	auto actor = SpawnActor();
+	Actor* actor = SpawnActor();
 		actor->GetEntity()->SetRootComp(SpawnComp_Camera());
 	return actor;
 }
@@ -520,20 +525,6 @@ void Core::Update(float deltaTime)
 
 				it2++;
 			}
-				
-
-			// Remove from prev frame collisionData
-			auto it3 = prevFrameActorCollisionData.begin();
-			while (it3 != prevFrameActorCollisionData.end())
-			{
-				if (it3->self == a || it3->other == a)
-				{
-					it3 = prevFrameActorCollisionData.erase(it3);
-					continue;
-				}
-					
-				it3++;
-			}
 
 			for (auto& comp : a->GetComponents())
 				DestroyComp(comp);
@@ -596,129 +587,65 @@ void Core::Update(float deltaTime)
 
 			const std::vector<rPhysicsCollision>& collisionList = physicsEngine->GetCollisionList();
 
-			static std::unordered_map<Actor*, Actor*> curFrameActorCollideList;
-			static std::vector<rCollision> curFrameActorCollisionData;
-			static bool b = true;
-			if (b)
-			{
-				curFrameActorCollideList.reserve(1000);
-				curFrameActorCollisionData.reserve(1000);
-				b = false;
-			}
 			curFrameActorCollideList.clear();
-			curFrameActorCollisionData.clear();
 
 			for (auto& collision : collisionList)
 			{
 				rCollision colData;
+				colData.selfBody = collision.entityA;
+				colData.otherBody = collision.entityB;
 
-				for (auto& a : actors)
+				Actor* self = (Actor*)collision.entityA->GetUserPointer();
+				if (self && !self->IsPendingKill())
+					colData.self = self;
+				else
+					colData.self = nullptr;
+
+				Actor* other = (Actor*)collision.entityB->GetUserPointer();
+				if (other && !other->IsPendingKill())
+					colData.other = other;
+				else
+					colData.other = nullptr;
+
+				if (colData.self || colData.other)
+					colData.contacts = collision.contacts;
+				else
+					continue;
+
+				auto CheckDispatchActorCollision = [&](Actor* a)
 				{
-					//PROFILE_SCOPE_SUM("actor0");
-					if (a->IsPendingKill()) // Leave actors already destroying
-						continue;
-
-
-					static std::vector<WorldComponent*> allComps;
-					static bool b = true;
-					if (b)
-					{
-						allComps.reserve(10);
-						b = false;
-					}
-					allComps.clear();
-					a->GetComponents(allComps);
-
-					//PROFILE_SCOPE_SUM("comp iter");
-					for (auto comp : allComps)
-					{
-						if (!dynamic_cast<RigidBodyComponent*>(comp))
-							continue;
-
-						if (((RigidBodyComponent*)comp)->GetEntity() == collision.entityA)
-						{
-							colData.self = a;
-							colData.contacts = collision.contacts;
-							colData.selfBody = collision.entityA;
-							colData.otherBody = collision.entityB;
-							break;
-						}
-						else if (((RigidBodyComponent*)comp)->GetEntity() == collision.entityB)
-						{
-							colData.other = a;
-							colData.contacts = collision.contacts;
-							colData.selfBody = collision.entityA;
-							colData.otherBody = collision.entityB;
-							break;
-						}
-					}
-
-					if (colData.self && colData.other)
-						break;
-				}
-				
-				Actor* twoActor[2] = { 0, 0 };
-				twoActor[0] = colData.self;
-				twoActor[1] = colData.other;
-
-				for (auto& a : twoActor)
-				{
-					if (!a)
-						continue;
+					curFrameActorCollideList[a] = colData;
 
 					// NO prev frame data, YES cur frame data for actor (OnCollisionEnter)
-					if (prevFrameActorCollideList.find(a) == prevFrameActorCollideList.end())
-					{
-						if (a->GetOnCollisionEnter())
-						{
-							PROFILE_SCOPE_SUM("ActorLambda onCollisionEnter");
-							a->GetOnCollisionEnter()(colData);
-						}
-					}
+					if (prevFrameActorCollideList.find(a) == prevFrameActorCollideList.end() && a->GetOnCollisionEnter())
+						a->GetOnCollisionEnter()(colData);
 
 					// YES cur frame data (OnCollision)
 					if (a->GetOnCollision())
-					{
-						PROFILE_SCOPE_SUM("ActorLambda onCollision");
 						a->GetOnCollision()(colData);
-					}
 
-					curFrameActorCollideList[a] = a;
-					curFrameActorCollisionData.push_back(colData);
-				}
-			}
-
-			//PROFILE_SCOPE("OnCollisionExit");
-
-			// If previous frame collided actor not found in current list, then Call OnCollisionExit
-			for (auto& a : prevFrameActorCollideList)
-			{
-				if (a.first->IsPendingKill())
-					continue;
-
-				auto it = curFrameActorCollideList.find(a.first);
-
-				if (it == curFrameActorCollideList.end())
-				{
-					for (auto& collision : prevFrameActorCollisionData)
+					// If previous frame collided actor not found in current list, then Call OnCollisionExit
+					for (auto& aPrev : prevFrameActorCollideList)
 					{
-						if (collision.self == a.first && collision.self->GetOnCollisionExit() != nullptr)
+						if (aPrev.first->IsPendingKill() || aPrev.first != a)
+							continue;
+
+						const auto& collision = aPrev.second;
+						if (collision.self == aPrev.first && collision.self->GetOnCollisionExit() != nullptr)
 							collision.self->GetOnCollisionExit()(collision);
-						else if (collision.other == a.first && collision.other->GetOnCollisionExit() != nullptr)
+						else if (collision.other == aPrev.first && collision.other->GetOnCollisionExit() != nullptr)
 							collision.other->GetOnCollisionExit()(collision);
 					}
-				}
+				};
+
+				if (colData.self)
+					CheckDispatchActorCollision(colData.self);
+
+				if (colData.other)
+					CheckDispatchActorCollision(colData.other);
 			}
 
-			// TODO, walking on floor -> should not break in that if
-			//if (curFrameActorCollideList.size() == 0)
-			//{
-			//	int asd = 5;
-			//	asd++;
-			//}
-
 			prevFrameActorCollideList = curFrameActorCollideList;
-			prevFrameActorCollisionData = curFrameActorCollisionData;
 		}
 
 

@@ -44,6 +44,7 @@ int main()
 
 	Timer* timer = new Timer();
 	timer->Start();
+
 	while (window->IsOpen())
 	{
 		// Prepare for input processing
@@ -99,6 +100,7 @@ int main()
 
 		gCore->Update(deltaSeconds);
 	}
+
 	return 0;
 }
 

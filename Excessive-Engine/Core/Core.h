@@ -124,8 +124,9 @@ protected:
 	std::vector<Actor*> actors;
 	std::vector<Actor*> actorsToDestroy;
 
-	std::unordered_map<Actor*, Actor*> prevFrameActorCollideList;
-	std::vector<rCollision> prevFrameActorCollisionData;
+	// Prev and cur frame actors associated collision data
+	std::unordered_map<Actor*, rCollision> curFrameActorCollideList;
+	std::unordered_map<Actor*, rCollision> prevFrameActorCollideList;
 
 	// Entity scripts
 	std::vector<EntityScript*> entityScripts;

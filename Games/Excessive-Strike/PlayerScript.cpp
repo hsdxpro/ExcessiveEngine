@@ -4,6 +4,8 @@
 #include "Core\Input.h"
 #include "ExcessiveStrikeCommon.h"
 
+rCollision playerCollisionData;
+
 PlayerScript::PlayerScript()
 {
 	bSquatting = false;
@@ -34,15 +36,30 @@ PlayerScript::PlayerScript()
 	// Player components
 	playerCapsule = gCore->SpawnActor_RigidBodyCapsule(2, 0.2f, 70);
 	playerCapsule->SetCollisionGroup(eES_CollisionGroup::PLAYER);
+	playerCapsule->SetOnCollision([&](const rCollision& col)
+	{
+		playerCollisionData = col;
+	});
+
 	playerCapsule->SetOnCollisionEnter([&](const rCollision& col)
 	{
-		if (nButtonsDown > 0 && !walkSound->IsEmitting())
-			walkSound->Start();
+		bool bStayOnGroundThing = false;
 
-		bCanJump = true;
+		for (auto& contact : col.contacts)
+			if (contact.normalB.z > 0.707)
+				bStayOnGroundThing = true;
+
+		if (bStayOnGroundThing)
+		{
+			if (nButtonsDown > 0 && !walkSound->IsEmitting())
+				walkSound->Start();
+
+			bCanJump = true;
+		}
 	});
-	
+
 	playerCapsule->SetAngularFactor(0);
+	playerCapsule->SetKinematic(true);
 
 	// Attach camera to player physics
 	camComp->Move({ 0, 0, 1 });
@@ -76,36 +93,50 @@ PlayerScript::PlayerScript()
 	gunSound = gCore->CreateSoundMono("Assets/GUN_FIRE-stereo.ogg", 0.5);
 	shellSound = gCore->CreateSoundMono("Assets/shell_fall.ogg", 0.5);
 
-	playerCapsule->SetPos(mm::vec3(0, 0, 10));
+	playerCapsule->SetPos(mm::vec3(0, 0, 3));
 }
 
 void PlayerScript::Update(float deltaSeconds)
 {
 	// W,S,A,D Moving
 	nButtonsDown = 0;
-	mm::vec3 newVel(0, 0, 0);
+	mm::vec3 move(0, 0, 0);
 	if (gInput.IsKeyDown(eKey::W))
 	{
-		newVel += camComp->GetDirFrontNormed() * playerMoveSpeed;
+		move += camComp->GetDirFrontNormed();
 		nButtonsDown++;
 	}
 	if (gInput.IsKeyDown(eKey::S))
 	{
-		newVel += camComp->GetDirBackNormed() * playerMoveSpeed;
+		move += camComp->GetDirBackNormed();
 		nButtonsDown++;
 	}
 	if (gInput.IsKeyDown(eKey::A))
 	{
-		newVel += camComp->GetDirLeftNormed() * playerMoveSpeed;
+		move += camComp->GetDirLeftNormed();
 		nButtonsDown++;
 	}
 	if (gInput.IsKeyDown(eKey::D))
 	{
-		newVel += camComp->GetDirRightNormed() * playerMoveSpeed;
+		move += camComp->GetDirRightNormed();
 		nButtonsDown++;
 	}
 
-	playerCapsule->SetVelocity(mm::vec3(newVel.x, newVel.y, playerCapsule->GetVelocity().z));
+	// Decline newVel components facing to player self contact normals
+	for (auto& contact : playerCollisionData.contacts)
+	{
+		mm::vec3 playerToOtherContactNormal = contact.normalA;
+
+		// move = projectVecToPlane(move, plane(playerToOtherContactNormal, contact.posA));
+		// plane(playerToOtherContactNormal, contact.posA)
+	}
+
+	if (move.x != 0 || move.y != 0 || move.z != 0)
+		move = mm::normalize(move);
+
+	move *= playerMoveSpeed;
+
+	playerCapsule->SetVelocity(mm::vec3(move.x, move.y, playerCapsule->GetVelocity().z));
 
 
 	if (nButtonsDown == 1 && gInput.IsKeyPressed(eKey::W) | gInput.IsKeyPressed(eKey::S) | gInput.IsKeyPressed(eKey::A) | gInput.IsKeyPressed(eKey::D))

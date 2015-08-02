@@ -7,9 +7,11 @@
 TestLevelScript::TestLevelScript()
 {
 	// Add ground to game
-	auto& groundModelPath = "Assets/Terminal/terminal_blender.dae";
+	auto groundModelPath = "Assets/Terminal/terminal_blender.dae";
 	//Assets/demo_ground.dae
-	gCore->SpawnComp_RigidBodyFromFile(groundModelPath, 0)->SetCollisionGroup(eES_CollisionGroup::GROUND);
+	auto groundRigidActor = gCore->SpawnActor_RigidBodyFromFile(groundModelPath, 0);
+	groundRigidActor->SetCollisionGroup(eES_CollisionGroup::GROUND);
+	groundRigidActor->SetName("ground");
 	gCore->SpawnComp_MeshFromFile(groundModelPath);
 
 	// Add sky to game
@@ -19,18 +21,15 @@ TestLevelScript::TestLevelScript()
 	//gCore->SetLayerCollision(eES_CollisionGroup::GROUND, eES_CollisionGroup::SHELL, true);
 
 	gCore->SetLayerCollision(eES_CollisionGroup::PLAYER, eES_CollisionGroup::SHELL, false);
-	gCore->SetLayerCollision(eES_CollisionGroup::PLAYER, eES_CollisionGroup::BULLET, false);
+	//gCore->SetLayerCollision(eES_CollisionGroup::PLAYER, eES_CollisionGroup::BULLET, false);
 
 	gCore->SetLayerCollision(eES_CollisionGroup::GROUND, eES_CollisionGroup::GROUND, false);
 
 	gCore->SetLayerCollision(eES_CollisionGroup::SHELL, eES_CollisionGroup::SHELL, false);
 	gCore->SetLayerCollision(eES_CollisionGroup::SHELL, eES_CollisionGroup::PLAYER, false);
 
-	gCore->SetLayerCollision(eES_CollisionGroup::BULLET, eES_CollisionGroup::BULLET, false);
-	gCore->SetLayerCollision(eES_CollisionGroup::BULLET, eES_CollisionGroup::PLAYER, false);
+//	gCore->SetLayerCollision(eES_CollisionGroup::BULLET, eES_CollisionGroup::PLAYER, false);
 	gCore->SetLayerCollision(eES_CollisionGroup::BULLET, eES_CollisionGroup::SHELL, false);
-
-	gCore->SetLayerCollision(eES_CollisionGroup::BULLET, eES_CollisionGroup::GROUND, true);
 }
 
 void TestLevelScript::Update(float deltaSeconds)

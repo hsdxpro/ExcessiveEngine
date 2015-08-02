@@ -7,6 +7,7 @@
 #include <vector>
 #include "RigidBodyEntity.h"
 #include "BulletCollision/BroadphaseCollision/btOverlappingPairCache.h"
+#include "BulletCollision/CollisionDispatch/btCollisionDispatcher.h"
 
 using namespace physics::bullet;
 
@@ -52,6 +53,7 @@ public:
 
 	bool GetDebugData(mm::vec3*& linesFromNonUniqPoints_out, size_t& nLines_out) const override;
 
+	//__inline bool IsOverlapCallbacksEnabled(){ return bOverlapCallbacksEnabled; }
 private:
 	btDiscreteDynamicsWorld* world;
 
@@ -64,23 +66,31 @@ private:
 	size_t nLayerCollisionMatrixRows;
 };
 
-class BulletBroadPhaseCallback : public btOverlapFilterCallback
+
+class BulletCollisionDispatcher : public btCollisionDispatcher
 {
 public:
-	BulletBroadPhaseCallback(PhysicsEngineBullet* e) :physicsEngine(e){}
-
-	// return true when pairs need collision
-	virtual bool	needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const
+	BulletCollisionDispatcher(btCollisionConfiguration* collisionConfiguration, PhysicsEngineBullet* physicsEngine)
+	:btCollisionDispatcher(collisionConfiguration), physicsEngine(physicsEngine)
 	{
-		
-		RigidBodyEntity* entityA = (RigidBodyEntity*)((btCollisionObject*)proxy0->m_clientObject)->getUserPointer();
-		RigidBodyEntity* entityB = (RigidBodyEntity*)((btCollisionObject*)proxy1->m_clientObject)->getUserPointer();
 
-		if (!entityA || !entityB)
-			return true;
-
-		return physicsEngine->CheckLayerCollision(entityA->GetCollisionGroup(), entityB->GetCollisionGroup());
 	}
+
+	bool needsCollision(const btCollisionObject* body0, const btCollisionObject* body1) override
+	{
+		bool bCollide = btCollisionDispatcher::needsCollision(body0, body1);
+
+		if (bCollide)
+		{
+			RigidBodyEntity* entityA = (RigidBodyEntity*)body0->getUserPointer();
+			RigidBodyEntity* entityB = (RigidBodyEntity*)body1->getUserPointer();
+			
+			bCollide &= entityB->GetCollisionGroup() == -1 || entityA->GetCollisionGroup() == -1 || physicsEngine->CheckLayerCollision(entityA->GetCollisionGroup(), entityB->GetCollisionGroup());
+		}
+
+		return bCollide;
+	}
+
 protected:
 	PhysicsEngineBullet* physicsEngine;
 };

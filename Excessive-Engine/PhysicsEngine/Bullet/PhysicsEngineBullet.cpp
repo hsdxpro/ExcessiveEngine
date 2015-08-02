@@ -35,7 +35,7 @@ EXPORT IPhysicsEngine* CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d)
 
 PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d) 
 {
-	world = new btDiscreteDynamicsWorld(new	btCollisionDispatcher(new btDefaultCollisionConfiguration),
+	world = new btDiscreteDynamicsWorld(new	BulletCollisionDispatcher(new btDefaultCollisionConfiguration, this),
 										new btDbvtBroadphase,
 										new btSequentialImpulseConstraintSolver,
 										new btDefaultCollisionConfiguration);
@@ -51,9 +51,6 @@ PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d)
 	nLayerCollisionMatrixRows = 4;
 	layerCollisionMatrix.resize(nLayerCollisionMatrixRows * nLayerCollisionMatrixRows);
 	memset(layerCollisionMatrix.data(), 1, nLayerCollisionMatrixRows * nLayerCollisionMatrixRows);
-
-	btOverlapFilterCallback * filterCallback = new BulletBroadPhaseCallback(this);
-	world->getBroadphase()->getOverlappingPairCache()->setOverlapFilterCallback(filterCallback);
 }
 
 PhysicsEngineBullet::~PhysicsEngineBullet()
@@ -175,7 +172,7 @@ physics::IRigidBodyEntity* PhysicsEngineBullet::AddEntityRigidDynamic(mm::vec3* 
 	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), colShape, localInertia);
 		body->setFriction(1);
 	world->addRigidBody(body);
-	
+
 	RigidBodyEntity* e = new RigidBodyEntity(body);
 		entities.push_back(e);
 	return e;
