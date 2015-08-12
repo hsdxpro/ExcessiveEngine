@@ -1,4 +1,4 @@
-Excessive Engine
+Excessive Team
 ================
 
 **Greetings brave developer!**
@@ -20,7 +20,6 @@ Excessive Strike
 ----------------
 To run this project, you need to copy "Assets" and "Runtime/*" near to Excessive-Strike.exe  [Process will be improved via cmake]
 
-Contact
--------
--Feel free to ask anything, available e - mails :
+Contacts
+--------
 **hsdxpro@gmail.com**
