@@ -4,10 +4,9 @@ Excessive Engine
 **Greetings brave developer!**
 
 Our repository contains the following piece of cakes for everybody 
-[static library and dynamic library builds also available via cmake]
-* **Excessive Engine**
-* **Excessive Editor**
-* **Excessive Strike**
+*Excessive Engine
+*Excessive Editor
+*Excessive Strike
 
 1. **Excessive Engine**
 Support for multiple platforms in progress [Current platforms: Only Windows 32 bit! ]
