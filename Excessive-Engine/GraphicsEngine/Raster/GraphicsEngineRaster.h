@@ -69,11 +69,17 @@ public:
 	Camera* CreateCam() override;
 	
 	// scene & layer system
+	// DEPRECATED
 	void AddLayer(const Layer& layer) override;
 	void RemoveLayer(size_t index) override;
 	size_t GetNumLayers() const override;
 	void SetNumLayers(size_t num_layers) override;
 	Layer& GetLayer(size_t index) override;
+
+	// configure pipeline
+	// description must be in json format.
+	// describes the nodes making the pipeline
+	bool SetPipeline(const char* description);
 
 	// interact
 	void Update(float deltaTime) override;
