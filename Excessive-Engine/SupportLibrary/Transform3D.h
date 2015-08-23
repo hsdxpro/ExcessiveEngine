@@ -20,6 +20,14 @@ public:
 	__inline const mm::mat3& GetSkew() const { return skew; }
 	__inline const mm::vec3  GetScaleLocal() const { return skew * mm::vec3(1,1,1);}
 
+	__inline void SetRel(const Transform3D& from, const Transform3D& to)
+	{
+		SetRot(from.GetRot() * mm::inverse(to.GetRot()));
+		SetScaleLocal(from.GetScaleLocal() / to.GetScaleLocal());
+		SetPos(mm::rotate_vector(mm::inverse(to.GetRot()), (from.GetPos() - to.GetPos()) / to.GetScaleLocal()));
+		SetSkew(from.GetSkew() * mm::inverse(to.GetSkew()));
+	}
+
 protected:
 	mm::vec3 pos;
 	mm::quat rot;

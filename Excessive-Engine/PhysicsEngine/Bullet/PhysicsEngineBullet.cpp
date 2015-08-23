@@ -13,6 +13,7 @@
 #include "RigidBodyEntity.h"
 #include "PhysicsEngineBulletDebugGatherer.h"
 #include "SupportLibrary/VisualCpuProfiler.h"
+#include "SoftBodyEntity.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Export Create function
@@ -40,6 +41,10 @@ PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d)
 										new btSequentialImpulseConstraintSolver,
 										new btDefaultCollisionConfiguration);
 
+	world->getSolverInfo().m_numIterations = 4;
+	world->getSolverInfo().m_solverMode = SOLVER_SIMD;
+	world->getDispatchInfo().m_enableSPU = true;
+
 	world->setGravity(btVector3(d.gravity.x, d.gravity.y, d.gravity.z));
 
 	btIDebugDraw* debugDrawer = (btIDebugDraw*)new PhysicsEngineBulletDebugGatherer();
@@ -48,7 +53,7 @@ PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d)
 	world->setDebugDrawer(debugDrawer);
 
 	// Populate collisionMatrix with true values, everything can collide with everything by default
-	nLayerCollisionMatrixRows = 4;
+	nLayerCollisionMatrixRows = 16; // Start with 16x16 matrix
 	layerCollisionMatrix.resize(nLayerCollisionMatrixRows * nLayerCollisionMatrixRows);
 	memset(layerCollisionMatrix.data(), 1, nLayerCollisionMatrixRows * nLayerCollisionMatrixRows);
 }
@@ -119,9 +124,30 @@ void PhysicsEngineBullet::Update(float deltaTime)
 				const btCollisionObject* colB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
 
 				// Fill up our structure with contact informations
-				rPhysicsCollision colInfo;
-				colInfo.entityA = (RigidBodyEntity*)colA->getUserPointer();
-				colInfo.entityB = (RigidBodyEntity*)colB->getUserPointer();
+				physics::rCollision colInfo;
+				
+				if (!colA->getCollisionShape()->isSoftBody())
+				{
+					colInfo.rigidBodyA = (RigidBodyEntity*)colA->getUserPointer();
+					colInfo.softBodyA = nullptr;
+				}
+				else
+				{
+					colInfo.softBodyA = (SoftBodyEntity*)colA->getUserPointer();
+					colInfo.rigidBodyA = nullptr;
+				}
+					
+
+				if (!colB->getCollisionShape()->isSoftBody())
+				{
+					colInfo.rigidBodyB = (RigidBodyEntity*)colB->getUserPointer();
+					colInfo.softBodyB = nullptr;
+				}
+				else
+				{
+					colInfo.softBodyB = (SoftBodyEntity*)colB->getUserPointer();
+					colInfo.rigidBodyB = nullptr;
+				}
 
 				for (int j = 0; j < numContacts; j++)
 				{
@@ -129,7 +155,7 @@ void PhysicsEngineBullet::Update(float deltaTime)
 					if (pt.getDistance() <= 0.f)
 					{
 						//Fill contact data
-						rContactPoint c;
+						physics::rContactPoint c;
 						c.normalA = -mm::vec3(pt.m_normalWorldOnB.x(), pt.m_normalWorldOnB.y(), pt.m_normalWorldOnB.z());
 						c.normalB = mm::vec3(pt.m_normalWorldOnB.x(), pt.m_normalWorldOnB.y(), pt.m_normalWorldOnB.z());
 						c.posA = mm::vec3(pt.m_positionWorldOnA.x(), pt.m_positionWorldOnA.y(), pt.m_positionWorldOnA.z());
@@ -155,9 +181,10 @@ void PhysicsEngineBullet::Update(float deltaTime)
 	}
 }
 
-bool PhysicsEngineBullet::TraceClosestPoint(const mm::vec3& from, const mm::vec3& to, rPhysicsTraceInfo& traceInfo_out)
+bool PhysicsEngineBullet::TraceClosestPoint(const mm::vec3& from, const mm::vec3& to, physics::rTraceResult& traceInfo_out, const physics::rTraceParams& params /*= physics::rTraceParams()*/)
 {
-	btCollisionWorld::ClosestRayResultCallback callb({ from.x, from.y, from.z }, { to.x, to.y, to.z });
+	ExcessiveClosestRayCallb callb(this, { from.x, from.y, from.z }, { to.x, to.y, to.z }, params.ignoredCollisionLayers);
+
 	world->rayTest({ from.x, from.y, from.z }, { to.x, to.y, to.z }, callb);
 
 	if (callb.hasHit())

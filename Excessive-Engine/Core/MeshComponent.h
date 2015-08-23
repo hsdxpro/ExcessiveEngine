@@ -4,10 +4,10 @@
 
 namespace graphics { class IEntity; }
 
-class GraphicsComponent : public WorldComponent
+class MeshComponent : public WorldComponent
 {
 public:
-	GraphicsComponent(graphics::IEntity* e);
+	MeshComponent(graphics::IEntity* e);
 
 	__inline graphics::IEntity* GetEntity() { return entity; }
 

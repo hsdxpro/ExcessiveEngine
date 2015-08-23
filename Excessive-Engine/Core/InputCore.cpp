@@ -1,8 +1,8 @@
-#include "Input.h"
+#include "InputCore.h"
 
-Input gInput;
+InputCore Input;
 
-Input::Input()
+InputCore::InputCore()
 {
 	for(auto& keyDownInfo : keyDownArray)
 	{
@@ -23,7 +23,7 @@ Input::Input()
 	clientMousePos.y = 0;
 }
 
-void Input::KeyPress(eKey key)
+void InputCore::KeyPress(eKey key)
 {
 	keyDownArray[(size_t)key].bDownCurFrame = true;
 
@@ -33,7 +33,7 @@ void Input::KeyPress(eKey key)
 			info.second();
 }
 
-void Input::KeyRelease(eKey key)
+void InputCore::KeyRelease(eKey key)
 {
 	keyDownArray[(size_t)key].bDownCurFrame = false;
 	keyDownArray[(size_t)key].bDownPrevFrame = true;
@@ -44,7 +44,7 @@ void Input::KeyRelease(eKey key)
 			info.second();
 }
 
-void Input::MouseRightPress()
+void InputCore::MouseRightPress()
 {
 	bMouseRightDownCurFrame = true;
 	bMouseRightDownPrevFrame = false;
@@ -54,7 +54,7 @@ void Input::MouseRightPress()
 		callb(clientMousePos);
 }
 
-void Input::MouseRightRelease()
+void InputCore::MouseRightRelease()
 {
 	bMouseRightDownCurFrame = false;
 	bMouseRightDownPrevFrame = true;
@@ -64,7 +64,7 @@ void Input::MouseRightRelease()
 		callb(clientMousePos);
 }
 
-void Input::MouseLeftPress()
+void InputCore::MouseLeftPress()
 {
 	bMouseLeftDownCurFrame = true;
 	bMouseLeftDownPrevFrame = false;
@@ -74,7 +74,7 @@ void Input::MouseLeftPress()
 		callb(clientMousePos);
 }
 
-void Input::MouseLeftRelease()
+void InputCore::MouseLeftRelease()
 {
 	bMouseLeftDownCurFrame = false;
 	bMouseLeftDownPrevFrame = true;
@@ -84,7 +84,7 @@ void Input::MouseLeftRelease()
 		callb(clientMousePos);
 }
 
-void Input::MouseMidPress()
+void InputCore::MouseMidPress()
 {
 	bMouseMidDownCurFrame = true;
 	bMouseMidDownPrevFrame = false;
@@ -94,7 +94,7 @@ void Input::MouseMidPress()
 		callb(clientMousePos);
 }
 
-void Input::MouseMidRelease()
+void InputCore::MouseMidRelease()
 {
 	bMouseMidDownCurFrame = false;
 	bMouseMidDownPrevFrame = true;
@@ -104,7 +104,7 @@ void Input::MouseMidRelease()
 		callb(clientMousePos);
 }
 
-void Input::MouseMove(const mm::ivec2& mouseDelta, const mm::uvec2& clientMousePos)
+void InputCore::MouseMove(const mm::ivec2& mouseDelta, const mm::uvec2& clientMousePos)
 {
 	this->mouseDelta += mouseDelta;
 	this->clientMousePos = clientMousePos;
@@ -114,72 +114,72 @@ void Input::MouseMove(const mm::ivec2& mouseDelta, const mm::uvec2& clientMouseP
 		callb(mouseDelta, clientMousePos);
 }
 
-void Input::RegOnKeyDown(eKey key, const std::function<void()> callb)
+void InputCore::RegOnKeyDown(eKey key, const std::function<void()> callb)
 {
 	onKeyDownCallbacks.push_back(std::make_pair(key,callb));
 }
 
-void Input::RegOnKeyPressed(eKey key, const std::function<void()> callb)
+void InputCore::RegOnKeyPressed(eKey key, const std::function<void()> callb)
 {
 	onKeyPressedCallbacks.push_back(std::make_pair(key,callb));
 }
 
-void Input::RegOnKeyReleased(eKey key, const std::function<void()> callb)
+void InputCore::RegOnKeyReleased(eKey key, const std::function<void()> callb)
 {
 	onKeyReleasedCallbacks.push_back(std::make_pair(key,callb));
 }
 
-void Input::RegOnMouseRightPressed(const std::function<void(const mm::uvec2& mousePos)> callb)
+void InputCore::RegOnMouseRightPressed(const std::function<void(const mm::uvec2& mousePos)> callb)
 {
 	onMouseRightPressedCallbacks.push_back(callb);
 }
 
-void Input::RegOnMouseRightReleased(const std::function<void(const mm::uvec2& mousePos)>  callb)
+void InputCore::RegOnMouseRightReleased(const std::function<void(const mm::uvec2& mousePos)>  callb)
 {
 	onMouseRightReleasedCallbacks.push_back(callb);
 }
 
-void Input::RegOnMouseRightDown(const std::function<void(const mm::uvec2& mousePos)>  callb)
+void InputCore::RegOnMouseRightDown(const std::function<void(const mm::uvec2& mousePos)>  callb)
 {
 	onMouseRightDownCallbacks.push_back(callb);
 }
 
-void Input::RegOnMouseLeftPressed(const std::function<void(const mm::uvec2& mousePos)>  callb)
+void InputCore::RegOnMouseLeftPressed(const std::function<void(const mm::uvec2& mousePos)>  callb)
 {
 	onMouseLeftPressedCallbacks.push_back(callb);
 }
 
-void Input::RegOnMouseLeftReleased(const std::function<void(const mm::uvec2& mousePos)>  callb)
+void InputCore::RegOnMouseLeftReleased(const std::function<void(const mm::uvec2& mousePos)>  callb)
 {
 	onMouseLeftReleasedCallbacks.push_back(callb);
 }
 
-void Input::RegOnMouseLeftDown(const std::function<void(const mm::uvec2& mousePos)>  callb)
+void InputCore::RegOnMouseLeftDown(const std::function<void(const mm::uvec2& mousePos)>  callb)
 {
 	onMouseLeftDownCallbacks.push_back(callb);
 }
 
-void Input::RegOnMouseMidPressed(const std::function<void(const mm::uvec2& mousePos)>  callb)
+void InputCore::RegOnMouseMidPressed(const std::function<void(const mm::uvec2& mousePos)>  callb)
 {
 	onMouseMidPressedCallbacks.push_back(callb);
 }
 
-void Input::RegOnMouseMidReleased(const std::function<void(const mm::uvec2& mousePos)>  callb)
+void InputCore::RegOnMouseMidReleased(const std::function<void(const mm::uvec2& mousePos)>  callb)
 {
 	onMouseMidReleasedCallbacks.push_back(callb);
 }
 
-void Input::RegOnMouseMidDown(const std::function<void(const mm::uvec2& mousePos)>  callb)
+void InputCore::RegOnMouseMidDown(const std::function<void(const mm::uvec2& mousePos)>  callb)
 {
 	onMouseMidDownCallbacks.push_back(callb);
 }
 
-void Input::RegOnMouseMove(const std::function<void(const mm::ivec2& mouseDelta, const mm::uvec2& clientMousePos)> callb)
+void InputCore::RegOnMouseMove(const std::function<void(const mm::ivec2& mouseDelta, const mm::uvec2& clientMousePos)> callb)
 {
 	onMouseMoveCallbacks.push_back(callb);
 }
 
-void Input::ClearFrameData()
+void InputCore::ClearFrameData()
 {
 
 	// General equation downPrevFrame = downCurFrame | (downPrevFrame & downCurFrame)
@@ -206,7 +206,7 @@ void Input::ClearFrameData()
 	mouseDelta.y = 0;
 }
 
-void Input::Update()
+void InputCore::Update()
 {
 	for(size_t i = 0; i < keyDownArray.size(); i++)
 	{
@@ -233,67 +233,67 @@ void Input::Update()
 			callb(clientMousePos);
 }
 
-bool Input::IsKeyDown(eKey key)
+bool InputCore::IsKeyDown(eKey key)
 {
 	return keyDownArray[(size_t)key].bDownCurFrame;
 }
 
-bool Input::IsKeyPressed(eKey key)
+bool InputCore::IsKeyPressed(eKey key)
 {
 	return keyDownArray[(size_t)key].bDownCurFrame && !keyDownArray[(size_t)key].bDownPrevFrame;
 }
 
-bool Input::IsKeyReleased(eKey key)
+bool InputCore::IsKeyReleased(eKey key)
 {
 	return keyDownArray[(size_t)key].bDownPrevFrame && !keyDownArray[(size_t)key].bDownCurFrame;
 }
 
-bool Input::IsMouseRightPressed()
+bool InputCore::IsMouseRightPressed()
 {
 	return bMouseRightDownCurFrame && !bMouseRightDownPrevFrame;
 }
 
-bool Input::IsMouseRightReleased()
+bool InputCore::IsMouseRightReleased()
 {
 	return bMouseRightDownPrevFrame && !bMouseRightDownCurFrame;
 }
 
-bool Input::IsMouseRightDown()
+bool InputCore::IsMouseRightDown()
 {
 	return bMouseRightDownCurFrame;
 }
 
-bool Input::IsMouseLeftPressed()
+bool InputCore::IsMouseLeftPressed()
 {
 	return bMouseLeftDownCurFrame && !bMouseLeftDownPrevFrame;
 }
 
-bool Input::IsMouseLeftReleased()
+bool InputCore::IsMouseLeftReleased()
 {
 	return bMouseLeftDownPrevFrame && !bMouseLeftDownCurFrame;
 }
 
-bool Input::IsMouseLeftDown()
+bool InputCore::IsMouseLeftDown()
 {
 	return bMouseLeftDownCurFrame;
 }
 
-bool Input::IsMouseMidPressed()
+bool InputCore::IsMouseMidPressed()
 {
 	return bMouseMidDownCurFrame && !bMouseMidDownPrevFrame;
 }
 
-bool Input::IsMouseMidReleased()
+bool InputCore::IsMouseMidReleased()
 {
 	return bMouseMidDownPrevFrame && !bMouseMidDownCurFrame;
 }
 
-bool Input::IsMouseMidDown()
+bool InputCore::IsMouseMidDown()
 {
 	return bMouseMidDownCurFrame;
 }
 
-bool Input::IsMouseMove(mm::uvec2& mouseDelta_out)
+bool InputCore::IsMouseMove(mm::uvec2& mouseDelta_out)
 {
 	mouseDelta_out = mouseDelta;
 	return mouseDelta.x != 0 || mouseDelta.y != 0;

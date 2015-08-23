@@ -1,7 +1,7 @@
 #include "Awesomium/WebCore.h"
 #include "Awesomium/BitmapSurface.h"
 #include "Awesomium/STLHelpers.h"
-#include <Core/Core.h>
+#include "Core/EngineCore.h"
 #include "PlatformLibrary/Window.h"
 
 static const char vertexShaderCode[] =
@@ -40,7 +40,7 @@ int main()
 	rGraphicsEngineRaster gDesc;
 		gDesc.gapiType = eGapiType::OPENGL_4_5;
 		gDesc.targetWindow = &window;
-	IGraphicsEngine* gEngine = gCore->InitGraphicsEngineRaster(gDesc);
+	IGraphicsEngine* gEngine = Core.InitGraphicsEngineRaster(gDesc);
 
 // GAPI HACKED THINGS
 	auto gapi = gEngine->GetGapi();
@@ -92,7 +92,7 @@ int main()
 			{
 				if (evt.mouseBtn == eMouseBtn::LEFT)
 					view->InjectMouseUp(Awesomium::kMouseButton_Left);
-				else if (evt.mouseBtn == eMouseBtn::MIDDLE)
+				else if (evt.mouseBtn == eMouseBtn::MID)
 					view->InjectMouseUp(Awesomium::kMouseButton_Middle);
 				else if (evt.mouseBtn == eMouseBtn::RIGHT)
 					view->InjectMouseUp(Awesomium::kMouseButton_Right);

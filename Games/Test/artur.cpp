@@ -28,23 +28,23 @@ namespace testartur
 		Window window(d);
 
 		// Init engine core (graphics, physics, sound, network
-		ISoundEngine* sEngine = gCore->InitSoundEngineSFML();
-		gCore->InitNetworkEngine();
-		gCore->InitPhysicsEngineBullet();
+		ISoundEngine* sEngine = Core.InitSoundEngineSFML();
+		Core.InitNetworkEngine();
+		Core.InitPhysicsEngineBullet();
 		rGraphicsEngineRaster gDesc;
 		gDesc.gapiType = eGapiType::OPENGL_4_5;
 		gDesc.targetWindow = &window;
-		IGraphicsEngine* gEngine = gCore->InitGraphicsEngineRaster(gDesc);
+		IGraphicsEngine* gEngine = Core.InitGraphicsEngineRaster(gDesc);
 
 		// Create camera
-		CameraComponent* cam = gCore->SpawnComp_Camera();
+		CameraComponent* cam = World.SpawnComp_Camera();
 		cam->SetFOV(70 / 180.f*3.1415926f);
 		//cam->SetAspectRatio(window->GetClientAspectRatio());
 		cam->SetNearPlane(0.2f);
 		cam->SetFarPlane(2000);
 		cam->SetPos(mm::vec3(0, -3, 1));
 
-		gCore->SetCam(cam);
+		Core.SetCam(cam);
 
 		//IGraphicsEngine::Layer layer;
 		//layer.scene = scene;
@@ -56,12 +56,12 @@ namespace testartur
 		/*/
 		static const wchar_t assetName[] = L"Assets/teapot.dae";
 		//*/
-		//Entity* simpleEntity = gCore->AddActor();
-		gCore->SpawnComp_RigidBodyFromFile(assetName, 0)->Attach(gCore->SpawnComp_MeshFromFile(assetName));
+		//Entity* simpleEntity = Core.AddActor();
+		World.SpawnComp_RigidBodyFromFile(assetName, 0)->Attach(Core.SpawnComp_MeshFromFile(assetName));
 
-		gCore->SpawnComp_MeshFromFile("Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
+		World.SpawnComp_MeshFromFile("Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
 
-		auto pMusicSourceRepresenterModel = gCore->SpawnComp_MeshFromFile(teapotModelPath);
+		auto pMusicSourceRepresenterModel = World.SpawnComp_MeshFromFile(teapotModelPath);
 		pMusicSourceRepresenterModel->SetScaleLocal({ 0.1f, 0.1f, 0.1f });
 		pMusicSourceRepresenterModel->SetPos(musicPosition);
 
@@ -217,7 +217,7 @@ namespace testartur
 			//float deltaT = t->GetElapsedSinceReset();
 
 			// Update core
-			gCore->Update(elapsed/*, scene*/);
+			Core.Update(elapsed/*, scene*/);
 
 			// Call that after OpenGL "finish" all of it's rendering
 			//window.Present();

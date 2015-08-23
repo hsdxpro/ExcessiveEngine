@@ -26,28 +26,28 @@ int Ricsi()
 	Window window(d);
 
 	// Init engine core (graphics, physics, sound, network
-	gCore->InitSoundEngineSFML();
-	gCore->InitNetworkEngine();
-	gCore->InitPhysicsEngineBullet();
+	Core.InitSoundEngineSFML();
+	Core.InitNetworkEngine();
+	Core.InitPhysicsEngineBullet();
 		rGraphicsEngineRaster gDesc;
 		gDesc.gapiType = eGapiType::OPENGL_4_5;
 		gDesc.targetWindow = &window;
-	IGraphicsEngine* gEngine = gCore->InitGraphicsEngineRaster(gDesc);
+	IGraphicsEngine* gEngine = Core.InitGraphicsEngineRaster(gDesc);
 
 	// Create camera
-	CameraComponent* cam = gCore->SpawnComp_Camera();
+	CameraComponent* cam = World.SpawnComp_Camera();
 		cam->SetFOV(70 / 180.f*3.1415926f);
 		cam->SetNearPlane(0.2f);
 		cam->SetFarPlane(2000);
 		cam->SetPos(mm::vec3(0, -3, 1));
-	gCore->SetCam(cam);
+	Graphics.SetCam(cam);
 
 	static const char assetName[] = "Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
 	static const char teapotModelPath[] = "Assets/box.dae"; // Assets/teapot.dae
 	static const char ak47ModelPath[] = "Assets/ak47/ak.obj"; // Assets/teapot.dae
 
-	gCore->SpawnComp_RigidBodyFromFile(assetName, 0)->Attach(gCore->SpawnComp_MeshFromFile(assetName));
-	gCore->SpawnComp_MeshFromFile("Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
+	World.SpawnComp_RigidBodyFromFile(assetName, 0)->Attach(World.SpawnComp_MeshFromFile(assetName));
+	World.SpawnComp_MeshFromFile("Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
 
 	// Run the main loop
 	rWindowEvent ev;
@@ -98,8 +98,8 @@ int Ricsi()
 					bRMBDown = true;
 				else if (ev.mouseBtn == eMouseBtn::LEFT)
 				{
-					auto box = gCore->SpawnComp_RigidBodyFromFile(teapotModelPath, 10);
-					box->Attach(gCore->SpawnComp_MeshFromFile(teapotModelPath));
+					auto box = World.SpawnComp_RigidBodyFromFile(teapotModelPath, 10);
+					box->Attach(World.SpawnComp_MeshFromFile(teapotModelPath));
 
 					box->SetPos(cam->GetPos() + cam->GetCam()->GetFrontDirNormed() * 3); // 3 méterrel elénk
 					box->SetScaleLocal(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
@@ -188,7 +188,7 @@ int Ricsi()
 			cam->SetPos(cam->GetPos() + cam->GetCam()->GetRightDirNormed() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 
 		// Update core
-		gCore->Update(elapsed/*, scene*/);
+		Core.Update(elapsed/*, scene*/);
 	}
 	std::cout << std::endl;
 

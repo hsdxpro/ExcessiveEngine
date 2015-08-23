@@ -6,9 +6,11 @@
 #include "assimp/Scene.h"
 
 // Util
+#include "PlatformLibrary/Sys.h"
 #include <fstream>
 #include <map>
-#include "PlatformLibrary/Sys.h"
+#include <unordered_map>
+#include <functional>
 
 bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg& cfg, rImporter3DData& data_out) {
 	Assimp::Importer importer;
@@ -27,16 +29,50 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 	is.close();
 
 	// Assimp will parse memory
-	const aiScene* scene = importer.ReadFileFromMemory(mem, fileSize, aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph | aiProcess_OptimizeMeshes | aiProcess_FlipWindingOrder);
-
+	const aiScene* scene = importer.ReadFileFromMemory(mem, fileSize, aiProcess_MakeLeftHanded | aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph | aiProcess_OptimizeMeshes | aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
+	
 	// Free memory
 	free(mem);
 
-	if (!scene) {
+	if (!scene)
 		return false;
-	}
 
 
+	// Gather absolute transformation matrices for each mesh, we will transform vertices with that, to get final positions
+	std::vector<aiMatrix4x4> meshTransformations(scene->mNumMeshes);
+
+
+	//Node000RelTrans * Node00RelTrans * Node0RelTrans * rootRelTrans
+// Root
+	// -Node 0
+	//  - Node 00
+	//	  - Node 000
+	//  - Node 01
+	// -Node 1
+	//  - Node 10
+	//	   - Node 100
+
+	std::function<void(aiNode*, aiMatrix4x4 absoluteTransform)> CalcWorldMatrixRecursively;
+	CalcWorldMatrixRecursively = [&](aiNode* node, aiMatrix4x4 absoluteTransform)
+	{
+		absoluteTransform = node->mTransformation * absoluteTransform;
+
+		if (node->mNumMeshes > 0)
+		{
+			for (size_t i = 0; i < node->mNumMeshes; i++)
+			{
+				unsigned int meshIdx = node->mMeshes[i];
+				meshTransformations[meshIdx] = absoluteTransform;
+			}
+		}
+
+		for (size_t i = 0; i < node->mNumChildren; i++)
+			CalcWorldMatrixRecursively(node->mChildren[i], absoluteTransform);
+	};
+
+	aiMatrix4x4 identityMat;
+	CalcWorldMatrixRecursively(scene->mRootNode, identityMat);
+	
 	// Parsed "scene" have meshes
 	size_t nMeshes = scene->mNumMeshes;
 	aiMesh** meshes = scene->mMeshes;
@@ -175,15 +211,15 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 				indices[globalIndicesIdx + k] = localVertIdx + globalVertexIdx;
 
 				// Gather position
-				if (bHasPos) 
+				if (bHasPos)
 				{
-					const aiVector3D& pos = mesh->mVertices[localVertIdx];
+					const aiVector3D& pos = meshTransformations[i] * mesh->mVertices[localVertIdx];
 					
 					// Determine vertex index
 					u32 vertexIdx = localVertIdx + globalVertexIdx;
 
 					// Then copy the data to the appropriate attrib offset in that vertex
-					memcpy(((u8*)vertices) + vertexSize * vertexIdx + pos_attribOffset, &mm::vec3(pos.x, pos.y, pos.z), sizeof(mm::vec3));
+					memcpy(((u8*)vertices) + vertexSize * vertexIdx + pos_attribOffset, &mm::vec3(pos.x, pos.z, pos.y), sizeof(mm::vec3)); // z and y swapped !!
 				}
 
 				// Gather normal
@@ -213,7 +249,8 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 					u32 vertexIdx = localVertIdx + globalVertexIdx;
 
 					// Then copy the data to the appropriate attrib offset in that vertex
-					memcpy(((u8*)vertices) + vertexSize * vertexIdx + tex0_attribOffset, &mm::vec2(tex0.x, 1 - tex0.y), sizeof(mm::vec2)); // UV flip y
+					//memcpy(((u8*)vertices) + vertexSize * vertexIdx + tex0_attribOffset, &mm::vec2(tex0.x, 1 - tex0.y), sizeof(mm::vec2)); // UV flip y
+					memcpy(((u8*)vertices) + vertexSize * vertexIdx + tex0_attribOffset, &mm::vec2(tex0.x, tex0.y), sizeof(mm::vec2));
 				}
 			}
 		}

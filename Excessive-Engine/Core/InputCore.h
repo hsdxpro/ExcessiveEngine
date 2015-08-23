@@ -4,10 +4,10 @@
 #include <functional>
 #include <vector>
 
-class Input
+class InputCore
 {
 public:
-	Input();
+	InputCore();
 
 public:
 	void KeyPress(eKey key);
@@ -94,4 +94,4 @@ protected:
 	std::vector<std::function<void(const mm::ivec2& mouseDelta, const mm::uvec2& clientMousePos)>> onMouseMoveCallbacks;
 };
 
-extern Input gInput;
+extern InputCore Input;
