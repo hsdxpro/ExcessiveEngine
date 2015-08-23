@@ -5,6 +5,9 @@
 #include <map>
 #include "mymath\mm_quat_func.h"
 
+#include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
 
 #ifdef WIN32
 #define EXPORT __declspec(dllexport)
@@ -431,4 +434,34 @@ IGapi* GraphicsEngineRaster::GetGapi() {
 
 Window* GraphicsEngineRaster::GetTargetWindow() {
 	return targetWindow;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Stuff related to new pipeline
+
+bool GraphicsEngineRaster::SetPipeline(const char* description) {
+	// create the document and parse input
+	rapidjson::Document doc;
+	doc.Parse(description);
+
+	// check parse error and display some helpful information
+	rapidjson::ParseErrorCode errorCode = doc.GetParseError();
+	if (errorCode != rapidjson::ParseErrorCode::kParseErrorNone) {
+#pragma message("You are not displaying any error, dumbfuck");
+		return false;
+	}
+
+
+	return false;
 }
