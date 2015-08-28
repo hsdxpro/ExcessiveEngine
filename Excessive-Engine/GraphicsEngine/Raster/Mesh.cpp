@@ -82,8 +82,12 @@ void Mesh::Load(const wchar_t* file_path) {
 
 // Update whole mesh
 bool Mesh::Update(MeshData data) {
-	auto Deleter = [](void* ptr) {operator delete(ptr); };
-	using RawUniquePtr = std::unique_ptr < void, decltype(Deleter) > ;
+	struct Deleter {
+		void operator()(void* ptr) const {
+			operator delete(ptr);
+		}
+	};
+	using RawUniquePtr = std::unique_ptr < void, Deleter > ;
 
 	Reset();
 
