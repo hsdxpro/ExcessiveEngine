@@ -1,21 +1,56 @@
-// Ismét tisztázzuk mostantól kezdve mire is van szükségünk, haladjunk szükségleti sorrendben...
+// Mai feladat : Gondolkodni kene Core feldarabolasan, Physics, Sound, Graphics, Network
+// A felosztás mûködõképes ha individuális modul részeket ölelnek fel a felosztott részek
+// De mi van olyan funckionalitással amihez pl graphicsEngine meg phyicsEngine is kell, ez egyértelmûen a Core dolga
+// Nézzük meg, hogy néznének ki ezek az osztályok
 
-//1. Szeretnék egy script - bõl kattintásra lõni egy adott irányba egy grafikát, ami magától 200 méter után azt mondja hogy törlõdjön ki
-//
-//2. Szeretnék unit test - et írni a "Mutated Game Scripting" - re, de egy elég durvát
-//3. Próbálj találni végre olyan játék logikai dolgot amire hasznos lehet a WorldComponent mutálás, nem csak az Entity mutálás...
+// Input
+// Network
+// Graphics
+// Physics
+// Sound
+// World
+// Core Amikor Core példányosul, akkor a többi is
+// Core példányosítását nem vethetjük el editoron belül, de játékon belül lesz egy Core
 
-#include "Core\Core.h"
+// Egyszerû eset:
+// Akarok egy GuiImage : GuiControl a képernyõ közepére amin megjelenik az alma.jpg
+
+// Editorbol ?? "New Gui Page(mainMenu)", lepakolom a control - t, majd dragelek alma.jpg oda
+// Kódból beállítom a GuiLayer - t mainMenu - re
+// Canvas
+// - GuiPages
+//		- GuiLayers
+//			- GuiControls
+
+// A GuiLibrary felelössége
+// - Megjelenítéshez szükséges absztrakció hordozása
+// Vannak layerek, pl inventory, hp and mana
+// Van layer, pl MainMenu
+// Layerek sokaságát GuiPage - nek hívjuk
+// Minden stackelhetõ, <GuiPage>, <GuiLayer>, <GuiControl>
+
+// Ne bonyolítsuk túl. Pl van egy inventory nyitva level 0 - nál
+// level1 - re pusholok egy teljes mainMenu - t
+
+// Másik eset, az editoron belül bizonyos viewport részre akarom renderelni az egész világot
+// gui lib renderelés lefut aztán csókolom, ezután Core - n keresztül beállítom hogy az ablak mely részére kéne renderelni a GuiControl alapján, majd meghívom az update - t
+// Ezt mind az editor mainLoop - jában
+
+// Core eddig hangot, .dae stb fájlokat tud zúzni
+
+#include "Core\EngineCore.h"
 #include "Core\CameraComponent.h"
 #include "PlatformLibrary\Window.h"
 #include "PlatformLibrary\Timer.h"
 #include "SupportLibrary\VisualCpuProfiler.h"
 #include "PlayerScript.h"
 #include "TestLevelScript.h"
-#include "Core\Input.h"
+#include "Core\InputCore.h"
 #include "PlatformLibrary\File.h"
+#include "Core\WorldCore.h"
 
 void InitScript();
+
 
 int main()
 {
@@ -30,15 +65,15 @@ int main()
 	window->SetCursorVisible(false);
 
 	// Init Engine core
-	Core::Instantiate();
-		rGraphicsEngineRaster graphicsDesc;
-			graphicsDesc.gapiType = eGapiType::OPENGL_4_5;
-			graphicsDesc.targetWindow = window;
-	gCore->InitGraphicsEngineRaster(graphicsDesc);
-		rPhysicsEngineBullet physicsDesc;
-			physicsDesc.gravity = mm::vec3(0, 0, -9.81f);
-	gCore->InitPhysicsEngineBullet(physicsDesc);
-	gCore->InitSoundEngineSFML();
+	//EngineCore::InstantiateSingleton();
+	rGraphicsEngineRaster graphicsDesc;
+		graphicsDesc.gapiType = eGapiType::OPENGL_4_5;
+		graphicsDesc.targetWindow = window;
+	Core.InitGraphicsEngineRaster(graphicsDesc);
+	rPhysicsEngineBullet physicsDesc;
+		physicsDesc.gravity = mm::vec3(0, 0, -9.81f);
+	Core.InitPhysicsEngineBullet(physicsDesc);
+	Core.InitSoundEngineSFML();
 
 	InitScript(); // Manual bullshit, TODO !!!
 
@@ -48,7 +83,7 @@ int main()
 	while (window->IsOpen())
 	{
 		// Prepare for input processing
-		gInput.ClearFrameData();
+		Input.ClearFrameData();
 
 		// Process input events coming from O.S.-> Window
 		rWindowEvent evt;
@@ -58,47 +93,47 @@ int main()
 			{
 			case eWindowMsg::KEY_PRESS:
 				if (evt.key != eKey::INVALID)
-					gInput.KeyPress(evt.key);
+					Input.KeyPress(evt.key);
 				break;
 
 			case eWindowMsg::KEY_RELEASE:
 				if (evt.key != eKey::INVALID)
-					gInput.KeyRelease(evt.key);
+					Input.KeyRelease(evt.key);
 				break;
 
 			case eWindowMsg::MOUSE_MOVE:
 			{
 				assert(evt.x >= 0 && evt.y >= 0);
-				gInput.MouseMove(mm::ivec2(evt.deltaX, evt.deltaY), mm::uvec2((u32)evt.x, (u32)evt.y));
+				Input.MouseMove(mm::ivec2(evt.deltaX, evt.deltaY), mm::uvec2((u32)evt.x, (u32)evt.y));
 				break;
 			}
 
 			case eWindowMsg::MOUSE_PRESS:
 				switch (evt.mouseBtn)
 				{
-				case eMouseBtn::LEFT:  gInput.MouseLeftPress();  break;
-				case eMouseBtn::MID:   gInput.MouseMidPress();	 break;
-				case eMouseBtn::RIGHT: gInput.MouseRightPress(); break;
+				case eMouseBtn::LEFT:  Input.MouseLeftPress();  break;
+				case eMouseBtn::MID:   Input.MouseMidPress();	 break;
+				case eMouseBtn::RIGHT: Input.MouseRightPress(); break;
 				}
 				break;
 
 			case eWindowMsg::MOUSE_RELEASE:
 				switch (evt.mouseBtn)
 				{
-				case eMouseBtn::LEFT:  gInput.MouseLeftRelease();  break;
-				case eMouseBtn::MID:   gInput.MouseMidRelease();   break;
-				case eMouseBtn::RIGHT: gInput.MouseRightRelease(); break;
+				case eMouseBtn::LEFT:  Input.MouseLeftRelease();  break;
+				case eMouseBtn::MID:   Input.MouseMidRelease();   break;
+				case eMouseBtn::RIGHT: Input.MouseRightRelease(); break;
 				}
 				break;
 			}
 		}
 
-		gInput.Update();
+		Input.Update();
 
 		float deltaSeconds = timer->GetSecondsPassed();
 		timer->Reset();
 
-		gCore->Update(deltaSeconds);
+		Core.Update(deltaSeconds);
 	}
 
 	return 0;
@@ -106,5 +141,5 @@ int main()
 
 void InitScript()
 {
-	gCore->AddScript<TestLevelScript>();
+	World.AddScript<TestLevelScript>();
 }

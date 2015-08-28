@@ -3,8 +3,8 @@
 #include "mymath\mymath.h"
 #include "Core\CameraComponent.h"
 #include "Core\RigidBodyComponent.h"
-#include "Core\EntityScript.h"
-#include "Core\GraphicsComponent.h"
+#include "Core\ActorScript.h"
+#include "Core\MeshComponent.h"
 #include "Core\Actor.h"
 #include "SoundEngine\IEmitter.h"
 
@@ -19,7 +19,7 @@ protected:
 	// Components
 	CameraComponent* camComp;
 
-	GraphicsComponent* ak47Graphics;
+	MeshComponent* ak47Graphics;
 
 	Actor* playerCapsule;
 

@@ -1,12 +1,14 @@
 #pragma once
 #include "WorldComponent.h"
 
-namespace physics { class ISoftEntity; }
+namespace physics { class ISoftBodyEntity; }
 
 class SoftBodyComponent : public WorldComponent
 {
 public:
-	SoftBodyComponent(physics::ISoftEntity* e) :SoftEntity(e){}
+	SoftBodyComponent(physics::ISoftBodyEntity* e) :entity(e){}
+
+	_inline physics::ISoftBodyEntity* GetEntity() { return entity; }
 
 protected:
 	void _InnerReflectPos() override;
@@ -14,5 +16,5 @@ protected:
 	void _InnerReflectSkew() override;
 
 protected:
-	physics::ISoftEntity* SoftEntity;
+	physics::ISoftBodyEntity* entity;
 };

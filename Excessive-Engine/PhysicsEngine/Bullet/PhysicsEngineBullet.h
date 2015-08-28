@@ -2,13 +2,16 @@
 #include "../IPhysicsEngine.h"
 #include "../IRigidBodyEntity.h"
 
+#include "RigidBodyEntity.h"
+#include "SoftBodyEntity.h"
+#include "BulletCollision/BroadphaseCollision/btOverlappingPairCache.h"
+#include "BulletCollision/CollisionDispatch/btCollisionDispatcher.h"
+#include "BulletCollision/CollisionDispatch/btCollisionWorld.h"
+#include "BulletCollision/CollisionShapes/btCollisionShape.h"
+
 #include "SupportLibrary/BasicTypes.h"
 #include "mymath/mymath.h"
 #include <vector>
-#include "RigidBodyEntity.h"
-#include "BulletCollision/BroadphaseCollision/btOverlappingPairCache.h"
-#include "BulletCollision/CollisionDispatch/btCollisionDispatcher.h"
-
 using namespace physics::bullet;
 
 class btSoftRigidDynamicsWorld;
@@ -28,7 +31,7 @@ public:
 
 	void Update(float deltaTime) override;
 
-	bool TraceClosestPoint(const mm::vec3& from, const mm::vec3& to, rPhysicsTraceInfo& traceInfo_out) override;
+	bool TraceClosestPoint(const mm::vec3& from, const mm::vec3& to, physics::rTraceResult& traceResult_out, const physics::rTraceParams& params = physics::rTraceParams()) override;
 
 	// Create, Add DYNAMIC rigid body to physics world
 	physics::IRigidBodyEntity* AddEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass = 1) override;
@@ -43,7 +46,7 @@ public:
 
 	void SetLayerCollision(size_t ID0, size_t ID1, bool bEnableCollision) override;
 
-	__inline bool CheckLayerCollision(size_t ID0, size_t ID1) const override
+	__inline bool IsLayersCanCollide(size_t ID0, size_t ID1) const override
 	{
 		assert(ID0 < sqrt(layerCollisionMatrix.size()));
 		assert(ID1 < sqrt(layerCollisionMatrix.size()));
@@ -51,7 +54,7 @@ public:
 		return layerCollisionMatrix[ID0 + ID1 * nLayerCollisionMatrixRows] > 0;
 	}
 
-	__inline std::vector<rPhysicsCollision>& GetCollisionList() override { return contactList; }
+	__inline std::vector<physics::rCollision>& GetCollisionList() override { return contactList; }
 
 	bool GetDebugData(mm::vec3*& linesFromNonUniqPoints_out, size_t& nLines_out) const override;
 
@@ -61,7 +64,7 @@ private:
 
 	std::vector<physics::IRigidBodyEntity*> entities;
 
-	std::vector<rPhysicsCollision> contactList;
+	std::vector<physics::rCollision> contactList;
 
 	// byte bool array bitch pls
 	std::vector<u8> layerCollisionMatrix;
@@ -72,27 +75,69 @@ private:
 class BulletCollisionDispatcher : public btCollisionDispatcher
 {
 public:
-	BulletCollisionDispatcher(btCollisionConfiguration* collisionConfiguration, PhysicsEngineBullet* physicsEngine)
-	:btCollisionDispatcher(collisionConfiguration), physicsEngine(physicsEngine)
+	BulletCollisionDispatcher(btCollisionConfiguration* c, PhysicsEngineBullet* p)
+	:btCollisionDispatcher(c), physicsEngine(p)
 	{
 
 	}
 
-	bool needsCollision(const btCollisionObject* body0, const btCollisionObject* body1) override
+	bool needsCollision(const btCollisionObject* bodyA, const btCollisionObject* bodyB) override
 	{
-		bool bCollide = btCollisionDispatcher::needsCollision(body0, body1);
+		bool bCollide = btCollisionDispatcher::needsCollision(bodyA, bodyB);
+
+		i64 colGroupA;
+		i64 colGroupB;
 
 		if (bCollide)
 		{
-			RigidBodyEntity* entityA = (RigidBodyEntity*)body0->getUserPointer();
-			RigidBodyEntity* entityB = (RigidBodyEntity*)body1->getUserPointer();
-			
-			bCollide &= entityB->GetCollisionGroup() == -1 || entityA->GetCollisionGroup() == -1 || physicsEngine->CheckLayerCollision(entityA->GetCollisionGroup(), entityB->GetCollisionGroup());
+			if (!bodyA->getCollisionShape()->isSoftBody())
+				colGroupA = ((RigidBodyEntity*)bodyA->getUserPointer())->GetCollisionGroup();
+			else 
+				colGroupA = ((SoftBodyEntity*)bodyA->getUserPointer())->GetCollisionGroup();
+
+			if (!bodyB->getCollisionShape()->isSoftBody())
+				colGroupB = ((RigidBodyEntity*)bodyB->getUserPointer())->GetCollisionGroup();
+			else
+				colGroupB = ((SoftBodyEntity*)bodyB->getUserPointer())->GetCollisionGroup();
 		}
+
+		bCollide &= colGroupA == -1 || colGroupB == -1 || physicsEngine->IsLayersCanCollide(colGroupA, colGroupB);
 
 		return bCollide;
 	}
 
 protected:
 	PhysicsEngineBullet* physicsEngine;
+};
+
+
+struct ExcessiveClosestRayCallb : public btCollisionWorld::ClosestRayResultCallback
+{
+	ExcessiveClosestRayCallb(IPhysicsEngine* p, const btVector3& rayFromWorld, const btVector3& rayToWorld, const std::vector<size_t>& ignoredCollisionLayers)
+	:btCollisionWorld::ClosestRayResultCallback(rayFromWorld, rayToWorld), ignoredCollisionLayers(ignoredCollisionLayers), physicsEngine(p)
+	{
+	}
+
+	virtual bool needsCollision(btBroadphaseProxy* proxy0) const override
+	{
+		btCollisionObject* col = (btCollisionObject*)proxy0->m_clientObject;
+
+		size_t colGroup;
+		if (!col->getCollisionShape()->isSoftBody())
+			colGroup = ((RigidBodyEntity*)col->getUserPointer())->GetCollisionGroup();
+		else
+			colGroup = ((SoftBodyEntity*)col->getUserPointer())->GetCollisionGroup();
+		
+		size_t i = 0;
+		for (; i < ignoredCollisionLayers.size(); i++)
+			if (ignoredCollisionLayers[i] == colGroup)
+				break;
+
+		return i == ignoredCollisionLayers.size();
+	}
+
+protected:
+	IPhysicsEngine* physicsEngine;
+
+	std::vector<size_t> ignoredCollisionLayers;
 };

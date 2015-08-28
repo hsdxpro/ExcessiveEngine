@@ -1,11 +1,16 @@
-#include "Core.h"
+#include "EngineCore.h"
+#include "PhysicsEngine\PhysicsCommon.h"
 #include "PlatformLibrary\Sys.h"
+#include "PlatformLibrary\File.h"
 #include "SupportLibrary\VisualCpuProfiler.h"
 #include "Factory.h"
-#include "PlatformLibrary\File.h"
+#include "Script.h"
+
 #include <array>
 
-Core* gCore = nullptr;
+
+
+EngineCore Core;
 
 //////////////////////////////////////////////////
 //                                              //
@@ -33,14 +38,14 @@ Core* gCore = nullptr;
 //                                              //
 //////////////////////////////////////////////////
 
-Core::Core() 
+EngineCore::EngineCore()
 :graphicsEngine(0), physicsEngine(0), soundEngine(0), networkEngine(0)
 {
 	prevFrameActorCollideList.reserve(1000);
 	curFrameActorCollideList.reserve(1000);
 }
 
-Core::~Core()
+EngineCore::~EngineCore()
 {
 	for (auto& a : scripts)
 		delete a;
@@ -66,7 +71,7 @@ Core::~Core()
 	if (soundEngine)	soundEngine->Release();
 }
 
-IGraphicsEngine* Core::InitGraphicsEngineRaster(const rGraphicsEngineRaster& d /*= rGraphicsEngineRaster()*/) 
+IGraphicsEngine* EngineCore::InitGraphicsEngineRaster(const rGraphicsEngineRaster& d /*= rGraphicsEngineRaster()*/)
 {
 	if (graphicsEngine)
 		graphicsEngine->Release();
@@ -103,7 +108,7 @@ IGraphicsEngine* Core::InitGraphicsEngineRaster(const rGraphicsEngineRaster& d /
 	return graphicsEngine;
 }
 
-IGraphicsEngine* Core::InitGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/) 
+IGraphicsEngine* EngineCore::InitGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/)
 {
 	if (graphicsEngine)
 		graphicsEngine->Release();
@@ -111,7 +116,7 @@ IGraphicsEngine* Core::InitGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGrap
 	return graphicsEngine = Factory::CreateGraphicsEngineRT(d);
 }
 
-IPhysicsEngine* Core::InitPhysicsEngineBullet(const rPhysicsEngineBullet& d /*= rPhysicsEngineBullet()*/) 
+IPhysicsEngine* EngineCore::InitPhysicsEngineBullet(const rPhysicsEngineBullet& d /*= rPhysicsEngineBullet()*/)
 {
 	if (physicsEngine)
 		physicsEngine->Release();
@@ -119,7 +124,7 @@ IPhysicsEngine* Core::InitPhysicsEngineBullet(const rPhysicsEngineBullet& d /*= 
 	return physicsEngine = Factory::CreatePhysicsEngineBullet(d);
 }
 
-INetworkEngine* Core::InitNetworkEngine(const rNetworkEngine& d /*= rNetworkEngine()*/) 
+INetworkEngine* EngineCore::InitNetworkEngine(const rNetworkEngine& d /*= rNetworkEngine()*/)
 {
 	if (networkEngine)
 		networkEngine->Release();
@@ -127,7 +132,7 @@ INetworkEngine* Core::InitNetworkEngine(const rNetworkEngine& d /*= rNetworkEngi
 	return networkEngine = Factory::CreateNetworkEngine(d);
 }
 
-ISoundEngine* Core::InitSoundEngineSFML(const rSoundEngine& d /*= rSoundEngine()*/) 
+ISoundEngine* EngineCore::InitSoundEngineSFML(const rSoundEngine& d /*= rSoundEngine()*/)
 {
 	if (soundEngine)
 		soundEngine->Release();
@@ -139,35 +144,27 @@ ISoundEngine* Core::InitSoundEngineSFML(const rSoundEngine& d /*= rSoundEngine()
 	return soundEngine;
 }
 
-bool Core::TraceClosestPoint(eScene traceInScene, const mm::vec3& from, const mm::vec3& to, rTraceInfo& traceInfo_out)
+bool EngineCore::TraceClosestPoint_Physics(const mm::vec3& from, const mm::vec3& to, rPhysicsTraceResult& traceResult_out, const rPhysicsTraceParams& params /*= rPhysicsTraceParams()*/)
 {
-	if (traceInScene == eScene::GRAPHICS)
+	physics::rTraceResult result;
+	if (physicsEngine->TraceClosestPoint(from, to, result, params))
 	{
-		// TODO
-		return false;
+		traceResult_out.pos = result.pos;
+		traceResult_out.normal = result.normal;
+
+		RigidBodyEntity* entity = (RigidBodyEntity*)result.userPointer;
+
+		if (entity)
+			traceResult_out.actor = (Actor*)entity->GetUserPointer();
+		else
+			traceResult_out.actor = nullptr;
+
+		return true;
 	}
-	else if (traceInScene == eScene::PHYSICS)
-	{
-		rPhysicsTraceInfo info;
-		if (physicsEngine->TraceClosestPoint(from, to, info))
-		{
-			traceInfo_out.pos = info.pos;
-			traceInfo_out.normal = info.normal;
-
-			RigidBodyEntity* entity = (RigidBodyEntity*)info.userPointer;
-
-			if (entity)
-				traceInfo_out.actor = (Actor*)entity->GetUserPointer();
-			else
-				traceInfo_out.actor = nullptr;
-
-			return true;
-		}
-		return false;
-	}
+	return false;
 }
 
-sound::IEmitter* Core::CreateSoundMono(const std::string& filePath, float volumeNormedPercent /*= 1*/, bool bLoop /*= false*/)
+sound::IEmitter* EngineCore::CreateSoundMono(const std::string& filePath, float volumeNormedPercent /*= 1*/, bool bLoop /*= false*/)
 {
 	sound::IEmitter* soundEmitter;
 	sound::ISoundData* soundData;
@@ -201,23 +198,7 @@ sound::IEmitter* Core::CreateSoundMono(const std::string& filePath, float volume
 	return soundEmitter;
 }
 
-Actor* Core::SpawnActor(EntityScript* s)
-{
-	// New actor
-	Actor* actor = new Actor();
-
-		// Behavior from script
-		Behavior* behav = new Behavior();
-		behav->AddScript(s);
-
-		actor->AddBehavior(behav);
-		actor->SetEntity(s->GetEntity());
-
-		actors.push_back(actor);
-	return actor;
-}
-
-void Core::DestroyActor(Actor* a)
+void EngineCore::Destroy(Actor* a)
 {
 	if (!a->IsPendingKill())
 	{
@@ -226,10 +207,10 @@ void Core::DestroyActor(Actor* a)
 	}
 }
 
-void Core::DestroyComp(WorldComponent* c)
+void EngineCore::Destroy(WorldComponent* c)
 {
-	if (dynamic_cast<GraphicsComponent*>(c))
-		defaultGraphicsScene->Remove(((GraphicsComponent*)c)->GetEntity());
+	if (dynamic_cast<MeshComponent*>(c))
+		defaultGraphicsScene->Remove(((MeshComponent*)c)->GetEntity());
 	else if (dynamic_cast<RigidBodyComponent*>(c))
 		physicsEngine->RemoveEntity(((RigidBodyComponent*)c)->GetEntity());
 	else
@@ -243,48 +224,43 @@ void Core::DestroyComp(WorldComponent* c)
 	}
 }
 
-Actor* Core::SpawnActor()
+Actor* EngineCore::SpawnActor(WorldComponent* rootComp /*= new Transform3DComponent()*/)
 {
-	Actor* actor = new Actor();
-	actor->SetEntity(AddEntity());
-
+	Actor* actor = new Actor(rootComp);
 	actors.push_back(actor);
 	return actor;
 }
 
-Actor* Core::SpawnActor_MeshFromFile(const std::string& modelFilePath)
+Actor* EngineCore::SpawnActor_MeshFromFile(const std::string& modelFilePath)
 {
-	Actor* actor = SpawnActor();
-		actor->GetEntity()->SetRootComp(SpawnComp_MeshFromFile(modelFilePath));
+	Actor* actor = SpawnActor(SpawnComp_MeshFromFile(modelFilePath));
 	return actor;
 }
 
-Actor* Core::SpawnActor_RigidBodyFromFile(const std::string& modelFilePath, float mass)
+Actor* EngineCore::SpawnActor_RigidBodyFromFile(const std::string& modelFilePath, float mass)
 {
-	Actor* actor = SpawnActor();
-		RigidBodyComponent* rigidComp = SpawnComp_RigidBodyFromFile(modelFilePath, mass);
-		rigidComp->SetUserPointer(actor);
-		actor->GetEntity()->SetRootComp(rigidComp);
+	RigidBodyComponent* rigidComp = SpawnComp_RigidBodyFromFile(modelFilePath, mass);
+		Actor* actor = SpawnActor(rigidComp);
+	rigidComp->SetUserPointer(actor);
+	
 	return actor;
 }
 
-Actor* Core::SpawnActor_RigidBodyCapsule(float height, float radius, float mass /*= 0*/)
+Actor* EngineCore::SpawnActor_RigidBodyCapsule(float height, float radius, float mass /*= 0*/)
 {
-	Actor* actor = SpawnActor();
-		RigidBodyComponent* rigidComp = SpawnComp_RigidBodyCapsule(height, radius, mass);
-		rigidComp->SetUserPointer(actor);
-		actor->GetEntity()->SetRootComp(rigidComp);
+	RigidBodyComponent* rigidComp = SpawnComp_RigidBodyCapsule(height, radius, mass);
+		Actor* actor = SpawnActor(rigidComp);
+	rigidComp->SetUserPointer(actor);
+
 	return actor;
 }
 
-Actor* Core::SpawnActor_Camera()
+Actor* EngineCore::SpawnActor_Camera()
 {
-	Actor* actor = SpawnActor();
-		actor->GetEntity()->SetRootComp(SpawnComp_Camera());
-	return actor;
+	return SpawnActor(SpawnComp_Camera());
 }
 
-void Core::AddTask(const std::function<void()>& callb, float timeToProceed)
+void EngineCore::AddTask(const std::function<void()>& callb, float timeToProceed)
 {
 	rTask task;
 		task.callb = callb;
@@ -292,14 +268,7 @@ void Core::AddTask(const std::function<void()>& callb, float timeToProceed)
 	tasks.push_back(task); // TODO slow
 }
 
-Entity* Core::AddEntity()
-{
-	Entity* p = new Entity();
-		entities.push_back(p);
-	return p;
-}
-
-GraphicsComponent* Core::SpawnComp_MeshFromFile(const std::string& modelFilePath)
+MeshComponent* EngineCore::SpawnComp_MeshFromFile(const std::string& modelFilePath)
 {
 	// Check if model already loaded somehow
 	// Check if model already loaded somehow
@@ -362,8 +331,9 @@ GraphicsComponent* Core::SpawnComp_MeshFromFile(const std::string& modelFilePath
 			{
 				// TODO:
 				// turn .bmp references into .jpg (UGLY TMP)
+				// Todo, ".bmp", ".BMP"...
 				std::string relPath;
-				if (importedMaterial.relTexPathDiffuse.rfind(".bmp"))
+				if (importedMaterial.relTexPathDiffuse.rfind(".bmp") != std::string::npos || importedMaterial.relTexPathDiffuse.rfind(".BMP") != std::string::npos)
 				{
 					auto idx = importedMaterial.relTexPathDiffuse.rfind('.');
 					auto jpgExtension = importedMaterial.relTexPathDiffuse.substr(0, idx + 1) + "jpg";
@@ -395,7 +365,8 @@ GraphicsComponent* Core::SpawnComp_MeshFromFile(const std::string& modelFilePath
 		// Material groups (face assignment)
 		std::vector<graphics::IMesh::MaterialGroup> matIDs;
 		matIDs.resize(importedMesh->materials.size());
-		for (u32 i = 0; i < matIDs.size(); i++) {
+		for (u32 i = 0; i < matIDs.size(); i++) 
+		{
 			matIDs[i].beginFace = importedMesh->materials[i].faceStartIdx;
 			matIDs[i].endFace = importedMesh->materials[i].faceEndIdx;
 			matIDs[i].id = i;
@@ -421,12 +392,12 @@ GraphicsComponent* Core::SpawnComp_MeshFromFile(const std::string& modelFilePath
 		graphicsMesh->Update(meshData);
 	}
 
-	auto c = new GraphicsComponent(graphicsEntity);
+	auto c = new MeshComponent(graphicsEntity);
 	worldComponents.push_back(c);
 	return c;
 }
 
-RigidBodyComponent* Core::SpawnComp_RigidBodyFromFile(const std::string& modelFilePath, float mass)
+RigidBodyComponent* EngineCore::SpawnComp_RigidBodyFromFile(const std::string& modelFilePath, float mass)
 {
 	// Check if model already loaded somehow
 	rImporter3DData* modelDesc;
@@ -488,7 +459,7 @@ RigidBodyComponent* Core::SpawnComp_RigidBodyFromFile(const std::string& modelFi
 	return c;
 }
 
-RigidBodyComponent* Core::SpawnComp_RigidBodyCapsule(float height, float radius, float mass /* = 0*/)
+RigidBodyComponent* EngineCore::SpawnComp_RigidBodyCapsule(float height, float radius, float mass /* = 0*/)
 {
 	auto capsuleEntity = physicsEngine->AddEntityRigidCapsule(height, radius, mass);
 
@@ -497,30 +468,27 @@ RigidBodyComponent* Core::SpawnComp_RigidBodyCapsule(float height, float radius,
 	return c;
 }
 
-CameraComponent* Core::SpawnComp_Camera()
+CameraComponent* EngineCore::SpawnComp_Camera()
 {
 	auto c = new CameraComponent(graphicsEngine->CreateCam());
 	worldComponents.push_back(c);
 	return c;
 }
 
-void Core::SetCam(CameraComponent* c)
+Transform3DComponent* EngineCore::SpawnComp_Transform3D()
 {
-	defaultGraphicsScene->SetCamera(c->GetCam());
+	auto c = new Transform3DComponent();
+	worldComponents.push_back(c);
+	return c;
 }
 
-bool Core::SetLayerCollision(size_t ID0, size_t ID1, bool bEnableCollision)
+void EngineCore::SetLayerCollision(size_t ID0, size_t ID1, bool bEnableCollision)
 {
-	if (physicsEngine)
-	{
-		physicsEngine->SetLayerCollision(ID0, ID1, bEnableCollision);
-		return true;
-	}
-	
-	return false;
+	assert(physicsEngine);
+	physicsEngine->SetLayerCollision(ID0, ID1, bEnableCollision);
 }
 
-void Core::Update(float deltaTime)
+void EngineCore::Update(float deltaTime)
 {
 	// TODO: Physics engine debug draw
 	mm::vec3* linesFromNonUniqPoints_out;
@@ -555,7 +523,7 @@ void Core::Update(float deltaTime)
 			}
 
 			for (auto& comp : a->GetComponents())
-				DestroyComp(comp);
+				Destroy(comp);
 
 			delete a;
 		}
@@ -613,29 +581,124 @@ void Core::Update(float deltaTime)
 		{
 			PROFILE_SCOPE("Core & onCollision(Enter, Exit, ...)");
 
-			const std::vector<rPhysicsCollision>& collisionList = physicsEngine->GetCollisionList();
+			const std::vector<physics::rCollision>& collisionList = physicsEngine->GetCollisionList();
 
 			curFrameActorCollideList.clear();
 
 			for (auto& collision : collisionList)
 			{
+				// Fill up rCollision, based on rPhysicsCollision
 				rCollision colData;
-				colData.selfBody = collision.entityA;
-				colData.otherBody = collision.entityB;
 
-				Actor* self = (Actor*)collision.entityA->GetUserPointer();
-				if (self && !self->IsPendingKill())
-					colData.self = self;
+				// A
+				if (collision.rigidBodyA)
+				{
+					colData.softBodyA = nullptr;
+					colData.actorA = (Actor*)collision.rigidBodyA->GetUserPointer();
+
+					if (colData.actorA)
+					{
+						// Search for component associated with RigidBodyEntity
+						// Todo: optimize
+						std::vector<RigidBodyComponent*> rigidBodyComps = colData.actorA->GetComponents<RigidBodyComponent>();
+						for (auto& a : rigidBodyComps)
+						{
+							if (a->GetEntity() == collision.rigidBodyA)
+							{
+								colData.rigidBodyA = a;
+								break;
+							}
+						}
+					}
+					else if (colData.actorA->IsPendingKill())
+					{
+						colData.actorA = nullptr;
+					}
+				}
+				else if (collision.softBodyA)
+				{
+					colData.rigidBodyA = nullptr;
+					colData.actorA = (Actor*)collision.softBodyA->GetUserPointer();
+
+					if (colData.actorA)
+					{
+						// Search for component associated with RigidBodyEntity
+						// Todo: optimize
+						std::vector<SoftBodyComponent*> softBodyComps = colData.actorA->GetComponents<SoftBodyComponent>();
+						for (auto& a : softBodyComps)
+						{
+							if (a->GetEntity() == collision.softBodyA)
+							{
+								colData.softBodyA = a;
+								break;
+							}
+						}
+					}
+					else if (colData.actorA->IsPendingKill())
+					{
+						colData.actorA = nullptr;
+					}
+				}
 				else
-					colData.self = nullptr;
+				{
+					colData.actorA = nullptr;
+				}
 
-				Actor* other = (Actor*)collision.entityB->GetUserPointer();
-				if (other && !other->IsPendingKill())
-					colData.other = other;
+				// B
+				if (collision.rigidBodyB)
+				{
+					colData.softBodyB = nullptr;
+					colData.actorB = (Actor*)collision.rigidBodyB->GetUserPointer();
+
+					if (colData.actorB)
+					{
+						// Search for component associated with RigidBodyEntity
+						// Todo: optimize
+						std::vector<RigidBodyComponent*> rigidBodyComps = colData.actorB->GetComponents<RigidBodyComponent>();
+						for (auto& a : rigidBodyComps)
+						{
+							if (a->GetEntity() == collision.rigidBodyB)
+							{
+								colData.rigidBodyB = a;
+								break;
+							}
+						}
+					}
+					else if (colData.actorB->IsPendingKill())
+					{
+						colData.actorB = nullptr;
+					}
+				}
+				else if (collision.softBodyB)
+				{
+					colData.rigidBodyB = nullptr;
+					colData.actorB = (Actor*)collision.softBodyB->GetUserPointer();
+
+					if (colData.actorB)
+					{
+						// Search for component associated with RigidBodyEntity
+						// Todo: optimize
+						std::vector<SoftBodyComponent*> softBodyComps = colData.actorB->GetComponents<SoftBodyComponent>();
+						for (auto& a : softBodyComps)
+						{
+							if (a->GetEntity() == collision.softBodyB)
+							{
+								colData.softBodyB = a;
+								break;
+							}
+						}
+					}
+					else if (colData.actorB->IsPendingKill())
+					{
+						colData.actorB = nullptr;
+					}
+				}
 				else
-					colData.other = nullptr;
+				{
+					colData.actorB = nullptr;
+				}
 
-				if (colData.self || colData.other)
+				if (colData.actorA || colData.actorA)
 					colData.contacts = collision.contacts;
 				else
 					continue;
@@ -659,18 +722,18 @@ void Core::Update(float deltaTime)
 							continue;
 
 						const auto& collision = aPrev.second;
-						if (collision.self == aPrev.first && collision.self->GetOnCollisionExit() != nullptr)
-							collision.self->GetOnCollisionExit()(collision);
-						else if (collision.other == aPrev.first && collision.other->GetOnCollisionExit() != nullptr)
-							collision.other->GetOnCollisionExit()(collision);
+						if (collision.actorA == aPrev.first && collision.actorA->GetOnCollisionExit() != nullptr)
+							collision.actorA->GetOnCollisionExit()(collision);
+						else if (collision.actorB == aPrev.first && collision.actorB->GetOnCollisionExit() != nullptr)
+							collision.actorB->GetOnCollisionExit()(collision);
 					}
 				};
 
-				if (colData.self)
-					CheckDispatchActorCollision(colData.self);
+				if (colData.actorA)
+					CheckDispatchActorCollision(colData.actorA);
 
-				if (colData.other)
-					CheckDispatchActorCollision(colData.other);
+				if (colData.actorB)
+					CheckDispatchActorCollision(colData.actorB);
 			}
 
 			prevFrameActorCollideList = curFrameActorCollideList;
@@ -731,29 +794,4 @@ void Core::Update(float deltaTime)
 
 	// Present opengl window
 	graphicsEngine->GetTargetWindow()->Present();
-}
-
-Window* Core::GetTargetWindow()
-{
-	return graphicsEngine->GetTargetWindow();
-}
-
-IGraphicsEngine* Core::GetGraphicsEngine()
-{ 
-	return graphicsEngine; 
-}
-
-IPhysicsEngine* Core::GetPhysicsEngine() 
-{ 
-	return physicsEngine; 
-}
-
-INetworkEngine* Core::GetNetworkEngine() 
-{ 
-	return networkEngine; 
-}
-
-ISoundEngine*	Core::GetSoundEngine()
-{ 
-	return soundEngine; 
 }

@@ -12,125 +12,108 @@
 #include "NetworkEngine\Boost\NetworkEngineBoost.h"
 #include "SoundEngine\SFML\SoundEngineSFML.h"
 
-#include "Script.h"
 #include "Actor.h"
-#include "EntityScript.h"
-#include "Entity.h"
-#include "GraphicsComponent.h"
+#include "ActorScript.h"
+#include "MeshComponent.h"
 #include "RigidBodyComponent.h"
 #include "CameraComponent.h"
+#include "Transform3DComponent.h"
 
 #include "SupportLibrary\Importer3D.h"
 
 #include <unordered_map>
 #include <vector>
 #include <functional>
+class Script;
 
-struct rMonoSound
-{
-	sound::ISoundData* soundData;
-	sound::IEmitter* soundEmitter;
-};
-
-struct rTask
-{
-	std::function<void()> callb;
-	float timeLeft;
-};
-
-enum eScene
-{
-	PHYSICS,
-	GRAPHICS
-};
-
-struct rTraceInfo
-{
-	Actor* actor;
-
-	mm::vec3 pos;
-	mm::vec3 normal;
-};
-
-extern class Core* gCore;
-
-class Core
+class EngineCore
 {
 public:
-	// Nearly do nothing, null out vars
-	static void Instantiate(){ if(!gCore)gCore = new Core(); }
-
-	Core();
-	~Core();
+	EngineCore();
+	~EngineCore();
 
 	// Init raster graphics engine, if one already exists will be destroyed, then instantiate it
 	IGraphicsEngine* InitGraphicsEngineRaster(const rGraphicsEngineRaster& d = rGraphicsEngineRaster());
-
+	
 	// Init raytracer graphics engine, if one already exists will be destroyed, then instantiate it
 	IGraphicsEngine* InitGraphicsEngineRT(const rGraphicsEngineRT& d = rGraphicsEngineRT());
-
+	
 	// Init physics engine, if one already exists will be destroyed, then instantiate it
 	IPhysicsEngine* InitPhysicsEngineBullet(const rPhysicsEngineBullet& d = rPhysicsEngineBullet());
-
+	
 	// Init network engine, if one already exists will be destroyed, then instantiate it
 	INetworkEngine* InitNetworkEngine(const rNetworkEngine& d = rNetworkEngine());
-
+	
 	// Init network engine, if one already exists will be destroyed, then instantiate it
 	ISoundEngine* InitSoundEngineSFML(const rSoundEngine& d = rSoundEngine());
+	
+	bool TraceClosestPoint_Physics(const mm::vec3& from, const mm::vec3& to, rPhysicsTraceResult& traceResult_out, const rPhysicsTraceParams& params = rPhysicsTraceParams());
 
-	bool TraceClosestPoint(eScene traceInScene, const mm::vec3& from, const mm::vec3& to, rTraceInfo& traceInfo_out);
-
-	// TODO!
-	//ThingType*			  CreateThingType(Thing* t);
-	//GraphicsComponentType*  CreateCompGraphicsType(GraphicsComponent* comp);
-	//RigidBodyComponentType* CreateCompRigidBodyType(RigidBodyComponent* comp);
-	//CameraComponentType*	  CreateCompCameraType(CameraComponent* comp);
-
+	// Todo
+	//bool TraceClosestPoint_Graphics(const mm::vec3& from, const mm::vec3& to, rTraceResult& traceInfo_out);
+	
 	sound::IEmitter* CreateSoundMono(const std::string& filePath, float volumeNormedPercent = 1, bool bLoop = false);
-
-	Actor* SpawnActor();
-	Actor* SpawnActor(EntityScript* s);
-
-	void DestroyActor(Actor* a);
-	void DestroyComp(WorldComponent* c);
-
+	
+	Actor* SpawnActor(WorldComponent* rootComp = new Transform3DComponent());
 	Actor* SpawnActor_MeshFromFile(const std::string& modelFilePath);
 	Actor* SpawnActor_RigidBodyFromFile(const std::string& modelFilePath, float mass);
 	Actor* SpawnActor_RigidBodyCapsule(float height, float radius, float mass = 0);
 	Actor* SpawnActor_Camera();
+	
+	void Destroy(Actor* a);
+	void Destroy(WorldComponent* c);
 
 	void AddTask(const std::function<void()>& callb, float timeToProceed);
-
-	Entity* AddEntity();
-
+	
 	template<class ScriptClass>
-	Script* AddScript();
-
+	Script* AddScript()
+	{
+		ScriptClass* p = new ScriptClass();
+		scripts.push_back(p);
+		return p;
+	}
+	
 	template<class ActorScriptClass>
-	EntityScript* AddEntityScript();
-
-	GraphicsComponent*  SpawnComp_MeshFromFile(const std::string& modelFilePath);
-	RigidBodyComponent* SpawnComp_RigidBodyFromFile(const std::string& modelFilePath, float mass);
-	RigidBodyComponent* SpawnComp_RigidBodyCapsule(float height, float radius, float mass = 0);
-	CameraComponent*	SpawnComp_Camera();
-
-	bool SetLayerCollision(size_t ID0, size_t ID1, bool bEnableCollision);
-
-	void SetCam(CameraComponent* c);
-
+	ActorScript* AddActorScript()
+	{
+		ActorScriptClass* p = new ActorScriptClass();
+		p->SetEntity(Core.AddEntity());
+	
+		entityScripts.push_back(p);
+		return p;
+	}
+	
+	MeshComponent*			SpawnComp_MeshFromFile(const std::string& modelFilePath);
+	RigidBodyComponent*		SpawnComp_RigidBodyFromFile(const std::string& modelFilePath, float mass);
+	RigidBodyComponent*		SpawnComp_RigidBodyCapsule(float height, float radius, float mass = 0);
+	CameraComponent*		SpawnComp_Camera();
+	Transform3DComponent*	SpawnComp_Transform3D();
+	
+	void SetLayerCollision(size_t ID0, size_t ID1, bool bEnableCollision);
+	
+	__inline void SetCam(CameraComponent* c)
+	{ 
+		assert(defaultGraphicsScene); 
+		defaultGraphicsScene->SetCamera(c->GetCam()); 
+	}
+	
 	void Update(float deltaTime);
-
-	Window* GetTargetWindow();
-
-	IGraphicsEngine*	GetGraphicsEngine();
-	IPhysicsEngine*	GetPhysicsEngine();
-	INetworkEngine*	GetNetworkEngine();
-	ISoundEngine*		GetSoundEngine();
+	
+	__inline Window* GetTargetWindow() 
+	{
+		assert(graphicsEngine);
+		return graphicsEngine->GetTargetWindow();
+	}
+	
+	//_inline IGraphicsEngine*	GetGraphicsEngine() const { return graphicsEngine; }
+	//_inline IPhysicsEngine*		GetPhysicsEngine() const { return physicsEngine; }
+	//_inline INetworkEngine*		GetNetworkEngine() const { return networkEngine; }
+	//_inline ISoundEngine*		GetSoundEngine() const { return soundEngine; }
 
 protected:
 	IGraphicsEngine*	graphicsEngine;
-	IPhysicsEngine*	physicsEngine;
-	INetworkEngine*	networkEngine;
+	IPhysicsEngine*		physicsEngine;
+	INetworkEngine*		networkEngine;
 	ISoundEngine*		soundEngine;
 
 	// Scripts
@@ -145,10 +128,7 @@ protected:
 	std::unordered_map<Actor*, rCollision> prevFrameActorCollideList;
 
 	// Entity scripts
-	std::vector<EntityScript*> entityScripts;
-
-	// Entities
-	std::vector<Entity*> entities;
+	std::vector<ActorScript*> entityScripts;
 
 	// World components
 	std::vector<WorldComponent*> worldComponents;
@@ -175,20 +155,4 @@ protected:
 	graphics::ITexture* texError;
 };
 
-template<class ScriptClass>
-Script* Core::AddScript()
-{
-	ScriptClass* p = new ScriptClass();
-		scripts.push_back(p);
-	return p;
-}
-
-template<class ActorScriptClass>
-EntityScript* Core::AddEntityScript()
-{
-	ActorScriptClass* p = new ActorScriptClass();
-	p->SetEntity(gCore->AddEntity());
-
-	entityScripts.push_back(p);
-	return p;
-}
+extern EngineCore Core;

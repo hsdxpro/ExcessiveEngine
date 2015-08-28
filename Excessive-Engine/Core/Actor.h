@@ -1,105 +1,282 @@
 #pragma once
 #include "Behavior.h"
-#include <functional>
 #include "CoreCommon.h"
+#include "WorldComponent.h"
+#include "WorldObject.h"
+#include "RigidBodyComponent.h"
 
-class Actor
+#include <functional>
+
+class Actor : public WorldObject
 {
 public:
-	Actor();
+	Actor(WorldComponent* rootComp);
 
 public:
 	__inline void AddBehavior(Behavior* b)	{ behaviors.push_back(b); }
 
-	__inline bool AddForce(const mm::vec3& force, const mm::vec3& relPos = { 0, 0, 0 }) { return worldEntity->AddForce(force, relPos); }
+	__inline void AttachTo(WorldComponent* c) { rootComp->AttachTo(c); }
+	__inline void AttachTo(Actor* a)
+	{ 
+		Detach();
 
-	__inline WorldComponent* AttachTo(WorldComponent* c) { return worldEntity->AttachTo(c); }
-	__inline WorldComponent* Attach(WorldComponent* c)	 { return worldEntity->Attach(c); }
-	__inline WorldComponent* Detach() { return worldEntity->Detach(); }
+		if (parent != a)
+		{
+			a->childs.push_back(this);
+			parent = a;
+		}
+		// rootComp->AttachTo(a->rootComp);
+
+		// Actor0
+		// - comp0
+		//	- comp00
+
+		// Actor1
+		// - comp1
+		//	- comp11
+
+		// Actor0
+		// comp0
+		//	- comp00
+		//	- comp1
+		//		- comp11
+
+		// comp1->Detach() // if(dynamic_cast<Actor*>(parent)) ((Actor*)parent)->DetachChild(this);
+
+		//Detach();
+		//
+		//if (parent != a)
+		//{
+		//	a->childs.push_back(this);
+		//	parent = a;
+		//
+		//	// Recalc relative transform
+		//	relTransform.SetRot(transform.GetRot() * mm::inverse(parent->transform.GetRot()));
+		//	relTransform.SetScaleLocal(transform.GetScaleLocal() / parent->transform.GetScaleLocal());
+		//	relTransform.SetPos(mm::rotate_vector(mm::inverse(parent->transform.GetRot()), (transform.GetPos() - parent->transform.GetPos()) / parent->transform.GetScaleLocal()));
+		//	relTransform.SetSkew(transform.GetSkew() * mm::inverse(parent->transform.GetSkew()));
+		//}
+	}
+
+	__inline void Attach(WorldComponent* c)	 {  rootComp->Attach(c); }
+	__inline void Attach(Actor* a) { a->AttachTo(this); }
+
+	__inline Actor* Detach()
+	{
+		Actor* savedParent = parent;
+
+		if (parent)
+			parent->DetachChild(this);
+
+		return savedParent;
+	}
+
+	__inline bool DetachChild(Actor* a)
+	{
+		rootComp->DetachChild(a->GetRootComp());
+
+		a->parent = nullptr;
+
+		for (size_t i = 0; i < childs.size(); i++)
+		{
+			if (childs[i] == a)
+			{
+				// childs[i] not last element, move data front from back
+				if (i + 1 < childs.size())
+					memmove(&childs[i], &childs[i + 1], childs.size() - 1 - i);
+
+				childs.resize(childs.size() - 1);
+
+				//a->rootComp->SetRelTransform(a->GetTransform());
+				// Recalc actor relative transform
+				return true;
+			}
+		}
+		return false;
+	}
 
 	template<class T>
-	__inline bool RunLambdaOnComponents(const std::function<void(T*)>& lambda) { return worldEntity->RunLambdaOnComponents<T>(lambda); }
+	__inline void RunLambdaOnComponents(const std::function<void(T*)>& lambda)
+	{ 
+		static auto runLambdaRecursively = [](WorldComponent* c, const std::function<void(T*)>& lambda)
+		{
+			if (dynamic_cast<T*>(c))
+				lambda((T*)c);
+
+			for (auto& child : c->GetChilds())
+				runLambdaRecursively(child, lambda);
+		};
+		runLambdaRecursively(rootComp, lambda);
+	}
+
+	__inline void AddForce(const mm::vec3& force, const mm::vec3& relPos = { 0, 0, 0 })
+	{
+		RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		{
+			c->AddForce(force, relPos);
+		});
+	}
 
 	__inline void SetName(const std::string& s) { name = s; }
 
 	__inline void SetPendingKill(bool bKill) { bPendingKill = bKill; }
 
-	__inline void SetEntity(Entity* e)
-	{
-		worldEntity = e;
-
-		for (auto& b : behaviors)
-			b->SetEntity(e);
+	__inline void SetTrigger(bool bTrigger)
+	{ 
+		RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		{
+			c->SetTrigger(bTrigger);
+		});
 	}
 
-	__inline bool SetTrigger(bool bTrigger) { return worldEntity->SetTrigger(true); }
+	__inline void SetGravityScale(float s)
+	{
+		RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		{
+			c->SetGravityScale(s);
+		});
+	}
 
-	__inline bool SetGravityScale(float s) { return worldEntity->SetGravityScale(s); }
+	__inline void SetCollisionGroup(i64 ID)
+	{ 
+		RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		{
+			c->SetCollisionGroup(ID);
+		});
+	}
 
-	__inline bool SetCollisionGroup(i64 ID) { return worldEntity->SetCollisionGroup(ID); }
+	__inline void SetAngularFactor(float f)
+	{ 
+		RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		{
+			c->SetAngularFactor(f);
+		});
+	}
 
-	__inline bool SetAngularFactor(float f) { return worldEntity->SetAngularFactor(f); }
+	__inline void SetKinematic(bool b)
+	{
+		RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		{
+			c->SetKinematic(b);
+		});
+	}
 
-	__inline bool SetKinematic(bool b) {return worldEntity->SetKinematic(b); }
-
-	__inline bool SetVelocity(const mm::vec3& v) { return worldEntity->SetVelocity(v); }
+	__inline void SetVelocity(const mm::vec3& v) 
+	{ 
+		RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		{
+			c->SetVelocity(v);
+		});
+	}
 
 	__inline void SetOnUpdate(const std::function<void(float deltaSeconds)>& callb) { onUpdate = callb; }
 
 	__inline void SetOnCollision(const std::function<void(const rCollision& info)>& callb)		{ onCollision = callb; }
 	__inline void SetOnCollisionEnter(const std::function<void(const rCollision& info)>& callb) { onCollisionEnter = callb;}
 	__inline void SetOnCollisionExit(const std::function<void(const rCollision& info)>& callb)	{ onCollisionExit = callb; }
+
+	__inline void SetPos(const mm::vec3& v)			{ rootComp->SetPos(v); }
+	__inline void SetRot(const mm::quat& q)			{ rootComp->SetRot(q); }
+	__inline void SetScaleLocal(const mm::vec3& v)	{ rootComp->SetScaleLocal(v); }
 	
-	__inline WorldComponent* SetParent(WorldComponent* c) { return worldEntity->SetParent(c); }
+	__inline void Move(const mm::vec3& v)		{ rootComp->Move(v); }
+	__inline void Rot(const mm::quat& q)		{ rootComp->Rot(q); }
+	__inline void Scale(const mm::vec3& v)		{ rootComp->Scale(v); }
+	__inline void ScaleLocal(const mm::vec3& v)	{ rootComp->ScaleLocal(v); }
+	
+	__inline void SetRelPos(const mm::vec3& v)	 { rootComp->SetRelPos(v); }
+	__inline void SetRelRot(const mm::quat& q)	 { rootComp->SetRelRot(q); }
+	__inline void SetRelScale(const mm::vec3& v) { rootComp->SetRelScale(v); }
+	__inline void MoveRel(const mm::vec3& v)	 { rootComp->MoveRel(v); }
+	__inline void RotRel(const mm::quat& q)		 { rootComp->RotRel(q); }
+	__inline void ScaleRel(const mm::vec3& v)	 { rootComp->ScaleRel(v); }
+	
+	//__inline Entity* GetParent() const { return worldEntity->GetParent(); }
+	
+	__inline const mm::vec3  GetScaleLocal() const		{ return rootComp->GetScaleLocal(); }
+	__inline const mm::mat3& GetSkew()		 const		{ return rootComp->GetSkew(); }
+	__inline const mm::vec3& GetPos()		 const		{ return rootComp->GetPos(); }
+	__inline const mm::quat& GetRot()		 const		{ return rootComp->GetRot(); }
+	
+	__inline const mm::vec3  GetRelScaleLocal() const	{ return rootComp->GetScaleLocal(); }
+	__inline const mm::vec3& GetRelPos()		const	{ return rootComp->GetPos(); }
+	__inline const mm::quat& GetRelRot()		const	{ return rootComp->GetRot(); }
+	
+	
+	__inline const Transform3D& GetRelTransform()	const { return rootComp->GetRelTransform(); }
+	__inline const Transform3D& GetTransform()		const { return rootComp->GetTransform(); }
+	
+	__inline mm::vec3 GetFrontDirNormed()	const { return rootComp->GetFrontDirNormed(); }
+	__inline mm::vec3 GetBackDirNormed()	const { return rootComp->GetBackDirNormed(); }
+	__inline mm::vec3 GetUpDirNormed()		const { return rootComp->GetUpDirNormed(); }
+	__inline mm::vec3 GetDownDirNormed()	const { return rootComp->GetDownDirNormed(); }
+	__inline mm::vec3 GetRightDirNormed()	const { return rootComp->GetRightDirNormed(); }
+	__inline mm::vec3 GetLeftDirNormed()	const { return rootComp->GetLeftDirNormed(); }
 
-	__inline void SetPos(const mm::vec3& v)			{ worldEntity->SetPos(v); }
-	__inline void SetRot(const mm::quat& q)			{ worldEntity->SetRot(q); }
-	__inline void SetScaleLocal(const mm::vec3& v)	{ worldEntity->SetScaleLocal(v); }
+	__inline mm::vec3 GetVelocity() 
+	{ 
+		mm::vec3 avgVel = mm::vec3(0, 0, 0);
+		size_t nBody = 0;
+		RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		{
+			nBody++;
+			avgVel += c->GetVelocity();
+		});
 
-	__inline void Move(const mm::vec3& v)		{ worldEntity->Move(v); }
-	__inline void Rot(const mm::quat& q)		{ worldEntity->Rot(q); }
-	__inline void Scale(const mm::vec3& v)		{ worldEntity->Scale(v); }
-	__inline void ScaleLocal(const mm::vec3& v)	{ worldEntity->ScaleLocal(v); }
+		return avgVel / nBody;
+	}
 
-	__inline void SetRelPos(const mm::vec3& v)	 { worldEntity->SetRelPos(v); }
-	__inline void SetRelRot(const mm::quat& q)	 { worldEntity->SetRelRot(q); }
-	__inline void SetRelScale(const mm::vec3& v) { worldEntity->SetRelScale(v); }
-	__inline void MoveRel(const mm::vec3& v)	 { worldEntity->MoveRel(v); }
-	__inline void RotRel(const mm::quat& q)		 { worldEntity->RotRel(q); }
-	__inline void ScaleRel(const mm::vec3& v)	 { worldEntity->ScaleRel(v); }
+	__inline const std::vector<WorldComponent*> GetComponents() 
+	{ 
+		std::vector<WorldComponent*> comps;
 
-	__inline WorldComponent* GetParent() const { return worldEntity->GetParent(); }
+		static auto collectCompsRecursively = [](WorldComponent* c, std::vector<WorldComponent*>& comps_out)
+		{
+			comps_out.push_back(c);
 
-	__inline const mm::vec3  GetScaleLocal() const		{ return worldEntity->GetScaleLocal(); }
-	__inline const mm::mat3& GetSkew()		 const		{ return worldEntity->GetSkew(); }
-	__inline const mm::vec3& GetPos()		 const		{ return worldEntity->GetPos(); }
-	__inline const mm::quat& GetRot()		 const		{ return worldEntity->GetRot(); }
+			for (auto& child : c->GetChilds())
+				collectCompsRecursively(child, comps_out);
+		};
 
-	__inline const mm::vec3  GetRelScaleLocal() const	{ return worldEntity->GetScaleLocal(); }
-	__inline const mm::vec3& GetRelPos()		const	{ return worldEntity->GetPos(); }
-	__inline const mm::quat& GetRelRot()		const	{ return worldEntity->GetRot(); }
+		collectCompsRecursively(rootComp, comps);
 
+		return comps;
+	}
 
-	__inline const Transform3D& GetRelTransform()	const { return worldEntity->GetRelTransform(); }
-	__inline const Transform3D& GetTransform()		const { return worldEntity->GetTransform(); }
+	__inline void GetComponents(std::vector<WorldComponent*>& allComp) 
+	{ 
+		static std::function<void(WorldComponent*)> collectCompsRecursively  = [&](WorldComponent* c)
+		{
+			allComp.push_back(c);
 
-	__inline mm::vec3 GetFrontDirNormed()	const { return worldEntity->GetFrontDirNormed(); }
-	__inline mm::vec3 GetBackDirNormed()	const { return worldEntity->GetBackDirNormed(); }
-	__inline mm::vec3 GetUpDirNormed()		const { return worldEntity->GetUpDirNormed(); }
-	__inline mm::vec3 GetDownDirNormed()	const { return worldEntity->GetDownDirNormed(); }
-	__inline mm::vec3 GetRightDirNormed()	const { return worldEntity->GetRightDirNormed(); }
-	__inline mm::vec3 GetLeftDirNormed()	const { return worldEntity->GetLeftDirNormed(); }
+			for (auto& child : c->GetChilds())
+				collectCompsRecursively(child);
+		};
 
-	__inline mm::vec3 GetVelocity() const { return worldEntity->GetVelocity(); }
-
-	__inline const std::vector<WorldComponent*> GetComponents() const { return worldEntity->GetComponents(); }
-	__inline void GetComponents(std::vector<WorldComponent*>& allComp) const { worldEntity->GetComponents(allComp); }
+		collectCompsRecursively(rootComp);
+	}
 
 	template<class T>
-	__inline std::vector<T*> GetComponents() const { return worldEntity->GetComponents<T>(); }
+	__inline std::vector<T*> GetComponents() const 
+	{ 
+		std::vector<T*> comps;
 
-	__inline std::vector<Behavior*>& GetBehaviors() {return behaviors;}
-	__inline Entity* GetEntity() const { return worldEntity; }
+		static auto collectCompsRecursively = [](WorldComponent* c, std::vector<T*>& comps_out)
+		{
+			if (dynamic_cast<T*>(c))
+				comps_out.push_back((T*)c);
+
+			for (auto& child : c->GetChilds())
+				collectCompsRecursively(child, comps_out);
+		};
+
+		collectCompsRecursively(rootComp, comps);
+
+		return comps;
+	}
+
+	__inline WorldComponent* GetRootComp() { return rootComp; }
+	__inline std::vector<Behavior*>& GetBehaviors() { return behaviors; }
 
 	__inline const std::function<void(float deltaSeconds)>& GetOnUpdate() { return onUpdate; }
 	__inline const std::function<void(const rCollision& col)>& GetOnCollision() { return onCollision; }
@@ -108,11 +285,19 @@ public:
 
 	__inline const std::string& GetName() { return name; }
 	__inline bool IsPendingKill() { return bPendingKill; }
+
+	__inline std::vector<Actor*>& GetChilds() { return childs; }
+	__inline Actor* GetParent() { return parent; }
+
 protected:
 	std::string name;
 
-	Entity* worldEntity;
+	WorldComponent* rootComp;
 
+	Actor* parent;
+	std::vector<Actor*> childs;
+
+	// Behaviors -> ActorScripts
 	std::vector<Behavior*> behaviors;
 
 	std::function<void(float deltaSeconds)> onUpdate;

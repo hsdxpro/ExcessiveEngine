@@ -1,7 +1,5 @@
 #include "PlayerScript.h"
 #include "PlatformLibrary\Sys.h"
-#include "Core\Core.h"
-#include "Core\Input.h"
 #include "ExcessiveStrikeCommon.h"
 
 PlayerScript::PlayerScript()
@@ -21,18 +19,18 @@ PlayerScript::PlayerScript()
 	playerMaxMoveSpeed = 2.6f;
 	playerMoveSpeed = playerMaxMoveSpeed;
 	pixelsToRot360 = 1000;
-	windowCenter = gCore->GetTargetWindow()->GetCenterPos();
+	windowCenter = Graphics.GetTargetWindow()->GetCenterPos();
 
 	// Weapon model
 	//auto& ak47ModelPath = "Assets/ak47/ak.obj";
 	auto& ak47ModelPath = "Assets/ak47/ak47.dae";
 
 	// Camera
-	camComp = gCore->SpawnComp_Camera();
-	gCore->SetCam(camComp);
+	camComp = World.SpawnComp_Camera();
+	Graphics.SetCam(camComp);
 	
 	// Player components
-	playerCapsule = gCore->SpawnActor_RigidBodyCapsule(2, 0.2f, 70);
+	playerCapsule = World.SpawnActor_RigidBodyCapsule(2, 0.2f, 70);
 	playerCapsule->SetCollisionGroup(eES_CollisionGroup::PLAYER);
 	playerCapsule->SetOnCollision([&](const rCollision& col)
 	{
@@ -41,18 +39,21 @@ PlayerScript::PlayerScript()
 
 	playerCapsule->SetOnCollisionEnter([&](const rCollision& col)
 	{
-		bool bStayOnGroundThing = false;
-
-		for (auto& contact : col.contacts)
-			if (contact.normalB.z > 0.707)
-				bStayOnGroundThing = true;
-
-		if (bStayOnGroundThing)
+		if (col.actorB && col.actorB->GetName() == "ground")
 		{
-			if (nButtonsDown > 0 && !walkSound->IsEmitting())
-				walkSound->Start();
+			bool bStayOnGroundThing = false;
 
-			bCanJump = true;
+			for (auto& contact : col.contacts)
+				if (contact.normalB.z > 0.707)
+					bStayOnGroundThing = true;
+
+			if (bStayOnGroundThing)
+			{
+				if (nButtonsDown > 0 && !walkSound->IsEmitting())
+					walkSound->Start();
+
+				bCanJump = true;
+			}
 		}
 	});
 
@@ -64,7 +65,7 @@ PlayerScript::PlayerScript()
 	playerCapsule->Attach(camComp);
 	playerCapsule->SetPos({ 0, 0, 2 });
 	
-	ak47Graphics = gCore->SpawnComp_MeshFromFile(ak47ModelPath);
+	ak47Graphics = World.SpawnComp_MeshFromFile(ak47ModelPath);
 
 	ak47Graphics->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
 	ak47Graphics->SetPos(camComp->GetPos() + mm::vec3(0.7f, 1.5f, -0.6f));
@@ -78,19 +79,18 @@ PlayerScript::PlayerScript()
 	camComp->Attach(ak47Graphics); // Attach weapon to player physics
 	
 	// Mouse recenter
-	mm::vec2 windowCenter = gCore->GetTargetWindow()->GetCenterPos();
+	mm::vec2 windowCenter = Graphics.GetTargetWindow()->GetCenterPos();
 	Sys::SetCursorPos(mm::uvec2((u32)windowCenter.x, (u32)windowCenter.y));
-
-	//gCore->PlaySoundMono(L"Assets/PurgatorysMansion-mono.ogg", 1, true);
 
 	// Ha ez a sor bevan tolva akkor debug - ban lezuhanunk, olyan mintha scale = 0 lenne
 	playerCapsule->ScaleLocal({ 1.f / 3.5f, 1.f / 3.5f, 1.f / 3.5f });
 
-	walkSound = gCore->CreateSoundMono("Assets/walk_sound.ogg", 1, true);
-	gunSound = gCore->CreateSoundMono("Assets/GUN_FIRE-stereo.ogg", 0.5);
-	shellSound = gCore->CreateSoundMono("Assets/shell_fall.ogg", 0.5);
+	walkSound = Sound.CreateSoundMono("Assets/walk_sound.ogg", 1, true);
+	gunSound = Sound.CreateSoundMono("Assets/GUN_FIRE-stereo.ogg", 0.5);
+	shellSound = Sound.CreateSoundMono("Assets/shell_fall.ogg", 0.5);
 
-	playerCapsule->SetPos(mm::vec3(0, 0, 3));
+	playerCapsule->SetPos(mm::vec3(0, 0, 10));
+	//playerCapsule->SetGravityScale(0);
 }
 
 void PlayerScript::Update(float deltaSeconds)
@@ -98,22 +98,22 @@ void PlayerScript::Update(float deltaSeconds)
 	// W,S,A,D Moving
 	nButtonsDown = 0;
 	mm::vec3 move(0, 0, 0);
-	if (gInput.IsKeyDown(eKey::W))
+	if (Input.IsKeyDown(eKey::W))
 	{
 		move += camComp->GetFrontDirNormed();
 		nButtonsDown++;
 	}
-	if (gInput.IsKeyDown(eKey::S))
+	if (Input.IsKeyDown(eKey::S))
 	{
 		move += camComp->GetBackDirNormed();
 		nButtonsDown++;
 	}
-	if (gInput.IsKeyDown(eKey::A))
+	if (Input.IsKeyDown(eKey::A))
 	{
 		move += camComp->GetLeftDirNormed();
 		nButtonsDown++;
 	}
-	if (gInput.IsKeyDown(eKey::D))
+	if (Input.IsKeyDown(eKey::D))
 	{
 		move += camComp->GetRightDirNormed();
 		nButtonsDown++;
@@ -137,14 +137,14 @@ void PlayerScript::Update(float deltaSeconds)
 	playerCapsule->SetVelocity(mm::vec3(move.x, move.y, playerCapsule->GetVelocity().z));
 
 
-	if (nButtonsDown == 1 && gInput.IsKeyPressed(eKey::W) | gInput.IsKeyPressed(eKey::S) | gInput.IsKeyPressed(eKey::A) | gInput.IsKeyPressed(eKey::D))
+	if (nButtonsDown == 1 && Input.IsKeyPressed(eKey::W) | Input.IsKeyPressed(eKey::S) | Input.IsKeyPressed(eKey::A) | Input.IsKeyPressed(eKey::D))
 		walkSound->Start();
 
-	if (nButtonsDown == 0 && gInput.IsKeyReleased(eKey::W) | gInput.IsKeyReleased(eKey::S) | gInput.IsKeyReleased(eKey::A) | gInput.IsKeyReleased(eKey::D))
+	if (nButtonsDown == 0 && Input.IsKeyReleased(eKey::W) | Input.IsKeyReleased(eKey::S) | Input.IsKeyReleased(eKey::A) | Input.IsKeyReleased(eKey::D))
 		walkSound->Stop();
 
 	// Jump
-	if (bCanJump && gInput.IsKeyPressed(eKey::SPACE))
+	if (bCanJump && Input.IsKeyPressed(eKey::SPACE))
 	{
 		bCanJump = false;
 		playerCapsule->AddForce({ 0, 0, 15000 });
@@ -152,13 +152,13 @@ void PlayerScript::Update(float deltaSeconds)
 	}
 
 	// Squat
-	if (!bSquatting && gInput.IsKeyPressed(eKey::LCONTROL))
+	if (!bSquatting && Input.IsKeyPressed(eKey::LCONTROL))
 	{
 		camComp->MoveRel(mm::vec3(0, 0, -0.8f));
 		bSquatting = true;
 		playerMoveSpeed /= 2;
 	}
-	else if (bSquatting && gInput.IsKeyReleased(eKey::LCONTROL))
+	else if (bSquatting && Input.IsKeyReleased(eKey::LCONTROL))
 	{
 		camComp->MoveRel(mm::vec3(0, 0, 0.8f));
 		bSquatting = false;
@@ -167,7 +167,7 @@ void PlayerScript::Update(float deltaSeconds)
 
 	// Roting camera
 	mm::uvec2 mouseDelta;
-	if(gInput.IsMouseMove(mouseDelta))
+	if(Input.IsMouseMove(mouseDelta))
 	{
 		static float angleZ = 0;
 		static float angleX = 0;
@@ -195,50 +195,46 @@ void PlayerScript::Update(float deltaSeconds)
 	if (shootTimer > 0)
 		shootTimer -= deltaSeconds;
 
-	if (gInput.IsMouseLeftDown() && shootTimer <= 0)
+	if (Input.IsMouseLeftDown() && shootTimer <= 0)
 	{
 		shootTimer =+ rateOfFire;
 
 		gunSound->Start();
 
 		// Falling bullet shell, and it's sound
-		Actor* bulletShell = gCore->SpawnActor_RigidBodyCapsule(0.09, 0.04, 0.02);
+		Actor* bulletShell = World.SpawnActor_RigidBodyCapsule(0.09, 0.04, 0.02);
 		bulletShell->SetTrigger(true);
 		bulletShell->SetCollisionGroup(eES_CollisionGroup::SHELL);
 		bulletShell->SetPos(ak47Graphics->GetPos());
 		bulletShell->SetOnCollisionEnter([=](const rCollision& info)
 		{
 			shellSound->Start();
-			gCore->DestroyActor(bulletShell);
+			World.Destroy(bulletShell);
 		});
 		
 		
-		rTraceInfo p;
-		if (gCore->TraceClosestPoint(eScene::PHYSICS, camComp->GetPos(), camComp->GetPos() + camComp->GetFrontDirNormed() * 999999, p))
+		rPhysicsTraceResult result;
+		rPhysicsTraceParams params;
+		params.AddIgnoreCollisionLayer(eES_CollisionGroup::SHELL);
+
+		//params. Trace pls ignoráld már a shelleket
+		if (Physics.TraceClosestPoint(camComp->GetPos(), camComp->GetPos() + camComp->GetFrontDirNormed() * 999999, result, params))
 		{
-			GraphicsComponent* boxComp = gCore->SpawnComp_MeshFromFile("Assets/box.DAE");
-			boxComp->SetScaleLocal({ 1.f / 200, 1.f / 200, 1.f / 200 });
-			boxComp->SetPos(p.pos);
+			//MeshComponent* boxComp = World.SpawnComp_MeshFromFile("Assets/box.DAE");
+			MeshComponent* boxComp = World.SpawnComp_MeshFromFile("Assets/sziv.DAE");
+			boxComp->SetScaleLocal({ 1.f / 2, 1.f / 2, 1.f / 2});
+			boxComp->SetPos(result.pos);//cuki <3 <3 <3 I <3 U Rici
+			boxComp->SetRot(mm::get_rotation(mm::vec3(0,1,0), result.normal));
 		}
-		
-		//bullet->Attach(gCore->SpawnComp_MeshFromFile("Assets/box.DAE"));
+
+		//Actor* bullet = Core.SpawnActor_RigidBodyFromFile("Assets/box.DAE", 100);
+		//bullet->Attach(Core.SpawnComp_MeshFromFile("Assets/box.DAE"));
 		//bullet->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
 		//bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);
-
+		//
 		//mm::vec3 bulletDir = camComp->GetFrontDirNormed();
 		//bullet->SetPos(ak47Graphics->GetPos());
 		//bullet->SetVelocity(bulletDir * 7);
-
-		//mm::vec3 bulletStartPos = bullet->GetPos();
-		//const float bulletSpeed = 100;
-		//const float distAfterDisappear = 200;
-		//bullet->SetOnUpdate([=](float deltaSeconds)
-		//{
-		//	bullet->Move(deltaSeconds * bulletDir * bulletSpeed);
-		//
-		//	if (mm::length(bulletStartPos - bullet->GetPos()) >= distAfterDisappear)
-		//		gCore->DestroyActor(bullet);
-		//});
 	}
 
 	// Mouse recenter

@@ -162,6 +162,8 @@ mm::mat4 Camera::GetProjMatrix(float aspectRatio) const
 		assert(0);
 		break;
 	}
+
+	return mm::mat4();
 }
 
 mm::vec3 Camera::GetFrontDirNormed() const

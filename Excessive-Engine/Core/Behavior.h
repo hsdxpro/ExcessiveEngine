@@ -1,17 +1,24 @@
 #pragma once
 // Behaviors are groups of {actorScript0, actorScript1, ...} which control Actor
-#include "EntityScript.h"
+#include "ActorScript.h"
 #include <vector>
 
 class Behavior
 {
 public:
-	void AddScript(EntityScript* s);
+	__inline void AddScript(ActorScript* s)
+	{
+		entityScripts.push_back(s);
+	}
 
-	void SetEntity(Entity* a);
+	__inline void SetActor(Actor* a)
+	{
+		for (auto& s : entityScripts)
+			s->SetActor(a);
+	}
 
-	__inline std::vector<EntityScript*> GetScripts() {return entityScripts;}
+	__inline std::vector<ActorScript*> GetScripts() {return entityScripts;}
 
 protected:
-	std::vector<EntityScript*> entityScripts;
+	std::vector<ActorScript*> entityScripts;
 };
