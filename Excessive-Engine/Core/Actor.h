@@ -98,15 +98,16 @@ public:
 	template<class T>
 	__inline void RunLambdaOnComponents(const std::function<void(T*)>& lambda)
 	{ 
-		static auto runLambdaRecursively = [](WorldComponent* c, const std::function<void(T*)>& lambda)
+		std::function<void(WorldComponent* c, const std::function<void(T*)>& lambda)> recursiveFunc;
+		recursiveFunc = [&](WorldComponent* c, const std::function<void(T*)>& lambda)
 		{
 			if (dynamic_cast<T*>(c))
 				lambda((T*)c);
 
 			for (auto& child : c->GetChilds())
-				runLambdaRecursively(child, lambda);
+				recursiveFunc(child, lambda);
 		};
-		runLambdaRecursively(rootComp, lambda);
+		recursiveFunc(rootComp, lambda);
 	}
 
 	__inline void AddForce(const mm::vec3& force, const mm::vec3& relPos = { 0, 0, 0 })
@@ -228,9 +229,8 @@ public:
 
 	__inline const std::vector<WorldComponent*> GetComponents() 
 	{ 
-		std::vector<WorldComponent*> comps;
-
-		static auto collectCompsRecursively = [](WorldComponent* c, std::vector<WorldComponent*>& comps_out)
+		std::function<void(WorldComponent*, std::vector<WorldComponent*>& comps_out)> collectCompsRecursively;
+		collectCompsRecursively = [&](WorldComponent* c, std::vector<WorldComponent*>& comps_out)
 		{
 			comps_out.push_back(c);
 
@@ -238,6 +238,7 @@ public:
 				collectCompsRecursively(child, comps_out);
 		};
 
+		std::vector<WorldComponent*> comps;
 		collectCompsRecursively(rootComp, comps);
 
 		return comps;
@@ -259,9 +260,8 @@ public:
 	template<class T>
 	__inline std::vector<T*> GetComponents() const 
 	{ 
-		std::vector<T*> comps;
-
-		static auto collectCompsRecursively = [](WorldComponent* c, std::vector<T*>& comps_out)
+		std::function<void(WorldComponent* c, std::vector<T*>& comps_out)> collectCompsRecursively;
+		collectCompsRecursively = [&](WorldComponent* c, std::vector<T*>& comps_out)
 		{
 			if (dynamic_cast<T*>(c))
 				comps_out.push_back((T*)c);
@@ -270,6 +270,7 @@ public:
 				collectCompsRecursively(child, comps_out);
 		};
 
+		std::vector<T*> comps;
 		collectCompsRecursively(rootComp, comps);
 
 		return comps;
