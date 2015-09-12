@@ -124,6 +124,11 @@ else ()
 	set(EXCESSIVE_LINK_COMPILER "unknown")
 endif ()
 
+# you can not compile with msvc12 any longer
+if ("msvc12" STREQUAL ${EXCESSIVE_LINK_COMPILER})
+	message(FATAL_ERROR "This version of Microsoft Visual C++ is not supported. Use MSVC 2015 or later.")
+endif()
+
 # get architecture
 if (EXCESSIVE_64BIT)
 	set(EXCESSIVE_LINK_ARCHITECTURE "64")
