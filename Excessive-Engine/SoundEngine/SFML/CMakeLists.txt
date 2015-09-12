@@ -56,9 +56,11 @@ else()
 endif()
 
 target_link_libraries(SoundEngineSFML PlatformLibrary SupportLibrary)
-target_link_libraries(SoundEngineSFML 
-	debug sfml-system-d
-	debug sfml-audio-d)
-target_link_libraries(SoundEngineSFML 
-	optimized sfml-system
-	optimized sfml-audio)
+
+target_link_libraries(SoundEngineSFML ${LINK_SFML_LIBRARIES})
+# target_link_libraries(SoundEngineSFML 
+	# debug sfml-system-d
+	# debug sfml-audio-d)
+# target_link_libraries(SoundEngineSFML 
+	# optimized sfml-system
+	# optimized sfml-audio)

@@ -21,10 +21,5 @@ endif()
 target_link_libraries( GraphicsApiGL 
 	glew32
 	opengl32
-	debug sfml-system-d
-	debug sfml-window-d
-	debug sfml-graphics-d
-	optimized sfml-system
-	optimized sfml-window
-	optimized sfml-graphics)
+	${LINK_SFML_LIBRARIES})
 target_link_libraries( GraphicsApiGL PlatformLibrary SupportLibrary )

@@ -77,9 +77,6 @@ endif()
 
 target_link_libraries(GraphicsEngineRaster PlatformLibrary SupportLibrary)
 target_link_libraries(GraphicsEngineRaster
-	debug sfml-graphics-d 
-	debug sfml-system-d 
-	optimized sfml-graphics 
-	optimized sfml-system)
+	${LINK_SFML_LIBRARIES})
 
 

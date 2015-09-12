@@ -25,12 +25,7 @@ endif()
 add_library( PlatformLibrary STATIC ${sources} ${platform_sources} ${headers} ${platform_headers})
 
 target_link_libraries(PlatformLibrary
-	debug sfml-system-d 
-	debug sfml-window-d 
-	debug sfml-graphics-d
-	optimized sfml-system 
-	optimized sfml-window
-	optimized sfml-graphics
+	${LINK_SFML_LIBRARIES}
 	debug assimpd
 	optimized assimp
 	glew32)
