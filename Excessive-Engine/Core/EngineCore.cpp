@@ -698,7 +698,7 @@ void EngineCore::Update(float deltaTime)
 					colData.actorB = nullptr;
 				}
 
-				if (colData.actorA || colData.actorA)
+				if ((size_t)colData.actorA | (size_t)colData.actorB)
 					colData.contacts = collision.contacts;
 				else
 					continue;
@@ -707,19 +707,18 @@ void EngineCore::Update(float deltaTime)
 				{
 					curFrameActorCollideList[a] = colData;
 
-					// NO prev frame data, YES cur frame data for actor (OnCollisionEnter)
-					if (prevFrameActorCollideList.find(a) == prevFrameActorCollideList.end() && a->GetOnCollisionEnter())
-						a->GetOnCollisionEnter()(colData);
-
 					// YES cur frame data (OnCollision)
 					if (a->GetOnCollision())
 						a->GetOnCollision()(colData);
 
 					// If previous frame collided actor not found in current list, then Call OnCollisionExit
+					bool bActorFound = false;
 					for (auto& aPrev : prevFrameActorCollideList)
 					{
-						if (aPrev.first->IsPendingKill() || aPrev.first != a)
+						if (aPrev.first != a || aPrev.first->IsPendingKill())
 							continue;
+
+						bActorFound = true;
 
 						const auto& collision = aPrev.second;
 						if (collision.actorA == aPrev.first && collision.actorA->GetOnCollisionExit() != nullptr)
@@ -727,6 +726,10 @@ void EngineCore::Update(float deltaTime)
 						else if (collision.actorB == aPrev.first && collision.actorB->GetOnCollisionExit() != nullptr)
 							collision.actorB->GetOnCollisionExit()(collision);
 					}
+
+					// NO prev frame data, YES cur frame data for actor (OnCollisionEnter)
+					if (!bActorFound && a->GetOnCollisionEnter())
+						a->GetOnCollisionEnter()(colData);
 				};
 
 				if (colData.actorA)

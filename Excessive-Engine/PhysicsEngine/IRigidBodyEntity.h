@@ -21,6 +21,7 @@ public:
 	virtual void SetPos(const mm::vec3& v) = 0;
 	virtual void SetRot(const mm::quat& q) = 0;
 	virtual void SetScaleLocal(const mm::vec3& v) = 0;
+	virtual void SetSkew(const mm::mat3& skew) = 0;
 
 	virtual const mm::vec3 GetPos() const = 0;
 	virtual const mm::quat GetRot() const = 0;

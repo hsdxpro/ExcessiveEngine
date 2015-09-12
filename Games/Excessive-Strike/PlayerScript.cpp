@@ -6,7 +6,7 @@ PlayerScript::PlayerScript()
 {
 	bSquatting = false;
 
-	rateOfFire = 0.1f;
+	rateOfFire = 0.1f; // ak 0.1
 	shootTimer = rateOfFire;
 
 	nButtonsDown = 0;
@@ -67,7 +67,7 @@ PlayerScript::PlayerScript()
 	
 	ak47Graphics = World.SpawnComp_MeshFromFile(ak47ModelPath);
 
-	ak47Graphics->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
+	ak47Graphics->SetScaleLocal({ 1.f / 3, 1.f / 3, 1.f / 3 });
 	ak47Graphics->SetPos(camComp->GetPos() + mm::vec3(0.7f, 1.5f, -0.6f));
 	ak47Graphics->Rot(mm::quat(-90.f / 180.f * 3.1415f, { 0, 0, 1 }));
 
@@ -89,8 +89,7 @@ PlayerScript::PlayerScript()
 	gunSound = Sound.CreateSoundMono("Assets/GUN_FIRE-stereo.ogg", 0.5);
 	shellSound = Sound.CreateSoundMono("Assets/shell_fall.ogg", 0.5);
 
-	playerCapsule->SetPos(mm::vec3(0, 0, 10));
-	//playerCapsule->SetGravityScale(0);
+	playerCapsule->SetPos(mm::vec3(0, 0, 5));
 }
 
 void PlayerScript::Update(float deltaSeconds)
@@ -218,23 +217,25 @@ void PlayerScript::Update(float deltaSeconds)
 		params.AddIgnoreCollisionLayer(eES_CollisionGroup::SHELL);
 
 		//params. Trace pls ignoráld már a shelleket
-		if (Physics.TraceClosestPoint(camComp->GetPos(), camComp->GetPos() + camComp->GetFrontDirNormed() * 999999, result, params))
-		{
-			//MeshComponent* boxComp = World.SpawnComp_MeshFromFile("Assets/box.DAE");
-			MeshComponent* boxComp = World.SpawnComp_MeshFromFile("Assets/sziv.DAE");
-			boxComp->SetScaleLocal({ 1.f / 2, 1.f / 2, 1.f / 2});
-			boxComp->SetPos(result.pos);//cuki <3 <3 <3 I <3 U Rici
-			boxComp->SetRot(mm::get_rotation(mm::vec3(0,1,0), result.normal));
-		}
+		//if (Physics.TraceClosestPoint(camComp->GetPos(), camComp->GetPos() + camComp->GetFrontDirNormed() * 999999, result, params))
+		//{
+		//	//MeshComponent* boxComp = World.SpawnComp_MeshFromFile("Assets/box.DAE");
+		//	MeshComponent* boxComp = World.SpawnComp_MeshFromFile("Assets/box.DAE");
+		//	boxComp->SetScaleLocal({ 1.f / 2, 1.f / 2, 1.f / 2});
+		//	boxComp->SetPos(result.pos);//cuki <3 <3 <3 I <3 U Rici
+		//	boxComp->SetRot(camComp->GetRot());
+		//}
 
-		//Actor* bullet = Core.SpawnActor_RigidBodyFromFile("Assets/box.DAE", 100);
-		//bullet->Attach(Core.SpawnComp_MeshFromFile("Assets/box.DAE"));
-		//bullet->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
-		//bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);
-		//
-		//mm::vec3 bulletDir = camComp->GetFrontDirNormed();
-		//bullet->SetPos(ak47Graphics->GetPos());
-		//bullet->SetVelocity(bulletDir * 7);
+		Actor* bullet = Core.SpawnActor_RigidBodyFromFile("Assets/box.DAE", 100);
+		bullet->Attach(Core.SpawnComp_MeshFromFile("Assets/box.DAE"));
+		bullet->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
+		
+		bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);
+		
+		mm::vec3 bulletDirNormed = camComp->GetFrontDirNormed();
+		bullet->SetPos(ak47Graphics->GetPos());
+		bullet->SetVelocity(bulletDirNormed * 7);
+		bullet->Scale(bulletDirNormed * 3);
 	}
 
 	// Mouse recenter

@@ -1,6 +1,9 @@
 #include "RigidBodyEntity.h"
 #include "BulletCollision/CollisionShapes/btCollisionShape.h"
 #include "SupportLibrary/VisualCpuProfiler.h"
+#include "BulletCollision/CollisionShapes/btConvexHullShape.h"
+#include "BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h"
+#include "BulletCollision/CollisionShapes/btCapsuleShape.h"
 
 using namespace physics::bullet;
 
@@ -8,6 +11,12 @@ RigidBodyEntity::RigidBodyEntity(btRigidBody* body)
 :body(body), collisionGroupID(-1), userPointer(0) // -1 default means can collide with everything
 {
 	body->setUserPointer(this);
+
+	//btConvexHullShape asd;
+	//asd.getVertex
+	//body->getCollisionShape()
+	//btBvhTriangleMeshShape asd;
+	//asd.getMeshInterface()->getLockedVertexIndexBase
 }
 
 void RigidBodyEntity::AddForce(const mm::vec3& force, const mm::vec3& relPos /*= {0,0,0}*/)
@@ -97,6 +106,74 @@ void RigidBodyEntity::SetScaleLocal(const mm::vec3& v)
 		}
 	}
 	body->activate();
+}
+
+void RigidBodyEntity::SetSkew(const mm::mat3& skew)
+{
+	btCollisionShape* baseShape = body->getCollisionShape();
+	int shapeType = baseShape->getShapeType();
+
+	switch (shapeType)
+	{
+	case CONVEX_HULL_SHAPE_PROXYTYPE:
+	{
+		btConvexHullShape* shape = (btConvexHullShape*)body->getCollisionShape();
+
+		btVector3* vertices = shape->getUnscaledPoints();
+		for (size_t i = 0; i < shape->getNumPoints(); i++)
+		{
+			mm::vec3 transformedVertex = skew * mm::vec3(vertices[i].x(), vertices[i].y(), vertices[i].z());
+			vertices[i] = btVector3(transformedVertex.x, transformedVertex.y, transformedVertex.z);
+
+			shape->recalcLocalAabb();
+		}
+	}break;
+	case CAPSULE_SHAPE_PROXYTYPE:
+	{
+		btCapsuleShape* shape = (btCapsuleShape*)body->getCollisionShape();
+
+		mm::vec3 localScale = skew * mm::vec3(1, 1, 1);
+
+		shape->setLocalScaling({ localScale.x, localScale.y, localScale.z });
+	}break;
+
+	case BOX_SHAPE_PROXYTYPE:
+	case TRIANGLE_SHAPE_PROXYTYPE:
+	case TETRAHEDRAL_SHAPE_PROXYTYPE:
+	case CONVEX_TRIANGLEMESH_SHAPE_PROXYTYPE:
+	case CONVEX_POINT_CLOUD_SHAPE_PROXYTYPE:
+	case CUSTOM_POLYHEDRAL_SHAPE_TYPE:
+	case IMPLICIT_CONVEX_SHAPES_START_HERE:
+	case SPHERE_SHAPE_PROXYTYPE:
+	case MULTI_SPHERE_SHAPE_PROXYTYPE:
+	case CONE_SHAPE_PROXYTYPE:
+	case CONVEX_SHAPE_PROXYTYPE:
+	case CYLINDER_SHAPE_PROXYTYPE:
+	case UNIFORM_SCALING_SHAPE_PROXYTYPE:
+	case MINKOWSKI_SUM_SHAPE_PROXYTYPE:
+	case MINKOWSKI_DIFFERENCE_SHAPE_PROXYTYPE:
+	case BOX_2D_SHAPE_PROXYTYPE:
+	case CONVEX_2D_SHAPE_PROXYTYPE:
+	case CUSTOM_CONVEX_SHAPE_TYPE:
+	case CONCAVE_SHAPES_START_HERE:
+	case TRIANGLE_MESH_SHAPE_PROXYTYPE:
+	case SCALED_TRIANGLE_MESH_SHAPE_PROXYTYPE:
+	case FAST_CONCAVE_MESH_PROXYTYPE:
+	case TERRAIN_SHAPE_PROXYTYPE:
+	case GIMPACT_SHAPE_PROXYTYPE:
+	case MULTIMATERIAL_TRIANGLE_MESH_PROXYTYPE:
+	case EMPTY_SHAPE_PROXYTYPE:
+	case STATIC_PLANE_PROXYTYPE:
+	case CUSTOM_CONCAVE_SHAPE_TYPE:
+	case CONCAVE_SHAPES_END_HERE:
+	case COMPOUND_SHAPE_PROXYTYPE:
+	case SOFTBODY_SHAPE_PROXYTYPE:
+	case HFFLUID_SHAPE_PROXYTYPE:
+	case HFFLUID_BUOYANT_CONVEX_SHAPE_PROXYTYPE:
+	case INVALID_SHAPE_PROXYTYPE:
+	case MAX_BROADPHASE_COLLISION_TYPES:
+		break;
+	}
 }
 
 const mm::vec3 RigidBodyEntity::GetPos() const

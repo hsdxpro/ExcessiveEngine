@@ -24,4 +24,5 @@ void RigidBodyComponent::_InnerReflectRot()
 void RigidBodyComponent::_InnerReflectSkew()
 {
 	entity->SetScaleLocal(transform.GetScaleLocal());
+	//entity->SetSkew(transform.GetSkew());
 }

@@ -51,6 +51,16 @@
 
 void InitScript();
 
+struct data
+{
+	int a, b, c, d, e, f, g, h, i, j, k, l, m, n;
+};
+
+int myAbs(int val)
+{
+	// flip bits, then add 1, it makes positive from negative
+	return (val ^ (val >> 31)) + (1 & (val >> 31));
+}
 
 int main()
 {
@@ -82,6 +92,32 @@ int main()
 
 	while (window->IsOpen())
 	{
+		//const int nIter = 100000000;
+		//{
+		//	PROFILE_SCOPE("myAbs");
+		//	int* tmp = new int;
+		//	for (int i = 0; i < nIter; i++)
+		//	{
+		//		*tmp = rand() % 256 - 128;
+		//		*tmp = myAbs(*tmp);
+		//	}
+		//		
+		//	delete tmp;
+		//}
+		//
+		//{
+		//	PROFILE_SCOPE("oldAbs");
+		//
+		//	int* tmp = new int;
+		//	for (int i = 0; i < nIter; i++)
+		//	{
+		//		*tmp = rand() % 256 - 128;
+		//		*tmp = abs(*tmp);
+		//		//if (*tmp < 0)
+		//		//	*tmp = -*tmp;
+		//	}
+		//	delete tmp;
+		//}
 		// Prepare for input processing
 		Input.ClearFrameData();
 
