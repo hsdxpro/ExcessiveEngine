@@ -1,7 +1,7 @@
 #pragma once
-
 #include "..\ISoftBodyEntity.h"
 #include "BulletSoftBody\btSoftBody.h"
+
 #include "SupportLibrary\BasicTypes.h"
 
 class btSoftBody;

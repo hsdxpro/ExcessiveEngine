@@ -1,5 +1,7 @@
 #include "SoftBodyEntity.h"
 
+#include "BulletSoftBody\btSoftBody.h"
+
 using namespace physics::bullet;
 
 SoftBodyEntity::SoftBodyEntity(btSoftBody* body)

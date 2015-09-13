@@ -6,6 +6,8 @@
 # specify include directories
 #---------------------------------------
 include_directories(${CMAKE_CURRENT_LIST_DIR}/Externals/include)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/Externals/source)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/Externals/source/Bullet3/)
 
 
 #---------------------------------------
@@ -37,9 +39,9 @@ else ()
 endif ()
 
 # you can not compile with msvc12 any longer
-if ("msvc12" STREQUAL ${EXCESSIVE_LINK_COMPILER})
-	message(FATAL_ERROR "This version of Microsoft Visual C++ is not supported. Use MSVC 2015 or later.")
-endif()
+#if ("msvc12" STREQUAL ${EXCESSIVE_LINK_COMPILER})
+#	message(FATAL_ERROR "This version of Microsoft Visual C++ is not supported. Use MSVC 2015 or later.")
+#endif()
 
 # get architecture
 if (EXCESSIVE_64BIT)
@@ -69,6 +71,7 @@ message("External link path: ${EXCESSIVE_LINK_PATH}")
 #---------------------------------------
 # add quick entries for common libraries
 #---------------------------------------
+add_definitions(-DBT_USE_SSE_IN_API)
 
 add_definitions(-DSFML_STATIC)
 

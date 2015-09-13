@@ -13,19 +13,17 @@ message( "-PhysicsEngineBullet" )
 FILE( GLOB_RECURSE sources *.c* )
 FILE( GLOB_RECURSE headers *.h* )
 
-FILE( GLOB_RECURSE sources1 ../../../Externals/include/Bullet3/*.c* )
-FILE( GLOB_RECURSE headers1 ../../../Externals/include/Bullet3/*.h* )
+FILE( GLOB_RECURSE sources1 ../../../Externals/source/Bullet3/*.c* )
+FILE( GLOB_RECURSE headers1 ../../../Externals/source/Bullet3/*.h* )
 
-include_directories("../../../Externals/include/Bullet3/")
-
-SOURCE_GROUP( Interfaces FILES ${interfaces})
-
+include_directories("../../../Externals/source/")
+include_directories("../../../Externals/source/Bullet3")
 
 # Project
 if(EXCESSIVE_DLL_MODULES)
-	add_library( PhysicsEngineBullet SHARED ${sources} ${headers} ${sources1} ${headers1} ${interfaces} )
+	add_library( PhysicsEngineBullet SHARED ${sources} ${headers} ${sources1} ${headers1} )
 else()
-	add_library( PhysicsEngineBullet STATIC ${sources} ${headers} ${sources1} ${headers1} ${interfaces} )
+	add_library( PhysicsEngineBullet STATIC ${sources} ${headers} ${sources1} ${headers1} )
 endif()
 
 # link stuff

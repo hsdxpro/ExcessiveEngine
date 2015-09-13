@@ -85,9 +85,9 @@ PlayerScript::PlayerScript()
 	// Ha ez a sor bevan tolva akkor debug - ban lezuhanunk, olyan mintha scale = 0 lenne
 	playerCapsule->ScaleLocal({ 1.f / 3.5f, 1.f / 3.5f, 1.f / 3.5f });
 
-	walkSound = Sound.CreateSoundMono("Assets/walk_sound.ogg", 1, true);
-	gunSound = Sound.CreateSoundMono("Assets/GUN_FIRE-stereo.ogg", 0.5);
-	shellSound = Sound.CreateSoundMono("Assets/shell_fall.ogg", 0.5);
+	//walkSound = Sound.CreateSoundMono("Assets/walk_sound.ogg", 1, true);
+	//gunSound = Sound.CreateSoundMono("Assets/GUN_FIRE-stereo.ogg", 0.5);
+	//shellSound = Sound.CreateSoundMono("Assets/shell_fall.ogg", 0.5);
 
 	playerCapsule->SetPos(mm::vec3(0, 0, 5));
 }
@@ -147,7 +147,7 @@ void PlayerScript::Update(float deltaSeconds)
 	{
 		bCanJump = false;
 		playerCapsule->AddForce({ 0, 0, 15000 });
-		walkSound->Stop();
+		//walkSound->Stop();
 	}
 
 	// Squat

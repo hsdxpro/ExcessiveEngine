@@ -205,8 +205,3 @@ const mm::quat RigidBodyEntity::GetRot() const
 
 	return mm::vec3(1,1,1);
 }
-
- btRigidBody* RigidBodyEntity::GetBody()
- {
-	 return body;
- }

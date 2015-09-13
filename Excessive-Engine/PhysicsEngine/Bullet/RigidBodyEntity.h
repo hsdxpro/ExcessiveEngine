@@ -3,7 +3,7 @@
 #include "..\IRigidBodyEntity.h"
 
 #include "SupportLibrary\BasicTypes.h"
-#include "BulletDynamics\Dynamics\btRigidBody.h"
+#include "Bullet3\BulletDynamics\Dynamics\btRigidBody.h"
 
 
 namespace physics { namespace bullet {
@@ -34,15 +34,15 @@ public:
 	const mm::quat GetRot() const override;
 	const mm::vec3 GetScaleLocal() const override;
 
-	__inline i64 GetCollisionGroup() const override { return collisionGroupID; }
-	__inline mm::vec3 GetVelocity() const { return mm::vec3(body->getLinearVelocity().x(), body->getLinearVelocity().y(), body->getLinearVelocity().z()); }
-	__inline void* GetUserPointer() { return userPointer; }
+	inline i64 GetCollisionGroup() const override { return collisionGroupID; }
+	inline mm::vec3 GetVelocity() const { return mm::vec3(body->getLinearVelocity().x(), body->getLinearVelocity().y(), body->getLinearVelocity().z()); }
+	inline void* GetUserPointer() { return userPointer; }
 
-	__inline bool IsTrigger() const override { return (body->getCollisionFlags() & btRigidBody::CF_NO_CONTACT_RESPONSE) != 0; }
-	__inline bool IsStatic() const { return body->isStaticObject(); }
-	__inline bool IsDynamic() const { return !body->isStaticObject(); }
+	inline bool IsTrigger() const override { return (body->getCollisionFlags() & btRigidBody::CF_NO_CONTACT_RESPONSE) != 0; }
+	inline bool IsStatic() const { return body->isStaticObject(); }
+	inline bool IsDynamic() const { return !body->isStaticObject(); }
 
-	btRigidBody* GetBody();
+	inline btRigidBody* GetBody() { return body; }
 
 protected:
 	btRigidBody* body;
