@@ -83,7 +83,7 @@ int main()
 			{
 				if (evt.mouseBtn == eMouseBtn::LEFT)
 					view->InjectMouseDown(Awesomium::kMouseButton_Left);
-				else if (evt.mouseBtn == eMouseBtn::MIDDLE)
+				else if (evt.mouseBtn == eMouseBtn::MID)
 					view->InjectMouseDown(Awesomium::kMouseButton_Middle);
 				else if (evt.mouseBtn == eMouseBtn::RIGHT)
 					view->InjectMouseDown(Awesomium::kMouseButton_Right);

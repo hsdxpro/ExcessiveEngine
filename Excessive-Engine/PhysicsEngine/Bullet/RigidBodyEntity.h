@@ -3,7 +3,7 @@
 #include "..\IRigidBodyEntity.h"
 
 #include "SupportLibrary\BasicTypes.h"
-#include "Bullet3\BulletDynamics\Dynamics\btRigidBody.h"
+#include "Bullet\BulletDynamics\Dynamics\btRigidBody.h"
 
 
 namespace physics { namespace bullet {

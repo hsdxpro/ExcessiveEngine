@@ -7,8 +7,7 @@
 #---------------------------------------
 include_directories(${CMAKE_CURRENT_LIST_DIR}/Externals/include)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/Externals/source)
-include_directories(${CMAKE_CURRENT_LIST_DIR}/Externals/source/Bullet3/)
-
+include_directories(${CMAKE_CURRENT_LIST_DIR}/Externals/source/Bullet)
 
 #---------------------------------------
 # get platform dependent library collection
@@ -72,7 +71,6 @@ message("External link path: ${EXCESSIVE_LINK_PATH}")
 # add quick entries for common libraries
 #---------------------------------------
 add_definitions(-DBT_USE_SSE_IN_API)
-
 add_definitions(-DSFML_STATIC)
 
 set(LINK_SFML_LIBRARIES
@@ -97,13 +95,32 @@ set(LINK_SFML_LIBRARIES
 	SFML/vorbisfile)
 	
 if (EXCESSIVE_WINDOWS)
-	set(LINK_SFML_LIBRARIES 
+	set(LINK_SFML_LIBRARIES
 		${LINK_SFML_LIBRARIES}
 		debug SFML/win_utf8_io_static-d
 		optimized SFML/win_utf8_io_static
 		Winmm)
 endif()
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
 	
 	
 	

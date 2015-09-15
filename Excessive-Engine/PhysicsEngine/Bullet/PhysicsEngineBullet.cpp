@@ -1,14 +1,14 @@
 #include "PhysicsEngineBullet.h"
 
 // Common bullet include
-#include "Bullet3/btBulletDynamicsCommon.h"
+#include "Bullet/btBulletDynamicsCommon.h"
 
 // Soft body include
-#include "Bullet3/BulletSoftBody/btSoftRigidDynamicsWorld.h"
-#include "Bullet3/BulletSoftBody/btSoftBodyRigidBodyCollisionConfiguration.h"
-#include "Bullet3/BulletSoftBody/btSoftBodyRigidBodyCollisionConfiguration.h"
-#include "Bullet3/BulletSoftBody/btSoftBodyHelpers.h"
-#include "Bullet3/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h"
+#include "Bullet/BulletSoftBody/btSoftRigidDynamicsWorld.h"
+#include "Bullet/BulletSoftBody/btSoftBodyRigidBodyCollisionConfiguration.h"
+#include "Bullet/BulletSoftBody/btSoftBodyRigidBodyCollisionConfiguration.h"
+#include "Bullet/BulletSoftBody/btSoftBodyHelpers.h"
+#include "Bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h"
 
 #include "RigidBodyEntity.h"
 #include "PhysicsEngineBulletDebugGatherer.h"

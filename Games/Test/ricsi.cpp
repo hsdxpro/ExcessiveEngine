@@ -1,15 +1,15 @@
-﻿#include <Core/Core.h>
-#include <PlatformLibrary/Window.h>
-#include <PlatformLibrary/Timer.h>
+﻿#include "Core\EngineCore.h"
+#include "Core\InputCore.h"
+#include "Core\GraphicsCore.h"
+#include "Core\WorldCore.h"
+#include "Core\CameraComponent.h"
 
-// basic util
-#include <chrono>
-#include <thread>
-#include <iostream>
-#include <string>
+#include "PlatformLibrary\Window.h"
+#include "PlatformLibrary\Timer.h"
+#include "PlatformLibrary\File.h"
+
+#include "SupportLibrary\VisualCpuProfiler.h"
 #include <sstream>
-#include <PlatformLibrary/Sys.h>
-
 
 #define CAM_MOVE_SPEED 5
 float gCamSpeedMultiplier = 1;

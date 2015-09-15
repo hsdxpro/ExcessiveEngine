@@ -7,5 +7,6 @@
 
 # enumerate interfaces
 FILE( GLOB interfaces *.h* )
+SOURCE_GROUP( Interfaces FILES ${interfaces})
 
 add_subdirectory( Bullet )
