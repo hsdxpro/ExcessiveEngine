@@ -109,12 +109,12 @@ include(ExternalLibraries.cmake)
 # add sub-folders
 #---------------------------------------
 
-include_directories(${CMAKE_CURRENT_LIST_DIR}/Excessive-Engine)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/Engine)
 
 # Engine
-add_subdirectory( Excessive-Engine )
+add_subdirectory( Engine )
 # Editor
-add_subdirectory( Excessive-Editor )
+add_subdirectory( Editor )
 # Game
 add_subdirectory( Games )
 

@@ -22,8 +22,8 @@ PlayerScript::PlayerScript()
 	windowCenter = Graphics.GetTargetWindow()->GetCenterPos();
 
 	// Weapon model
-	//auto& ak47ModelPath = "Assets/ak47/ak.obj";
-	auto& ak47ModelPath = "../../Assets/ak47/ak47.dae";
+	//auto& ak47ModelPath = "ak47/ak.obj";
+	auto& ak47ModelPath = "ak47/ak47.dae";
 
 	// Camera
 	camComp = World.SpawnComp_Camera();
@@ -85,9 +85,9 @@ PlayerScript::PlayerScript()
 	// Ha ez a sor bevan tolva akkor debug - ban lezuhanunk, olyan mintha scale = 0 lenne
 	playerCapsule->ScaleLocal({ 1.f / 3.5f, 1.f / 3.5f, 1.f / 3.5f });
 
-	//walkSound = Sound.CreateSoundMono("Assets/walk_sound.ogg", 1, true);
-	//gunSound = Sound.CreateSoundMono("Assets/GUN_FIRE-stereo.ogg", 0.5);
-	//shellSound = Sound.CreateSoundMono("Assets/shell_fall.ogg", 0.5);
+	//walkSound = Sound.CreateSoundMono("walk_sound.ogg", 1, true);
+	//gunSound = Sound.CreateSoundMono("GUN_FIRE-stereo.ogg", 0.5);
+	//shellSound = Sound.CreateSoundMono("shell_fall.ogg", 0.5);
 
 	playerCapsule->SetPos(mm::vec3(0, 0, 5));
 }
@@ -219,15 +219,15 @@ void PlayerScript::Update(float deltaSeconds)
 		//params. Trace pls ignoráld már a shelleket
 		//if (Physics.TraceClosestPoint(camComp->GetPos(), camComp->GetPos() + camComp->GetFrontDirNormed() * 999999, result, params))
 		//{
-		//	//MeshComponent* boxComp = World.SpawnComp_MeshFromFile("Assets/box.DAE");
-		//	MeshComponent* boxComp = World.SpawnComp_MeshFromFile("Assets/box.DAE");
+		//	//MeshComponent* boxComp = World.SpawnComp_MeshFromFile("box.DAE");
+		//	MeshComponent* boxComp = World.SpawnComp_MeshFromFile("box.DAE");
 		//	boxComp->SetScaleLocal({ 1.f / 2, 1.f / 2, 1.f / 2});
 		//	boxComp->SetPos(result.pos);//cuki <3 <3 <3 I <3 U Rici
 		//	boxComp->SetRot(camComp->GetRot());
 		//}
 
-		Actor* bullet = Core.SpawnActor_RigidBodyFromFile("Assets/box.DAE", 100);
-		bullet->Attach(Core.SpawnComp_MeshFromFile("Assets/box.DAE"));
+		Actor* bullet = Core.SpawnActor_RigidBodyFromFile("box.DAE", 100);
+		bullet->Attach(Core.SpawnComp_MeshFromFile("box.DAE"));
 		bullet->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
 		
 		bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);

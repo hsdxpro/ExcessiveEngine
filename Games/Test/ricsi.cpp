@@ -42,12 +42,12 @@ int Ricsi()
 		cam->SetPos(mm::vec3(0, -3, 1));
 	Graphics.SetCam(cam);
 
-	static const char assetName[] = "Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
-	static const char teapotModelPath[] = "Assets/box.dae"; // Assets/teapot.dae
-	static const char ak47ModelPath[] = "Assets/ak47/ak.obj"; // Assets/teapot.dae
+	static const char assetName[] = "demo_ground.dae"; // Assets/terminal/terminal.dae
+	static const char teapotModelPath[] = "box.dae"; // Assets/teapot.dae
+	static const char ak47ModelPath[] = "ak47/ak.obj"; // Assets/teapot.dae
 
 	World.SpawnComp_RigidBodyFromFile(assetName, 0)->Attach(World.SpawnComp_MeshFromFile(assetName));
-	World.SpawnComp_MeshFromFile("Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
+	World.SpawnComp_MeshFromFile("skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
 
 	// Run the main loop
 	rWindowEvent ev;

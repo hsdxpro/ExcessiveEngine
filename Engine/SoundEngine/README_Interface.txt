@@ -1,0 +1,1 @@
+Common interface for the SoundEngine component. Implemented by another project in a DLL or STATIC library.

@@ -52,15 +52,15 @@ namespace testartur
 		//gEngine->AddLayer(layer);
 
 		//*/
-		static const char assetName[] = "Assets/demo_ground.dae"; // Assets/terminal/terminal.dae
-		static const char teapotModelPath[] = "Assets/box.dae"; // Assets/teapot.dae
+		static const char assetName[] = "demo_ground.dae"; // Assets/terminal/terminal.dae
+		static const char teapotModelPath[] = "box.dae"; // Assets/teapot.dae
 		/*/
-		static const wchar_t assetName[] = L"Assets/teapot.dae";
+		static const wchar_t assetName[] = L"teapot.dae";
 		//*/
 		//Entity* simpleEntity = Core.AddActor();
 		World.SpawnComp_RigidBodyFromFile(assetName, 0)->Attach(Core.SpawnComp_MeshFromFile(assetName));
 
-		World.SpawnComp_MeshFromFile("Assets/skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
+		World.SpawnComp_MeshFromFile("skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
 
 		auto pMusicSourceRepresenterModel = World.SpawnComp_MeshFromFile(teapotModelPath);
 		pMusicSourceRepresenterModel->SetScaleLocal({ 0.1f, 0.1f, 0.1f });
@@ -73,7 +73,7 @@ namespace testartur
 		//soundScene->SetListener(listener);
 		//sound::IEmitter* pMusicSource = soundScene->AddEmitter();
 		//sound::ISoundData* pMusicData = sEngine->CreateSoundData();
-		//auto musicFilePath = Sys::GetWorkDirW() + L"Assets/PurgatorysMansion-mono.ogg";
+		//auto musicFilePath = Sys::GetWorkDirW() + L"PurgatorysMansion-mono.ogg";
 		//if (!pMusicData->Load(musicFilePath.c_str(), sound::StoreMode::STREAMED)) {
 		//	std::cout << "Failed to load: " << musicFilePath.c_str() << std::endl;
 		//	return 1;
@@ -85,7 +85,7 @@ namespace testartur
 
 		sound::IEmitter* pFireSound = soundScene->AddEmitter();
 		sound::ISoundData* pFireSoundData = sEngine->CreateSoundData();
-		auto fireSoundFilePath = "Assets/GUN_FIRE-stereo.ogg";
+		auto fireSoundFilePath = "GUN_FIRE-stereo.ogg";
 		if (!pFireSoundData->Load(fireSoundFilePath, sound::StoreMode::BUFFERED)) {
 			std::cout << "Failed to load: " << fireSoundFilePath << std::endl;
 			return 1;
