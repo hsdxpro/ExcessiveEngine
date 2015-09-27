@@ -1,1 +1,0 @@
-OpenGL based implementation of the GraphicsApi interface(s).

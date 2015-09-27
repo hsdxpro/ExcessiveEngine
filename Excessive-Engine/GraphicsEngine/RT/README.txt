@@ -1,1 +1,0 @@
-Raytracer implementation of the GraphicsEngine interface
