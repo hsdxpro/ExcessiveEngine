@@ -23,7 +23,7 @@ PlayerScript::PlayerScript()
 
 	// Weapon model
 	//auto& ak47ModelPath = "Assets/ak47/ak.obj";
-	auto& ak47ModelPath = "Assets/ak47/ak47.dae";
+	auto& ak47ModelPath = "../../Assets/ak47/ak47.dae";
 
 	// Camera
 	camComp = World.SpawnComp_Camera();

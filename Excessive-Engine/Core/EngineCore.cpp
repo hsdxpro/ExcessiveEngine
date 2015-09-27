@@ -96,7 +96,7 @@ IGraphicsEngine* EngineCore::InitGraphicsEngineRaster(const rGraphicsEngineRaste
 	// Load error diffuse texture, that we place on materials which fails load their own texture by path
 	texError = graphicsEngine->CreateTexture();
 	
-	bool bSuccess = texError->Load(Sys::GetWorkDir() + "Assets/error.jpg");
+	bool bSuccess = texError->Load(Sys::GetWorkDir() + "../../Assets/error.jpg");
 	assert(bSuccess);
 
 	// Default scene and layer for GraphicsEngine

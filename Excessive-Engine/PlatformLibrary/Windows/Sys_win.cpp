@@ -6,9 +6,12 @@
 #include <xlocbuf>
 #include <codecvt>
 
+#include <iostream>
+
 Sys::DLLHandle Sys::LoadDLL(const wchar_t* path) 
 {
-	return LoadLibraryW(path);
+	auto value = LoadLibraryW(path);
+	return value;
 }
 
 bool Sys::UnLoadDLL(DLLHandle h) 

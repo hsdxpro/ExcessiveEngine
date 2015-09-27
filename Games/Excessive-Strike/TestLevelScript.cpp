@@ -8,7 +8,7 @@
 TestLevelScript::TestLevelScript()
 {
 	// Add ground to game
-	auto groundModelPath = "Assets/Terminal/terminal_blender.dae";
+	auto groundModelPath = "../../Assets/Terminal/terminal_blender.dae";
 	//Assets/demo_ground.dae
 	auto groundRigidActor = World.SpawnActor_RigidBodyFromFile(groundModelPath, 0);
 	groundRigidActor->SetCollisionGroup(eES_CollisionGroup::GROUND);
@@ -17,7 +17,7 @@ TestLevelScript::TestLevelScript()
 	//groundRigidActor->Rot(mm::quat(3.14159265 / 2, mm::vec3(1, 0, 0)));
 	
 	// Add sky to game
-	auto sky = World.SpawnComp_MeshFromFile("Assets/skybox.dae");
+	auto sky = World.SpawnComp_MeshFromFile("../../Assets/skybox.dae");
 	sky->SetScaleLocal({ 1000, 1000, 1000 });
 	//sky->Rot(mm::quat(3.14159265 / 2, mm::vec3(1, 0, 0)));
 

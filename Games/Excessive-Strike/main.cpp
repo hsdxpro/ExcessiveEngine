@@ -65,14 +65,14 @@ int main()
 
 	// Init Engine core
 	//EngineCore::InstantiateSingleton();
+	Core.InitSoundEngineSFML();
 	rGraphicsEngineRaster graphicsDesc;
 		graphicsDesc.gapiType = eGapiType::OPENGL_4_5;
 		graphicsDesc.targetWindow = window;
 	Core.InitGraphicsEngineRaster(graphicsDesc);
 	rPhysicsEngineBullet physicsDesc;
 		physicsDesc.gravity = mm::vec3(0, 0, -9.81f);
-	Core.InitPhysicsEngineBullet(physicsDesc);
-	Core.InitSoundEngineSFML();
+	Core.InitPhysicsEngineBullet(physicsDesc);	
 
 	InitScript(); // Manual bullshit, TODO !!!
 
