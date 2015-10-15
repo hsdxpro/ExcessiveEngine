@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -40,7 +40,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API RectangleShape : public Shape
 {
-public:
+public :
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -73,28 +73,24 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of points defining the shape
     ///
-    /// \return Number of points of the shape. For rectangle
-    ///         shapes, this number is always 4.
+    /// \return Number of points of the shape
     ///
     ////////////////////////////////////////////////////////////
-    virtual std::size_t getPointCount() const;
+    virtual unsigned int getPointCount() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get a point of the rectangle
+    /// \brief Get a point of the shape
     ///
-    /// The returned point is in local coordinates, that is,
-    /// the shape's transforms (position, rotation, scale) are
-    /// not taken into account.
     /// The result is undefined if \a index is out of the valid range.
     ///
-    /// \param index Index of the point to get, in range [0 .. 3]
+    /// \param index Index of the point to get, in range [0 .. getPointCount() - 1]
     ///
-    /// \return index-th point of the shape
+    /// \return Index-th point of the shape
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2f getPoint(std::size_t index) const;
+    virtual Vector2f getPoint(unsigned int index) const;
 
-private:
+private :
 
     ////////////////////////////////////////////////////////////
     // Member data

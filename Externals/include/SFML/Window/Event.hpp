@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -32,7 +32,6 @@
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
-#include <SFML/Window/Sensor.hpp>
 
 
 namespace sf
@@ -43,7 +42,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class Event
 {
-public:
+public :
 
     ////////////////////////////////////////////////////////////
     /// \brief Size events parameters (Resized)
@@ -74,7 +73,7 @@ public:
     ////////////////////////////////////////////////////////////
     struct TextEvent
     {
-        Uint32 unicode; ///< UTF-32 Unicode value of the character
+        Uint32 unicode; ///< UTF-32 unicode value of the character
     };
 
     ////////////////////////////////////////////////////////////
@@ -102,27 +101,12 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Mouse wheel events parameters (MouseWheelMoved)
     ///
-    /// \deprecated This event is deprecated and potentially inaccurate.
-    ///             Use MouseWheelScrollEvent instead.
-    ///
     ////////////////////////////////////////////////////////////
     struct MouseWheelEvent
     {
         int delta; ///< Number of ticks the wheel has moved (positive is up, negative is down)
         int x;     ///< X position of the mouse pointer, relative to the left of the owner window
         int y;     ///< Y position of the mouse pointer, relative to the top of the owner window
-    };
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Mouse wheel events parameters (MouseWheelScrolled)
-    ///
-    ////////////////////////////////////////////////////////////
-    struct MouseWheelScrollEvent
-    {
-        Mouse::Wheel wheel; ///< Which wheel (for mice with multiple ones)
-        float        delta; ///< Wheel offset (positive is up/left, negative is down/right). High-precision mice may use non-integral offsets.
-        int          x;     ///< X position of the mouse pointer, relative to the left of the owner window
-        int          y;     ///< Y position of the mouse pointer, relative to the top of the owner window
     };
 
     ////////////////////////////////////////////////////////////
@@ -158,29 +142,6 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Touch events parameters (TouchBegan, TouchMoved, TouchEnded)
-    ///
-    ////////////////////////////////////////////////////////////
-    struct TouchEvent
-    {
-        unsigned int finger; ///< Index of the finger in case of multi-touch events
-        int x;               ///< X position of the touch, relative to the left of the owner window
-        int y;               ///< Y position of the touch, relative to the top of the owner window
-    };
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Sensor event parameters (SensorChanged)
-    ///
-    ////////////////////////////////////////////////////////////
-    struct SensorEvent
-    {
-        Sensor::Type type; ///< Type of the sensor
-        float x;           ///< Current value of the sensor on X axis
-        float y;           ///< Current value of the sensor on Y axis
-        float z;           ///< Current value of the sensor on Z axis
-    };
-
-    ////////////////////////////////////////////////////////////
     /// \brief Enumeration of the different types of events
     ///
     ////////////////////////////////////////////////////////////
@@ -193,8 +154,7 @@ public:
         TextEntered,            ///< A character was entered (data in event.text)
         KeyPressed,             ///< A key was pressed (data in event.key)
         KeyReleased,            ///< A key was released (data in event.key)
-        MouseWheelMoved,        ///< The mouse wheel was scrolled (data in event.mouseWheel) (deprecated)
-        MouseWheelScrolled,     ///< The mouse wheel was scrolled (data in event.mouseWheelScroll)
+        MouseWheelMoved,        ///< The mouse wheel was scrolled (data in event.mouseWheel)
         MouseButtonPressed,     ///< A mouse button was pressed (data in event.mouseButton)
         MouseButtonReleased,    ///< A mouse button was released (data in event.mouseButton)
         MouseMoved,             ///< The mouse cursor moved (data in event.mouseMove)
@@ -205,10 +165,6 @@ public:
         JoystickMoved,          ///< The joystick moved along an axis (data in event.joystickMove)
         JoystickConnected,      ///< A joystick was connected (data in event.joystickConnect)
         JoystickDisconnected,   ///< A joystick was disconnected (data in event.joystickConnect)
-        TouchBegan,             ///< A touch event began (data in event.touch)
-        TouchMoved,             ///< A touch moved (data in event.touch)
-        TouchEnded,             ///< A touch event ended (data in event.touch)
-        SensorChanged,          ///< A sensor value changed (data in event.sensor)
 
         Count                   ///< Keep last -- the total number of event types
     };
@@ -220,18 +176,15 @@ public:
 
     union
     {
-        SizeEvent             size;              ///< Size event parameters (Event::Resized)
-        KeyEvent              key;               ///< Key event parameters (Event::KeyPressed, Event::KeyReleased)
-        TextEvent             text;              ///< Text event parameters (Event::TextEntered)
-        MouseMoveEvent        mouseMove;         ///< Mouse move event parameters (Event::MouseMoved)
-        MouseButtonEvent      mouseButton;       ///< Mouse button event parameters (Event::MouseButtonPressed, Event::MouseButtonReleased)
-        MouseWheelEvent       mouseWheel;        ///< Mouse wheel event parameters (Event::MouseWheelMoved) (deprecated)
-        MouseWheelScrollEvent mouseWheelScroll;  ///< Mouse wheel event parameters (Event::MouseWheelScrolled)
-        JoystickMoveEvent     joystickMove;      ///< Joystick move event parameters (Event::JoystickMoved)
-        JoystickButtonEvent   joystickButton;    ///< Joystick button event parameters (Event::JoystickButtonPressed, Event::JoystickButtonReleased)
-        JoystickConnectEvent  joystickConnect;   ///< Joystick (dis)connect event parameters (Event::JoystickConnected, Event::JoystickDisconnected)
-        TouchEvent            touch;             ///< Touch events parameters (Event::TouchBegan, Event::TouchMoved, Event::TouchEnded)
-        SensorEvent           sensor;            ///< Sensor event parameters (Event::SensorChanged)
+        SizeEvent            size;            ///< Size event parameters (Event::Resized)
+        KeyEvent             key;             ///< Key event parameters (Event::KeyPressed, Event::KeyReleased)
+        TextEvent            text;            ///< Text event parameters (Event::TextEntered)
+        MouseMoveEvent       mouseMove;       ///< Mouse move event parameters (Event::MouseMoved)
+        MouseButtonEvent     mouseButton;     ///< Mouse button event parameters (Event::MouseButtonPressed, Event::MouseButtonReleased)
+        MouseWheelEvent      mouseWheel;      ///< Mouse wheel event parameters (Event::MouseWheelMoved)
+        JoystickMoveEvent    joystickMove;    ///< Joystick move event parameters (Event::JoystickMoved)
+        JoystickButtonEvent  joystickButton;  ///< Joystick button event parameters (Event::JoystickButtonPressed, Event::JoystickButtonReleased)
+        JoystickConnectEvent joystickConnect; ///< Joystick (dis)connect event parameters (Event::JoystickConnected, Event::JoystickDisconnected)
     };
 };
 

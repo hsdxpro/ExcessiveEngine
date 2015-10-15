@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -32,7 +32,6 @@
 #include <SFML/Audio/SoundSource.hpp>
 #include <SFML/System/Thread.hpp>
 #include <SFML/System/Time.hpp>
-#include <SFML/System/Mutex.hpp>
 #include <cstdlib>
 
 
@@ -44,7 +43,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_AUDIO_API SoundStream : public SoundSource
 {
-public:
+public :
 
     ////////////////////////////////////////////////////////////
     /// \brief Structure defining a chunk of audio data to stream
@@ -66,8 +65,8 @@ public:
     /// \brief Start or resume playing the audio stream
     ///
     /// This function starts the stream if it was stopped, resumes
-    /// it if it was paused, and restarts it from the beginning if
-    /// it was already playing.
+    /// it if it was paused, and restarts it from beginning if it
+    /// was it already playing.
     /// This function uses its own thread so that it doesn't block
     /// the rest of the program while the stream is played.
     ///
@@ -132,9 +131,7 @@ public:
     /// \brief Change the current playing position of the stream
     ///
     /// The playing position can be changed when the stream is
-    /// either paused or playing. Changing the playing position
-    /// when the stream is stopped has no effect, since playing
-    /// the stream would reset its position.
+    /// either paused or playing.
     ///
     /// \param timeOffset New playing position, from the beginning of the stream
     ///
@@ -178,7 +175,7 @@ public:
     ////////////////////////////////////////////////////////////
     bool getLoop() const;
 
-protected:
+protected :
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -207,14 +204,11 @@ protected:
     ////////////////////////////////////////////////////////////
     /// \brief Request a new chunk of audio samples from the stream source
     ///
-    /// This function must be overridden by derived classes to provide
+    /// This function must be overriden by derived classes to provide
     /// the audio samples to play. It is called continuously by the
     /// streaming loop, in a separate thread.
     /// The source can choose to stop the streaming loop at any time, by
     /// returning false to the caller.
-    /// If you return true (i.e. continue streaming) it is important that
-    /// the returned array of samples is not empty; this would stop the stream
-    /// due to an internal limitation.
     ///
     /// \param data Chunk of data to fill
     ///
@@ -226,7 +220,7 @@ protected:
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position in the stream source
     ///
-    /// This function must be overridden by derived classes to
+    /// This function must be overriden by derived classes to
     /// allow random seeking into the stream source.
     ///
     /// \param timeOffset New playing position, relative to the beginning of the stream
@@ -234,7 +228,7 @@ protected:
     ////////////////////////////////////////////////////////////
     virtual void onSeek(Time timeOffset) = 0;
 
-private:
+private :
 
     ////////////////////////////////////////////////////////////
     /// \brief Function called as the entry point of the thread
@@ -253,7 +247,7 @@ private:
     /// consumed; it fills it again and inserts it back into the
     /// playing queue.
     ///
-    /// \param bufferNum Number of the buffer to fill (in [0, BufferCount])
+    /// \param buffer Number of the buffer to fill (in [0, BufferCount])
     ///
     /// \return True if the stream source has requested to stop, false otherwise
     ///
@@ -288,8 +282,6 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     Thread        m_thread;                  ///< Thread running the background tasks
-    mutable Mutex m_threadMutex;             ///< Thread mutex
-    Status        m_threadStartState;        ///< State the thread starts in (Playing, Paused, Stopped)
     bool          m_isStreaming;             ///< Streaming state (true = playing, false = stopped)
     unsigned int  m_buffers[BufferCount];    ///< Sound buffers used to store temporary audio data
     unsigned int  m_channelCount;            ///< Number of channels (1 = mono, 2 = stereo, ...)
@@ -313,7 +305,7 @@ private:
 /// Unlike audio buffers (see sf::SoundBuffer), audio streams
 /// are never completely loaded in memory. Instead, the audio
 /// data is acquired continuously while the stream is playing.
-/// This behavior allows to play a sound with no loading delay,
+/// This behaviour allows to play a sound with no loading delay,
 /// and keeps the memory consumption very low.
 ///
 /// Sound sources that need to be streamed are usually big files
@@ -336,13 +328,13 @@ private:
 /// rest of the program. In particular, the OnGetData and OnSeek
 /// virtual functions may sometimes be called from this separate thread.
 /// It is important to keep this in mind, because you may have to take
-/// care of synchronization issues if you share data between threads.
+/// care of synchronization issues if you share data between threads. 
 ///
 /// Usage example:
 /// \code
 /// class CustomStream : public sf::SoundStream
 /// {
-/// public:
+/// public :
 ///
 ///     bool open(const std::string& location)
 ///     {
@@ -355,12 +347,11 @@ private:
 ///         initialize(channelCount, sampleRate);
 ///     }
 ///
-/// private:
+/// private :
 ///
 ///     virtual bool onGetData(Chunk& data)
 ///     {
 ///         // Fill the chunk with audio data from the stream source
-///         // (note: must not be empty if you want to continue playing)
 ///         data.samples = ...;
 ///         data.sampleCount = ...;
 ///

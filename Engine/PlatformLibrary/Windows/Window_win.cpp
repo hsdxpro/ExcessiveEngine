@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <limits>
+#include <assert.h>
 
 Window::Window(const rWindow& d)
 {
@@ -18,6 +19,8 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 	if (!w.pollEvent(evt))
 		return false;
 
+	// Important to update eWindowMsg based on SFML enum
+	assert((size_t)eWindowMsg::COUNT == (size_t)sf::Event::EventType::Count);
 	evt_out.msg = (eWindowMsg)(evt.type);
 
 	// Key press release

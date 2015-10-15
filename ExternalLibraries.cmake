@@ -74,68 +74,14 @@ add_definitions(-DBT_USE_SSE_IN_API)
 add_definitions(-DSFML_STATIC)
 
 set(LINK_SFML_LIBRARIES
-	debug SFML/flac-d
-	optimized SFML/flac
 	SFML/freetype
 	SFML/jpeg
-	SFML/ogg
 	SFML/openal32
 	debug SFML/sfml-audio-s-d
 	optimized SFML/sfml-audio-s
 	debug SFML/sfml-graphics-s-d
 	optimized SFML/sfml-graphics-s
-	debug SFML/sfml-network-s-d
-	optimized SFML/sfml-network-s
 	debug SFML/sfml-system-s-d
 	optimized SFML/sfml-system-s
 	debug SFML/sfml-window-s-d
-	optimized SFML/sfml-window-s
-	SFML/vorbis
-	SFML/vorbisenc
-	SFML/vorbisfile)
-	
-if (EXCESSIVE_WINDOWS)
-	set(LINK_SFML_LIBRARIES
-		${LINK_SFML_LIBRARIES}
-		debug SFML/win_utf8_io_static-d
-		optimized SFML/win_utf8_io_static
-		Winmm)
-endif()
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	optimized SFML/sfml-window-s)

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "InputCore.h"
-#include "WorldCore.h"
+#include "EngineWorld.h"
 
 #include "GraphicsCore.h"
 #include "PhysicsCore.h"

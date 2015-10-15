@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
-#include <SFML/Audio/AlResource.hpp>
 #include <SFML/System/Time.hpp>
 #include <string>
 #include <vector>
@@ -38,17 +37,21 @@
 
 namespace sf
 {
+namespace priv
+{
+    class SoundFile;
+}
+
 class Sound;
-class InputSoundFile;
 class InputStream;
 
 ////////////////////////////////////////////////////////////
 /// \brief Storage for audio samples defining a sound
 ///
 ////////////////////////////////////////////////////////////
-class SFML_AUDIO_API SoundBuffer : AlResource
+class SFML_AUDIO_API SoundBuffer
 {
-public:
+public :
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -73,8 +76,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from a file
     ///
-    /// See the documentation of sf::InputSoundFile for the list
-    /// of supported formats.
+    /// Here is a complete list of all the supported audio formats:
+    /// ogg, wav, flac, aiff, au, raw, paf, svx, nist, voc, ircam,
+    /// w64, mat4, mat5 pvf, htk, sds, avr, sd2, caf, wve, mpc2k, rf64.
     ///
     /// \param filename Path of the sound file to load
     ///
@@ -88,8 +92,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from a file in memory
     ///
-    /// See the documentation of sf::InputSoundFile for the list
-    /// of supported formats.
+    /// Here is a complete list of all the supported audio formats:
+    /// ogg, wav, flac, aiff, au, raw, paf, svx, nist, voc, ircam,
+    /// w64, mat4, mat5 pvf, htk, sds, avr, sd2, caf, wve, mpc2k, rf64.
     ///
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Size of the data to load, in bytes
@@ -104,8 +109,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from a custom stream
     ///
-    /// See the documentation of sf::InputSoundFile for the list
-    /// of supported formats.
+    /// Here is a complete list of all the supported audio formats:
+    /// ogg, wav, flac, aiff, au, raw, paf, svx, nist, voc, ircam,
+    /// w64, mat4, mat5 pvf, htk, sds, avr, sd2, caf, wve, mpc2k, rf64.
     ///
     /// \param stream Source stream to read from
     ///
@@ -132,13 +138,14 @@ public:
     /// \see loadFromFile, loadFromMemory, saveToFile
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromSamples(const Int16* samples, Uint64 sampleCount, unsigned int channelCount, unsigned int sampleRate);
+    bool loadFromSamples(const Int16* samples, std::size_t sampleCount, unsigned int channelCount, unsigned int sampleRate);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the sound buffer to an audio file
     ///
-    /// See the documentation of sf::OutputSoundFile for the list
-    /// of supported formats.
+    /// Here is a complete list of all the supported audio formats:
+    /// ogg, wav, flac, aiff, au, raw, paf, svx, nist, voc, ircam,
+    /// w64, mat4, mat5 pvf, htk, sds, avr, sd2, caf, wve, mpc2k, rf64.
     ///
     /// \param filename Path of the sound file to write
     ///
@@ -174,7 +181,7 @@ public:
     /// \see getSamples
     ///
     ////////////////////////////////////////////////////////////
-    Uint64 getSampleCount() const;
+    std::size_t getSampleCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sample rate of the sound
@@ -223,7 +230,7 @@ public:
     ////////////////////////////////////////////////////////////
     SoundBuffer& operator =(const SoundBuffer& right);
 
-private:
+private :
 
     friend class Sound;
 
@@ -232,10 +239,10 @@ private:
     ///
     /// \param file Sound file providing access to the new loaded sound
     ///
-    /// \return True on successful initialization, false on failure
+    /// \return True on succesful initialization, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    bool initialize(InputSoundFile& file);
+    bool initialize(priv::SoundFile& file);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the internal buffer with the cached audio samples
@@ -291,7 +298,7 @@ private:
 /// A sound buffer holds the data of a sound, which is
 /// an array of audio samples. A sample is a 16 bits signed integer
 /// that defines the amplitude of the sound at a given time.
-/// The sound is then reconstituted by playing these samples at
+/// The sound is then restituted by playing these samples at
 /// a high rate (for example, 44100 samples per second is the
 /// standard rate used for playing CDs). In short, audio samples
 /// are like texture pixels, and a sf::SoundBuffer is similar to
@@ -324,20 +331,20 @@ private:
 /// \code
 /// // Declare a new sound buffer
 /// sf::SoundBuffer buffer;
-///
+/// 
 /// // Load it from a file
 /// if (!buffer.loadFromFile("sound.wav"))
 /// {
 ///     // error...
 /// }
-///
+/// 
 /// // Create a sound source and bind it to the buffer
 /// sf::Sound sound1;
 /// sound1.setBuffer(buffer);
-///
+/// 
 /// // Play the sound
 /// sound1.play();
-///
+/// 
 /// // Create another sound source bound to the same buffer
 /// sf::Sound sound2;
 /// sound2.setBuffer(buffer);

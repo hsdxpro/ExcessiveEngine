@@ -47,7 +47,7 @@
 #include "TestLevelScript.h"
 #include "Core\InputCore.h"
 #include "PlatformLibrary\File.h"
-#include "Core\WorldCore.h"
+#include "Core\EngineCore.h"
 
 void InitScript();
 
@@ -102,7 +102,7 @@ int main()
 
 			case eWindowMsg::MOUSE_MOVE:
 			{
-				assert(evt.x >= 0 && evt.y >= 0);
+				//assert(evt.x >= 0 && evt.y >= 0);
 				Input.MouseMove(mm::ivec2(evt.deltaX, evt.deltaY), mm::uvec2((u32)evt.x, (u32)evt.y));
 				break;
 			}

@@ -81,7 +81,7 @@ PlayerScript::PlayerScript()
 	// Mouse recenter
 	mm::vec2 windowCenter = Graphics.GetTargetWindow()->GetCenterPos();
 	Sys::SetCursorPos(mm::uvec2((u32)windowCenter.x, (u32)windowCenter.y));
-
+	
 	// Ha ez a sor bevan tolva akkor debug - ban lezuhanunk, olyan mintha scale = 0 lenne
 	playerCapsule->ScaleLocal({ 1.f / 3.5f, 1.f / 3.5f, 1.f / 3.5f });
 
@@ -217,25 +217,25 @@ void PlayerScript::Update(float deltaSeconds)
 		params.AddIgnoreCollisionLayer(eES_CollisionGroup::SHELL);
 
 		//params. Trace pls ignoráld már a shelleket
-		//if (Physics.TraceClosestPoint(camComp->GetPos(), camComp->GetPos() + camComp->GetFrontDirNormed() * 999999, result, params))
-		//{
-		//	//MeshComponent* boxComp = World.SpawnComp_MeshFromFile("box.DAE");
-		//	MeshComponent* boxComp = World.SpawnComp_MeshFromFile("box.DAE");
-		//	boxComp->SetScaleLocal({ 1.f / 2, 1.f / 2, 1.f / 2});
-		//	boxComp->SetPos(result.pos);//cuki <3 <3 <3 I <3 U Rici
-		//	boxComp->SetRot(camComp->GetRot());
-		//}
+		if (Physics.TraceClosestPoint(camComp->GetPos(), camComp->GetPos() + camComp->GetFrontDirNormed() * 999999, result, params))
+		{
+			//MeshComponent* boxComp = World.SpawnComp_MeshFromFile("box.DAE");
+			MeshComponent* boxComp = World.SpawnComp_MeshFromFile("sziv.DAE");
+			boxComp->SetScaleLocal({ 1.f / 2, 1.f / 2, 1.f / 2});
+			boxComp->SetPos(result.pos);//cuki <3 <3 <3 I <3 U Rici
+			boxComp->SetRot(camComp->GetRot());
+		}
 
-		Actor* bullet = Core.SpawnActor_RigidBodyFromFile("box.DAE", 100);
-		bullet->Attach(Core.SpawnComp_MeshFromFile("box.DAE"));
-		bullet->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
-		
-		bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);
-		
-		mm::vec3 bulletDirNormed = camComp->GetFrontDirNormed();
-		bullet->SetPos(ak47Graphics->GetPos());
-		bullet->SetVelocity(bulletDirNormed * 7);
-		bullet->Scale(bulletDirNormed * 3);
+		//Actor* bullet = Core.SpawnActor_RigidBodyFromFile("box.DAE", 100);
+		//bullet->Attach(Core.SpawnComp_MeshFromFile("box.DAE"));
+		//bullet->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
+		//
+		//bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);
+		//
+		//mm::vec3 bulletDirNormed = camComp->GetFrontDirNormed();
+		//bullet->SetPos(ak47Graphics->GetPos());
+		//bullet->SetVelocity(bulletDirNormed * 7);
+		//bullet->Scale(bulletDirNormed * 3);
 	}
 
 	// Mouse recenter

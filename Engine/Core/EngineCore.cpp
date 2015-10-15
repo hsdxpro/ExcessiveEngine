@@ -8,13 +8,14 @@
 
 #include <array>
 
+EngineCore Core;
+
+
 std::string GetAssetsDir()
 {
 	return Sys::GetExeDir() + "../../Assets/";
 }
 
-
-EngineCore Core;
 
 //////////////////////////////////////////////////
 //                                              //
@@ -503,7 +504,7 @@ void EngineCore::Update(float deltaTime)
 	}
 
 
-	// Destroy actors which on destroy queue
+	// Destroy actors queued for destroying
 	{
 		PROFILE_SCOPE("Destroying Actors");
 		for (auto& a : actorsToDestroy)

@@ -120,7 +120,7 @@ void RigidBodyEntity::SetSkew(const mm::mat3& skew)
 		btConvexHullShape* shape = (btConvexHullShape*)body->getCollisionShape();
 
 		btVector3* vertices = shape->getUnscaledPoints();
-		for (size_t i = 0; i < shape->getNumPoints(); i++)
+		for (int i = 0; i < shape->getNumPoints(); i++)
 		{
 			mm::vec3 transformedVertex = skew * mm::vec3(vertices[i].x(), vertices[i].y(), vertices[i].z());
 			vertices[i] = btVector3(transformedVertex.x, transformedVertex.y, transformedVertex.z);

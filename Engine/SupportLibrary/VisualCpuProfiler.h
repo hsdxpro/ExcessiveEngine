@@ -11,7 +11,7 @@
 #include "BasicTypes.h"
 
 #ifndef BUILD_DLL
-	#define PROFILE_ENGINE
+	//#define PROFILE_ENGINE
 #endif
 
 #ifdef PROFILE_ENGINE

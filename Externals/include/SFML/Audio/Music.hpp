@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -30,7 +30,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/SoundStream.hpp>
-#include <SFML/Audio/InputSoundFile.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Time.hpp>
 #include <string>
@@ -39,6 +38,11 @@
 
 namespace sf
 {
+namespace priv
+{
+    class SoundFile;
+}
+
 class InputStream;
 
 ////////////////////////////////////////////////////////////
@@ -47,7 +51,7 @@ class InputStream;
 ////////////////////////////////////////////////////////////
 class SFML_AUDIO_API Music : public SoundStream
 {
-public:
+public :
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -66,8 +70,9 @@ public:
     ///
     /// This function doesn't start playing the music (call play()
     /// to do so).
-    /// See the documentation of sf::InputSoundFile for the list
-    /// of supported formats.
+    /// Here is a complete list of all the supported audio formats:
+    /// ogg, wav, flac, aiff, au, raw, paf, svx, nist, voc, ircam,
+    /// w64, mat4, mat5 pvf, htk, sds, avr, sd2, caf, wve, mpc2k, rf64.
     ///
     /// \param filename Path of the music file to open
     ///
@@ -83,11 +88,12 @@ public:
     ///
     /// This function doesn't start playing the music (call play()
     /// to do so).
-    /// See the documentation of sf::InputSoundFile for the list
-    /// of supported formats.
+    /// Here is a complete list of all the supported audio formats:
+    /// ogg, wav, flac, aiff, au, raw, paf, svx, nist, voc, ircam,
+    /// w64, mat4, mat5 pvf, htk, sds, avr, sd2, caf, wve, mpc2k, rf64.
     /// Since the music is not loaded completely but rather streamed
     /// continuously, the \a data must remain available as long as the
-    /// music is playing (i.e. you can't deallocate it right after calling
+    /// music is playing (ie. you can't deallocate it right after calling
     /// this function).
     ///
     /// \param data        Pointer to the file data in memory
@@ -105,11 +111,12 @@ public:
     ///
     /// This function doesn't start playing the music (call play()
     /// to do so).
-    /// See the documentation of sf::InputSoundFile for the list
-    /// of supported formats.
+    /// Here is a complete list of all the supported audio formats:
+    /// ogg, wav, flac, aiff, au, raw, paf, svx, nist, voc, ircam,
+    /// w64, mat4, mat5 pvf, htk, sds, avr, sd2, caf, wve, mpc2k, rf64.
     /// Since the music is not loaded completely but rather streamed
     /// continuously, the \a stream must remain alive as long as the
-    /// music is playing (i.e. you can't destroy it right after calling
+    /// music is playing (ie. you can't destroy it right after calling
     /// this function).
     ///
     /// \param stream Source stream to read from
@@ -129,7 +136,7 @@ public:
     ////////////////////////////////////////////////////////////
     Time getDuration() const;
 
-protected:
+protected :
 
     ////////////////////////////////////////////////////////////
     /// \brief Request a new chunk of audio samples from the stream source
@@ -152,7 +159,7 @@ protected:
     ////////////////////////////////////////////////////////////
     virtual void onSeek(Time timeOffset);
 
-private:
+private :
 
     ////////////////////////////////////////////////////////////
     /// \brief Initialize the internal state after loading a new music
@@ -163,7 +170,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    InputSoundFile     m_file;     ///< The streamed music file
+    priv::SoundFile*   m_file;     ///< Sound file
     Time               m_duration; ///< Music duration
     std::vector<Int16> m_samples;  ///< Temporary buffer of samples
     Mutex              m_mutex;    ///< Mutex protecting the data

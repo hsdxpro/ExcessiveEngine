@@ -175,7 +175,7 @@ VisualCpuProfiler::ScopeSum::LifeCycleHelper::~LifeCycleHelper()
 VisualCpuProfiler::ScopeSum::ScopeSum(const std::string& name)
 :name(name)
 {
-	// Itt a baj, DLL - nél IDGenerator 0 ad vissza, static lib - nél meg 3 - at
+	// Problematic: DLL_BUILD -> IDGenerator = 0, STATIC_BUILD -> IDGenerator > 0
 	ID = IDGenerator;
 
 	timer = new Timer();
