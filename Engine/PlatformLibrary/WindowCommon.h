@@ -55,10 +55,11 @@ struct rWindowEvent
 // Descriptor of window
 struct rWindow
 {
-	rWindow() : clientW(0), clientH(0), style(eWindowStyle::TITLE__RESIZE__CLOSE){}
+	rWindow() : clientW(0), clientH(0), style(eWindowStyle::TITLE__RESIZE__CLOSE), bVSync(true) {}
 
 	u16 clientW;
 	u16 clientH;
 	eWindowStyle style;
 	std::string capText;
+	bool bVSync;
 };

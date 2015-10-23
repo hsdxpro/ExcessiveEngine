@@ -31,6 +31,9 @@ public:
 
 	mm::vec2 GetCenterPos() const;
 
+private:
+	eWindowMsg ConvertSFMLWindowMsg(sf::Event::EventType windowMsg);
+
 protected:
 	sf::Window w;
 	mm::ivec3 lastMousePos;

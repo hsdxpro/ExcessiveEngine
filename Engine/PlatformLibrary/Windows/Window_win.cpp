@@ -10,7 +10,7 @@ Window::Window(const rWindow& d)
 	lastMousePos.y = std::numeric_limits<int>::min();
 
 	w.create(sf::VideoMode(d.clientW, d.clientH), d.capText.c_str(), (u32)d.style);
-	w.setVerticalSyncEnabled(true);
+	w.setVerticalSyncEnabled(d.bVSync);
 }
 
 bool Window::PopEvent(rWindowEvent& evt_out)
@@ -19,9 +19,7 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 	if (!w.pollEvent(evt))
 		return false;
 
-	// Important to update eWindowMsg based on SFML enum
-	assert((size_t)eWindowMsg::COUNT == (size_t)sf::Event::EventType::Count);
-	evt_out.msg = (eWindowMsg)(evt.type);
+	evt_out.msg = ConvertSFMLWindowMsg(evt.type);
 
 	// Key press release
 	if (evt.type == sf::Event::EventType::KeyPressed || evt.type == sf::Event::EventType::KeyReleased) 
@@ -136,4 +134,31 @@ mm::vec2 Window::GetCenterPos() const
 	auto pos = w.getPosition();
 
 	return mm::vec2(pos.x + size.x * 0.5, pos.y + size.y * 0.5);
+}
+
+eWindowMsg Window::ConvertSFMLWindowMsg(sf::Event::EventType windowMsg)
+{
+	switch (windowMsg)
+	{
+	case sf::Event::EventType::Closed:					return eWindowMsg::CLOSE;
+	case sf::Event::EventType::Resized:					return eWindowMsg::RESIZE;
+	case sf::Event::EventType::LostFocus:				return eWindowMsg::DEFOCUS;
+	case sf::Event::EventType::GainedFocus:				return eWindowMsg::FOCUS;
+	case sf::Event::EventType::TextEntered:				return eWindowMsg::TEXT_ENTERED;
+	case sf::Event::EventType::KeyPressed:				return eWindowMsg::KEY_PRESS;
+	case sf::Event::EventType::KeyReleased:				return eWindowMsg::KEY_RELEASE;
+	case sf::Event::EventType::MouseButtonPressed:		return eWindowMsg::MOUSE_PRESS;
+	case sf::Event::EventType::MouseButtonReleased:		return eWindowMsg::MOUSE_RELEASE;
+	case sf::Event::EventType::MouseMoved:				return eWindowMsg::MOUSE_MOVE;
+	case sf::Event::EventType::MouseEntered:			return eWindowMsg::MOUSE_ENTER;
+	case sf::Event::EventType::MouseLeft:				return eWindowMsg::MOUSE_LEAVE;
+	case sf::Event::EventType::JoystickButtonPressed:	return eWindowMsg::JOYSTICK_BUTTON_PRESS;
+	case sf::Event::EventType::JoystickButtonReleased:	return eWindowMsg::JOYSTICK_BUTTON_RELEASE;
+	case sf::Event::EventType::JoystickMoved:			return eWindowMsg::JOYSTICK_MOVE;
+	case sf::Event::EventType::JoystickConnected:		return eWindowMsg::JOYSTICK_CONNECT;
+	case sf::Event::EventType::JoystickDisconnected:	return eWindowMsg::JOYSTICK_DISCONNECT;
+	}
+
+	assert(0);
+	return eWindowMsg::COUNT;
 }
