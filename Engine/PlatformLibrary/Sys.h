@@ -141,3 +141,5 @@ public:
 	static mm::ivec2	GetCursorPos();
 	static mm::ivec2	GetScreenSize();
 };
+
+std::string GetAssetsPath();

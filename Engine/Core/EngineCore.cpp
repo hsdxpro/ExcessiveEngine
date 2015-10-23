@@ -10,13 +10,6 @@
 
 EngineCore Core;
 
-
-std::string GetAssetsDir()
-{
-	return Sys::GetExeDir() + "../../Assets/";
-}
-
-
 //////////////////////////////////////////////////
 //                                              //
 //           +----------+                       //
@@ -101,7 +94,7 @@ IGraphicsEngine* EngineCore::InitGraphicsEngineRaster(const rGraphicsEngineRaste
 	// Load error diffuse texture, that we place on materials which fails load their own texture by path
 	texError = graphicsEngine->CreateTexture();
 	
-	bool bSuccess = texError->Load(GetAssetsDir() + "error.jpg");
+	bool bSuccess = texError->Load(GetAssetsPath() + "error.jpg");
 	assert(bSuccess);
 
 	// Default scene and layer for GraphicsEngine
@@ -183,7 +176,7 @@ sound::IEmitter* EngineCore::CreateSoundMono(const std::string& filePath, float 
 	else
 	{
 		soundData = soundEngine->CreateSoundData();
-		if (!soundData->Load((GetAssetsDir() + filePath).c_str(), sound::StoreMode::BUFFERED))
+		if (!soundData->Load((GetAssetsPath() + filePath).c_str(), sound::StoreMode::BUFFERED))
 		{
 			soundData->Release();
 			return false;
@@ -285,7 +278,7 @@ MeshComponent* EngineCore::SpawnComp_MeshFromFile(const std::string& modelFilePa
 	}
 	else // Not loaded, check bin format first
 	{
-		std::string binPath = GetAssetsDir() + modelFilePath.substr(0, modelFilePath.rfind('.')) + ".exm"; // Excessive Mesh
+		std::string binPath = GetAssetsPath() + modelFilePath.substr(0, modelFilePath.rfind('.')) + ".exm"; // Excessive Mesh
 
 		if (File::IsExists(binPath))
 		{
@@ -302,7 +295,7 @@ MeshComponent* EngineCore::SpawnComp_MeshFromFile(const std::string& modelFilePa
 				eImporter3DFlag::PIVOT_RECENTER });
 
 			modelDesc = new rImporter3DData();
-			Importer3D::LoadModelFromFile(GetAssetsDir() + modelFilePath, cfg, *modelDesc);
+			Importer3D::LoadModelFromFile(GetAssetsPath() + modelFilePath, cfg, *modelDesc);
 
 			modelDesc->Serialize(binPath);
 		}
@@ -358,7 +351,7 @@ MeshComponent* EngineCore::SpawnComp_MeshFromFile(const std::string& modelFilePa
 				else
 				{
 					texDiffuse = graphicsEngine->CreateTexture();
-					if (texDiffuse->Load(GetAssetsDir() + relPath))
+					if (texDiffuse->Load(GetAssetsPath() + relPath))
 						importedTextures[relPath] = texDiffuse;
 					else
 						texDiffuse = texError;
@@ -413,7 +406,7 @@ RigidBodyComponent* EngineCore::SpawnComp_RigidBodyFromFile(const std::string& m
 	}
 	else // Not loaded, check bin format first
 	{
-		std::string binPath = GetAssetsDir() + modelFilePath.substr(0, modelFilePath.rfind('.')) + ".exm"; // Excessive Mesh
+		std::string binPath = GetAssetsPath() + modelFilePath.substr(0, modelFilePath.rfind('.')) + ".exm"; // Excessive Mesh
 
 		if (File::IsExists(binPath))
 		{
@@ -430,7 +423,7 @@ RigidBodyComponent* EngineCore::SpawnComp_RigidBodyFromFile(const std::string& m
 				eImporter3DFlag::PIVOT_RECENTER });
 
 			modelDesc = new rImporter3DData();
-			Importer3D::LoadModelFromFile(GetAssetsDir() + modelFilePath, cfg, *modelDesc);
+			Importer3D::LoadModelFromFile(GetAssetsPath() + modelFilePath, cfg, *modelDesc);
 
 			modelDesc->Serialize(binPath);
 		}
