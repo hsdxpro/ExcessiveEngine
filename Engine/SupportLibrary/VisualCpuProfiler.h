@@ -11,7 +11,7 @@
 #include "BasicTypes.h"
 
 #ifndef BUILD_DLL
-	//#define PROFILE_ENGINE
+	//#define PROFILE_ENGINE // TODO glew SFML glew.lib collide with Gapi glew.lib
 #endif
 
 #ifdef PROFILE_ENGINE

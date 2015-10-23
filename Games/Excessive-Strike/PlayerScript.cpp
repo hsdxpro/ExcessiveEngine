@@ -228,7 +228,7 @@ void PlayerScript::Update(float deltaSeconds)
 
 		//Actor* bullet = Core.SpawnActor_RigidBodyFromFile("box.DAE", 100);
 		//bullet->Attach(Core.SpawnComp_MeshFromFile("box.DAE"));
-		//bullet->SetScaleLocal({ 1.f / 100, 1.f / 100, 1.f / 100 });
+		//bullet->SetScaleLocal({ 1.f / 3, 1.f / 3, 1.f / 3 });
 		//
 		//bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);
 		//

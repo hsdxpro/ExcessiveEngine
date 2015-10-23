@@ -1,8 +1,8 @@
-﻿#include "Core\EngineCore.h"
-#include "Core\InputCore.h"
-#include "Core\GraphicsCore.h"
-#include "Core\WorldCore.h"
-#include "Core\CameraComponent.h"
+﻿#include "Core/EngineCore.h"
+#include "Core/InputCore.h"
+#include "Core/GraphicsCore.h"
+#include "Core/EngineWorld.h"
+#include "Core/CameraComponent.h"
 
 #include "PlatformLibrary\Window.h"
 #include "PlatformLibrary\Timer.h"

@@ -4,9 +4,8 @@
 #include "mymath\mymath.h"
 #include "mymath\mm_quat_func.h"
 #include "SupportLibrary\Transform3D.h"
-#include "WorldObject.h"
 
-class WorldComponent : public WorldObject
+class WorldComponent
 {
 public:
 	WorldComponent();

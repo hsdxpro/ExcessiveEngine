@@ -2,12 +2,11 @@
 #include "Behavior.h"
 #include "CoreCommon.h"
 #include "WorldComponent.h"
-#include "WorldObject.h"
 #include "RigidBodyComponent.h"
 
 #include <functional>
 
-class Actor : public WorldObject
+class Actor
 {
 public:
 	Actor(WorldComponent* rootComp);

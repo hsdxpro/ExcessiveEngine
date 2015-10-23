@@ -1,6 +1,5 @@
 #pragma once
-
-#include "GL/glew.h"
+#include <GraphicsApi/IGapi.h>
 
 #include "UniformBufferGL.h"
 #include "VertexBufferGL.h"
@@ -8,8 +7,6 @@
 #include "ShaderProgramGL.h"
 #include "TextureGL.h"
 #include "InputLayoutGL.h"
-
-#include <GraphicsApi/IGapi.h>
 
 
 class GapiGL : public IGapi

@@ -23,9 +23,3 @@ endif()
 
 # add build target
 add_library( PlatformLibrary STATIC ${sources} ${platform_sources} ${headers} ${platform_headers})
-
-target_link_libraries(PlatformLibrary
-	${LINK_SFML_LIBRARIES}
-	debug assimpd
-	optimized assimp
-	glew32)

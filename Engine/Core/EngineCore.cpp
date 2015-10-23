@@ -381,7 +381,7 @@ MeshComponent* EngineCore::SpawnComp_MeshFromFile(const std::string& modelFilePa
 		meshData.index_data = (u32*)importedMesh->indices;
 		meshData.index_num = importedMesh->nIndices;
 		meshData.mat_ids = matIDs.data();
-		meshData.mat_ids_num = matIDs.size();
+		meshData.mat_ids_num = (u32)matIDs.size();
 		meshData.vertex_bytes = importedMesh->nVertices * importedMesh->vertexSize;
 		meshData.vertex_data = importedMesh->vertexBuffers[0];
 
