@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -44,7 +44,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API VertexArray : public Drawable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -61,7 +61,7 @@ public :
     /// \param vertexCount Initial number of vertices in the array
     ///
     ////////////////////////////////////////////////////////////
-    explicit VertexArray(PrimitiveType type, unsigned int vertexCount = 0);
+    explicit VertexArray(PrimitiveType type, std::size_t vertexCount = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the vertex count
@@ -69,13 +69,13 @@ public :
     /// \return Number of vertices in the array
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int getVertexCount() const;
+    std::size_t getVertexCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-write access to a vertex by its index
     ///
     /// This function doesn't check \a index, it must be in range
-    /// [0, getVertexCount() - 1]. The behaviour is undefined
+    /// [0, getVertexCount() - 1]. The behavior is undefined
     /// otherwise.
     ///
     /// \param index Index of the vertex to get
@@ -85,13 +85,13 @@ public :
     /// \see getVertexCount
     ///
     ////////////////////////////////////////////////////////////
-    Vertex& operator [](unsigned int index);
+    Vertex& operator [](std::size_t index);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-only access to a vertex by its index
     ///
     /// This function doesn't check \a index, it must be in range
-    /// [0, getVertexCount() - 1]. The behaviour is undefined
+    /// [0, getVertexCount() - 1]. The behavior is undefined
     /// otherwise.
     ///
     /// \param index Index of the vertex to get
@@ -101,7 +101,7 @@ public :
     /// \see getVertexCount
     ///
     ////////////////////////////////////////////////////////////
-    const Vertex& operator [](unsigned int index) const;
+    const Vertex& operator [](std::size_t index) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear the vertex array
@@ -126,7 +126,7 @@ public :
     /// \param vertexCount New size of the array (number of vertices)
     ///
     ////////////////////////////////////////////////////////////
-    void resize(unsigned int vertexCount);
+    void resize(std::size_t vertexCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Add a vertex to the array
@@ -163,15 +163,15 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Compute the bounding rectangle of the vertex array
     ///
-    /// This function returns the axis-aligned rectangle that
-    /// contains all the vertices of the array.
+    /// This function returns the minimal axis-aligned rectangle
+    /// that contains all the vertices of the array.
     ///
     /// \return Bounding rectangle of the vertex array
     ///
     ////////////////////////////////////////////////////////////
     FloatRect getBounds() const;
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw the vertex array to a render target

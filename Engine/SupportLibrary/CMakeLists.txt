@@ -16,5 +16,5 @@ FILE( GLOB_RECURSE headers *.h* )
 add_library( SupportLibrary STATIC ${sources} ${headers} )
 
 target_link_libraries(SupportLibrary 
-assimp
+	${EXC_LINK_LIBRARY_ASSIMP}
 )

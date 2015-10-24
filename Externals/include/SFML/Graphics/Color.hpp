@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -34,12 +34,12 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// \brief Utility class for manpulating RGBA colors
+/// \brief Utility class for manipulating RGBA colors
 ///
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API Color
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -60,6 +60,22 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     Color(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha = 255);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct the color from 32-bit unsigned integer
+    ///
+    /// \param color Number containing the RGBA components (in that order)
+    ///
+    ////////////////////////////////////////////////////////////
+    explicit Color(Uint32 color);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Retrieve the color as a 32-bit unsigned integer
+    ///
+    /// \return Color represented as a 32-bit unsigned integer
+    ///
+    ////////////////////////////////////////////////////////////
+    Uint32 toInteger() const;
 
     ////////////////////////////////////////////////////////////
     // Static member data
@@ -128,6 +144,21 @@ SFML_GRAPHICS_API Color operator +(const Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
+/// \brief Overload of the binary - operator
+///
+/// This operator returns the component-wise subtraction of two colors.
+/// Components below 0 are clamped to 0.
+///
+/// \param left  Left operand
+/// \param right Right operand
+///
+/// \return Result of \a left - \a right
+///
+////////////////////////////////////////////////////////////
+SFML_GRAPHICS_API Color operator -(const Color& left, const Color& right);
+
+////////////////////////////////////////////////////////////
+/// \relates Color
 /// \brief Overload of the binary * operator
 ///
 /// This operator returns the component-wise multiplication
@@ -158,6 +189,22 @@ SFML_GRAPHICS_API Color operator *(const Color& left, const Color& right);
 ///
 ////////////////////////////////////////////////////////////
 SFML_GRAPHICS_API Color& operator +=(Color& left, const Color& right);
+
+////////////////////////////////////////////////////////////
+/// \relates Color
+/// \brief Overload of the binary -= operator
+///
+/// This operator computes the component-wise subtraction of two colors,
+/// and assigns the result to the left operand.
+/// Components below 0 are clamped to 0.
+///
+/// \param left  Left operand
+/// \param right Right operand
+///
+/// \return Reference to \a left
+///
+////////////////////////////////////////////////////////////
+SFML_GRAPHICS_API Color& operator -=(Color& left, const Color& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Color

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -46,7 +46,7 @@ class Texture;
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API Sprite : public Drawable, public Transformable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -85,7 +85,7 @@ public :
     /// doesn't store its own copy of the texture, but rather keeps
     /// a pointer to the one that you passed to this function.
     /// If the source texture is destroyed and the sprite tries to
-    /// use it, the behaviour is undefined.
+    /// use it, the behavior is undefined.
     /// If \a resetRect is true, the TextureRect property of
     /// the sprite is automatically adjusted to the size of the new
     /// texture. If it is false, the texture rect is left unchanged.
@@ -179,7 +179,7 @@ public :
     /// \brief Get the global bounding rectangle of the entity
     ///
     /// The returned rectangle is in global coordinates, which means
-    /// that it takes in account the transformations (translation,
+    /// that it takes into account the transformations (translation,
     /// rotation, scale, ...) that are applied to the entity.
     /// In other words, this function returns the bounds of the
     /// sprite in the global 2D world's coordinate system.
@@ -189,7 +189,7 @@ public :
     ////////////////////////////////////////////////////////////
     FloatRect getGlobalBounds() const;
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw the sprite to a render target
@@ -255,12 +255,14 @@ private :
 /// used by a sf::Sprite (i.e. never write a function that
 /// uses a local sf::Texture instance for creating a sprite).
 ///
+/// See also the note on coordinates and undistorted rendering in sf::Transformable.
+///
 /// Usage example:
 /// \code
 /// // Declare and load a texture
 /// sf::Texture texture;
 /// texture.loadFromFile("texture.png");
-/// 
+///
 /// // Create a sprite
 /// sf::Sprite sprite;
 /// sprite.setTexture(texture);

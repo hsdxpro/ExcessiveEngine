@@ -13,8 +13,8 @@ message( "-PhysicsEngineBullet" )
 FILE( GLOB_RECURSE sources *.c* )
 FILE( GLOB_RECURSE headers *.h* )
 
-FILE( GLOB_RECURSE sources1 ../../../Externals/source/Bullet/*.c* )
-FILE( GLOB_RECURSE headers1 ../../../Externals/source/Bullet/*.h* )
+#FILE( GLOB_RECURSE sources1 ../../../Externals/source/Bullet/*.c* )
+#FILE( GLOB_RECURSE headers1 ../../../Externals/source/Bullet/*.h* )
 
 # Project
 if(EXCESSIVE_DLL_MODULES)
@@ -24,4 +24,4 @@ else()
 endif()
 
 # link stuff
-target_link_libraries( PhysicsEngineBullet PlatformLibrary SupportLibrary)
+target_link_libraries( PhysicsEngineBullet PlatformLibrary SupportLibrary ${EXC_LINK_LIBRARY_BULLET})

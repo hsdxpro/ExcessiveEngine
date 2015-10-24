@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -42,7 +42,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API View
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -264,7 +264,7 @@ public :
     ////////////////////////////////////////////////////////////
     const Transform& getInverseTransform() const;
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -313,7 +313,7 @@ private :
 /// \code
 /// sf::RenderWindow window;
 /// sf::View view;
-/// 
+///
 /// // Initialize the view to a rectangle located at (100, 100) and with a size of 400x200
 /// view.reset(sf::FloatRect(100, 100, 400, 200));
 ///
@@ -335,6 +335,8 @@ private :
 /// // Render stuff not affected by the view
 /// window.draw(someText);
 /// \endcode
+///
+/// See also the note on coordinates and undistorted rendering in sf::Transformable.
 ///
 /// \see sf::RenderWindow, sf::RenderTexture
 ///

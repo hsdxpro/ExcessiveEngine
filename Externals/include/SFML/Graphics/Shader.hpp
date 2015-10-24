@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -50,7 +50,7 @@ class Texture;
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API Shader : GlResource, NonCopyable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Types of shaders
@@ -63,14 +63,23 @@ public :
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Special type/value that can be passed to setParameter,
+    /// \brief Special type that can be passed to setParameter,
     ///        and that represents the texture of the object being drawn
+    ///
+    /// \see setParameter(const std::string&, CurrentTextureType)
     ///
     ////////////////////////////////////////////////////////////
     struct CurrentTextureType {};
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Represents the texture of the object being drawn
+    ///
+    /// \see setParameter(const std::string&, CurrentTextureType)
+    ///
+    ////////////////////////////////////////////////////////////
     static CurrentTextureType CurrentTexture;
 
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -390,7 +399,7 @@ public :
     /// \param transform Transform to assign
     ///
     ////////////////////////////////////////////////////////////
-    void setParameter(const std::string& name, const sf::Transform& transform);
+    void setParameter(const std::string& name, const Transform& transform);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a texture parameter of the shader
@@ -448,6 +457,18 @@ public :
     void setParameter(const std::string& name, CurrentTextureType);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the underlying OpenGL handle of the shader.
+    ///
+    /// You shouldn't need to use this function, unless you have
+    /// very specific stuff to implement that SFML doesn't support,
+    /// or implement a temporary workaround until a bug is fixed.
+    ///
+    /// \return OpenGL handle of the shader or 0 if not yet loaded
+    ///
+    ////////////////////////////////////////////////////////////
+    unsigned int getNativeHandle() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Bind a shader for rendering
     ///
     /// This function is not part of the graphics API, it mustn't be
@@ -477,12 +498,15 @@ public :
     /// the shader features. If it returns false, then
     /// any attempt to use sf::Shader will fail.
     ///
+    /// Note: The first call to this function, whether by your
+    /// code or SFML will result in a context switch.
+    ///
     /// \return True if shaders are supported, false otherwise
     ///
     ////////////////////////////////////////////////////////////
     static bool isAvailable();
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Compile the shader(s) and create the program

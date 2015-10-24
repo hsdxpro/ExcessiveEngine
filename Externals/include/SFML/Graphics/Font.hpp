@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -49,7 +49,18 @@ class InputStream;
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API Font
 {
-public :
+public:
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Holds various information about a font
+    ///
+    ////////////////////////////////////////////////////////////
+    struct Info
+    {
+        std::string family; ///< The font family
+    };
+
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -84,6 +95,10 @@ public :
     /// fonts installed on the user's system, thus you can't
     /// load them directly.
     ///
+    /// \warning SFML cannot preload all the font data in this
+    /// function, so the file has to remain accessible until
+    /// the sf::Font object loads a new font or is destroyed.
+    ///
     /// \param filename Path of the font file to load
     ///
     /// \return True if loading succeeded, false if it failed
@@ -98,9 +113,11 @@ public :
     ///
     /// The supported font formats are: TrueType, Type 1, CFF,
     /// OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and Type 42.
-    /// Warning: SFML cannot preload all the font data in this
+    ///
+    /// \warning SFML cannot preload all the font data in this
     /// function, so the buffer pointed by \a data has to remain
-    /// valid as long as the font is used.
+    /// valid until the sf::Font object loads a new font or
+    /// is destroyed.
     ///
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Size of the data to load, in bytes
@@ -121,6 +138,10 @@ public :
     /// function, so the contents of \a stream have to remain
     /// valid as long as the font is used.
     ///
+    /// \warning SFML cannot preload all the font data in this
+    /// function, so the stream has to remain accessible until
+    /// the sf::Font object loads a new font or is destroyed.
+    ///
     /// \param stream Source stream to read from
     ///
     /// \return True if loading succeeded, false if it failed
@@ -131,7 +152,19 @@ public :
     bool loadFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the font information
+    ///
+    /// \return A structure that holds the font information
+    ///
+    ////////////////////////////////////////////////////////////
+    const Info& getInfo() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Retrieve a glyph of the font
+    ///
+    /// If the font is a bitmap font, not all character sizes
+    /// might be available. If the glyph is not available at the
+    /// requested size, an empty glyph is returned.
     ///
     /// \param codePoint     Unicode code point of the character to get
     /// \param characterSize Reference character size
@@ -158,7 +191,7 @@ public :
     /// \return Kerning value for \a first and \a second, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    int getKerning(Uint32 first, Uint32 second, unsigned int characterSize) const;
+    float getKerning(Uint32 first, Uint32 second, unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the line spacing
@@ -171,7 +204,36 @@ public :
     /// \return Line spacing, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    int getLineSpacing(unsigned int characterSize) const;
+    float getLineSpacing(unsigned int characterSize) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the position of the underline
+    ///
+    /// Underline position is the vertical offset to apply between the
+    /// baseline and the underline.
+    ///
+    /// \param characterSize Reference character size
+    ///
+    /// \return Underline position, in pixels
+    ///
+    /// \see getUnderlineThickness
+    ///
+    ////////////////////////////////////////////////////////////
+    float getUnderlinePosition(unsigned int characterSize) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the thickness of the underline
+    ///
+    /// Underline thickness is the vertical size of the underline.
+    ///
+    /// \param characterSize Reference character size
+    ///
+    /// \return Underline thickness, in pixels
+    ///
+    /// \see getUnderlinePosition
+    ///
+    ////////////////////////////////////////////////////////////
+    float getUnderlineThickness(unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Retrieve the texture containing the loaded glyphs of a certain size
@@ -197,7 +259,7 @@ public :
     ////////////////////////////////////////////////////////////
     Font& operator =(const Font& right);
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Structure defining a row of glyphs
@@ -226,7 +288,7 @@ private :
         Page();
 
         GlyphTable       glyphs;  ///< Table mapping code points to their corresponding glyph
-        sf::Texture      texture; ///< Texture containing the pixels of the glyphs
+        Texture          texture; ///< Texture containing the pixels of the glyphs
         unsigned int     nextRow; ///< Y position of the next new row in the texture
         std::vector<Row> rows;    ///< List containing the position of all the existing rows
     };
@@ -283,8 +345,12 @@ private :
     void*                      m_face;        ///< Pointer to the internal font face (it is typeless to avoid exposing implementation details)
     void*                      m_streamRec;   ///< Pointer to the stream rec instance (it is typeless to avoid exposing implementation details)
     int*                       m_refCount;    ///< Reference counter used by implicit sharing
+    Info                       m_info;        ///< Information about the font
     mutable PageTable          m_pages;       ///< Table containing the glyphs pages by character size
     mutable std::vector<Uint8> m_pixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
+    #ifdef SFML_SYSTEM_ANDROID
+    void*                      m_stream; ///< Asset file streamer (if loaded from file)
+    #endif
 };
 
 } // namespace sf
@@ -331,30 +397,36 @@ private :
 /// \code
 /// // Declare a new font
 /// sf::Font font;
-/// 
+///
 /// // Load it from a file
 /// if (!font.loadFromFile("arial.ttf"))
 /// {
 ///     // error...
 /// }
-/// 
+///
 /// // Create a text which uses our font
 /// sf::Text text1;
 /// text1.setFont(font);
 /// text1.setCharacterSize(30);
 /// text1.setStyle(sf::Text::Regular);
-/// 
+///
 /// // Create another text using the same font, but with different parameters
 /// sf::Text text2;
 /// text2.setFont(font);
 /// text2.setCharacterSize(50);
-/// text1.setStyle(sf::Text::Italic);
+/// text2.setStyle(sf::Text::Italic);
 /// \endcode
 ///
 /// Apart from loading font files, and passing them to instances
 /// of sf::Text, you should normally not have to deal directly
 /// with this class. However, it may be useful to access the
 /// font metrics or rasterized glyphs for advanced usage.
+///
+/// Note that if the font is a bitmap font, it is not scalable,
+/// thus not all requested sizes will be available to use. This
+/// needs to be taken into consideration when using sf::Text.
+/// If you need to display text of a certain size, make sure the
+/// corresponding bitmap font that supports that size is used.
 ///
 /// \see sf::Text
 ///

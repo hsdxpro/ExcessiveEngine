@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -43,7 +43,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API Shape : public Drawable, public Transformable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Virtual destructor
@@ -59,7 +59,7 @@ public :
     /// doesn't store its own copy of the texture, but rather keeps
     /// a pointer to the one that you passed to this function.
     /// If the source texture is destroyed and the shape tries to
-    /// use it, the behaviour is undefined.
+    /// use it, the behavior is undefined.
     /// \a texture can be NULL to disable texturing.
     /// If \a resetRect is true, the TextureRect property of
     /// the shape is automatically adjusted to the size of the new
@@ -193,21 +193,24 @@ public :
     /// \see getPoint
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int getPointCount() const = 0;
+    virtual std::size_t getPointCount() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a point of the shape
     ///
+    /// The returned point is in local coordinates, that is,
+    /// the shape's transforms (position, rotation, scale) are
+    /// not taken into account.
     /// The result is undefined if \a index is out of the valid range.
     ///
     /// \param index Index of the point to get, in range [0 .. getPointCount() - 1]
     ///
-    /// \return Index-th point of the shape
+    /// \return index-th point of the shape
     ///
     /// \see getPointCount
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2f getPoint(unsigned int index) const = 0;
+    virtual Vector2f getPoint(std::size_t index) const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the local bounding rectangle of the entity
@@ -224,20 +227,27 @@ public :
     FloatRect getLocalBounds() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the global bounding rectangle of the entity
+    /// \brief Get the global (non-minimal) bounding rectangle of the entity
     ///
     /// The returned rectangle is in global coordinates, which means
-    /// that it takes in account the transformations (translation,
+    /// that it takes into account the transformations (translation,
     /// rotation, scale, ...) that are applied to the entity.
     /// In other words, this function returns the bounds of the
-    /// sprite in the global 2D world's coordinate system.
+    /// shape in the global 2D world's coordinate system.
+    ///
+    /// This function does not necessarily return the \a minimal
+    /// bounding rectangle. It merely ensures that the returned
+    /// rectangle covers all the vertices (but possibly more).
+    /// This allows for a fast approximation of the bounds as a
+    /// first check; you may want to use more precise checks
+    /// on top of that.
     ///
     /// \return Global bounding rectangle of the entity
     ///
     ////////////////////////////////////////////////////////////
     FloatRect getGlobalBounds() const;
 
-protected :
+protected:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -249,13 +259,13 @@ protected :
     /// \brief Recompute the internal geometry of the shape
     ///
     /// This function must be called by the derived class everytime
-    /// the shape's points change (ie. the result of either
+    /// the shape's points change (i.e. the result of either
     /// getPointCount or getPoint is different).
     ///
     ////////////////////////////////////////////////////////////
     void update();
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw the shape to a render target
@@ -290,7 +300,7 @@ private :
     ////////////////////////////////////////////////////////////
     void updateOutlineColors();
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     // Member data

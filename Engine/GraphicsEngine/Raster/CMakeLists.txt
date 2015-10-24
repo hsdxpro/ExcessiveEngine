@@ -76,7 +76,6 @@ else()
 endif()
 
 target_link_libraries(GraphicsEngineRaster PlatformLibrary SupportLibrary)
-target_link_libraries(GraphicsEngineRaster
-	${LINK_SFML_LIBRARIES})
+target_link_libraries(GraphicsEngineRaster ${EXC_LINK_LIBRARY_SFML})
 
 

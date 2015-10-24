@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -40,7 +40,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API CircleShape : public Shape
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -49,7 +49,7 @@ public :
     /// \param pointCount Number of points composing the circle
     ///
     ////////////////////////////////////////////////////////////
-    explicit CircleShape(float radius = 0, unsigned int pointCount = 30);
+    explicit CircleShape(float radius = 0, std::size_t pointCount = 30);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the radius of the circle
@@ -79,37 +79,40 @@ public :
     /// \see getPointCount
     ///
     ////////////////////////////////////////////////////////////
-    void setPointCount(unsigned int count);
+    void setPointCount(std::size_t count);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the number of points of the shape
+    /// \brief Get the number of points of the circle
     ///
-    /// \return Number of points of the shape
+    /// \return Number of points of the circle
     ///
     /// \see setPointCount
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int getPointCount() const;
+    virtual std::size_t getPointCount() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get a point of the shape
+    /// \brief Get a point of the circle
     ///
+    /// The returned point is in local coordinates, that is,
+    /// the shape's transforms (position, rotation, scale) are
+    /// not taken into account.
     /// The result is undefined if \a index is out of the valid range.
     ///
     /// \param index Index of the point to get, in range [0 .. getPointCount() - 1]
     ///
-    /// \return Index-th point of the shape
+    /// \return index-th point of the shape
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2f getPoint(unsigned int index) const;
+    virtual Vector2f getPoint(std::size_t index) const;
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    float        m_radius;     ///< Radius of the circle
-    unsigned int m_pointCount; ///< Number of points composing the circle
+    float       m_radius;     ///< Radius of the circle
+    std::size_t m_pointCount; ///< Number of points composing the circle
 };
 
 } // namespace sf
