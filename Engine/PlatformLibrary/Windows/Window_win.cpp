@@ -22,19 +22,10 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 	// Key press release,
 	if (evt.type == sf::Event::EventType::KeyPressed || evt.type == sf::Event::EventType::KeyReleased) 
 	{
-		//evt_out.mouseBtn = eMouseBtn::INVALID;
-
 		evt_out.key = ConvertSFMLKey(evt.key.code);// (eKey)((int)evt.key.code);
-		//evt_out.deltaX = 0;
-		//evt_out.deltaY = 0;
-		//evt_out.x = 0;
-		//evt_out.y = 0;
 	}
 	else if (evt.type == sf::Event::EventType::MouseMoved) 
 	{
-		//evt_out.key = eKey::INVALID;
-		//evt_out.mouseBtn = eMouseBtn::INVALID;
-
 		// TODO: worst idea ever
 		if (lastMousePos.x == std::numeric_limits<int>::min()) 
 		{
@@ -53,10 +44,6 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 	}
 	else if (evt.type == sf::Event::EventType::MouseButtonPressed || evt.type == sf::Event::EventType::MouseButtonReleased)	
 	{
-		//evt_out.key = eKey::INVALID;
-		//evt_out.deltaX = 0;
-		//evt_out.deltaY = 0;
-
 		evt_out.x = evt.mouseButton.x;
 		evt_out.y = evt.mouseButton.y;
 		evt_out.mouseBtn = ConvertSFMLMouseBtn(evt.mouseButton.button);
