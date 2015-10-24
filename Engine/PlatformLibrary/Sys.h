@@ -6,8 +6,7 @@
 
 enum class eKey
 {
-	INVALID = -1, ///< Unhandled key
-	A = 0,        ///< The A key
+	A,			  ///< The A key
 	B,            ///< The B key
 	C,            ///< The C key
 	D,            ///< The D key
@@ -43,8 +42,8 @@ enum class eKey
 	NUM7,         ///< The 7 key
 	NUM8,         ///< The 8 key
 	NUM9,         ///< The 9 key
-	ESCAPE,       ///< The Escape key
-	LCONTROL,     ///< The left Control key
+	ESC,       ///< The Escape key
+	LCTRL,     ///< The left Control key
 	LSHIFT,       ///< The left Shift key
 	LALT,         ///< The left Alt key
 	LSYS,      ///< The left OS specific key: window (Windows and Linux), apple (MacOS X), ...
@@ -108,8 +107,8 @@ enum class eKey
 	F14,          ///< The F14 key
 	F15,          ///< The F15 key
 	PAUSE,        ///< The Pause key
-
-	COUNT,      ///< Keep last -- the total number of keyboard keys
+	COUNT,		  ///< Keep last -- the total number of keyboard keys
+	INVALID,	  ///< Unhandled key
 };
 
 enum class eMouseBtn 
@@ -117,9 +116,9 @@ enum class eMouseBtn
 	INVALID,
 	LEFT,       ///< The left mouse button
 	RIGHT,      ///< The right mouse button
-	MID,     ///< The middle (wheel) mouse button
-	EXTRA_1ST,   ///< The first extra mouse button
-	EXTRA_2ST,   ///< The second extra mouse button
+	MID,		///< The middle (wheel) mouse button
+	EXTRA1,   ///< The first extra mouse button
+	EXTRA2,   ///< The second extra mouse button
 	COUNT
 };
 
