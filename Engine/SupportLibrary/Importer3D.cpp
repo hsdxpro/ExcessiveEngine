@@ -157,7 +157,7 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 			auto chIdx = modelDirectory.rfind('/');
 			modelDirectory = modelDirectory.substr(0, chIdx + 1);
 
-			auto shit = Sys::GetExeDir() + "../../Assets/";
+			auto shit = GetAssetsPath();
 			size_t offs = shit.length();
 			relModelPath = modelDirectory.substr(offs, modelDirectory.length() - offs);
 		}

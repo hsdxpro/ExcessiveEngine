@@ -36,12 +36,13 @@ enum class eWindowMsg
 	JOYSTICK_MOVE,				///< The joystick moved along an axis (data in event.joystickMove)
 	JOYSTICK_CONNECT,			///< A joystick was connected (data in event.joystickConnect)
 	JOYSTICK_DISCONNECT,		///< A joystick was disconnected (data in event.joystickConnect)
-	COUNT						///< Keep last -- the total number of event types
+	COUNT,						///< Keep last -- the total number of event types
+	INVALID,
 };
 
 struct rWindowEvent 
 {
-	rWindowEvent() : msg(eWindowMsg::COUNT), key(eKey::COUNT), deltaX(0), deltaY(0), x(0), y(0){}
+	rWindowEvent() : msg(eWindowMsg::INVALID), key(eKey::INVALID), deltaX(0), deltaY(0), x(0), y(0){}
 
 	eWindowMsg msg;
 	eKey key;
@@ -55,10 +56,11 @@ struct rWindowEvent
 // Descriptor of window
 struct rWindow
 {
-	rWindow() : clientW(0), clientH(0), style(eWindowStyle::TITLE__RESIZE__CLOSE){}
+	rWindow() : clientW(0), clientH(0), style(eWindowStyle::TITLE__RESIZE__CLOSE), bVSync(true) {}
 
 	u16 clientW;
 	u16 clientH;
 	eWindowStyle style;
 	std::string capText;
+	bool bVSync;
 };

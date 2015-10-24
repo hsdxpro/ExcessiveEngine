@@ -151,13 +151,13 @@ void PlayerScript::Update(float deltaSeconds)
 	}
 
 	// Squat
-	if (!bSquatting && Input.IsKeyPressed(eKey::LCONTROL))
+	if (!bSquatting && Input.IsKeyPressed(eKey::LCTRL))
 	{
 		camComp->MoveRel(mm::vec3(0, 0, -0.8f));
 		bSquatting = true;
 		playerMoveSpeed /= 2;
 	}
-	else if (bSquatting && Input.IsKeyReleased(eKey::LCONTROL))
+	else if (bSquatting && Input.IsKeyReleased(eKey::LCTRL))
 	{
 		camComp->MoveRel(mm::vec3(0, 0, 0.8f));
 		bSquatting = false;
@@ -201,7 +201,7 @@ void PlayerScript::Update(float deltaSeconds)
 		gunSound->Start();
 
 		// Falling bullet shell, and it's sound
-		Actor* bulletShell = World.SpawnActor_RigidBodyCapsule(0.09, 0.04, 0.02);
+		Actor* bulletShell = World.SpawnActor_RigidBodyCapsule(0.09f, 0.04f, 0.02f);
 		bulletShell->SetTrigger(true);
 		bulletShell->SetCollisionGroup(eES_CollisionGroup::SHELL);
 		bulletShell->SetPos(ak47Graphics->GetPos());

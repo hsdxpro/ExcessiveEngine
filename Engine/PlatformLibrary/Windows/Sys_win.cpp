@@ -95,3 +95,8 @@ mm::ivec2 Sys::GetScreenSize()
 {
 	return{ GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) };
 }
+
+std::string GetAssetsPath()
+{
+	return Sys::GetExeDir() + "../../Assets/";
+}

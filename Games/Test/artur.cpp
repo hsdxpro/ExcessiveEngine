@@ -1,14 +1,15 @@
-﻿#include "Core\EngineCore.h"
-#include "Core\InputCore.h"
-#include "Core\WorldCore.h"
-#include "Core\CameraComponent.h"
+﻿#include "Core/EngineCore.h"
+#include "Core/InputCore.h"
+#include "Core/EngineCore.h"
+#include "Core/EngineWorld.h"
+#include "Core/CameraComponent.h"
 
-#include "PlatformLibrary\Window.h"
-#include "PlatformLibrary\Timer.h"
-#include "PlatformLibrary\File.h"
+#include "PlatformLibrary/Window.h"
+#include "PlatformLibrary/Timer.h"
+#include "PlatformLibrary/File.h"
 
-#include "SupportLibrary\VisualCpuProfiler.h"
-#include <sstream>
+#include "SupportLibrary/VisualCpuProfiler.h"
+#include <sstream> 
 
 namespace testartur
 {
