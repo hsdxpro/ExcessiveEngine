@@ -22,7 +22,7 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 	// Key press release,
 	if (evt.type == sf::Event::EventType::KeyPressed || evt.type == sf::Event::EventType::KeyReleased) 
 	{
-		evt_out.key = ConvertSFMLKey(evt.key.code);// (eKey)((int)evt.key.code);
+		evt_out.key = ConvertSFMLKey(evt.key.code);
 	}
 	else if (evt.type == sf::Event::EventType::MouseMoved) 
 	{
@@ -127,6 +127,8 @@ eWindowMsg Window::ConvertSFMLWindowMsg(sf::Event::EventType windowMsg)
 	case sf::Event::EventType::TextEntered:				return eWindowMsg::TEXT_ENTERED;
 	case sf::Event::EventType::KeyPressed:				return eWindowMsg::KEY_PRESS;
 	case sf::Event::EventType::KeyReleased:				return eWindowMsg::KEY_RELEASE;
+	case sf::Event::EventType::MouseWheelScrolled:
+	case sf::Event::EventType::MouseWheelMoved:			return eWindowMsg::MOUSE_SCROLL;
 	case sf::Event::EventType::MouseButtonPressed:		return eWindowMsg::MOUSE_PRESS;
 	case sf::Event::EventType::MouseButtonReleased:		return eWindowMsg::MOUSE_RELEASE;
 	case sf::Event::EventType::MouseMoved:				return eWindowMsg::MOUSE_MOVE;
@@ -139,8 +141,7 @@ eWindowMsg Window::ConvertSFMLWindowMsg(sf::Event::EventType windowMsg)
 	case sf::Event::EventType::JoystickDisconnected:	return eWindowMsg::JOYSTICK_DISCONNECT;
 	}
 
-	assert(0);
-	return eWindowMsg::COUNT;
+	return eWindowMsg::INVALID;
 }
 
 eMouseBtn Window::ConvertSFMLMouseBtn(sf::Mouse::Button btn)
@@ -154,8 +155,7 @@ eMouseBtn Window::ConvertSFMLMouseBtn(sf::Mouse::Button btn)
 		case sf::Mouse::Button::XButton2:	return eMouseBtn::EXTRA2;
 	}
 
-	assert(0);
-	return eMouseBtn::COUNT;
+	return eMouseBtn::INVALID;
 }
 
 eKey Window::ConvertSFMLKey(sf::Keyboard::Key key)
@@ -266,6 +266,5 @@ eKey Window::ConvertSFMLKey(sf::Keyboard::Key key)
 	case sf::Keyboard::KeyCount:	return eKey::COUNT;
 	}
 
-	assert(0);
 	return eKey::INVALID;
 }

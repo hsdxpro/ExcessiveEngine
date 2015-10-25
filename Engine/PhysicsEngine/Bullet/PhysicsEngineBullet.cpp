@@ -50,7 +50,7 @@ PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d)
 	btIDebugDraw* debugDrawer = (btIDebugDraw*)new PhysicsEngineBulletDebugGatherer();
 	debugDrawer->setDebugMode(btIDebugDraw::DBG_DrawAabb);
 
-	world->setDebugDrawer(debugDrawer);
+	//world->setDebugDrawer(debugDrawer);
 
 	// Populate collisionMatrix with true values, everything can collide with everything by default
 	nLayerCollisionMatrixRows = 16; // Start with 16x16 matrix
