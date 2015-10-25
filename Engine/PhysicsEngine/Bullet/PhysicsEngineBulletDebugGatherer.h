@@ -9,7 +9,7 @@ class PhysicsEngineBulletDebugGatherer : btIDebugDraw
 public:
 	PhysicsEngineBulletDebugGatherer(): nLines(0)
 	{
-		linesFromNonUniqPoints.resize(400000);
+		linesFromNonUniqPoints.resize(4000000);
 	}
 
 	~PhysicsEngineBulletDebugGatherer(){}

@@ -39,6 +39,7 @@ protected:
 	float pixelsToRot360;
 
 	mm::vec2 windowCenter;
+	mm::vec2 mousePosWhenPress;
 
 	sound::IEmitter* walkSound;
 	sound::IEmitter* gunSound;

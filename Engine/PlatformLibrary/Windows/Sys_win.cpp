@@ -19,7 +19,7 @@ bool Sys::UnLoadDLL(DLLHandle h)
 	return FreeLibrary((HMODULE)h) ? true : false;
 }
 
-void Sys::MsgBox(const std::wstring& msg)
+void Sys::ShowMsgBox(const std::wstring& msg)
 {
 	MessageBoxW(0, msg.c_str(), L"", MB_OK);
 
@@ -28,6 +28,11 @@ void Sys::MsgBox(const std::wstring& msg)
 void Sys::SetCursorPos(const mm::uvec2& pos)
 {
 	::SetCursorPos(pos.x, pos.y);
+}
+
+void Sys::SetCursorVisible(bool b)
+{
+	ShowCursor(b ? SW_SHOW : SW_HIDE);
 }
 
 void* Sys::GetDLLProcAddress(DLLHandle h, const std::string& procName) 

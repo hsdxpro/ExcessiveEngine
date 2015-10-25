@@ -32,9 +32,10 @@ public:
 	mm::vec2 GetCenterPos() const;
 
 private:
-	eWindowMsg	ConvertSFMLWindowMsg(sf::Event::EventType windowMsg);
-	eMouseBtn	ConvertSFMLMouseBtn(sf::Mouse::Button btn);
-	eKey		ConvertSFMLKey(sf::Keyboard::Key key);
+	eWindowMsg	ConvertFromSFMLWindowMsg(sf::Event::EventType windowMsg);
+	eMouseBtn	ConvertFromSFMLMouseBtn(sf::Mouse::Button btn);
+	eKey		ConvertFromSFMLKey(sf::Keyboard::Key key);
+	sf::Uint32	ConvertToSFMLWindowStyle(eWindowStyle style);
 
 protected:
 	sf::Window w;

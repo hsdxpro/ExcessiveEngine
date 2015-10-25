@@ -130,9 +130,10 @@ public:
 	static DLLHandle	LoadDLL(const wchar_t* path);
 	static bool			UnLoadDLL(DLLHandle h);
 
-	static void			MsgBox(const std::wstring& msg);
+	static void			ShowMsgBox(const std::wstring& msg);
 
 	static void			SetCursorPos(const mm::uvec2& pos);
+	static void			SetCursorVisible(bool b);
 
 	static void*		GetDLLProcAddress(DLLHandle h, const std::string& procName);
 	static std::wstring	GetExeDirW();

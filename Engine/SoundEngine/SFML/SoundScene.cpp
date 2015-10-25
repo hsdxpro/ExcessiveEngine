@@ -13,6 +13,7 @@ SoundScene::~SoundScene() {
 }
 
 void SoundScene::Release() {
+	return;
 	delete this;
 }
 

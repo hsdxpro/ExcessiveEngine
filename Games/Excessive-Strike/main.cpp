@@ -55,16 +55,11 @@ int main()
 {
 	// Full screen popup window for our game
 	rWindow d;
-		d.clientW = Sys::GetScreenSize().x; //FULL SCREEN props
-		d.clientH = Sys::GetScreenSize().y; //FULL SCREEN props
-		d.style = eWindowStyle::FULLSCREEN; //FULL SCREEN props
+		d.clientW = 1024;
+		d.clientH = 768;
 	Window* window = new Window(d);
 
-	// Hide hardware cursor for our game on window
-	window->SetCursorVisible(false);
-
 	// Init Engine core
-	//EngineCore::InstantiateSingleton();
 	Core.InitSoundEngineSFML();
 	rGraphicsEngineRaster graphicsDesc;
 		graphicsDesc.gapiType = eGapiType::OPENGL_4_5;
@@ -135,6 +130,8 @@ int main()
 		Core.Update(deltaSeconds);
 	}
 
+	delete window;
+	delete timer;
 	return 0;
 }
 

@@ -45,6 +45,7 @@ EngineCore::EngineCore()
 
 EngineCore::~EngineCore()
 {
+
 	for (auto& a : scripts)
 		delete a;
 
@@ -489,12 +490,12 @@ void EngineCore::SetLayerCollision(size_t ID0, size_t ID1, bool bEnableCollision
 void EngineCore::Update(float deltaTime)
 {
 	// TODO: Physics engine debug draw
-	mm::vec3* linesFromNonUniqPoints_out;
-	size_t nLines_out;
-	if (physicsEngine->GetDebugData(linesFromNonUniqPoints_out, nLines_out))
-	{
-
-	}
+	//mm::vec3* linesFromNonUniqPoints_out;
+	//size_t nLines_out;
+	//if (physicsEngine->GetDebugData(linesFromNonUniqPoints_out, nLines_out))
+	//{
+	//
+	//}
 
 
 	// Destroy actors queued for destroying

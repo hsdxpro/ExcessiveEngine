@@ -7,13 +7,11 @@
 
 enum class eWindowStyle
 {
-	NO_BORDER_NO_TITLE = 0,						///< No border / title bar (this flag and all others are mutually exclusive)
-	TITLE__FIXEDBORDER = 1 << 0,				///< Title bar + fixed border
-	TITLE__RESIZABLE__MAXIMIZEBUTTON = 1 << 1,	///< Titlebar + resizable border + maximize button
-	TITLE__CLOSE = 1 << 2,						///< Titlebar + close button
-	FULLSCREEN = 1 << 3,						///< Fullscreen mode (this flag and all others are mutually exclusive)
-
-	TITLE__RESIZE__CLOSE = TITLE__FIXEDBORDER | TITLE__RESIZABLE__MAXIMIZEBUTTON | TITLE__CLOSE ///< Default window style
+	DEFAULT = 1,
+	BORDERLESS = 2,
+	TITLE_FIXBORDER = 4,
+	TITLE_RESIZEABLE_MAXIMIZABLE = 8,
+	TITLE_CLOSEABLE = 16
 };
 
 enum class eWindowMsg 
@@ -56,7 +54,7 @@ struct rWindowEvent
 // Descriptor of window
 struct rWindow
 {
-	rWindow() : clientW(0), clientH(0), style(eWindowStyle::TITLE__RESIZE__CLOSE), bVSync(true) {}
+	rWindow() : clientW(0), clientH(0), style(eWindowStyle::DEFAULT), bVSync(true) {}
 
 	u16 clientW;
 	u16 clientH;

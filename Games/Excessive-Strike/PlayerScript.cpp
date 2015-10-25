@@ -1,6 +1,7 @@
 #include "PlayerScript.h"
 #include "PlatformLibrary\Sys.h"
 #include "ExcessiveStrikeCommon.h"
+#include <windows.h>
 
 PlayerScript::PlayerScript()
 {
@@ -164,33 +165,6 @@ void PlayerScript::Update(float deltaSeconds)
 		playerMoveSpeed = playerMaxMoveSpeed;
 	}
 
-	// Roting camera
-	mm::uvec2 mouseDelta;
-	if(Input.IsMouseMove(mouseDelta))
-	{
-		static float angleZ = 0;
-		static float angleX = 0;
-
-		// Input read up finished, now we can recenter cursor for our fps game
-		auto mousePos = Sys::GetCursorPos();
-
-		float mouseDx = mousePos.x - windowCenter.x;
-		float mouseDy = mousePos.y - windowCenter.y;
-
-		angleZ += -(float)mouseDx / pixelsToRot360 * 6.28;
-		angleX += -(float)mouseDy / pixelsToRot360 * 6.28;
-
-		// Clamp angleX
-		float angleSign = angleX >= 0 ? 1 : -1;
-		if (angleX * angleSign >= 3.14159265 / 2 * 0.95)
-			angleX = 3.14159265 / 2 * 0.95 * angleSign;
-
-		mm::quat rotAroundZ(angleZ, { 0, 0, 1 });
-		mm::quat rotAroundX(angleX, { 1, 0, 0 });
-
-		camComp->SetRot(rotAroundZ * rotAroundX);
-	}
-
 	if (shootTimer > 0)
 		shootTimer -= deltaSeconds;
 
@@ -238,6 +212,46 @@ void PlayerScript::Update(float deltaSeconds)
 		//bullet->Scale(bulletDirNormed * 3);
 	}
 
-	// Mouse recenter
-	Sys::SetCursorPos(mm::uvec2((u32)windowCenter.x, (u32)windowCenter.y));
+
+	if (Input.IsMouseRightPressed())
+	{
+		mousePosWhenPress = Sys::GetCursorPos();
+		Sys::SetCursorVisible(false);
+		Sys::SetCursorPos(mm::uvec2((u32)mousePosWhenPress.x, (u32)mousePosWhenPress.y));
+	}
+
+	if (Input.IsMouseRightReleased())
+		Sys::SetCursorVisible(true);
+
+	if (Input.IsMouseRightDown())
+	{
+		// Roting camera
+		mm::uvec2 mouseDelta;
+		if (Input.IsMouseMove(mouseDelta))
+		{
+			static float angleZ = 0;
+			static float angleX = 0;
+
+			// Input read up finished, now we can recenter cursor for our fps game
+			auto mousePos = Sys::GetCursorPos();
+
+			float mouseDx = mousePos.x - mousePosWhenPress.x;
+			float mouseDy = mousePos.y - mousePosWhenPress.y;
+
+			angleZ += -(float)mouseDx / pixelsToRot360 * 6.28;
+			angleX += -(float)mouseDy / pixelsToRot360 * 6.28;
+
+			// Clamp angleX
+			float angleSign = angleX >= 0 ? 1 : -1;
+			if (angleX * angleSign >= 3.14159265 / 2 * 0.95)
+				angleX = 3.14159265 / 2 * 0.95 * angleSign;
+
+			mm::quat rotAroundZ(angleZ, { 0, 0, 1 });
+			mm::quat rotAroundX(angleX, { 1, 0, 0 });
+
+			camComp->SetRot(rotAroundZ * rotAroundX);
+		}
+
+		Sys::SetCursorPos(mm::uvec2((u32)mousePosWhenPress.x, (u32)mousePosWhenPress.y));
+	}
 }

@@ -109,9 +109,6 @@ set(EXC_LINK_LIBRARY_ASSIMP
 	optimized assimp
 )
 
-
-add_definitions(-DBT_USE_SSE_IN_API)
-
 set(EXC_LINK_LIBRARY_BULLET
 	debug Bullet2FileLoader-d
 	debug Bullet3Collision-d

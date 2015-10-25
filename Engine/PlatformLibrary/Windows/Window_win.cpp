@@ -9,7 +9,14 @@ Window::Window(const rWindow& d)
 	lastMousePos.x = std::numeric_limits<int>::min();
 	lastMousePos.y = std::numeric_limits<int>::min();
 
-	w.create(sf::VideoMode(d.clientW, d.clientH), d.capText.c_str(), (u32)d.style);
+	sf::Uint32 windowStyle;
+	// Client are size == Screen size, we must use FullScreen style
+	if (d.clientW == Sys::GetScreenSize().x && d.clientH == Sys::GetScreenSize().y)
+		windowStyle = ConvertToSFMLWindowStyle(eWindowStyle::BORDERLESS);
+	else
+		windowStyle = ConvertToSFMLWindowStyle(d.style);
+
+	w.create(sf::VideoMode(d.clientW, d.clientH), d.capText.c_str(), windowStyle);
 	w.setVerticalSyncEnabled(d.bVSync);
 }
 
@@ -22,7 +29,7 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 	// Key press release,
 	if (evt.type == sf::Event::EventType::KeyPressed || evt.type == sf::Event::EventType::KeyReleased) 
 	{
-		evt_out.key = ConvertSFMLKey(evt.key.code);
+		evt_out.key = ConvertFromSFMLKey(evt.key.code);
 	}
 	else if (evt.type == sf::Event::EventType::MouseMoved) 
 	{
@@ -46,7 +53,7 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 	{
 		evt_out.x = evt.mouseButton.x;
 		evt_out.y = evt.mouseButton.y;
-		evt_out.mouseBtn = ConvertSFMLMouseBtn(evt.mouseButton.button);
+		evt_out.mouseBtn = ConvertFromSFMLMouseBtn(evt.mouseButton.button);
 	}
 	else if (evt.type == sf::Event::EventType::MouseWheelMoved)
 	{
@@ -62,7 +69,7 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 		evt_out.y = evt.size.height;
 	}
 
-	evt_out.msg = ConvertSFMLWindowMsg(evt.type);
+	evt_out.msg = ConvertFromSFMLWindowMsg(evt.type);
 
 	return true;
 }
@@ -116,7 +123,7 @@ mm::vec2 Window::GetCenterPos() const
 	return mm::vec2(pos.x + size.x * 0.5, pos.y + size.y * 0.5);
 }
 
-eWindowMsg Window::ConvertSFMLWindowMsg(sf::Event::EventType windowMsg)
+eWindowMsg Window::ConvertFromSFMLWindowMsg(sf::Event::EventType windowMsg)
 {
 	switch (windowMsg)
 	{
@@ -144,7 +151,7 @@ eWindowMsg Window::ConvertSFMLWindowMsg(sf::Event::EventType windowMsg)
 	return eWindowMsg::INVALID;
 }
 
-eMouseBtn Window::ConvertSFMLMouseBtn(sf::Mouse::Button btn)
+eMouseBtn Window::ConvertFromSFMLMouseBtn(sf::Mouse::Button btn)
 {
 	switch (btn)
 	{
@@ -158,7 +165,7 @@ eMouseBtn Window::ConvertSFMLMouseBtn(sf::Mouse::Button btn)
 	return eMouseBtn::INVALID;
 }
 
-eKey Window::ConvertSFMLKey(sf::Keyboard::Key key)
+eKey Window::ConvertFromSFMLKey(sf::Keyboard::Key key)
 {
 	switch (key)
 	{
@@ -267,4 +274,16 @@ eKey Window::ConvertSFMLKey(sf::Keyboard::Key key)
 	}
 
 	return eKey::INVALID;
+}
+
+sf::Uint32	Window::ConvertToSFMLWindowStyle(eWindowStyle style)
+{
+	switch (style)
+	{
+	case eWindowStyle::DEFAULT:							return sf::Style::Default;
+	case eWindowStyle::BORDERLESS:						return sf::Style::None;
+	case eWindowStyle::TITLE_FIXBORDER:					return sf::Style::Titlebar;
+	case eWindowStyle::TITLE_RESIZEABLE_MAXIMIZABLE:	return sf::Style::Resize;
+	case eWindowStyle::TITLE_CLOSEABLE:					return sf::Style::Close;
+	}
 }
