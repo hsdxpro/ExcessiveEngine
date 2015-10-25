@@ -68,9 +68,10 @@ else ()
 endif ()
 
 #---------------------------------------
-# output directories
+# directories
 #---------------------------------------
 
+# binary output directories
 if (CMAKE_BUILD_TYPE)
 	set(EXCESSIVE_OUTPUT_DIR "${CMAKE_CURRENT_LIST_DIR}/Build/${CMAKE_BUILD_TYPE}")
 else ()
@@ -79,6 +80,9 @@ endif ()
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${EXCESSIVE_OUTPUT_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${EXCESSIVE_OUTPUT_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${EXCESSIVE_OUTPUT_DIR})
+
+# asset directory (temporary solution)
+add_definitions(-DEXCESSIVE_ASSET_DIR="${CMAKE_CURRENT_LIST_DIR}/Assets/")
 
 
 #---------------------------------------

@@ -217,7 +217,7 @@ void GraphicsEngineRaster::Update(float deltaTime) {
 		ds.enable_write = true;
 		ds.far = 1.0f;
 		ds.near = 0.0f;
-		ds.func = eCompareFunc::LESSER_OR_EQUAL;
+		ds.func = eCompareFunc::LESSER;
 	gapi->SetDepthState(ds);
 
 	// ok, this function is only for testing purposes, it's not a real renderer xD	
