@@ -103,5 +103,6 @@ mm::ivec2 Sys::GetScreenSize()
 
 std::string GetAssetsPath()
 {
-	return Sys::GetExeDir() + "../../Assets/";
+	return EXCESSIVE_ASSET_DIR;
+	//return Sys::GetExeDir() + "../../Assets/";
 }
