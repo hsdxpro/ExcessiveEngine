@@ -689,6 +689,8 @@ void GapiGL::SetRasterizationState(const rRasterizerState& state)
 	glFrontFace(raster_order_data[(u32)state.vertex_order]);
 	glCullFace(raster_face_data[(u32)state.face]);
 	glColorMask(state.r_mask, state.g_mask, state.b_mask, state.a_mask);
+
+	glDisable(GL_BLEND);
 }
 
 bool GapiGL::GetError() //true if error
@@ -824,7 +826,6 @@ void GapiGL::Draw(u32 nVertices, u32 offset /*= 0*/)
 
 void GapiGL::ClearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth /*= 0*/, i32 stencil /*= 0*/)
 {
-
 	unsigned int clearFlag = 0;
 	u32 bits = (u32)f;
 

@@ -24,7 +24,7 @@ IGraphicsEngine* Factory::CreateGraphicsEngineRaster(const rGraphicsEngineRaster
 #endif
 }
 
-IGraphicsEngine* Factory::CreateGraphicsEngineRT(const rGraphicsEngineRT& d) 
+IGraphicsEngine* Factory::CreateGraphicsEngineRT_Richard(const rGraphicsEngineRT_Richard& d) 
 {
 #ifdef EXCESSIVE_DLL_MODULES
 	using CreateT = IGraphicsEngine*(*)(const rGraphicsEngineRT& d);
@@ -38,7 +38,7 @@ IGraphicsEngine* Factory::CreateGraphicsEngineRT(const rGraphicsEngineRT& d)
 	}
 	return CreateGraphicsEngine(d);
 #else
-	return new GraphicsEngineRT(d);
+	return new GraphicsEngineRT_Richard(d);
 #endif
 }
 

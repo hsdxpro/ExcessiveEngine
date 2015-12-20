@@ -36,7 +36,7 @@ public:
 	IGraphicsEngine* InitGraphicsEngineRaster(const rGraphicsEngineRaster& d = rGraphicsEngineRaster());
 	
 	// Init raytracer graphics engine, if one already exists will be destroyed, then instantiate it
-	IGraphicsEngine* InitGraphicsEngineRT(const rGraphicsEngineRT& d = rGraphicsEngineRT());
+	IGraphicsEngine* InitGraphicsEngineRT_Richard(const rGraphicsEngineRT_Richard& d = rGraphicsEngineRT_Richard());
 	
 	// Init physics engine, if one already exists will be destroyed, then instantiate it
 	IPhysicsEngine* InitPhysicsEngineBullet(const rPhysicsEngineBullet& d = rPhysicsEngineBullet());

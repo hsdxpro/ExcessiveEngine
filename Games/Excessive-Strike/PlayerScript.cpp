@@ -79,10 +79,6 @@ PlayerScript::PlayerScript()
 	//ak47Graphics->Rot(mm::quat(7.f / 180.f * 3.1415f, { 0, 0, 1 }) * mm::quat(-3.f / 180.f * 3.1415f, { 1, 0, 0 }));
 	camComp->Attach(ak47Graphics); // Attach weapon to player physics
 	
-	// Mouse recenter
-	mm::vec2 windowCenter = Graphics.GetTargetWindow()->GetCenterPos();
-	Sys::SetCursorPos(mm::uvec2((u32)windowCenter.x, (u32)windowCenter.y));
-	
 	// Ha ez a sor bevan tolva akkor debug - ban lezuhanunk, olyan mintha scale = 0 lenne
 	playerCapsule->ScaleLocal({ 1.f / 3.5f, 1.f / 3.5f, 1.f / 3.5f });
 

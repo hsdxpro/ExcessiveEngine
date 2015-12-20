@@ -96,9 +96,9 @@ mm::ivec2 Sys::GetCursorPos()
 	return mm::ivec2(p.x, p.y);
 }
 
-mm::ivec2 Sys::GetScreenSize()
+mm::uvec2 Sys::GetScreenSize()
 {
-	return{ GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) };
+	return mm::uvec2((unsigned)GetSystemMetrics(SM_CXSCREEN), (unsigned)GetSystemMetrics(SM_CYSCREEN));
 }
 
 std::string GetAssetsPath()

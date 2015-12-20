@@ -13,7 +13,7 @@ class Factory
 {
 public:
 	static IGraphicsEngine*	CreateGraphicsEngineRaster(const rGraphicsEngineRasterData& d);
-	static IGraphicsEngine*	CreateGraphicsEngineRT(const rGraphicsEngineRT& d);
+	static IGraphicsEngine*	CreateGraphicsEngineRT_Richard(const rGraphicsEngineRT_Richard& d);
 	static IPhysicsEngine*	CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d);
 	static INetworkEngine*	CreateNetworkEngine(const rNetworkEngine& d);
 	static ISoundEngine*	CreateSoundEngine(const rSoundEngine& d);

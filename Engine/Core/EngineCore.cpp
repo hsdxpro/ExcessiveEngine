@@ -107,12 +107,12 @@ IGraphicsEngine* EngineCore::InitGraphicsEngineRaster(const rGraphicsEngineRaste
 	return graphicsEngine;
 }
 
-IGraphicsEngine* EngineCore::InitGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/)
+IGraphicsEngine* EngineCore::InitGraphicsEngineRT_Richard(const rGraphicsEngineRT_Richard& d /*= rGraphicsEngineRT()*/)
 {
 	if (graphicsEngine)
 		graphicsEngine->Release();
 	
-	return graphicsEngine = Factory::CreateGraphicsEngineRT(d);
+	return graphicsEngine = Factory::CreateGraphicsEngineRT_Richard(d);
 }
 
 IPhysicsEngine* EngineCore::InitPhysicsEngineBullet(const rPhysicsEngineBullet& d /*= rPhysicsEngineBullet()*/)
@@ -577,6 +577,7 @@ void EngineCore::Update(float deltaTime)
 		PROFILE_SCOPE("Game Logic");
 
 		// Collision, enter, exit calls
+		if(physicsEngine)
 		{
 			PROFILE_SCOPE("Core & onCollision(Enter, Exit, ...)");
 
@@ -784,7 +785,7 @@ void EngineCore::Update(float deltaTime)
 			}
 
 			// Remove dispatched taks, reverse iteration for: indices don't slip away
-			for (i32 i = indicesToDelete.size(); --i >= 0;)
+			for (i32 i = (i32)indicesToDelete.size(); --i >= 0;)
 				tasks.erase(tasks.begin() + indicesToDelete[i]);
 		}
 	}

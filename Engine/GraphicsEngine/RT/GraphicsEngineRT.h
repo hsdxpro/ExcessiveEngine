@@ -6,10 +6,12 @@
 #include "../IMaterial.h"
 #include "../IMesh.h"
 #include "../Raster/Camera.h"
-
+//#include "Scene.h"
 #include <unordered_set>
 #include "PlatformLibrary/Window.h"
+#include "Ray.h"
 
+namespace Randominezz { class Scene; }
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -17,16 +19,17 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-struct rGraphicsEngineRT {
-
+struct rGraphicsEngineRT_Richard 
+{
+	Window* targetWindow;
 };
 
-class GraphicsEngineRT : public IGraphicsEngine
+class GraphicsEngineRT_Richard : public IGraphicsEngine
 {
 public:
 	// ctor, dtor, release
-	GraphicsEngineRT(const rGraphicsEngineRT& d);
-	~GraphicsEngineRT();
+	GraphicsEngineRT_Richard(const rGraphicsEngineRT_Richard& d);
+	~GraphicsEngineRT_Richard();
 
 	void Release() override;
 
@@ -47,6 +50,18 @@ public:
 	void Update(float deltaTime) override;
 
 	IGapi* GetGapi() override			{return nullptr;}
-	Window* GetTargetWindow() override {return nullptr;}
+	Window* GetTargetWindow() override {return targetWindow;}
+
+// TMP CPU TRACE
+public:
+	void initScene();
+	Ray getRayAtPixel(float pixelX, float pixelY, int screenWidth, int screenHeight, float aspectRatio);
+	Randominezz::Scene* scene;
+
+	Color* backBuffer;
+
+	Camera cam;
+protected:
+	Window* targetWindow;
 };
 

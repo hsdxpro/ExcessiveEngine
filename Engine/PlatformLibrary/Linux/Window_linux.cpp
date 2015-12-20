@@ -1,5 +1,5 @@
 #include "Window.h"
-
+/*
 Window::Window(const IWindow::rDesc& d) {
 	init(d);
 }
@@ -24,4 +24,4 @@ void Window::displayClientRect() {
 bool Window::isOpen() {
 	// TODO
 	return true;
-}
+}*/

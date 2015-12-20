@@ -3,6 +3,8 @@
 #include <cassert>
 #include <limits>
 #include <assert.h>
+#include "SFML/Graphics/Sprite.hpp"
+#include "SFML/Graphics/RenderTexture.hpp"
 
 Window::Window(const rWindow& d)
 {
@@ -11,13 +13,19 @@ Window::Window(const rWindow& d)
 
 	sf::Uint32 windowStyle;
 	// Client are size == Screen size, we must use FullScreen style
-	if (d.clientW == Sys::GetScreenSize().x && d.clientH == Sys::GetScreenSize().y)
+	//if (d.clientSize == Sys::GetScreenSize()) waiting for mymath improvement
+	if (d.clientSize.x == Sys::GetScreenSize().x && d.clientSize.y == Sys::GetScreenSize().y)
 		windowStyle = ConvertToSFMLWindowStyle(eWindowStyle::BORDERLESS);
 	else
 		windowStyle = ConvertToSFMLWindowStyle(d.style);
 
-	w.create(sf::VideoMode(d.clientW, d.clientH), d.capText.c_str(), windowStyle);
+	w.create(sf::VideoMode(d.clientSize.x, d.clientSize.y), d.capText.c_str(), windowStyle);
 	w.setVerticalSyncEnabled(d.bVSync);
+}
+
+Window::~Window()
+{
+	w.close();
 }
 
 bool Window::PopEvent(rWindowEvent& evt_out)
@@ -79,9 +87,37 @@ void Window::Close()
 	w.close();
 }
 
+void Window::Clear(const Color& color)
+{
+	w.clear(sf::Color(color.R, color.G, color.B, color.A));
+}
+
 void Window::Present() 
 {
 	w.display();
+}
+
+void Window::SetPos(const mm::ivec2& pos /*= mm::ivec2(0, 0)*/)
+{
+	w.setPosition(sf::Vector2i(pos.x, pos.y));
+}
+
+void Window::SetSize(const mm::uvec2& pos)
+{
+	w.setSize(sf::Vector2u(pos.x, pos.y));
+}
+
+void Window::SetClientPixels(const Color* const pixels)
+{
+	static thread_local sf::Sprite	sprite;
+	static thread_local sf::Texture texture;
+
+	texture.create(GetClientW(), GetClientH());
+
+	sprite.setTexture(texture);
+	texture.update((uint8_t*)pixels);
+
+	w.draw(sprite);
 }
 
 void Window::SetCursorVisible(bool bVisible)
@@ -107,6 +143,11 @@ u16 Window::GetClientW() const
 u16 Window::GetClientH() const 
 {
 	return w.getSize().y;
+}
+
+unsigned Window::GetNumClientPixels() const
+{
+	return w.getSize().x * w.getSize().y;
 }
 
 float Window::GetClientAspectRatio() const 
@@ -283,7 +324,9 @@ sf::Uint32	Window::ConvertToSFMLWindowStyle(eWindowStyle style)
 	case eWindowStyle::DEFAULT:							return sf::Style::Default;
 	case eWindowStyle::BORDERLESS:						return sf::Style::None;
 	case eWindowStyle::TITLE_FIXBORDER:					return sf::Style::Titlebar;
-	case eWindowStyle::TITLE_RESIZEABLE_MAXIMIZABLE:	return sf::Style::Resize;
-	case eWindowStyle::TITLE_CLOSEABLE:					return sf::Style::Close;
+	case eWindowStyle::TITLE_RESIZEABLEBORDER:			return sf::Style::Titlebar | sf::Style::Resize;
+	case eWindowStyle::TITLE_CLOSEABLE:					return sf::Style::Titlebar | sf::Style::Close;
 	}
+
+	return sf::Style::Default;
 }

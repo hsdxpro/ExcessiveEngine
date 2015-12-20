@@ -210,15 +210,26 @@ void GraphicsEngineRaster::Update(float deltaTime) {
 						targetWindow->GetClientW() * (renderRegion.topRightPercentNormed.x - renderRegion.bottomLeftPercentNormed.x),
 						targetWindow->GetClientH() * (renderRegion.topRightPercentNormed.y - renderRegion.bottomLeftPercentNormed.y));
 
-	gapi->ClearFrameBuffer(eClearFlag::COLOR_DEPTH, mm::vec4(0, 0, 0, 0), 0, 0);
+	gapi->ClearFrameBuffer(eClearFlag::COLOR_DEPTH, mm::vec4(0, 0, 0, 1), 1, 0);
 	
 	rDepthState ds;
-		ds.enable_test = true;
+		ds.enable_test = false;
 		ds.enable_write = true;
 		ds.far = 1.0f;
 		ds.near = 0.0f;
 		ds.func = eCompareFunc::LESSER;
 	gapi->SetDepthState(ds);
+
+	rRasterizerState rs;
+		rs.a_mask = true;
+		rs.b_mask = true;
+		rs.face = eWhichFace::BACK;
+		rs.face_culling = false;
+		rs.g_mask = true;
+		rs.mode = eRasterizationMode::SOLID;
+		rs.r_mask = true;
+		rs.vertex_order = eVertexOrder::COUNTER_CLOCKWISE;
+	gapi->SetRasterizationState(rs);
 
 	// ok, this function is only for testing purposes, it's not a real renderer xD	
 	// just render the first scene, entity by entity
@@ -245,7 +256,7 @@ void GraphicsEngineRaster::Update(float deltaTime) {
 		if (!mesh) {
 			continue;
 		}
-		rVertexAttrib attribs[3];
+
 		Mesh::ElementInfo attribInfos[3];
 		bool hasAllAttribs =
 			mesh->GetElementBySemantic(attribInfos[0], Mesh::POSITION) &&
@@ -458,7 +469,7 @@ bool GraphicsEngineRaster::SetPipeline(const char* description) {
 	// check parse error and display some helpful information
 	rapidjson::ParseErrorCode errorCode = doc.GetParseError();
 	if (errorCode != rapidjson::ParseErrorCode::kParseErrorNone) {
-#pragma message("You are not displaying any error, dumbfuck");
+#pragma message("You are not displaying any error, dumbfuck")
 		return false;
 	}
 

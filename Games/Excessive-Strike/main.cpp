@@ -1,42 +1,27 @@
-// Mai feladat : Gondolkodni kene Core feldarabolasan, Physics, Sound, Graphics, Network
-// A felosztás mûködõképes ha individuális modul részeket ölelnek fel a felosztott részek
-// De mi van olyan funckionalitással amihez pl graphicsEngine meg phyicsEngine is kell, ez egyértelmûen a Core dolga
-// Nézzük meg, hogy néznének ki ezek az osztályok
-
-// Input
-// Network
-// Graphics
-// Physics
-// Sound
-// World
-// Core Amikor Core példányosul, akkor a többi is
-// Core példányosítását nem vethetjük el editoron belül, de játékon belül lesz egy Core
-
-// Egyszerû eset:
-// Akarok egy GuiImage : GuiControl a képernyõ közepére amin megjelenik az alma.jpg
-
-// Editorbol ?? "New Gui Page(mainMenu)", lepakolom a control - t, majd dragelek alma.jpg oda
-// Kódból beállítom a GuiLayer - t mainMenu - re
+// GuiSystem
 // Canvas
-// - GuiPages
+// - GuiPages (DEPRECATED)
 //		- GuiLayers
 //			- GuiControls
 
-// A GuiLibrary felelössége
-// - Megjelenítéshez szükséges absztrakció hordozása
-// Vannak layerek, pl inventory, hp and mana
-// Van layer, pl MainMenu
-// Layerek sokaságát GuiPage - nek hívjuk
-// Minden stackelhetõ, <GuiPage>, <GuiLayer>, <GuiControl>
+// Gui library használata:
 
-// Ne bonyolítsuk túl. Pl van egy inventory nyitva level 0 - nál
-// level1 - re pusholok egy teljes mainMenu - t
+// GuiSystem
+// GuiSystemPeter
 
-// Másik eset, az editoron belül bizonyos viewport részre akarom renderelni az egész világot
-// gui lib renderelés lefut aztán csókolom, ezután Core - n keresztül beállítom hogy az ablak mely részére kéne renderelni a GuiControl alapján, majd meghívom az update - t
-// Ezt mind az editor mainLoop - jában
+//* GuiSytemRichard::CreateButton(.....)
 
-// Core eddig hangot, .dae stb fájlokat tud zúzni
+// Typical Usage
+// GuiSystemRichard guiSys;
+// GuiSystemRobert guiSys;
+// guiSys.CreateLayer(...) CreateButton(...) // MyButtonImpl* button = CreateButton(...)
+// OffScreenBuffer* buf = GuiRendererCpu.Render(GuiSystemRichard);
+// buf->bitBltToScreen(...);
+
+// GuiRendererDx11	 : IGuiRenderer // Dx11 resource - ba belerenderel mindent
+// GuiRendererOpenGL : IGuiRenderer // OpenGL resource - ba belerenderel mindent
+// GuiRendererCpu	 : IGuiRenderer // byte* ptr - be belerenderel mindent
+
 
 #include "Core\EngineCore.h"
 #include "Core\CameraComponent.h"
@@ -55,8 +40,8 @@ int main()
 {
 	// Full screen popup window for our game
 	rWindow d;
-		d.clientW = 1024;
-		d.clientH = 768;
+		d.clientSize = mm::uvec2(1024, 768);
+		d.bVSync = true;
 	Window* window = new Window(d);
 
 	// Init Engine core

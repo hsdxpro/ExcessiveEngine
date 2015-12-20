@@ -10,7 +10,7 @@ enum class eWindowStyle
 	DEFAULT = 1,
 	BORDERLESS = 2,
 	TITLE_FIXBORDER = 4,
-	TITLE_RESIZEABLE_MAXIMIZABLE = 8,
+	TITLE_RESIZEABLEBORDER = 8,
 	TITLE_CLOSEABLE = 16
 };
 
@@ -54,11 +54,10 @@ struct rWindowEvent
 // Descriptor of window
 struct rWindow
 {
-	rWindow() : clientW(0), clientH(0), style(eWindowStyle::DEFAULT), bVSync(true) {}
+	rWindow() : style(eWindowStyle::DEFAULT), clientSize(0, 0), bVSync(false) {}
 
-	u16 clientW;
-	u16 clientH;
-	eWindowStyle style;
-	std::string capText;
-	bool bVSync;
+	std::string		capText;
+	eWindowStyle	style;
+	mm::uvec2		clientSize;
+	bool			bVSync;
 };

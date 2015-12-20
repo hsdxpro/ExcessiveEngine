@@ -139,7 +139,7 @@ public:
 	static std::wstring	GetExeDirW();
 	static std::string	GetExeDir();
 	static mm::ivec2	GetCursorPos();
-	static mm::ivec2	GetScreenSize();
+	static mm::uvec2	GetScreenSize();
 };
 
 std::string GetAssetsPath();
