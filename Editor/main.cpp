@@ -155,38 +155,21 @@ class GuiGraphicsEngineOpenGL
 {
 };
 
-
 int main()
 {
-	//GuiImage* editorStartupImg = EditorGui.CreateImage(GetAssetsPath() + "editor_startup.jpg");
+	GuiImage* editorStartupImg = EditorGui.CreateImage(GetAssetsPath() + "editor_startup.jpg");
 
+	//uint64_t val = eWindowStyle::TITLE_CLOSEABLE | eWindowStyle::TITLE_FIXBORDER;
 	rWindow windowDesc;
-	windowDesc.clientSize = mm::uvec2(800, 600);// Sys::GetScreenSize();
-		windowDesc.style = eWindowStyle::DEFAULT;
-		//windowDesc.bVSync = true;
+		windowDesc.clientSize = mm::uvec2(editorStartupImg->GetWidth(), editorStartupImg->GetHeight());// Sys::GetScreenSize();
+		windowDesc.style = eWindowStyle::BORDERLESS;
 	Window* window = new Window(windowDesc);
 
-	//window->SetClientPixels(editorStartupImg->GetPixels());
-	//window->Present();
 
-	// Init Game Engine, load basic skybox
-	//Core.InitSoundEngineSFML();
 	rGraphicsEngineRT_Richard graphicsDesc;
-	//	graphicsDesc.gapiType = eGapiType::OPENGL_4_5;
 		graphicsDesc.targetWindow = window;
 	Core.InitGraphicsEngineRT_Richard(graphicsDesc);
-	//	rPhysicsEngineBullet physicsDesc;
-	//	physicsDesc.gravity = mm::vec3(0, 0, -9.81f);
-	//Core.InitPhysicsEngineBullet(physicsDesc);
-
-	//WorldComponent* sky = World.SpawnComp_MeshFromFile("skybox.dae");
-	//sky->SetScaleLocal({ 1000, 1000, 1000 });
-
-	// Full screen editor
-	//window->SetSize(Sys::GetScreenSize());
-	//window->SetPos();
-	//window->Clear(Color::RED);
-	//window->Present();
+	
 
 	// TMP !!
 	//World.AddScript<TestLevelScript>();
@@ -203,7 +186,7 @@ int main()
 
 		Core.Update(deltaTime);
 		
-		window->SetTitle(std::to_string(1.f / deltaTime));
+		window->SetTitle("Fps: " + std::to_string(1.f / deltaTime));
 	}
 	
 	getch();

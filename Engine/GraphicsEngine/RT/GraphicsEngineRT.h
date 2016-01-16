@@ -6,18 +6,6 @@
 #include "../IMaterial.h"
 #include "../IMesh.h"
 #include "../Raster/Camera.h"
-//#include "Scene.h"
-#include <unordered_set>
-#include "PlatformLibrary/Window.h"
-#include "Ray.h"
-
-namespace Randominezz { class Scene; }
-
-
-////////////////////////////////////////////////////////////////////////////////
-/// GraphicsEngine implementation.
-///
-////////////////////////////////////////////////////////////////////////////////
 
 struct rGraphicsEngineRT_Richard 
 {
@@ -52,15 +40,6 @@ public:
 	IGapi* GetGapi() override			{return nullptr;}
 	Window* GetTargetWindow() override {return targetWindow;}
 
-// TMP CPU TRACE
-public:
-	void initScene();
-	Ray getRayAtPixel(float pixelX, float pixelY, int screenWidth, int screenHeight, float aspectRatio);
-	Randominezz::Scene* scene;
-
-	Color* backBuffer;
-
-	Camera cam;
 protected:
 	Window* targetWindow;
 };

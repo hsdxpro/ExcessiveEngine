@@ -1,2 +1,0 @@
-//Camera.h 
-#pragma once

@@ -2,10 +2,11 @@
 #pragma once
 
 #include "..\SupportLibrary\BasicTypes.h"
+#include "..\SupportLibrary\Common.h"
 #include "Sys.h"
 #include <string>
 
-enum class eWindowStyle
+ENUM_CLASS_BITFLAG( eWindowStyle, int )
 {
 	DEFAULT = 1,
 	BORDERLESS = 2,
@@ -13,6 +14,12 @@ enum class eWindowStyle
 	TITLE_RESIZEABLEBORDER = 8,
 	TITLE_CLOSEABLE = 16
 };
+
+//ENUM_CLASS(emberiTulajdonsagok)
+//{
+//	TUD_ALUDNI,
+//	TUD_ENNI,
+//};
 
 enum class eWindowMsg 
 {
@@ -54,10 +61,9 @@ struct rWindowEvent
 // Descriptor of window
 struct rWindow
 {
-	rWindow() : style(eWindowStyle::DEFAULT), clientSize(0, 0), bVSync(false) {}
+	rWindow() : style(eWindowStyle::DEFAULT), clientSize(0, 0) {}
 
 	std::string		capText;
 	eWindowStyle	style;
 	mm::uvec2		clientSize;
-	bool			bVSync;
 };

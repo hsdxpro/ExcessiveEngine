@@ -12,7 +12,7 @@ Window::Window(const rWindow& d)
 	lastMousePos.y = std::numeric_limits<int>::min();
 
 	sf::Uint32 windowStyle;
-	// Client are size == Screen size, we must use FullScreen style
+	// Client size == Screen size, we must use FullScreen style
 	//if (d.clientSize == Sys::GetScreenSize()) waiting for mymath improvement
 	if (d.clientSize.x == Sys::GetScreenSize().x && d.clientSize.y == Sys::GetScreenSize().y)
 		windowStyle = ConvertToSFMLWindowStyle(eWindowStyle::BORDERLESS);
@@ -20,7 +20,7 @@ Window::Window(const rWindow& d)
 		windowStyle = ConvertToSFMLWindowStyle(d.style);
 
 	w.create(sf::VideoMode(d.clientSize.x, d.clientSize.y), d.capText.c_str(), windowStyle);
-	w.setVerticalSyncEnabled(d.bVSync);
+	//w.setVerticalSyncEnabled(true);
 }
 
 Window::~Window()
