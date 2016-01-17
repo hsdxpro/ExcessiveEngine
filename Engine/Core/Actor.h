@@ -119,7 +119,7 @@ public:
 
 	__inline void SetName(const std::string& s) { name = s; }
 
-	__inline void SetPendingKill(bool bKill) { bPendingKill = bKill; }
+	__inline void Kill() { bKilled = true; }
 
 	__inline void SetTrigger(bool bTrigger)
 	{ 
@@ -163,10 +163,10 @@ public:
 
 	__inline void SetVelocity(const mm::vec3& v) 
 	{ 
-		RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		if (rootComp->IsRigidBody())
 		{
-			c->SetVelocity(v);
-		});
+			rootComp->AsRigidBody()->SetVelocity(v);
+		}
 	}
 
 	__inline void SetOnUpdate(const std::function<void(float deltaSeconds)>& callb) { onUpdate = callb; }
@@ -213,17 +213,14 @@ public:
 	__inline mm::vec3 GetRightDirNormed()	const { return rootComp->GetRightDirNormed(); }
 	__inline mm::vec3 GetLeftDirNormed()	const { return rootComp->GetLeftDirNormed(); }
 
+	// TODO
 	__inline mm::vec3 GetVelocity() 
 	{ 
-		mm::vec3 avgVel = mm::vec3(0, 0, 0);
-		size_t nBody = 0;
-		RunLambdaOnComponents<RigidBodyComponent>([&](RigidBodyComponent* c)
+		if (rootComp->IsRigidBody())
 		{
-			nBody++;
-			avgVel += c->GetVelocity();
-		});
-
-		return avgVel / nBody;
+			return rootComp->AsRigidBody()->GetVelocity();
+		}
+		return mm::vec3(0, 0, 0);
 	}
 
 	__inline const std::vector<WorldComponent*> GetComponents() 
@@ -243,18 +240,18 @@ public:
 		return comps;
 	}
 
-	__inline void GetComponents(std::vector<WorldComponent*>& allComp) 
-	{ 
-		static std::function<void(WorldComponent*)> collectCompsRecursively  = [&](WorldComponent* c)
-		{
-			allComp.push_back(c);
-
-			for (auto& child : c->GetChilds())
-				collectCompsRecursively(child);
-		};
-
-		collectCompsRecursively(rootComp);
-	}
+	//__inline void GetComponents(std::vector<WorldComponent*>& allComp) 
+	//{ 
+	//	static std::function<void(WorldComponent*)> collectCompsRecursively  = [&](WorldComponent* c)
+	//	{
+	//		allComp.push_back(c);
+	//
+	//		for (auto& child : c->GetChilds())
+	//			collectCompsRecursively(child);
+	//	};
+	//
+	//	collectCompsRecursively(rootComp);
+	//}
 
 	template<class T>
 	__inline std::vector<T*> GetComponents() const 
@@ -284,7 +281,7 @@ public:
 	__inline const std::function<void(const rCollision& col)>& GetOnCollisionExit() { return onCollisionExit; }
 
 	__inline const std::string& GetName() { return name; }
-	__inline bool IsPendingKill() { return bPendingKill; }
+	__inline bool IsKilled() { return bKilled; }
 
 	__inline std::vector<Actor*>& GetChilds() { return childs; }
 	__inline Actor* GetParent() { return parent; }
@@ -306,5 +303,5 @@ protected:
 	std::function<void(const rCollision& col)> onCollisionExit;
 
 	// Lifecycle
-	bool bPendingKill;
+	bool bKilled;
 };

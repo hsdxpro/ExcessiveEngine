@@ -7,6 +7,8 @@
 #include "PlatformLibrary/Windows/Timer_win.h"
 #include <conio.h>
 #include "Core/EngineCore.h"
+#include "Core/EngineWorld.h"
+#include "../Games/Excessive-Strike/TestLevelScript.h"
 
 // TODO REMOVE
 //#include "../Games/Excessive-Strike/TestLevelScript.h"
@@ -172,7 +174,7 @@ int main()
 	
 
 	// TMP !!
-	//World.AddScript<TestLevelScript>();
+	World.AddScript<TestLevelScript>();
 
 	Timer* timer = new Timer();
 

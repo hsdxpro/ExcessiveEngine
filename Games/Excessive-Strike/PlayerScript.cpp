@@ -132,7 +132,6 @@ void PlayerScript::Update(float deltaSeconds)
 
 	playerCapsule->SetVelocity(mm::vec3(move.x, move.y, playerCapsule->GetVelocity().z));
 
-
 	if (nButtonsDown == 1 && Input.IsKeyPressed(eKey::W) | Input.IsKeyPressed(eKey::S) | Input.IsKeyPressed(eKey::A) | Input.IsKeyPressed(eKey::D))
 		walkSound->Start();
 

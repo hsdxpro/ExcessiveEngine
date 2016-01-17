@@ -199,9 +199,9 @@ sound::IEmitter* EngineCore::CreateSoundMono(const std::string& filePath, float 
 
 void EngineCore::Destroy(Actor* a)
 {
-	if (!a->IsPendingKill())
+	if (!a->IsKilled())
 	{
-		a->SetPendingKill(true);
+		a->Kill();
 		actorsToDestroy.push_back(a);
 	}
 }
@@ -610,7 +610,7 @@ void EngineCore::Update(float deltaTime)
 							}
 						}
 					}
-					else if (colData.actorA->IsPendingKill())
+					else if (colData.actorA->IsKilled())
 					{
 						colData.actorA = nullptr;
 					}
@@ -634,7 +634,7 @@ void EngineCore::Update(float deltaTime)
 							}
 						}
 					}
-					else if (colData.actorA->IsPendingKill())
+					else if (colData.actorA->IsKilled())
 					{
 						colData.actorA = nullptr;
 					}
@@ -664,7 +664,7 @@ void EngineCore::Update(float deltaTime)
 							}
 						}
 					}
-					else if (colData.actorB->IsPendingKill())
+					else if (colData.actorB->IsKilled())
 					{
 						colData.actorB = nullptr;
 					}
@@ -688,7 +688,7 @@ void EngineCore::Update(float deltaTime)
 							}
 						}
 					}
-					else if (colData.actorB->IsPendingKill())
+					else if (colData.actorB->IsKilled())
 					{
 						colData.actorB = nullptr;
 					}
@@ -715,7 +715,7 @@ void EngineCore::Update(float deltaTime)
 					bool bActorFound = false;
 					for (auto& aPrev : prevFrameActorCollideList)
 					{
-						if (aPrev.first != a || aPrev.first->IsPendingKill())
+						if (aPrev.first != a || aPrev.first->IsKilled())
 							continue;
 
 						bActorFound = true;
@@ -762,7 +762,7 @@ void EngineCore::Update(float deltaTime)
 		{
 			PROFILE_SCOPE("ActorLambda onUpdate");
 			for (auto& a : actors)
-				if (!a->IsPendingKill() && a->GetOnUpdate())
+				if (!a->IsKilled() && a->GetOnUpdate())
 					a->GetOnUpdate()(deltaTime);
 		}
 

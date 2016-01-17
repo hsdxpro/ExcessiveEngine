@@ -41,7 +41,7 @@ int main()
 	// Full screen popup window for our game
 	rWindow d;
 		d.clientSize = mm::uvec2(1024, 768);
-		d.bVSync = true;
+		//d.bVSync = true;
 	Window* window = new Window(d);
 
 	// Init Engine core

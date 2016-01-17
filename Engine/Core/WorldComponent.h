@@ -5,6 +5,8 @@
 #include "mymath\mm_quat_func.h"
 #include "SupportLibrary\Transform3D.h"
 
+class RigidBodyComponent;
+
 class WorldComponent
 {
 public:
@@ -28,7 +30,7 @@ public:
 			c->childs.push_back(this);
 			parent = c;
 
-			relTransform.SetRel(transform, parent->transform);
+			relTransform.Set(transform, parent->transform);
 		}
 	}
 
@@ -238,6 +240,9 @@ public:
 	__inline mm::vec3 GetLeftDirNormed()	const {return mm::rotate_vector(GetRot(), mm::vec3(-1,  0,  0));}
 
 	__inline std::vector<WorldComponent*>& GetChilds() { return childs; }
+
+	bool IsRigidBody() { return true; } // TODO 
+	RigidBodyComponent* AsRigidBody() { return (RigidBodyComponent*)this; } // TODO
 
 protected:
 	virtual void _InnerReflectPos(){}
