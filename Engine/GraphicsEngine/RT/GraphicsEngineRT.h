@@ -42,5 +42,7 @@ public:
 
 protected:
 	Window* targetWindow;
-};
 
+	Color* backBuffer;
+	std::vector<Layer> sceneLayers;
+};

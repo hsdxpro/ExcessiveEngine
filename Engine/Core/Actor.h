@@ -119,6 +119,7 @@ public:
 
 	__inline void SetName(const std::string& s) { name = s; }
 
+	// TODO call Core::Destroy
 	__inline void Kill() { bKilled = true; }
 
 	__inline void SetTrigger(bool bTrigger)

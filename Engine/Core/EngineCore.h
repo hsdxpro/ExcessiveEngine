@@ -153,6 +153,11 @@ protected:
 
 	// Error diffuse texture for failed texture loads
 	graphics::ITexture* texError;
+
+
+// TMP !! Richard RT OpenCL Investigation, simple query of loaded physical vertex positions...
+public:
+	std::vector<mm::vec3> loadedPhysicalVertexPositions;
 };
 
 extern EngineCore Core;

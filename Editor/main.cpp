@@ -163,18 +163,23 @@ int main()
 
 	//uint64_t val = eWindowStyle::TITLE_CLOSEABLE | eWindowStyle::TITLE_FIXBORDER;
 	rWindow windowDesc;
-		windowDesc.clientSize = mm::uvec2(editorStartupImg->GetWidth(), editorStartupImg->GetHeight());// Sys::GetScreenSize();
-		windowDesc.style = eWindowStyle::BORDERLESS;
+		//windowDesc.clientSize = mm::uvec2(editorStartupImg->GetWidth(), editorStartupImg->GetHeight());// Sys::GetScreenSize();
+		windowDesc.clientSize = mm::uvec2(800, 600);
+		windowDesc.style = eWindowStyle::DEFAULT;
 	Window* window = new Window(windowDesc);
 
 
 	rGraphicsEngineRT_Richard graphicsDesc;
 		graphicsDesc.targetWindow = window;
 	Core.InitGraphicsEngineRT_Richard(graphicsDesc);
+	Core.InitPhysicsEngineBullet();
 	
+	auto groundModelPath = "Terminal/terminal_blender.dae";
+	auto groundRigidActor = World.SpawnActor_RigidBodyFromFile(groundModelPath, 0);
+	Core.Destroy(groundRigidActor);
 
 	// TMP !!
-	World.AddScript<TestLevelScript>();
+	//World.AddScript<TestLevelScript>();
 
 	Timer* timer = new Timer();
 
@@ -188,7 +193,10 @@ int main()
 
 		Core.Update(deltaTime);
 		
-		window->SetTitle("Fps: " + std::to_string(1.f / deltaTime));
+		static uint64_t magic = 0;
+		magic++;
+		if((magic % 100) == 0)
+			window->SetTitle("Fps: " + std::to_string(1.f / deltaTime));
 	}
 	
 	getch();

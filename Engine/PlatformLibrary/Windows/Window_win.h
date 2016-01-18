@@ -32,8 +32,8 @@ public:
 	// Getters
 	bool IsOpen() const;
 
-	u16 GetClientW() const;
-	u16 GetClientH() const;
+	u16 GetClientWidth() const;
+	u16 GetClientHeight() const;
 
 	unsigned GetNumClientPixels() const;
 	float GetClientAspectRatio() const;

@@ -89,7 +89,7 @@ void Window::Close()
 
 void Window::Clear(const Color& color)
 {
-	w.clear(sf::Color(color.R, color.G, color.B, color.A));
+	w.clear(sf::Color(color.r, color.g, color.b, color.a));
 }
 
 void Window::Present() 
@@ -111,10 +111,15 @@ void Window::SetClientPixels(const Color* const pixels)
 {
 	static thread_local sf::Sprite	sprite;
 	static thread_local sf::Texture texture;
+	static thread_local bool bInited = false;
 
-	texture.create(GetClientW(), GetClientH());
+	if (!bInited)
+	{
+		texture.create(GetClientWidth(), GetClientHeight());
+		sprite.setTexture(texture);
+		bInited = true;
+	}
 
-	sprite.setTexture(texture);
 	texture.update((uint8_t*)pixels);
 
 	w.draw(sprite);
@@ -135,12 +140,12 @@ bool Window::IsOpen() const
 	return w.isOpen();
 }
 
-u16 Window::GetClientW() const 
+u16 Window::GetClientWidth() const 
 {
 	return w.getSize().x;
 }
 
-u16 Window::GetClientH() const 
+u16 Window::GetClientHeight() const 
 {
 	return w.getSize().y;
 }

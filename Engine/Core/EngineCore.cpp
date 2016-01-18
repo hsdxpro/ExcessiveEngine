@@ -112,7 +112,15 @@ IGraphicsEngine* EngineCore::InitGraphicsEngineRT_Richard(const rGraphicsEngineR
 	if (graphicsEngine)
 		graphicsEngine->Release();
 	
-	return graphicsEngine = Factory::CreateGraphicsEngineRT_Richard(d);
+	graphicsEngine = Factory::CreateGraphicsEngineRT_Richard(d);
+
+	// Default scene and layer for GraphicsEngine
+	defaultGraphicsScene = graphicsEngine->CreateScene();
+	IGraphicsEngine::Layer layer;
+	layer.scene = defaultGraphicsScene;
+	graphicsEngine->AddLayer(layer);
+
+	return graphicsEngine;
 }
 
 IPhysicsEngine* EngineCore::InitPhysicsEngineBullet(const rPhysicsEngineBullet& d /*= rPhysicsEngineBullet()*/)
@@ -441,8 +449,13 @@ RigidBodyComponent* EngineCore::SpawnComp_RigidBodyFromFile(const std::string& m
 	//if (cfg.isContain(eImporter3DFlag::VERT_BUFF_INTERLEAVED)) // Interleaved buffer? Okay gather positions from vertices stepping with vertex stride
 	{
 		vertices = new mm::vec3[mesh->nVertices];
+		loadedPhysicalVertexPositions.resize(mesh->nVertices);  // RT TMP
 		for (u32 i = 0; i < mesh->nVertices; i++)
+		{
 			vertices[i] = *(mm::vec3*)((u8*)mesh->vertexBuffers[0] + i * mesh->vertexSize);
+			loadedPhysicalVertexPositions[i] = vertices[i]; // RT TMP
+		}
+			
 	}
 
 	if (mass == 0)
@@ -450,8 +463,9 @@ RigidBodyComponent* EngineCore::SpawnComp_RigidBodyFromFile(const std::string& m
 	else
 		rigidEntity = physicsEngine->AddEntityRigidDynamic(vertices, mesh->nVertices, mass);
 
-	delete vertices;
-	vertices = nullptr; // Important
+	//loadedPhysicalVertexPositions = vertices;
+	//delete vertices;
+	//vertices = nullptr; // Important
 
 	auto c = new RigidBodyComponent(rigidEntity);
 	worldComponents.push_back(c);

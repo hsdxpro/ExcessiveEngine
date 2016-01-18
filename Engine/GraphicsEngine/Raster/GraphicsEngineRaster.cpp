@@ -126,8 +126,8 @@ GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRasterData& d) {
 	shader = gapi->CreateShaderSource(vertexShaderCode, pixelShaderCode);
 	isValid = shader != nullptr;
 
-	u32 windowWidth = d.targetWindow->GetClientW();
-	u32 windowHeight = d.targetWindow->GetClientH();
+	u32 windowWidth = d.targetWindow->GetClientWidth();
+	u32 windowHeight = d.targetWindow->GetClientHeight();
 
 	gapi->SetViewport(	windowWidth  *  renderRegion.bottomLeftPercentNormed.x,
 						windowHeight *  renderRegion.bottomLeftPercentNormed.y,
@@ -205,10 +205,10 @@ auto GraphicsEngineRaster::GetLayer(size_t index) -> Layer& {
 void GraphicsEngineRaster::Update(float deltaTime) {
 
 	// TODO Improve performance
-	gapi->SetViewport(	targetWindow->GetClientW() *  renderRegion.bottomLeftPercentNormed.x,
-						targetWindow->GetClientH() *  renderRegion.bottomLeftPercentNormed.y,
-						targetWindow->GetClientW() * (renderRegion.topRightPercentNormed.x - renderRegion.bottomLeftPercentNormed.x),
-						targetWindow->GetClientH() * (renderRegion.topRightPercentNormed.y - renderRegion.bottomLeftPercentNormed.y));
+	gapi->SetViewport(	targetWindow->GetClientWidth() *  renderRegion.bottomLeftPercentNormed.x,
+						targetWindow->GetClientHeight() *  renderRegion.bottomLeftPercentNormed.y,
+						targetWindow->GetClientWidth() * (renderRegion.topRightPercentNormed.x - renderRegion.bottomLeftPercentNormed.x),
+						targetWindow->GetClientHeight() * (renderRegion.topRightPercentNormed.y - renderRegion.bottomLeftPercentNormed.y));
 
 	gapi->ClearFrameBuffer(eClearFlag::COLOR_DEPTH, mm::vec4(0, 0, 0, 1), 1, 0);
 	
@@ -346,7 +346,7 @@ void GraphicsEngineRaster::Update(float deltaTime) {
 			*mm::mat4(entity->GetRot())
 			*mm::mat4(entity->GetSkew());
 
-		mm::mat4 wvp = scene.GetCamera()->GetProjMatrix((float)targetWindow->GetClientW() / targetWindow->GetClientH()) * scene.GetCamera()->GetViewMatrix() * prs;
+		mm::mat4 wvp = scene.GetCamera()->GetProjMatrix((float)targetWindow->GetClientWidth() / targetWindow->GetClientHeight()) * scene.GetCamera()->GetViewMatrix() * prs;
 
 		rBuffer ubo_alloc_data;
 			ubo_alloc_data.is_persistent = false;

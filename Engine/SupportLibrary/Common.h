@@ -5,12 +5,12 @@ class Color
 {
 public:
 	inline Color() {}
-	inline Color(u8 R, u8 G, u8 B, u8 A) : R(R), G(G), B(B), A(A) {}
+	inline Color(u8 r, u8 g, u8 b, u8 a) : r(r), g(g), b(b), a(a) {}
 
-	u8 R;
-	u8 G;
-	u8 B;
-	u8 A;
+	u8 r;
+	u8 g;
+	u8 b;
+	u8 a;
 
 public:
 	static Color BLACK;
