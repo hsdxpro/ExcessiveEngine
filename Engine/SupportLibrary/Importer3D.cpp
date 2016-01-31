@@ -125,13 +125,13 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 
 	// We collect each meshes indices and vertices into a big vertices, indices buffer, so meshes have local indexes to their local vertices
 	// we have global index for containers.  GlobalIdx += localIdx
-	size_t globalIndicesIdx = 0;
-	size_t globalVertexIdx = 0;
-	size_t vertexOffset = 0;
+	u32 globalIndicesIdx = 0;
+	u32 globalVertexIdx = 0;
+	u32 vertexOffset = 0;
 
 	// TODO: hack, will be combined to 1 mesh always, todo
 	rImporter3DMesh* mesh_out = new rImporter3DMesh();
-		mesh_out->materials.resize(nMeshes);
+	mesh_out->materials.resize(nMeshes);
 
 	// Each mesh
 	for (size_t i = 0; i < nMeshes; i++)
@@ -206,7 +206,7 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 			// Each vertex on face
 			for (size_t k = 0; k < 3; k++) 
 			{
-				unsigned localVertIdx = face.mIndices[k];
+				u32 localVertIdx = face.mIndices[k];
 
 				// Gather Index data
 				indices[globalIndicesIdx + k] = localVertIdx + globalVertexIdx;

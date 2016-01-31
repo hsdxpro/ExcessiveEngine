@@ -169,9 +169,9 @@ int main()
 	Window* window = new Window(windowDesc);
 
 
-	rGraphicsEngineRT_Richard graphicsDesc;
+	rGraphicsEngineRT graphicsDesc;
 		graphicsDesc.targetWindow = window;
-	Core.InitGraphicsEngineRT_Richard(graphicsDesc);
+	Core.InitGraphicsEngineRT(graphicsDesc);
 	Core.InitPhysicsEngineBullet();
 	
 	auto groundModelPath = "Terminal/terminal_blender.dae";

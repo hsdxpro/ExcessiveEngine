@@ -4,7 +4,7 @@
 
 SFMLMusicWrapper::SFMLMusicWrapper() {
 	music.setVolume(100);
-	music.setAttenuation(0.1);
+	music.setAttenuation(0.1f);
 }
 
 bool SFMLMusicWrapper::LoadFromFile(const std::string& filename){

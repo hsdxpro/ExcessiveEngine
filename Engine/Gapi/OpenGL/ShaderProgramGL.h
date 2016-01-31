@@ -2,7 +2,7 @@
 
 #include "GL/glew.h"
 #include <unordered_map>
-#include <GraphicsApi/IShaderProgram.h>
+#include "Gapi/IShaderProgram.h"
 
 //#define DEBUG_SHADER_ERRORS
 

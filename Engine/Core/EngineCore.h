@@ -6,10 +6,10 @@
 #include "PhysicsEngine\IPhysicsEngine.h"
 #include "NetworkEngine\INetworkEngine.h"
 #include "SoundEngine\ISoundEngine.h"
-#include "GraphicsEngine\Raster\GraphicsEngineRaster.h"
+#include "GraphicsEngine\Raster\RasterGraphicsEngine.h"
 #include "GraphicsEngine\RT\GraphicsEngineRT.h"
 #include "PhysicsEngine\Bullet\PhysicsEngineBullet.h"
-#include "NetworkEngine\Boost\NetworkEngineBoost.h"
+#include "NetworkEngine\RakNet\NetworkEngineRakNet.h"
 #include "SoundEngine\SFML\SoundEngineSFML.h"
 
 #include "Actor.h"
@@ -33,16 +33,16 @@ public:
 	~EngineCore();
 
 	// Init raster graphics engine, if one already exists will be destroyed, then instantiate it
-	IGraphicsEngine* InitGraphicsEngineRaster(const rGraphicsEngineRaster& d = rGraphicsEngineRaster());
-	
+	IGraphicsEngine* InitRasterGraphicsEngine(const rRasterGraphicsEngine& d = rRasterGraphicsEngine());
+
 	// Init raytracer graphics engine, if one already exists will be destroyed, then instantiate it
-	IGraphicsEngine* InitGraphicsEngineRT_Richard(const rGraphicsEngineRT_Richard& d = rGraphicsEngineRT_Richard());
+	IGraphicsEngine* InitGraphicsEngineRT(const rGraphicsEngineRT& d = rGraphicsEngineRT());
 	
 	// Init physics engine, if one already exists will be destroyed, then instantiate it
 	IPhysicsEngine* InitPhysicsEngineBullet(const rPhysicsEngineBullet& d = rPhysicsEngineBullet());
 	
 	// Init network engine, if one already exists will be destroyed, then instantiate it
-	INetworkEngine* InitNetworkEngine(const rNetworkEngine& d = rNetworkEngine());
+	INetworkEngine* InitNetworkEngineRakNet(const rNetworkEngine& d = rNetworkEngine());
 	
 	// Init network engine, if one already exists will be destroyed, then instantiate it
 	ISoundEngine* InitSoundEngineSFML(const rSoundEngine& d = rSoundEngine());

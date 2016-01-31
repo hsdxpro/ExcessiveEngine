@@ -1,10 +1,11 @@
 #-------------------------------------------------------------------------------
-# GRAPICS API
+# GRAPICS API DX11
 #
-# Wrapper for the graphics api's interface.
+# Wrapper for the DX11 API.
 #-------------------------------------------------------------------------------
 
-# enumerate interfaces
-FILE(GLOB interfaces *.h*)
+message( "-GraphicsApiDX11" )
 
-add_subdirectory( OpenGL )
+# enumerate sources
+FILE( GLOB_RECURSE sources *.c* )
+FILE( GLOB_RECURSE headers *.h* )

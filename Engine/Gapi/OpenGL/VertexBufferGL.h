@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BufferGL.h"
-#include <GraphicsApi/IBuffer.h>
+#include "Gapi/IBuffer.h"
 
 class VertexBufferGL : public BufferGL, public IVertexBuffer
 {

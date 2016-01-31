@@ -5,18 +5,15 @@ struct rNetworkEngine {
 
 };
 
-class NetworkEngineBoost : public INetworkEngine
+class NetworkEngineRakNet : public INetworkEngine
 {
 public:
-	// ctor, dtor, release
-	NetworkEngineBoost(const rNetworkEngine& d);
-	~NetworkEngineBoost();
+	NetworkEngineRakNet(const rNetworkEngine& d);
+	~NetworkEngineRakNet();
 
 	void Release() override;
 
-	// interact
 	void Update(float deltaTime) override;
-
 private:
 };
 

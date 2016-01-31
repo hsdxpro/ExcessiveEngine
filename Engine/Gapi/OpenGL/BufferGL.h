@@ -1,7 +1,7 @@
 #pragma once
 
-#include <GL/glew.h>
-#include <GraphicsApi/IBuffer.h>
+#include "GL/glew.h"
+#include "Gapi/IBuffer.h"
 
 class BufferGL : public IBuffer
 {

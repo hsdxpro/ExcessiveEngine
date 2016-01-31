@@ -1,7 +1,5 @@
 #pragma once
-
 #include "../IGraphicsEngine.h"
-
 
 // must be included because of covariant return type override
 #include "Scene.h"
@@ -9,53 +7,26 @@
 #include "Material.h"
 #include "Texture.h"
 #include "Camera.h"
-#include <GraphicsApi/IGapi.h>
+#include "Gapi/IHighLevelGapi.h"
 
 #include <unordered_set>
 #include <vector>
-
+#include "Gapi/IGapi.h"
 
 class IShaderProgram;
 
-////////////////////////////////////////////////////////////////////////////////
-/// GraphicsEngine implementation.
-///
-////////////////////////////////////////////////////////////////////////////////
-
-enum class eGapiType 
+struct rRasterGraphicsEngine
 {
-	OPENGL_4_5,
-};
-
-// TODO move to better place
-struct rRectNormed
-{
-	rRectNormed() :bottomLeftPercentNormed(0, 0), topRightPercentNormed(1, 1){}
-
-	mm::vec2 bottomLeftPercentNormed;
-	mm::vec2 topRightPercentNormed;
-};
-
-struct rGraphicsEngineRaster 
-{
-	eGapiType		gapiType;
-	Window*			targetWindow;
-	rRectNormed		renderRegion;
-};
-
-struct rGraphicsEngineRasterData
-{
-	IGapi*			gapi;
 	Window*		targetWindow;
-	rRectNormed		renderRegion;
+	eGapiType	gapiType;
+	rRectNormed	renderRegion;
 };
 
-class GraphicsEngineRaster : public IGraphicsEngine
+class RasterGraphicsEngine : public IGraphicsEngine
 {
 public:
-	// ctor, dtor, release
-	GraphicsEngineRaster(const rGraphicsEngineRasterData& d);
-	~GraphicsEngineRaster();
+	RasterGraphicsEngine(const rRasterGraphicsEngine& d);
+	~RasterGraphicsEngine();
 	bool isConstructionSucceeded() const { return isValid; }
 
 	void Release() override;
@@ -83,11 +54,10 @@ public:
 	// interact
 	void Update(float deltaTime) override;
 
-	IGapi* GetGapi() override;
-
 	Window* GetTargetWindow() override;
 private:
 	IGapi* gapi;
+
 	std::vector<Layer> layers;
 
 	Window* targetWindow;

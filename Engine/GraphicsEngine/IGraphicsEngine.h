@@ -23,8 +23,10 @@ public:
 	/// Layer properties.
 	/// Layers works much like photoshop's layers, except they are rendered in real-time
 	/// from graphical scenes.
-	struct Layer {
-		enum eBlendMode : u32 {
+	struct Layer 
+	{
+		enum eBlendMode : u32 
+		{
 			OVERLAY, ///< Draw this layer simply onto the layer below.
 			MULTIPLY, ///< multiply colors componentwise.
 			ADD, ///< Add colors componentswise.
@@ -41,14 +43,12 @@ public:
 		eBlendMode blendMode;
 	};
 
-
 	/// Release the interface.
 	/// Don't forget to call this when this object is no longer needed.
 	virtual void Release() = 0;
 
 
-	///////////////////////////////////////
-	// Create stuff
+// Create stuff
 
 	/// Create a new empty scene.
 	/// You may Add objects and other things to the scene.
@@ -67,9 +67,9 @@ public:
 	/// Create new virtual camera.
 	virtual graphics::ICamera* CreateCam() = 0;
 
+	virtual void Update(float deltaTime) = 0;
 
-	///////////////////////////////////////
-	// scene & layer system
+// scene & layer system
 
 	virtual void AddLayer(const Layer& layer) = 0;
 	virtual void RemoveLayer(size_t index) = 0;
@@ -77,11 +77,5 @@ public:
 	virtual void SetNumLayers(size_t num_layers) = 0;
 	virtual Layer& GetLayer(size_t index) = 0;
 
-	virtual IGapi* GetGapi() = 0;
-
 	virtual Window* GetTargetWindow() = 0;
-
-	///////////////////////////////////////
-	// interact
-	virtual void Update(float deltaTime) = 0;
 };

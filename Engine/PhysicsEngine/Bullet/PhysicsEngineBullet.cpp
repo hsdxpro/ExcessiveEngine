@@ -20,19 +20,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifdef WIN32
-#define EXPORT __declspec(dllexport)
-#else
-#define EXPORT
-#endif
-
 using namespace physics::bullet;
 
-extern "C"
-EXPORT IPhysicsEngine* CreatePhysicsEngineBullet(const rPhysicsEngineBullet& d) 
-{
-	return new PhysicsEngineBullet(d);
-}
 
 PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d) 
 {

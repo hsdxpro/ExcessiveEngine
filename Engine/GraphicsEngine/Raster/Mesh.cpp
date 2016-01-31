@@ -1,6 +1,6 @@
 #include "Mesh.h"
-#include "GraphicsApi/IBuffer.h"
-#include "GraphicsApi/IGapi.h"
+#include "Gapi/IBuffer.h"
+#include "Gapi/IHighLevelGapi.h"
 
 #include <memory>
 #include <iostream> // only for debug!!
@@ -112,7 +112,7 @@ bool Mesh::Update(MeshData data) {
 	bool is_bitangent = false;
 	num_elements = 0;
 
-	for (int i = 0; i < data.vertex_elements_num; i++) {
+	for (u32 i = 0; i < data.vertex_elements_num; i++) {
 		// check duplicate semantics
 		if ((element_flag & (u32)data.vertex_elements[i].semantic) != 0) {
 			return false; // error: duplicate semantic
@@ -242,7 +242,7 @@ bool Mesh::Update(MeshData data) {
 		// copy relevant stuff from packed_vertex_data
 		size_t input_ptr = (size_t)packed_vertex_data.get() + offset;
 		size_t output_ptr = (size_t)vb_data.get();
-		size_t chunk_size = elements[i].num_components * GetElementTypeSize(elements[i].type);
+		u32 chunk_size = elements[i].num_components * GetElementTypeSize(elements[i].type);
 		offset += chunk_size;
 		for (size_t j = 0; j < num_vertices; j++) {
 			memcpy((void*)output_ptr, (void*)input_ptr, chunk_size);

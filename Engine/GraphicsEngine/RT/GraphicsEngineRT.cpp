@@ -2,48 +2,48 @@
 #include "..\Raster\Scene.h"
 #include "Core\EngineCore.h"
 
-GraphicsEngineRT_Richard::GraphicsEngineRT_Richard(const rGraphicsEngineRT_Richard& d)
+GraphicsEngineRT::GraphicsEngineRT(const rGraphicsEngineRT& d)
 	:targetWindow(d.targetWindow)
 {
 	backBuffer = new Color[targetWindow->GetNumClientPixels()];
 }
 
-GraphicsEngineRT_Richard::~GraphicsEngineRT_Richard() 
+GraphicsEngineRT::~GraphicsEngineRT()
 {
 	delete backBuffer;
 }
 
-void GraphicsEngineRT_Richard::Release() 
+void GraphicsEngineRT::Release()
 {
 	delete this;
 }
 
-graphics::IScene* GraphicsEngineRT_Richard::CreateScene() 
+graphics::IScene* GraphicsEngineRT::CreateScene()
 {
 	return new Scene();
 }
 
-graphics::IMesh* GraphicsEngineRT_Richard::CreateMesh() 
+graphics::IMesh* GraphicsEngineRT::CreateMesh()
 {
 	return nullptr;
 }
 
-graphics::IMaterial* GraphicsEngineRT_Richard::CreateMaterial() 
+graphics::IMaterial* GraphicsEngineRT::CreateMaterial()
 {
 	return nullptr;
 }
 
-graphics::ITexture* GraphicsEngineRT_Richard::CreateTexture() 
+graphics::ITexture* GraphicsEngineRT::CreateTexture()
 {
 	return nullptr;
 }
 
-Camera* GraphicsEngineRT_Richard::CreateCam() 
+Camera* GraphicsEngineRT::CreateCam()
 {
 	return nullptr;
 }
 
-void GraphicsEngineRT_Richard::Update(float deltaTime) 
+void GraphicsEngineRT::Update(float deltaTime)
 {
 	std::vector<mm::vec3> vertices = Core.loadedPhysicalVertexPositions;
 
@@ -58,27 +58,27 @@ void GraphicsEngineRT_Richard::Update(float deltaTime)
 	targetWindow->SetClientPixels(backBuffer);
 }
 
-void GraphicsEngineRT_Richard::AddLayer(const Layer& layer) 
+void GraphicsEngineRT::AddLayer(const Layer& layer)
 {
 	sceneLayers.push_back(layer);
 }
 
-void GraphicsEngineRT_Richard::RemoveLayer(size_t index) 
+void GraphicsEngineRT::RemoveLayer(size_t index)
 {
 
 }
 
-size_t GraphicsEngineRT_Richard::GetNumLayers() const 
+size_t GraphicsEngineRT::GetNumLayers() const
 {
 	return 0;
 }
 
-void GraphicsEngineRT_Richard::SetNumLayers(size_t num_layers) 
+void GraphicsEngineRT::SetNumLayers(size_t num_layers)
 {
 
 }
 
-auto GraphicsEngineRT_Richard::GetLayer(size_t index) -> Layer& 
+auto GraphicsEngineRT::GetLayer(size_t index) -> Layer&
 {
 	static Layer l;
 	return l;

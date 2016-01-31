@@ -1,4 +1,4 @@
-#include "GraphicsEngineRaster.h"
+#include "RasterGraphicsEngine.h"
 
 #include <iostream> // only for debug
 #include <unordered_map>
@@ -8,12 +8,9 @@
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
-
-#ifdef WIN32
-#define EXPORT __declspec(dllexport)
-#else
-#define EXPORT
-#endif
+#include "Gapi\OpenGL\GapiGL.h"
+#include "Gapi\DX11\GapiDX11.h"
+#include "Gapi\VULKAN\GapiVULKAN.h"
 
 
 static const char vertexShaderCode[] =
@@ -88,36 +85,16 @@ static const char pixelShaderCode[] =
 ;
 
 
-////////////////////////////////////////////////////////////////////////////////
-// Export Create function
-//
-////////////////////////////////////////////////////////////////////////////////
-
-extern "C"
-EXPORT IGraphicsEngine* CreateGraphicsEngineRaster(const rGraphicsEngineRasterData& d) {
-	auto myEngine = new GraphicsEngineRaster(d);
-	if (myEngine->isConstructionSucceeded()) {
-		return myEngine;
+RasterGraphicsEngine::RasterGraphicsEngine(const rRasterGraphicsEngine& d) 
+{
+	switch (d.gapiType)
+	{
+	case eGapiType::GL_4_5: gapi = new GapiGL(); break;
+	case eGapiType::DX11:	gapi = new GapiDX11(); break;
+	case eGapiType::VULKAN: gapi = new GapiVULKAN(); break;
+	default: assert(0); break;
 	}
-	else {
-		delete myEngine;
-		return nullptr;
-	}
-}
 
-
-
-////////////////////////////////////////////////////////////////////////////////
-// GraphicsEngine class
-//
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-// ctor, dtor, release
-
-GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRasterData& d) {
-	gapi = d.gapi;
-	
 	targetWindow = d.targetWindow;
 	renderRegion = renderRegion;
 
@@ -139,36 +116,43 @@ GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRasterData& d) {
 	gapi->SetSyncDebugOutput(true);
 }
 
-GraphicsEngineRaster::~GraphicsEngineRaster() {
+RasterGraphicsEngine::~RasterGraphicsEngine() 
+{
 
 }
 
 
-void GraphicsEngineRaster::Release() {
+void RasterGraphicsEngine::Release() 
+{
 	delete this;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Create stuff
-Scene* GraphicsEngineRaster::CreateScene() {
+Scene* RasterGraphicsEngine::CreateScene() 
+{
 	Scene* s = new Scene;
 	return s;
 }
 
-Mesh* GraphicsEngineRaster::CreateMesh() {
+Mesh* RasterGraphicsEngine::CreateMesh() 
+{
 	return new Mesh(gapi);
 }
 
-Material* GraphicsEngineRaster::CreateMaterial() {
+Material* RasterGraphicsEngine::CreateMaterial() 
+{
 	return new Material;
 }
 
-Texture* GraphicsEngineRaster::CreateTexture() {
+Texture* RasterGraphicsEngine::CreateTexture() 
+{
 	return new Texture(gapi);
 }
 
-Camera* GraphicsEngineRaster::CreateCam() {
+Camera* RasterGraphicsEngine::CreateCam() 
+{
 	return new Camera();
 }
 
@@ -176,24 +160,29 @@ Camera* GraphicsEngineRaster::CreateCam() {
 ////////////////////////////////////////////////////////////////////////////////
 // scene system
 
-void GraphicsEngineRaster::AddLayer(const Layer& layer) {
+void RasterGraphicsEngine::AddLayer(const Layer& layer) 
+{
 	layers.push_back(layer);
 }
 
-void GraphicsEngineRaster::RemoveLayer(size_t index) {
+void RasterGraphicsEngine::RemoveLayer(size_t index) 
+{
 	assert(index < GetNumLayers());
 	layers.erase(layers.begin() + index);
 }
 
-size_t GraphicsEngineRaster::GetNumLayers() const {
+size_t RasterGraphicsEngine::GetNumLayers() const 
+{
 	return layers.size();
 }
 
-void GraphicsEngineRaster::SetNumLayers(size_t num_layers) {
+void RasterGraphicsEngine::SetNumLayers(size_t num_layers) 
+{
 	layers.resize(num_layers);
 }
 
-auto GraphicsEngineRaster::GetLayer(size_t index) -> Layer& {
+RasterGraphicsEngine::Layer& RasterGraphicsEngine::GetLayer(size_t index)
+{
 	assert(index < GetNumLayers());
 	return layers[index];
 }
@@ -202,8 +191,8 @@ auto GraphicsEngineRaster::GetLayer(size_t index) -> Layer& {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Update
-void GraphicsEngineRaster::Update(float deltaTime) {
-
+void RasterGraphicsEngine::Update(float deltaTime) 
+{
 	// TODO Improve performance
 	gapi->SetViewport(	targetWindow->GetClientWidth() *  renderRegion.bottomLeftPercentNormed.x,
 						targetWindow->GetClientHeight() *  renderRegion.bottomLeftPercentNormed.y,
@@ -245,30 +234,32 @@ void GraphicsEngineRaster::Update(float deltaTime) {
 	auto entities = scene.GetEntities();
 	auto lights = scene.GetLights();
 
-	//PROFILE_SCOPE("All Entity Draw");
-
 	// for each entity
 	int num_Drawn = 0;
 	for (auto entity : entities) {
 
 		// Get mesh
 		Mesh* mesh = entity->GetMesh();
-		if (!mesh) {
+
+		if (!mesh)
+		{
 			continue;
 		}
 
 		Mesh::ElementInfo attribInfos[3];
-		bool hasAllAttribs =
-			mesh->GetElementBySemantic(attribInfos[0], Mesh::POSITION) &&
-			mesh->GetElementBySemantic(attribInfos[1], Mesh::NORMAL) &&
-			mesh->GetElementBySemantic(attribInfos[2], Mesh::TEX0);
+		bool hasAllAttribs = mesh->GetElementBySemantic(attribInfos[0], Mesh::POSITION) &&
+							 mesh->GetElementBySemantic(attribInfos[1], Mesh::NORMAL) &&
+							 mesh->GetElementBySemantic(attribInfos[2], Mesh::TEX0);
+
 		//if (!hasAllAttribs) {
 		//	continue;
 		//}
 
 		// Create input layout
-		auto ConvertType = [](Mesh::ElementType type)->eVertexAttribType {
-			switch (type) {
+		auto ConvertType = [](Mesh::ElementType type)->eVertexAttribType 
+		{
+			switch (type) 
+			{
 				case Mesh::FLOAT: return eVertexAttribType::FLOAT;
 				case Mesh::HALF: return eVertexAttribType::HALF;
 				case Mesh::SINT_32: return eVertexAttribType::SINT_32;
@@ -439,11 +430,8 @@ void GraphicsEngineRaster::Update(float deltaTime) {
 	}
 }
 
-IGapi* GraphicsEngineRaster::GetGapi() {
-	return gapi;
-}
-
-Window* GraphicsEngineRaster::GetTargetWindow() {
+Window* RasterGraphicsEngine::GetTargetWindow() 
+{
 	return targetWindow;
 }
 
@@ -461,7 +449,7 @@ Window* GraphicsEngineRaster::GetTargetWindow() {
 ////////////////////////////////////////////////////////////////////////////////
 // Stuff related to new pipeline
 
-bool GraphicsEngineRaster::SetPipeline(const char* description) {
+bool RasterGraphicsEngine::SetPipeline(const char* description) {
 	// create the document and parse input
 	rapidjson::Document doc;
 	doc.Parse(description);

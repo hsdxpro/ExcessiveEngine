@@ -5,22 +5,6 @@
 
 using namespace std;
 
-////////////////////////////////////////////////////////////////////////////////
-// Export Create function
-//
-////////////////////////////////////////////////////////////////////////////////
-
-#ifdef WIN32
-#define EXPORT __declspec(dllexport)
-#else
-#define EXPORT
-#endif
-
-extern "C"
-EXPORT ISoundEngine* CreateSoundEngine(const rSoundEngine& d) {
-	return new SoundEngineSFML(d);
-}
-
 SoundEngineSFML::SoundEngineSFML(const rSoundEngine& d) : activeScene(nullptr) {
 	sf::Listener::setGlobalVolume(100);
 }

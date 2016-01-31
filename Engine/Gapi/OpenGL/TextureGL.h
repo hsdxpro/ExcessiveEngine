@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GraphicsApi/ITextureGapi.h>
+#include "Gapi/ITextureGapi.h"
 #include "GL/glew.h"
 
 #define MAX_TEXTURE_SLOTS 16

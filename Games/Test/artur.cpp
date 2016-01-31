@@ -34,7 +34,7 @@
 //		Core.InitNetworkEngine();
 //		Core.InitPhysicsEngineBullet();
 //		rGraphicsEngineRaster gDesc;
-//		gDesc.gapiType = eGapiType::OPENGL_4_5;
+//		gDesc.gapiType = eGapiType::GL_4_5;
 //		gDesc.targetWindow = &window;
 //		IGraphicsEngine* gEngine = Core.InitGraphicsEngineRaster(gDesc);
 //

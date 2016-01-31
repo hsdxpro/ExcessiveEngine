@@ -1,5 +1,5 @@
 #pragma once
-#include <GraphicsApi/IGapi.h>
+#include "Gapi/IHighLevelGapi.h"
 
 #include "UniformBufferGL.h"
 #include "VertexBufferGL.h"
@@ -9,7 +9,7 @@
 #include "InputLayoutGL.h"
 
 
-class GapiGL : public IGapi
+class GapiGL : public IHighLevelGapi
 {
 public:
 	GLuint global_vao;

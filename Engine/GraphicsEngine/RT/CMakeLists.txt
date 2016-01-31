@@ -24,14 +24,3 @@ SOURCE_GROUP(Interfaces FILES ${interfaces})
 
 # Main
 SOURCE_GROUP(Main FILES src/GraphicsEngine.h src/GraphicsEngine.cpp)
-
-#---------------------------------------
-# Project
-
-if(EXCESSIVE_DLL_MODULES)
-	add_library( GraphicsEngineRT SHARED ${sources} ${headers} ${interfaces} )
-else()
-	add_library( GraphicsEngineRT STATIC ${sources} ${headers} ${interfaces} )
-endif()
-
-target_link_libraries(GraphicsEngineRT PlatformLibrary SupportLibrary)

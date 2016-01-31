@@ -65,17 +65,3 @@ Entity.cpp
 Camera.h
 Camera.cpp
 )
-
-#---------------------------------------
-# Project
-
-if(EXCESSIVE_DLL_MODULES)
-	add_library( GraphicsEngineRaster SHARED ${sources} ${headers} ${interfaces} )
-else()
-	add_library( GraphicsEngineRaster STATIC ${sources} ${headers} ${interfaces} )
-endif()
-
-target_link_libraries(GraphicsEngineRaster PlatformLibrary SupportLibrary)
-target_link_libraries(GraphicsEngineRaster ${EXC_LINK_LIBRARY_SFML})
-
-

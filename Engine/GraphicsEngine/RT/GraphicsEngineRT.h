@@ -7,17 +7,17 @@
 #include "../IMesh.h"
 #include "../Raster/Camera.h"
 
-struct rGraphicsEngineRT_Richard 
+struct rGraphicsEngineRT
 {
 	Window* targetWindow;
 };
 
-class GraphicsEngineRT_Richard : public IGraphicsEngine
+class GraphicsEngineRT : public IGraphicsEngine
 {
 public:
 	// ctor, dtor, release
-	GraphicsEngineRT_Richard(const rGraphicsEngineRT_Richard& d);
-	~GraphicsEngineRT_Richard();
+	GraphicsEngineRT(const rGraphicsEngineRT& d);
+	~GraphicsEngineRT();
 
 	void Release() override;
 
@@ -37,7 +37,6 @@ public:
 	// interact
 	void Update(float deltaTime) override;
 
-	IGapi* GetGapi() override			{return nullptr;}
 	Window* GetTargetWindow() override {return targetWindow;}
 
 protected:

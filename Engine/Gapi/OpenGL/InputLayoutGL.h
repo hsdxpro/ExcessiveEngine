@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GraphicsApi/IInputLayout.h>
+#include "Gapi/IInputLayout.h"
 #include <vector>
 
 class InputLayoutGL : public IInputLayout

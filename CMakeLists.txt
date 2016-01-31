@@ -36,12 +36,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DEXCESSIVE_RELEASE")
 
 set(DEBUG_CONFIGURATIONS Debug;PerfDebug)
 
-# make modules as DLLs
-option(EXCESSIVE_DLL_MODULES "Chooses whether to create static libs for the submodules, or make them as DLLs." ON)
-if (EXCESSIVE_DLL_MODULES)
-	add_definitions(-DEXCESSIVE_DLL_MODULES)
-endif()
-
 #---------------------------------------
 # platform detection
 #---------------------------------------

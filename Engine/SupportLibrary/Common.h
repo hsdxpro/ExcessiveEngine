@@ -1,5 +1,6 @@
 #pragma once
 #include "BasicTypes.h"
+#include "mymath\mymath.h"
 
 class Color
 {
@@ -18,6 +19,14 @@ public:
 	static Color RED;
 	static Color GREEN;
 	static Color BLUE;
+};
+
+struct rRectNormed
+{
+	rRectNormed() :bottomLeftPercentNormed(0, 0), topRightPercentNormed(1, 1) {}
+
+	mm::vec2 bottomLeftPercentNormed;
+	mm::vec2 topRightPercentNormed;
 };
 
 

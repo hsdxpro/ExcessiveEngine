@@ -15,12 +15,6 @@ ENUM_CLASS_BITFLAG( eWindowStyle, int )
 	TITLE_CLOSEABLE = 16
 };
 
-//ENUM_CLASS(emberiTulajdonsagok)
-//{
-//	TUD_ALUDNI,
-//	TUD_ENNI,
-//};
-
 enum class eWindowMsg 
 {
 	CLOSE,						///< The window requested to be closed (no data)

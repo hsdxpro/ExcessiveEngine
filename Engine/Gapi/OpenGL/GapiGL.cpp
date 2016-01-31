@@ -16,19 +16,6 @@
 
 using namespace std;
 
-#ifdef _MSC_VER
-#define EXPORT __declspec(dllexport)
-#else
-#define EXPORT
-#endif
-
-extern "C"
-EXPORT IGapi* CreateGraphicsApi()
-{
-	return new GapiGL();
-}
-
-
 GapiGL::GapiGL() {
 	GLenum glew_error = glewInit();
 
@@ -960,7 +947,7 @@ void GapiGL::SetVertexBuffers(
 
 	// bind buffers one by one
 	// TODO: replace by multibind glBindVertexBuffer[s]
-	for (size_t i = 0; i < num_buffers; i++) {
+	for (u32 i = 0; i < num_buffers; i++) {
 		u32 slot = start_slot + i;
 
 		// clear zero buffers

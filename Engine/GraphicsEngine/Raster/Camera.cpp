@@ -56,7 +56,7 @@ mm::mat4 Matrix44ViewRH(const mm::vec3& eye, const mm::vec3& target, const mm::v
 }
 
 Camera::Camera()
-:nearPlane(0.01), farPlane(4000), pos(0, 0, 0), projType(graphics::eProjType::PERSP)
+:nearPlane(0.01f), farPlane(4000), pos(0, 0, 0), projType(graphics::eProjType::PERSP)
 {
 	SetDirNormed({ 0, 1, 0 });
 }

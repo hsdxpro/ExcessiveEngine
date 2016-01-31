@@ -45,17 +45,3 @@ SFMLMusicData.cpp
 SFMLSoundData.h
 SFMLSoundData.cpp
 )
-
-#---------------------------------------
-# Project
-
-if(EXCESSIVE_DLL_MODULES)
-	add_library( SoundEngineSFML SHARED ${sources} ${headers} ${interfaces} )
-else()
-	add_library( SoundEngineSFML STATIC ${sources} ${headers} ${interfaces} )
-endif()
-
-target_link_libraries(SoundEngineSFML PlatformLibrary SupportLibrary)
-
-target_link_libraries(SoundEngineSFML ${EXC_LINK_LIBRARY_SFML})
-

@@ -3,38 +3,13 @@
 #include "PlatformLibrary\Sys.h"
 #include "PlatformLibrary\File.h"
 #include "SupportLibrary\VisualCpuProfiler.h"
-#include "Factory.h"
 #include "Script.h"
+#include "Gapi\OpenGL\GapiGL.h"
+#include "Gapi\DX11\GapiDX11.h"
 
 #include <array>
 
 EngineCore Core;
-
-//////////////////////////////////////////////////
-//                                              //
-//           +----------+                       //
-//           |   CORE   |                       //
-//           +----------+                       //
-//                                              //
-//                 ##                           //
-//                  ##                          //
-//                   #                          //
-//                  ___                         //
-//                /  |   \                      //
-//                |      |                      //
-//                |------|                      //
-//                |      |                      //
-//                |      |                      //
-//                |      |                      //
-//                |      |                      //
-//                |      |                      //
-//                |      |                      //
-//              ---     ---                     //
-//            /     \ /     \                   //
-//            \     / \     /                   //
-//              ---     ---                     //
-//                                              //
-//////////////////////////////////////////////////
 
 EngineCore::EngineCore()
 :graphicsEngine(0), physicsEngine(0), soundEngine(0), networkEngine(0)
@@ -70,27 +45,12 @@ EngineCore::~EngineCore()
 	if (soundEngine)	soundEngine->Release();
 }
 
-IGraphicsEngine* EngineCore::InitGraphicsEngineRaster(const rGraphicsEngineRaster& d /*= rGraphicsEngineRaster()*/)
+IGraphicsEngine* EngineCore::InitRasterGraphicsEngine(const rRasterGraphicsEngine& d /*= rRasterGraphicsEngine()*/)
 {
 	if (graphicsEngine)
 		graphicsEngine->Release();
 
-	// Make data from description to startup graphics engine
-	rGraphicsEngineRasterData graphicsEngineData;
-		graphicsEngineData.renderRegion = d.renderRegion;
-		graphicsEngineData.targetWindow = d.targetWindow;
-		switch(d.gapiType)
-		{
-			case eGapiType::OPENGL_4_5:
-			{
-				graphicsEngineData.gapi = Factory::CreateGapiGL();
-				break;
-			}
-
-			default:
-				assert(0);
-		}
-	graphicsEngine = Factory::CreateGraphicsEngineRaster(graphicsEngineData);
+	graphicsEngine = new RasterGraphicsEngine(d);
 
 	// Load error diffuse texture, that we place on materials which fails load their own texture by path
 	texError = graphicsEngine->CreateTexture();
@@ -107,12 +67,12 @@ IGraphicsEngine* EngineCore::InitGraphicsEngineRaster(const rGraphicsEngineRaste
 	return graphicsEngine;
 }
 
-IGraphicsEngine* EngineCore::InitGraphicsEngineRT_Richard(const rGraphicsEngineRT_Richard& d /*= rGraphicsEngineRT()*/)
+IGraphicsEngine* EngineCore::InitGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/)
 {
 	if (graphicsEngine)
 		graphicsEngine->Release();
 	
-	graphicsEngine = Factory::CreateGraphicsEngineRT_Richard(d);
+	graphicsEngine = new GraphicsEngineRT(d);
 
 	// Default scene and layer for GraphicsEngine
 	defaultGraphicsScene = graphicsEngine->CreateScene();
@@ -128,15 +88,15 @@ IPhysicsEngine* EngineCore::InitPhysicsEngineBullet(const rPhysicsEngineBullet& 
 	if (physicsEngine)
 		physicsEngine->Release();
 
-	return physicsEngine = Factory::CreatePhysicsEngineBullet(d);
+	return physicsEngine = new PhysicsEngineBullet(d);
 }
 
-INetworkEngine* EngineCore::InitNetworkEngine(const rNetworkEngine& d /*= rNetworkEngine()*/)
+INetworkEngine* EngineCore::InitNetworkEngineRakNet(const rNetworkEngine& d /*= rNetworkEngine()*/)
 {
 	if (networkEngine)
 		networkEngine->Release();
 
-	return networkEngine = Factory::CreateNetworkEngine(d);
+	return networkEngine = new NetworkEngineRakNet(d);
 }
 
 ISoundEngine* EngineCore::InitSoundEngineSFML(const rSoundEngine& d /*= rSoundEngine()*/)
@@ -144,7 +104,7 @@ ISoundEngine* EngineCore::InitSoundEngineSFML(const rSoundEngine& d /*= rSoundEn
 	if (soundEngine)
 		soundEngine->Release();
 
-	soundEngine = Factory::CreateSoundEngine(d);
+	soundEngine = new SoundEngineSFML(d);
 
 	defaultSoundScene = soundEngine->CreateScene();
 
