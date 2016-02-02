@@ -6,11 +6,11 @@
 #include "PhysicsEngine\IPhysicsEngine.h"
 #include "NetworkEngine\INetworkEngine.h"
 #include "SoundEngine\ISoundEngine.h"
-#include "GraphicsEngine\Raster\RasterGraphicsEngine.h"
-#include "GraphicsEngine\RT\GraphicsEngineRT.h"
-#include "PhysicsEngine\Bullet\PhysicsEngineBullet.h"
-#include "NetworkEngine\RakNet\NetworkEngineRakNet.h"
-#include "SoundEngine\SFML\SoundEngineSFML.h"
+#include "GraphicsEngine_Raster\RasterGraphicsEngine.h"
+//#include "GraphicsEngine_RT\GraphicsEngineRT.h"
+#include "PhysicsEngine_Bullet\PhysicsEngineBullet.h"
+#include "NetworkEngine_RakNet\NetworkEngineRakNet.h"
+#include "SoundEngine_SFML\SoundEngineSFML.h"
 
 #include "Actor.h"
 #include "ActorScript.h"
@@ -36,7 +36,7 @@ public:
 	IGraphicsEngine* InitRasterGraphicsEngine(const rRasterGraphicsEngine& d = rRasterGraphicsEngine());
 
 	// Init raytracer graphics engine, if one already exists will be destroyed, then instantiate it
-	IGraphicsEngine* InitGraphicsEngineRT(const rGraphicsEngineRT& d = rGraphicsEngineRT());
+	//IGraphicsEngine* InitGraphicsEngineRT(const rGraphicsEngineRT& d = rGraphicsEngineRT());
 	
 	// Init physics engine, if one already exists will be destroyed, then instantiate it
 	IPhysicsEngine* InitPhysicsEngineBullet(const rPhysicsEngineBullet& d = rPhysicsEngineBullet());

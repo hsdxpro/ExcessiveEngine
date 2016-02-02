@@ -4,8 +4,8 @@
 #include "PlatformLibrary\File.h"
 #include "SupportLibrary\VisualCpuProfiler.h"
 #include "Script.h"
-#include "Gapi\OpenGL\GapiGL.h"
-#include "Gapi\DX11\GapiDX11.h"
+#include "GraphicsApi_OpenGL/GapiGL.h"
+#include "GraphicsApi_DX11/GapiDX11.h"
 
 #include <array>
 
