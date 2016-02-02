@@ -2,8 +2,8 @@
 # ROOT
 #
 # This file is the root CMake file. 
-# Contains basic stuff like platform definition, global preprocessor definitions,
-# configuration types.
+# Contains basic stuff like platform detection, global preprocessor definitions,
+# build configurations.
 #-------------------------------------------------------------------------------
 
 message("-Root")
@@ -23,7 +23,7 @@ project(${EXCESSIVE_PROJECT_NAME})
 # build configs
 set(CMAKE_CONFIGURATION_TYPES Debug PerfDebug Release CACHE TYPE INTERNAL FORCE )
 
-# add flags for perf debug, other should have it right
+# add flags for perf debug, others should have it right
 set(CMAKE_CXX_FLAGS_PERFDEBUG ${CMAKE_CXX_FLAGS_RELWITHDEBINFO})
 set(CMAKE_EXE_LINKER_FLAGS_PERFDEBUG ${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} )
 set(CMAKE_MODULE_LINKER_FLAGS_PERFDEBUG ${CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO})
@@ -75,6 +75,10 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${EXCESSIVE_OUTPUT_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${EXCESSIVE_OUTPUT_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${EXCESSIVE_OUTPUT_DIR})
 
+# clean old stuff
+message("Cleaning old output directory...")
+file(REMOVE_RECURSE ${EXCESSIVE_OUTPUT_DIR})
+
 # asset directory (temporary solution)
 add_definitions(-DEXCESSIVE_ASSET_DIR="${CMAKE_CURRENT_LIST_DIR}/Assets/")
 
@@ -120,7 +124,34 @@ add_subdirectory( Games )
 #---------------------------------------
 # copy runtime dll's and files
 #---------------------------------------
-# TODO
+
+message("Copying runtime dependencies to build folder...")
+if (CMAKE_BUILD_TYPE)
+	file(MAKE_DIRECTORY ${EXCESSIVE_OUTPUT_DIR})
+	
+	message("   Single config build system detected: ")
+
+	if (";${DEBUG_CONFIGURATIONS};" MATCHES ";${CMAKE_BUILD_TYPE};")
+		file(COPY "${EXCESSIVE_LINK_PATH}/runtime/debug/" DESTINATION "${EXCESSIVE_OUTPUT_DIR}/${CMAKE_BUILD_TYPE}")
+		message("      ${CMAKE_BUILD_TYPE} - type: DEBUG")
+	else ()
+		file(COPY "${EXCESSIVE_LINK_PATH}/runtime/release/" DESTINATION "${EXCESSIVE_OUTPUT_DIR}/${CMAKE_BUILD_TYPE}")
+		message("      ${CMAKE_BUILD_TYPE} - type: RELEASE")
+	endif()
+else ()
+	message("   Multi-config build system detected, processing configs:")
+	foreach (config ${CMAKE_CONFIGURATION_TYPES})
+		file(MAKE_DIRECTORY "${EXCESSIVE_OUTPUT_DIR}/${config}")
+	
+		if (";${DEBUG_CONFIGURATIONS};" MATCHES ";${config};")
+			file(COPY "${EXCESSIVE_LINK_PATH}/runtime/debug/" DESTINATION "${EXCESSIVE_OUTPUT_DIR}/${config}")
+			message("      ${config} - type: DEBUG")
+		else ()
+			file(COPY "${EXCESSIVE_LINK_PATH}/runtime/release/" DESTINATION "${EXCESSIVE_OUTPUT_DIR}/${config}")
+			message("      ${config} - type: RELEASE")
+		endif()	
+	endforeach()
+endif ()
 
 
 

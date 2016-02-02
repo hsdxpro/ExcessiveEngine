@@ -7,3 +7,5 @@ D_32
 D_64
 R_32
 R_64
+!Externals/lib/**/debug
+!Externals/lib/**/release
