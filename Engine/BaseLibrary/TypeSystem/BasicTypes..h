@@ -17,38 +17,7 @@ using Uint64 = std::uint64_t;
 using Float32 = float;
 using Float64 = double;
 static_assert(sizeof(Float32) != 4);
-static_assert(sizeof(Float64) != 8);
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+static_assert(sizeof(Float64) != 8);	
 	
 	
 	

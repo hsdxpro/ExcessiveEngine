@@ -14,15 +14,15 @@ FILE( GLOB headers *.h* )
 if(EXCESSIVE_WINDOWS)
 	FILE(GLOB_RECURSE platform_sources Windows/*.c*)
 	FILE(GLOB_RECURSE platform_headers Windows/*.h*)
-	set(platform_name "Windows");
+	set(platform_name "Windows")
 elseif(EXCESSIVE_LINUX)
 	FILE(GLOB_RECURSE platform_sources Linux/*.c*)
 	FILE(GLOB_RECURSE platform_headers Linux/*.h*)
-	set(platform_name "Linux");
+	set(platform_name "Linux")
 elseif(EXCESSIVE_OSX)
 	FILE(GLOB_RECURSE platform_sources OSX/*.c*)
 	FILE(GLOB_RECURSE platform_headers OSX/*.h*)
-	set(platform_name "OS X");
+	set(platform_name "OS X")
 endif()
 
 

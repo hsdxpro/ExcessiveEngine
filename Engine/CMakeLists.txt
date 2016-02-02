@@ -24,4 +24,4 @@ add_subdirectory( SoundEngine_SFML )
 
 add_subdirectory( NetworkEngine_Raknet )
 
-add_subdirectory( BaseLibrary )
+#add_subdirectory( BaseLibrary )
