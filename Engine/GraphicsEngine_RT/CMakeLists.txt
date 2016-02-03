@@ -25,3 +25,13 @@ SOURCE_GROUP(Interfaces FILES ${interfaces})
 
 # Main
 SOURCE_GROUP(Main FILES src/GraphicsEngine.h src/GraphicsEngine.cpp)
+
+
+add_library( GraphicsEngine_RT STATIC 
+			${interfaces} 
+			${headers} 
+			${sources} 
+			)
+
+# linker input
+target_link_libraries( GraphicsEngine_RT Core)

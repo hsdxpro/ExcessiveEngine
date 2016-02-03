@@ -13,8 +13,9 @@ add_library( Core STATIC ${sources} ${headers} )
 
 target_link_libraries( Core SupportLibrary PlatformLibrary )
 
-target_link_libraries( Core Gapi
-							GraphicsEngine
-							NetworkEngine
-							PhysicsEngine
-							SoundEngine )
+target_link_libraries( Core GraphicsApi_OpenGL
+							GraphicsEngine_Raster
+							GraphicsEngine_RT
+							NetworkEngine_Raknet
+							PhysicsEngine_Bullet
+							SoundEngine_SFML )

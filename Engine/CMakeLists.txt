@@ -16,7 +16,7 @@ add_subdirectory( GraphicsApi_OpenGL )
 #add_subdirectory( GraphicsApi_DX11 )
 
 add_subdirectory( GraphicsEngine_Raster )
-#add_subdirectory( GraphicsEngine_RT )
+add_subdirectory( GraphicsEngine_RT )
 
 add_subdirectory( PhysicsEngine_Bullet )
 

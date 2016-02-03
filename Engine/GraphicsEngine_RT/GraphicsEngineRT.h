@@ -1,11 +1,11 @@
 #pragma once
-#include "GraphicsEngine/IGraphicsEngine.h"
 
 // must be included because of covariant return type override
+#include "GraphicsEngine/IGraphicsEngine.h"
 #include "GraphicsEngine/IScene.h"
 #include "GraphicsEngine/IMaterial.h"
 #include "GraphicsEngine/IMesh.h"
-#include "GraphicsEngine/Camera.h"
+#include "SupportLibrary/Camera.h"
 
 struct rGraphicsEngineRT
 {

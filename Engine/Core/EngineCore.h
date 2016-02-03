@@ -6,8 +6,7 @@
 #include "PhysicsEngine\IPhysicsEngine.h"
 #include "NetworkEngine\INetworkEngine.h"
 #include "SoundEngine\ISoundEngine.h"
-#include "GraphicsEngine_Raster\RasterGraphicsEngine.h"
-//#include "GraphicsEngine_RT\GraphicsEngineRT.h"
+#include "GraphicsEngine_Raster\GraphicsEngineRaster.h"
 #include "PhysicsEngine_Bullet\PhysicsEngineBullet.h"
 #include "NetworkEngine_RakNet\NetworkEngineRakNet.h"
 #include "SoundEngine_SFML\SoundEngineSFML.h"
@@ -24,6 +23,7 @@
 #include <unordered_map>
 #include <vector>
 #include <functional>
+#include "GraphicsEngine_RT\GraphicsEngineRT.h"
 class Script;
 
 class EngineCore
@@ -33,10 +33,10 @@ public:
 	~EngineCore();
 
 	// Init raster graphics engine, if one already exists will be destroyed, then instantiate it
-	IGraphicsEngine* InitRasterGraphicsEngine(const rRasterGraphicsEngine& d = rRasterGraphicsEngine());
+	IGraphicsEngine* InitGraphicsEngineRaster(const rGraphicsEngineRaster& d = rGraphicsEngineRaster());
 
 	// Init raytracer graphics engine, if one already exists will be destroyed, then instantiate it
-	//IGraphicsEngine* InitGraphicsEngineRT(const rGraphicsEngineRT& d = rGraphicsEngineRT());
+	IGraphicsEngine* InitGraphicsEngineRT(const rGraphicsEngineRT& d = rGraphicsEngineRT());
 	
 	// Init physics engine, if one already exists will be destroyed, then instantiate it
 	IPhysicsEngine* InitPhysicsEngineBullet(const rPhysicsEngineBullet& d = rPhysicsEngineBullet());

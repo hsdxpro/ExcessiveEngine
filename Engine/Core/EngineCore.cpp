@@ -5,7 +5,6 @@
 #include "SupportLibrary\VisualCpuProfiler.h"
 #include "Script.h"
 #include "GraphicsApi_OpenGL/GapiGL.h"
-#include "GraphicsApi_DX11/GapiDX11.h"
 
 #include <array>
 
@@ -45,12 +44,12 @@ EngineCore::~EngineCore()
 	if (soundEngine)	soundEngine->Release();
 }
 
-IGraphicsEngine* EngineCore::InitRasterGraphicsEngine(const rRasterGraphicsEngine& d /*= rRasterGraphicsEngine()*/)
+IGraphicsEngine* EngineCore::InitGraphicsEngineRaster(const rGraphicsEngineRaster& d /*= rGraphicsEngineRaster()*/)
 {
 	if (graphicsEngine)
 		graphicsEngine->Release();
 
-	graphicsEngine = new RasterGraphicsEngine(d);
+	graphicsEngine = new GraphicsEngineRaster(d);
 
 	// Load error diffuse texture, that we place on materials which fails load their own texture by path
 	texError = graphicsEngine->CreateTexture();

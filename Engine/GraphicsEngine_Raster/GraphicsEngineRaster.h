@@ -6,27 +6,28 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "Texture.h"
-#include "Camera.h"
 #include "GraphicsApi/IGapi.h"
+#include "GraphicsApi/IGapi.h"
+#include "SupportLibrary/Camera.h"
 
 #include <unordered_set>
 #include <vector>
-#include "GraphicsApi/IGapi.h"
+
 
 class IShaderProgram;
 
-struct rRasterGraphicsEngine
+struct rGraphicsEngineRaster
 {
 	Window*		targetWindow;
 	eGapiType	gapiType;
 	rRectNormed	renderRegion;
 };
 
-class RasterGraphicsEngine : public IGraphicsEngine
+class GraphicsEngineRaster : public IGraphicsEngine
 {
 public:
-	RasterGraphicsEngine(const rRasterGraphicsEngine& d);
-	~RasterGraphicsEngine();
+	GraphicsEngineRaster(const rGraphicsEngineRaster& d);
+	~GraphicsEngineRaster();
 	bool isConstructionSucceeded() const { return isValid; }
 
 	void Release() override;

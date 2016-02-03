@@ -1,5 +1,4 @@
 #include "GraphicsEngineRT.h"
-#include "..\Raster\Scene.h"
 #include "Core\EngineCore.h"
 
 GraphicsEngineRT::GraphicsEngineRT(const rGraphicsEngineRT& d)

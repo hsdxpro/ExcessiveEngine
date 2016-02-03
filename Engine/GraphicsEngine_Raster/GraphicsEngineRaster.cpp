@@ -1,4 +1,4 @@
-#include "RasterGraphicsEngine.h"
+#include "GraphicsEngineRaster.h"
 
 #include <iostream> // only for debug
 #include <unordered_map>
@@ -81,7 +81,7 @@ static const char pixelShaderCode[] =
 ;
 
 
-RasterGraphicsEngine::RasterGraphicsEngine(const rRasterGraphicsEngine& d) 
+GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRaster& d) 
 {
 	//switch (d.gapiType)
 	//{
@@ -114,13 +114,13 @@ RasterGraphicsEngine::RasterGraphicsEngine(const rRasterGraphicsEngine& d)
 	gapi->SetSyncDebugOutput(true);
 }
 
-RasterGraphicsEngine::~RasterGraphicsEngine() 
+GraphicsEngineRaster::~GraphicsEngineRaster() 
 {
 
 }
 
 
-void RasterGraphicsEngine::Release() 
+void GraphicsEngineRaster::Release() 
 {
 	delete this;
 }
@@ -128,28 +128,28 @@ void RasterGraphicsEngine::Release()
 
 ////////////////////////////////////////////////////////////////////////////////
 // Create stuff
-Scene* RasterGraphicsEngine::CreateScene() 
+Scene* GraphicsEngineRaster::CreateScene() 
 {
 	Scene* s = new Scene;
 	return s;
 }
 
-Mesh* RasterGraphicsEngine::CreateMesh() 
+Mesh* GraphicsEngineRaster::CreateMesh() 
 {
 	return new Mesh(gapi);
 }
 
-Material* RasterGraphicsEngine::CreateMaterial() 
+Material* GraphicsEngineRaster::CreateMaterial() 
 {
 	return new Material;
 }
 
-Texture* RasterGraphicsEngine::CreateTexture() 
+Texture* GraphicsEngineRaster::CreateTexture() 
 {
 	return new Texture(gapi);
 }
 
-Camera* RasterGraphicsEngine::CreateCam() 
+Camera* GraphicsEngineRaster::CreateCam() 
 {
 	return new Camera();
 }
@@ -158,28 +158,28 @@ Camera* RasterGraphicsEngine::CreateCam()
 ////////////////////////////////////////////////////////////////////////////////
 // scene system
 
-void RasterGraphicsEngine::AddLayer(const Layer& layer) 
+void GraphicsEngineRaster::AddLayer(const Layer& layer) 
 {
 	layers.push_back(layer);
 }
 
-void RasterGraphicsEngine::RemoveLayer(size_t index) 
+void GraphicsEngineRaster::RemoveLayer(size_t index) 
 {
 	assert(index < GetNumLayers());
 	layers.erase(layers.begin() + index);
 }
 
-size_t RasterGraphicsEngine::GetNumLayers() const 
+size_t GraphicsEngineRaster::GetNumLayers() const 
 {
 	return layers.size();
 }
 
-void RasterGraphicsEngine::SetNumLayers(size_t num_layers) 
+void GraphicsEngineRaster::SetNumLayers(size_t num_layers) 
 {
 	layers.resize(num_layers);
 }
 
-RasterGraphicsEngine::Layer& RasterGraphicsEngine::GetLayer(size_t index)
+GraphicsEngineRaster::Layer& GraphicsEngineRaster::GetLayer(size_t index)
 {
 	assert(index < GetNumLayers());
 	return layers[index];
@@ -189,7 +189,7 @@ RasterGraphicsEngine::Layer& RasterGraphicsEngine::GetLayer(size_t index)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Update
-void RasterGraphicsEngine::Update(float deltaTime) 
+void GraphicsEngineRaster::Update(float deltaTime) 
 {
 	// TODO Improve performance
 	gapi->SetViewport(	targetWindow->GetClientWidth() *  renderRegion.bottomLeftPercentNormed.x,
@@ -428,7 +428,7 @@ void RasterGraphicsEngine::Update(float deltaTime)
 	}
 }
 
-Window* RasterGraphicsEngine::GetTargetWindow() 
+Window* GraphicsEngineRaster::GetTargetWindow() 
 {
 	return targetWindow;
 }
@@ -447,7 +447,7 @@ Window* RasterGraphicsEngine::GetTargetWindow()
 ////////////////////////////////////////////////////////////////////////////////
 // Stuff related to new pipeline
 
-bool RasterGraphicsEngine::SetPipeline(const char* description) {
+bool GraphicsEngineRaster::SetPipeline(const char* description) {
 	// create the document and parse input
 	rapidjson::Document doc;
 	doc.Parse(description);
