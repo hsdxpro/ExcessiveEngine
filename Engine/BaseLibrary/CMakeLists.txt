@@ -7,30 +7,45 @@
 
 message( "-Base Library" )
 
-# enumerate source files
-FILE( GLOB sources *.c* )
-FILE( GLOB headers *.h* )
+# sources
 
+# type system
+FILE( GLOB_RECURSE type_sources "TypeSystem/*.c*" )
+FILE( GLOB_RECURSE type_headers "TypeSystem/*.h*" )
+
+SOURCE_GROUP("TypeSystem" FILES ${type_sources} ${type_headers})
+
+# serialization
+FILE( GLOB_RECURSE serialization_sources "Serialization/*.c*" )
+FILE( GLOB_RECURSE serialization_headers "Serialization/*.h*" )
+
+SOURCE_GROUP("Serialization" FILES ${serialization_sources} ${serialization_headers})
+
+# platform specific files
 if(EXCESSIVE_WINDOWS)
-	FILE(GLOB_RECURSE platform_sources Windows/*.c*)
-	FILE(GLOB_RECURSE platform_headers Windows/*.h*)
-	set(platform_name "Windows")
+	set(platform_name "PLATFORM_Windows")
 elseif(EXCESSIVE_LINUX)
-	FILE(GLOB_RECURSE platform_sources Linux/*.c*)
-	FILE(GLOB_RECURSE platform_headers Linux/*.h*)
-	set(platform_name "Linux")
+	set(platform_name "PLATFORM_Linux")
 elseif(EXCESSIVE_OSX)
-	FILE(GLOB_RECURSE platform_sources OSX/*.c*)
-	FILE(GLOB_RECURSE platform_headers OSX/*.h*)
-	set(platform_name "OS X")
+	set(platform_name "PLATFORM_OS X")
 endif()
 
+
+if (platform_name)
+	FILE(GLOB_RECURSE platform_sources ${platform_name}/*.c*)
+	FILE(GLOB_RECURSE platform_headers ${platform_name}/*.h*)
+endif()
 
 SOURCE_GROUP("${platform_name}/Sources" FILES ${platform_sources})
 SOURCE_GROUP("${platform_name}/Headers" FILES ${platform_headers})
 
-
 # add build target
-add_library( BaseLibrary STATIC ${sources} ${platform_sources} ${headers} ${platform_headers})
+add_library( BaseLibrary STATIC 
+	${sources} ${headers}
+	${type_sources} ${type_headers}
+	${serialization_sources} ${serialization_headers}
+	${platform_sources} ${platform_headers})
 
+
+set_target_properties(BaseLibrary PROPERTIES LINKER_LANGUAGE C++)
 target_link_libraries(BaseLibrary ${EXC_LINK_LIBRARY_SFML})

@@ -7,6 +7,7 @@
 message( "-Engine" )
 
 # add modules
+add_subdirectory( BaseLibrary )
 add_subdirectory( PlatformLibrary )
 add_subdirectory( SupportLibrary )
 
@@ -24,4 +25,3 @@ add_subdirectory( SoundEngine_SFML )
 
 add_subdirectory( NetworkEngine_Raknet )
 
-#add_subdirectory( BaseLibrary )
