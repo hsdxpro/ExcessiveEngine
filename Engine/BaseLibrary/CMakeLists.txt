@@ -46,6 +46,4 @@ add_library( BaseLibrary STATIC
 	${serialization_sources} ${serialization_headers}
 	${platform_sources} ${platform_headers})
 
-
-set_target_properties(BaseLibrary PROPERTIES LINKER_LANGUAGE C++)
 target_link_libraries(BaseLibrary ${EXC_LINK_LIBRARY_SFML})
