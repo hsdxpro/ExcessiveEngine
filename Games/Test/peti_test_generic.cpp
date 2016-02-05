@@ -5,7 +5,7 @@
 #include <vector>
 #include <chrono>
 #include <SupportLibrary/BasicTypes.h>
-#include <BaseLibrary/Serialization/BinarySerializer.h>
+#include <BaseLibrary/Serialization>
 #include <conio.h>
 
 #include <mymath/mymath.h>
