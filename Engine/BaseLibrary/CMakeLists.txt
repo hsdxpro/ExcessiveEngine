@@ -10,16 +10,22 @@ message( "-Base Library" )
 # sources
 
 # type system
-FILE( GLOB_RECURSE type_sources "TypeSystem/*.c*" )
-FILE( GLOB_RECURSE type_headers "TypeSystem/*.h*" )
+FILE( GLOB_RECURSE type_sources "TypeSystem_/*.c*" )
+FILE( GLOB_RECURSE type_headers "TypeSystem_/*.h*" )
 
 SOURCE_GROUP("TypeSystem" FILES ${type_sources} ${type_headers})
 
 # serialization
-FILE( GLOB_RECURSE serialization_sources "Serialization/*.c*" )
-FILE( GLOB_RECURSE serialization_headers "Serialization/*.h*" )
+FILE( GLOB_RECURSE serialization_sources "Serialization_/*.c*" )
+FILE( GLOB_RECURSE serialization_headers "Serialization_/*.h*" )
 
 SOURCE_GROUP("Serialization" FILES ${serialization_sources} ${serialization_headers})
+
+# logging
+FILE( GLOB_RECURSE logging_sources "Logging_/*.c*" )
+FILE( GLOB_RECURSE logging_headers "Logging_/*.h*" )
+
+SOURCE_GROUP("Logging" FILES ${logging_sources} ${logging_headers})
 
 # platform specific files
 if(EXCESSIVE_WINDOWS)
@@ -44,8 +50,7 @@ add_library( BaseLibrary STATIC
 	${sources} ${headers}
 	${type_sources} ${type_headers}
 	${serialization_sources} ${serialization_headers}
+	${logging_sources} ${logging_headers}
 	${platform_sources} ${platform_headers})
 
-
-set_target_properties(BaseLibrary PROPERTIES LINKER_LANGUAGE C++)
 target_link_libraries(BaseLibrary ${EXC_LINK_LIBRARY_SFML})

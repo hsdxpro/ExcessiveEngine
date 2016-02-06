@@ -11,4 +11,4 @@ FILE( GLOB_RECURSE headers *.h* )
 
 add_executable( Test ${sources} ${headers} )
 
-target_link_libraries( Test PlatformLibrary SupportLibrary Core)
+target_link_libraries( Test PlatformLibrary SupportLibrary Core BaseLibrary)
