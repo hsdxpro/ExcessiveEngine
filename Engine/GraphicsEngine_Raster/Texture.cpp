@@ -96,7 +96,7 @@ bool Texture::Load(const std::string& file_path) {
 
 void Texture::Reset() {
 	if (tex) {
-		tex->destroy();
+		tex->Release();
 		tex = nullptr;
 	}
 }

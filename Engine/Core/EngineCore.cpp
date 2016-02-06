@@ -7,6 +7,7 @@
 #include "GraphicsApi_OpenGL/GapiGL.h"
 
 #include <array>
+#include "GraphicsEngine_RasterZsiros\GraphicsEngineRaster\src\GraphicsEngine.h"
 
 EngineCore Core;
 
@@ -54,6 +55,28 @@ IGraphicsEngine* EngineCore::InitGraphicsEngineRaster(const rGraphicsEngineRaste
 	// Load error diffuse texture, that we place on materials which fails load their own texture by path
 	texError = graphicsEngine->CreateTexture();
 	
+	bool bSuccess = texError->Load(GetAssetsPath() + "error.jpg");
+	assert(bSuccess);
+
+	// Default scene and layer for GraphicsEngine
+	defaultGraphicsScene = graphicsEngine->CreateScene();
+	IGraphicsEngine::Layer layer;
+	layer.scene = defaultGraphicsScene;
+	graphicsEngine->AddLayer(layer);
+
+	return graphicsEngine;
+}
+
+IGraphicsEngine* EngineCore::InitGraphicsEngineRasterZsiros(const rGraphicsEngineRaster& d /*= rGraphicsEngineRaster()*/)
+{
+	if (graphicsEngine)
+		graphicsEngine->Release();
+
+	graphicsEngine = new cGraphicsEngine(d);
+
+	// Load error diffuse texture, that we place on materials which fails load their own texture by path
+	texError = graphicsEngine->CreateTexture();
+
 	bool bSuccess = texError->Load(GetAssetsPath() + "error.jpg");
 	assert(bSuccess);
 

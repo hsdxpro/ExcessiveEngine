@@ -6,6 +6,10 @@
 // TODO
 #include <string>
 
+// TODO REMOVE IT
+#undef far
+#undef near
+
 class ITextureView;
 
 enum class eGapiType
@@ -31,11 +35,14 @@ enum class eCompareFunc : u32
 
 struct rDepthState
 {
-	rDepthState(): enable_test(true), enable_write(true), near(0), far(0), func(eCompareFunc::ALWAYS) {}
+	rDepthState(): enable_test(true), enable_write(true), near(0), far(0), func(eCompareFunc::ALWAYS) 
+	{
+	}
 
 	bool enable_test;
 	bool enable_write;
-	float near, far;
+	float near;
+	float far;
 	eCompareFunc func;
 };
 

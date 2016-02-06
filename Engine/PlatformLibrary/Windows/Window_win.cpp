@@ -140,6 +140,11 @@ bool Window::IsOpen() const
 	return w.isOpen();
 }
 
+size_t Window::GetHandle() const
+{
+	return (size_t)w.getSystemHandle();
+}
+
 u16 Window::GetClientWidth() const 
 {
 	return w.getSize().x;

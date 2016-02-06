@@ -294,18 +294,18 @@ GLenum texture_internal_formats[] =
   GL_STENCIL_INDEX16
 };
 
-void TextureGL::destroy()
+void TextureGL::Release()
 {
   glDeleteTextures( 1, &ID );
   ID = 0;
 }
 
-const rTextureGapi& TextureGL::GetDesc()
+rTextureGapi TextureGL::GetDesc() const
 {
 	return desc;
 }
 
-void TextureGL::genMipChain()
+void TextureGL::GenMipChain()
 {
   glGenerateTextureMipmap( ID );
 }

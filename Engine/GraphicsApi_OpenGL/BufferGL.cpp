@@ -2,7 +2,7 @@
 
 #include <string>
 
-void BufferGL::destroy()
+void BufferGL::Release()
 {
 	glDeleteBuffers(1, &id);
 	id = 0;

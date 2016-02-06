@@ -9,6 +9,6 @@ public:
 	rBuffer adata;
 	GLuint id;
 
-	void destroy() override;
+	void Release() override;
 	rBuffer GetDesc() override;
 };

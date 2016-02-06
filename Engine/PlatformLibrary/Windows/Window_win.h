@@ -32,6 +32,8 @@ public:
 	// Getters
 	bool IsOpen() const;
 
+	size_t GetHandle() const;
+
 	u16 GetClientWidth() const;
 	u16 GetClientHeight() const;
 

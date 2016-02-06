@@ -5,9 +5,9 @@
 class UniformBufferGL : public BufferGL, public IUniformBuffer
 {
   public:
-	  void destroy() override
+	void Release() override
     {
-      BufferGL::destroy();
+      BufferGL::Release();
     }
 
 	rBuffer GetDesc() override

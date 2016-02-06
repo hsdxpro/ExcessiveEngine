@@ -6,35 +6,41 @@ using namespace graphics;
 // ctor, dtor, release
 
 Scene::Scene() 
-:cam(nullptr) {
+:cam(nullptr)
+{
 	return;
 }
 
-Scene::~Scene() {
+Scene::~Scene()
+{
 	clear();
 }
 
-void Scene::Release() {
+void Scene::Release()
+{
 	delete this;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // scene content Add/erase
 
-Entity* Scene::AddEntity() {
+Entity* Scene::AddEntity()
+{
 	Entity* e = new Entity;
 	entities.insert(e);
 	return e;
 }
 
-Light* Scene::AddLight() {
+Light* Scene::AddLight()
+{
 	Light* l = new Light;
 	lights.insert(l);
 	return l;
 }
 
 
-void Scene::Remove(graphics::IEntity* entity) {
+void Scene::Remove(graphics::IEntity* entity)
+{
 	auto it = entities.find((Entity*)entity);
 	if (it != entities.end()) {
 		delete *it;
@@ -42,7 +48,8 @@ void Scene::Remove(graphics::IEntity* entity) {
 	}
 }
 
-void Scene::Remove(graphics::ILight* light) {
+void Scene::Remove(graphics::ILight* light)
+{
 	auto it = lights.find((Light*)light);
 	if (it != lights.end()) {
 		delete *it;
@@ -63,17 +70,22 @@ void Scene::clear()
 	lights.clear();
 }
 
-void Scene::SetCamera(graphics::ICamera* c) {
-	cam = c;
+void Scene::SetCamera(ICamera* c)
+{
+	cam = (Camera*)c;
 }
 
-graphics::ICamera* Scene::GetCamera() {
+ICamera* Scene::GetCamera() 
+{
 	return cam;
 }
 
-const std::unordered_set<Entity*>& Scene::GetEntities() {
+const std::unordered_set<graphics::IEntity*>& Scene::GetEntities() const
+{
 	return entities;
 }
-const std::unordered_set<Light*>& Scene::GetLights() {
+
+const std::unordered_set<graphics::ILight*>& Scene::GetLights() const
+{
 	return lights;
 }

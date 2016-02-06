@@ -115,7 +115,7 @@ struct rTextureGapi
 class ITextureGapi
 {
 public:
-	virtual void destroy() = 0;
-	virtual const rTextureGapi& GetDesc() = 0;
-	virtual void genMipChain() = 0;
+	virtual void Release() = 0;
+	virtual rTextureGapi GetDesc() const = 0;
+	virtual void GenMipChain() = 0;
 };

@@ -16,7 +16,7 @@ enum eShaderType
 class IShaderProgram
 {
 public:
-	virtual void destroy() = 0;
+	virtual void Release() = 0;
 
 	/// Get compiled binary shader code.
 	/// \param max_size Write no more bytes to data.

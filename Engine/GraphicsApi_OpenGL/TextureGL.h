@@ -21,7 +21,7 @@ public:
 	u32 dim;
 	rTextureGapi desc;
 
-	void destroy() override;
-	const rTextureGapi& GetDesc() override;
-	void genMipChain() override;
+	void Release() override;
+	rTextureGapi GetDesc() const override;
+	void GenMipChain() override;
 };
