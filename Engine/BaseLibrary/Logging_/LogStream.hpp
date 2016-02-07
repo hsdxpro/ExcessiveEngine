@@ -16,7 +16,7 @@ namespace exc {
 
 
 class Logger;
-
+class LogPipe;
 
 enum class eEventDisplayMode {
 	DONT_DISPLAY,
@@ -28,9 +28,7 @@ enum class eEventDisplayMode {
 class LogStream {
 	friend class LoggerInterface;
 private:
-	LogStream(Logger* parent, uint64_t streamId);
-	uint64_t GetStreamId() const;
-	EventBuffer PullFlush();
+	LogStream(std::shared_ptr<LogPipe> pipe);
 public:
 	LogStream();
 	LogStream(const LogStream&) = delete;
@@ -40,14 +38,10 @@ public:
 	LogStream& operator=(const LogStream&) = delete;
 	LogStream& operator=(LogStream&&);
 
-	void Event(Event e, eEventDisplayMode displayMode = eEventDisplayMode::DONT_DISPLAY);
-	void Flush();
-
-	Logger* GetParent() const;
+	void Event(const exc::Event& e, eEventDisplayMode displayMode = eEventDisplayMode::DONT_DISPLAY);
+	void Event(exc::Event&& e, eEventDisplayMode displayMode = eEventDisplayMode::DONT_DISPLAY);
 private:
-	Logger* parent;
-	uint64_t streamId;
-	EventBuffer eventBuffer;
+	std::shared_ptr<LogPipe> pipe;
 	std::recursive_mutex mtx;
 };
 
@@ -55,14 +49,8 @@ private:
 class LoggerInterface {
 	friend class Logger;
 private:
-	inline static LogStream Construct(Logger* parent, uint64_t streamId) {
-		return LogStream(parent, streamId);
-	}
-	inline static uint64_t GetStreamId(const LogStream& stream) {
-		return stream.GetStreamId();
-	}
-	inline static EventBuffer PullFlush(LogStream& instance) {
-		return std::move(instance.PullFlush());
+	inline static LogStream Construct(std::shared_ptr<LogPipe> pipe) {
+		return LogStream(pipe);
 	}
 };
 
