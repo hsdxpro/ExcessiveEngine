@@ -47,7 +47,7 @@ int main()
 	// Init Engine core
 	Core.InitSoundEngineSFML();
 	rGraphicsEngineRaster graphicsDesc;
-		graphicsDesc.gapiType = eGapiType::DX11;
+		graphicsDesc.gapiType = eGapiType::GL_4_5;
 		graphicsDesc.targetWindow = window;
 	Core.InitGraphicsEngineRaster(graphicsDesc);
 	rPhysicsEngineBullet physicsDesc;
