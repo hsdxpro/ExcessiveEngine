@@ -572,7 +572,7 @@ IVertexBuffer* cGraphicsApiD3D11::CreateVertexBuffer(const rBuffer& data)
 {
 	cVertexFormat dummy;
 	IVertexBuffer* pBuffer;
-	CreateVertexBuffer(&pBuffer, eUsage::DEFAULT, dummy, data.size, data.initial_data);
+	CreateVertexBuffer(&pBuffer, data.is_writable ? eUsage::DYNAMIC : eUsage::DEFAULT, dummy, data.size, data.initial_data);
 	return pBuffer;
 }
 
@@ -596,7 +596,7 @@ eGapiResult	cGraphicsApiD3D11::CreateIndexBuffer(IIndexBuffer** resource, eUsage
 	resData.SysMemPitch = 0;
 	resData.SysMemSlicePitch = 0;
 
-	HRESULT hr = d3ddev->CreateBuffer(&desc, &resData, &buffer);
+	HRESULT hr = d3ddev->CreateBuffer(&desc, data ? &resData : nullptr, &buffer);
 	switch (hr) {
 	case S_OK:
 		*resource = new cIndexBufferD3D11(buffer, desc.ByteWidth, usage);
@@ -611,7 +611,7 @@ eGapiResult	cGraphicsApiD3D11::CreateIndexBuffer(IIndexBuffer** resource, eUsage
 IIndexBuffer* cGraphicsApiD3D11::CreateIndexBuffer(const rBuffer& data)
 {
 	IIndexBuffer* pBuffer;
-	CreateIndexBuffer( &pBuffer, eUsage::DEFAULT, data.size, data.initial_data );
+	CreateIndexBuffer( &pBuffer, data.is_writable ? eUsage::DYNAMIC : eUsage::DEFAULT, data.size, data.initial_data );
 	return pBuffer;
 }
 
@@ -1296,10 +1296,10 @@ eGapiResult cGraphicsApiD3D11::WriteResource(IIndexBuffer* buffer, void* source,
 		return eGapiResult::ERROR_OUT_OF_RANGE;
 
 	HRESULT hr;
-	ID3D11Buffer* d3dBuffer = (ID3D11Buffer*)buffer;
+	ID3D11Buffer* d3dBuffer = ((cIndexBufferD3D11*)buffer)->buffer;
 	D3D11_MAPPED_SUBRESOURCE mappedRes;
 
-	hr = d3dcon->Map(d3dBuffer, 0, D3D11_MAP_WRITE, 0, &mappedRes);
+	hr = d3dcon->Map(d3dBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedRes);
 	if (hr != S_OK)
 		return eGapiResult::ERROR_INVALID_ARG;
 
@@ -1317,10 +1317,10 @@ eGapiResult cGraphicsApiD3D11::WriteResource(IVertexBuffer* buffer, void* source
 		return eGapiResult::ERROR_OUT_OF_RANGE;
 
 	HRESULT hr = S_OK;
-	ID3D11Buffer* d3dBuffer = (ID3D11Buffer*)buffer;
+	ID3D11Buffer* d3dBuffer = ((cVertexBufferD3D11*)buffer)->buffer;
 	D3D11_MAPPED_SUBRESOURCE mappedRes;
 
-	hr = d3dcon->Map(d3dBuffer, 0, D3D11_MAP_WRITE, 0, &mappedRes);
+	hr = d3dcon->Map(d3dBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedRes);
 	if (hr != S_OK)
 		return eGapiResult::ERROR_INVALID_ARG;
 
@@ -1475,7 +1475,7 @@ void cGraphicsApiD3D11::DrawIndexed(size_t nIndices, size_t idxStartIndex /*= 0*
 
 void cGraphicsApiD3D11::DrawIndexed(u32 num_indices, u32 index_byte_offset /*= 0*/)
 {
-	throw std::logic_error("The method or operation is not implemented.");
+	DrawIndexed((size_t)num_indices, (size_t)index_byte_offset / sizeof(u32));
 }
 
 void cGraphicsApiD3D11::DrawInstanced(size_t nVerticesPerInstance, size_t nInstances, size_t idxStartVertex /*= 0*/, size_t idxStartInstance /*= 0*/) {
@@ -1521,7 +1521,50 @@ void cGraphicsApiD3D11::SetVertexBuffers(
 
 	d3dcon->IASetVertexBuffers(start_slot, num_buffers, pBuffers, strides, offsets);
 
-	AutoSetInputLayout(activeShaderProg, (cVertexBufferD3D11*)&buffers[0]);
+	static bool bInputLayoutCreated = false;
+	static ID3D11InputLayout* inputLayout = nullptr;
+
+	if (!bInputLayoutCreated)
+	{
+		bInputLayoutCreated = true;
+
+		// Typical vertex
+		// Pos 
+		// Norm
+		// Tex0...
+
+		D3D11_INPUT_ELEMENT_DESC d[3];
+		d[0].AlignedByteOffset = 0;
+		d[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+		d[0].InputSlot = 0;
+		d[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		d[0].InstanceDataStepRate = 0;
+		d[0].SemanticIndex = 0;
+		d[0].SemanticName = "POSITION";
+
+		d[1].AlignedByteOffset = 0;
+		d[1].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+		d[1].InputSlot = 1;
+		d[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		d[1].InstanceDataStepRate = 0;
+		d[1].SemanticIndex = 0;
+		d[1].SemanticName = "NORMAL";
+
+		d[2].AlignedByteOffset = 0;
+		d[2].Format = DXGI_FORMAT_R32G32_FLOAT;
+		d[2].InputSlot = 1;
+		d[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		d[2].InstanceDataStepRate = 0;
+		d[2].SemanticIndex = 0;
+		d[2].SemanticName = "TEX0";
+
+		HRESULT hr = d3ddev->CreateInputLayout( d, 3, activeShaderProg->GetVSByteCode(), activeShaderProg->GetVSByteCodeSize(), &inputLayout );
+
+	}
+
+	d3dcon->IASetInputLayout(inputLayout);
+
+	//AutoSetInputLayout(activeShaderProg, (cVertexBufferD3D11*)&buffers[0]);
 }
 
 void cGraphicsApiD3D11::SetVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers)
@@ -1529,15 +1572,11 @@ void cGraphicsApiD3D11::SetVertexBuffers(IVertexBuffer** buffers, const rVertexA
 	throw std::logic_error("The method or operation is not implemented.");
 }
 
-void cGraphicsApiD3D11::SetIndexBuffer(const IIndexBuffer* ib) {
-	ASSERT(ib != nullptr);
-
-	d3dcon->IASetIndexBuffer(((cIndexBufferD3D11*)ib)->GetBufferPointer(), DXGI_FORMAT_R32_UINT, 0);
-}
-
 void cGraphicsApiD3D11::SetIndexBuffer(IIndexBuffer* ibo)
 {
-	throw std::logic_error("The method or operation is not implemented.");
+	ASSERT(ibo != nullptr);
+
+	d3dcon->IASetIndexBuffer(((cIndexBufferD3D11*)ibo)->GetBufferPointer(), DXGI_FORMAT_R32_UINT, 0);
 }
 
 // Set instance data for instanced rendering
@@ -2238,12 +2277,12 @@ IUniformBuffer* cGraphicsApiD3D11::CreateUniformBuffer(const rBuffer& data)
 
 void cGraphicsApiD3D11::WriteBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset)
 {
-	throw std::logic_error("The method or operation is not implemented.");
+	WriteResource(buffer, data, size, offset);
 }
 
 void cGraphicsApiD3D11::WriteBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t offset)
 {
-	throw std::logic_error("The method or operation is not implemented.");
+	WriteResource(buffer, data, size, offset);
 }
 
 void cGraphicsApiD3D11::WriteBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t offset)

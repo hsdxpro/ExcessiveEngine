@@ -120,7 +120,8 @@ cGraphicsEngine::cGraphicsEngine(const rGraphicsEngineRaster& d)
 	}
 }
 
-cGraphicsEngine::~cGraphicsEngine() {
+cGraphicsEngine::~cGraphicsEngine() 
+{
 	UnloadShaders();
 	SAFE_RELEASE(gApi);
 
@@ -128,13 +129,10 @@ cGraphicsEngine::~cGraphicsEngine() {
 		SAFE_RELEASE(t);
 	SAFE_RELEASE(curSceneBuffer);
 
-	SAFE_DELETE(resourceManager);
+	//SAFE_DELETE(resourceManager);
 	
 
 	SAFE_DELETE(deferredRenderer);
-	
-	
-	
 }
 
 void cGraphicsEngine::Release() {
@@ -245,8 +243,9 @@ void cGraphicsEngine::Update(float elapsed) {
 	//}
 
 	
+	
 	// render first scene straight to backbuffer
-	RenderScene(**graphicsScenes.begin(), gApi->GetDefaultRenderTarget(), elapsed);
+	RenderScene( *(Scene*)layers[0].scene, gApi->GetDefaultRenderTarget(), elapsed);
 
 	// set blend state
 	tBlendDesc blendScene;

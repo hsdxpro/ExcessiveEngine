@@ -56,55 +56,23 @@
 #include "mymath/mymath.h"
 #include <vector>
 #include "PlatformLibrary/Windows/File_win.h"
+#include "Common.h"
+
 
 // Flags for importing
-enum class eImporter3DFlag : u32 
+ENUM_CLASS_BITFLAG(eImporter3DFlag, u16)
 {
-	VERT_ATTR_POS,
-	VERT_ATTR_TEX0,
-	VERT_ATTR_NORM,
-	VERT_ATTR_TAN,
-	VERT_ATTR_BITAN,
-	VERT_ATTR_BONE_WEIGHTS,
-	VERT_ATTR_BONE_INDICES,
-	VERT_BUFF_INTERLEAVED,
-	VERT_BUFF_NON_INTERLEAVED,
-	PIVOT_RECENTER,
-	COUNT,
+	VERT_ATTR_POS = 1 << 0,
+	VERT_ATTR_TEX0 = 1 << 1,
+	VERT_ATTR_NORM = 1 << 2,
+	VERT_ATTR_TAN = 1 << 3,
+	VERT_ATTR_BITAN = 1 << 4,
+	VERT_ATTR_BONE_WEIGHTS = 1 << 5,
+	VERT_ATTR_BONE_INDICES = 1 << 6,
+	VERT_BUFF_INTERLEAVED = 1 << 7,
+	VERT_BUFF_NON_INTERLEAVED = 1 << 8,
+	PIVOT_RECENTER = 1 << 9,
 };
-
-// Configuring importer for importing, for example u dont want tangent for output meshes
-struct rImporter3DCfg 
-{
-	rImporter3DCfg() 
-	{	
-		// Default importing all attributes in interleaved form
-		flags.resize(6);
-		flags[0] = eImporter3DFlag::VERT_ATTR_POS;
-		flags[1] = eImporter3DFlag::VERT_ATTR_TEX0;
-		flags[2] = eImporter3DFlag::VERT_ATTR_NORM;
-		flags[3] = eImporter3DFlag::VERT_ATTR_TAN;
-		flags[4] = eImporter3DFlag::VERT_ATTR_BITAN;
-		flags[5] = eImporter3DFlag::VERT_ATTR_BONE_INDICES;
-		flags[6] = eImporter3DFlag::VERT_ATTR_BONE_WEIGHTS;
-		flags[7] = eImporter3DFlag::VERT_BUFF_INTERLEAVED;
-	}
-
-	rImporter3DCfg(const std::vector<eImporter3DFlag>& flags)
-	:flags(flags)
-	{}
-
-	bool isContain(eImporter3DFlag f) const
-	{
-		for (auto& a : flags)
-			if (a == f)
-				return true;
-		return false;
-	}
-
-	std::vector<eImporter3DFlag> flags;
-};
-
 
 // Output meshes
 struct rImporter3DMesh 
@@ -264,5 +232,5 @@ struct rImporter3DData
 class Importer3D
 {
 public:
-	static bool LoadModelFromFile(const std::string& path, const rImporter3DCfg& cfg, rImporter3DData& data_out);
+	static bool LoadModelFromFile(const std::string& path, eImporter3DFlag flags, rImporter3DData& data_out);
 };

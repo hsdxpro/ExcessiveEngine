@@ -279,14 +279,18 @@ MeshComponent* EngineCore::SpawnComp_MeshFromFile(const std::string& modelFilePa
 		else
 		{
 			// Config for importing
-			rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED,
-				eImporter3DFlag::VERT_ATTR_POS,
-				eImporter3DFlag::VERT_ATTR_NORM,
-				eImporter3DFlag::VERT_ATTR_TEX0,
-				eImporter3DFlag::PIVOT_RECENTER });
+				
+
+			
+			eImporter3DFlag importFlags = eImporter3DFlag::VERT_BUFF_INTERLEAVED |
+										  eImporter3DFlag::VERT_ATTR_POS |
+										  eImporter3DFlag::VERT_ATTR_NORM |
+										  eImporter3DFlag::VERT_ATTR_TAN |
+										  eImporter3DFlag::VERT_ATTR_TEX0 |
+										  eImporter3DFlag::PIVOT_RECENTER;
 
 			modelDesc = new rImporter3DData();
-			Importer3D::LoadModelFromFile(GetAssetsPath() + modelFilePath, cfg, *modelDesc);
+			Importer3D::LoadModelFromFile(GetAssetsPath() + modelFilePath, importFlags, *modelDesc);
 
 			modelDesc->Serialize(binPath);
 		}
@@ -372,6 +376,7 @@ MeshComponent* EngineCore::SpawnComp_MeshFromFile(const std::string& modelFilePa
 		graphics::IMesh::ElementDesc elements[] = {
 			graphics::IMesh::POSITION, 3,
 			graphics::IMesh::NORMAL, 3,
+			graphics::IMesh::TANGENT, 3,
 			graphics::IMesh::TEX0, 2,
 		};
 		meshData.vertex_elements = elements;
@@ -397,6 +402,7 @@ RigidBodyComponent* EngineCore::SpawnComp_RigidBodyFromFile(const std::string& m
 	}
 	else // Not loaded, check bin format first
 	{
+		// TODO modelFilePath.ReplaceFromBack(".", ".exm") rather than modelFilePath.substr(0, modelFilePath.rfind('.')) + ".exm"
 		std::string binPath = GetAssetsPath() + modelFilePath.substr(0, modelFilePath.rfind('.')) + ".exm"; // Excessive Mesh
 
 		if (File::IsExists(binPath))
@@ -406,15 +412,10 @@ RigidBodyComponent* EngineCore::SpawnComp_RigidBodyFromFile(const std::string& m
 		}
 		else
 		{
-			// Config for importing
-			rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED,
-				eImporter3DFlag::VERT_ATTR_POS,
-				eImporter3DFlag::VERT_ATTR_NORM,
-				eImporter3DFlag::VERT_ATTR_TEX0,
-				eImporter3DFlag::PIVOT_RECENTER });
+			eImporter3DFlag importFlags = eImporter3DFlag::PIVOT_RECENTER | eImporter3DFlag::VERT_ATTR_POS | eImporter3DFlag::VERT_BUFF_INTERLEAVED;
 
 			modelDesc = new rImporter3DData();
-			Importer3D::LoadModelFromFile(GetAssetsPath() + modelFilePath, cfg, *modelDesc);
+			Importer3D::LoadModelFromFile(GetAssetsPath() + modelFilePath, importFlags, *modelDesc);
 
 			modelDesc->Serialize(binPath);
 		}
@@ -444,10 +445,6 @@ RigidBodyComponent* EngineCore::SpawnComp_RigidBodyFromFile(const std::string& m
 		rigidEntity = physicsEngine->AddEntityRigidStatic(vertices, mesh->nVertices, mesh->indices, mesh->indexSize, mesh->nIndices);
 	else
 		rigidEntity = physicsEngine->AddEntityRigidDynamic(vertices, mesh->nVertices, mass);
-
-	//loadedPhysicalVertexPositions = vertices;
-	//delete vertices;
-	//vertices = nullptr; // Important
 
 	auto c = new RigidBodyComponent(rigidEntity);
 	worldComponents.push_back(c);
@@ -792,5 +789,5 @@ void EngineCore::Update(float deltaTime)
 #endif
 
 	// Present opengl window
-	graphicsEngine->GetTargetWindow()->Present();
+	//graphicsEngine->GetTargetWindow()->Present();
 }
