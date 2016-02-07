@@ -11,19 +11,6 @@ Event::Event(const std::string& message) {
 	this->message = message;
 }
 
-Event::Event(std::initializer_list<EventParameter> parameters) {
-	for (auto& param : parameters) {
-		PutParameter(param);
-	}
-}
-
-Event::Event(const std::string& message, std::initializer_list<EventParameter> parameters)
-	: Event(parameters)
-{ 
-	this->message = message;
-}
-
-
 Event::Event(const Event& other) {
 	message = other.message;
 	for (size_t i = 0; i < other.GetNumParameters(); i++) {

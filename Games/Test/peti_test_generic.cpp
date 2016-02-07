@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <random>
 #include <vector>
+#include <sstream>
 #include <chrono>
 #include <SupportLibrary/BasicTypes.h>
 #include <conio.h>
@@ -17,15 +18,15 @@ using namespace std;
 
 void TestSerializer();
 void TestLogger();
+void TestLoggerConcurrency();
 
 
 int PetiTestGeneric() {
-	TestLogger();
+	TestLoggerConcurrency();
 
 	_getch();
 	return 0;
 }
-
 
 
 
@@ -52,6 +53,60 @@ void TestLogger() {
 			ss << "event " << i+1;
 			stream2.Event(exc::Event{ ss.str() });
 		}
+	}
+
+	cout << "done" << endl;
+}
+
+void TestLoggerConcurrency() {
+	exc::LogCentre& logger = *exc::LogCentre::GetInstance();
+	if (!logger.OpenFile("D:\\LOGFILE.log")) {
+		cout << "could not open logfile" << endl;
+		return;
+	}
+
+	std::thread threads[8];
+	volatile unsigned threadId = 0;
+	volatile int numPipesToCreate = 100000;
+	volatile int numEventsToCreate = 100000;
+	for (auto& t : threads) {
+		t = std::thread([&] {
+			unsigned myId = threadId++;
+			
+			// create a bunch of pipes concurrently
+			int pipesLeft;
+			while ((pipesLeft = --numPipesToCreate) >= 0) {
+				exc::LogStream s = logger.CreateLogStream("pipe test");
+				if (pipesLeft % 1000 == 0) {
+					cout << "pipes left = " << pipesLeft << endl;
+				}
+			}
+
+			// create a single pipe
+			std::stringstream ss;
+			ss << myId;
+			exc::LogStream s = logger.CreateLogStream("stream " + ss.str());
+
+			// write a bunch of events to pipe
+			int myEvent;
+			while ((myEvent = --numEventsToCreate) >= 0) {
+				ss.str(std::string());
+				ss << myEvent;
+
+				exc::Event evt("event " + ss.str(), 
+							   exc::EventParameterInt("thread id", myId),													
+							   exc::EventParameterFloat("pi", 3.1415926));
+				s.Event(std::move(evt));
+
+				if (myEvent % 1000 == 0) {
+					cout << "events left = " << myEvent << endl;
+				}
+			}
+		});
+	}
+
+	for (auto& t : threads) {
+		t.join();
 	}
 
 	cout << "done" << endl;

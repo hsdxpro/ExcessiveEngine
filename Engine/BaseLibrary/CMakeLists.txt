@@ -27,6 +27,12 @@ FILE( GLOB_RECURSE logging_headers "Logging_/*.h*" )
 
 SOURCE_GROUP("Logging" FILES ${logging_sources} ${logging_headers})
 
+# utility
+FILE( GLOB_RECURSE utility_sources "Utility_/*.c*" )
+FILE( GLOB_RECURSE utility_headers "Utility_/*.h*" )
+
+SOURCE_GROUP("Utility" FILES ${utility_sources} ${utility_headers})
+
 # platform specific files
 if(EXCESSIVE_WINDOWS)
 	set(platform_name "PLATFORM_Windows")
@@ -50,6 +56,7 @@ add_library( BaseLibrary STATIC
 	${sources} ${headers}
 	${type_sources} ${type_headers}
 	${serialization_sources} ${serialization_headers}
+	${utility_sources} ${utility_headers}
 	${logging_sources} ${logging_headers}
 	${platform_sources} ${platform_headers})
 
