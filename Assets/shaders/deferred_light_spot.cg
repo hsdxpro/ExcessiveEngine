@@ -1,0 +1,169 @@
+////////////////////////////////////////////////////////////////////////////////
+//	Lighting shader for SPOT lights
+//
+////////////////////////////////////////////////////////////////////////////////
+
+#include "deferred_lightpass_cmn.cginc"
+
+
+//------------------------------------------------------------------------------
+//	Vertex shader
+//------------------------------------------------------------------------------
+
+struct VS_IN {
+	float4 posL 	: POSITION;
+	float4 misc 	: COLOR0;
+};
+struct VS_OUT {
+	float4 posH 	: POSITION;
+	float3 viewRay	: COLOR0;
+	float2 tex0 	: TEXCOORD2;
+};
+
+VS_OUT VS_MAIN(VS_IN In) {
+	VS_OUT vout;
+
+	// --- --- build up cone shape from scratch --- --- //
+	// rotate vertex by outer angle on z, then rotate again on y
+	vout.posH.x = 0.f;
+	vout.posH.y*=lightRange; 
+	vout.posH.z = 0.f;
+			
+	float angle_z = lightAngle.y*0.5f * 1.1f; // 1.1 multiplier for 8 sided light cones, this way it covers the whole perfect-circle shaped volume
+	angle_z = min(1.570796326, angle_z);
+	angle_z *= In.misc.y;
+	float angle_y = radians(In.misc.x);
+			
+	float s, c;
+	// rotate on z
+	sincos(angle_z, s, c);
+	float4x4 m;
+	m._11 = c;   m._12 = s;   m._13 = 0.f; m._14 = 0.f;
+	m._21 = -s;  m._22 = c;   m._23 = 0.f; m._24 = 0.f;
+	m._31 = 0.f; m._32 = 0.f; m._33 = 1.f; m._34 = 0.f;
+	m._41 = 0.f; m._42 = 0.f; m._43 = 0.f; m._44 = 1.f;					
+	vout.posH = mul(vout.posH, m);
+	// rotate on y
+	sincos(angle_y, s, c);
+	m._22 = 1.f;
+	m._21 = 0.f;
+	m._12 = 0.f;
+	m._11 = c;
+	m._13 = -s;
+	m._31 = s;
+	m._33 = c;
+	vout.posH = mul(vout.posH, m);	
+
+	// --- --- add transformations --- --- //						
+	// rotation
+	// TODO: chose the best two angles depending on the lenght of .xy, .xz, .yz
+	float sa, ca, sb, cb; // sines and cosines of angles
+	float3 dir = normalize(lightDir); // normalized light direction				
+	// alpha between -90 and 90 -> cosine is positive
+	sa = dir.z;
+	ca = sqrt(1.f - sa*sa);
+	// x1 is x of normalized v.xy
+	float2 xy1 = normalize(dir.xy);
+	// x1 is also the sine of beta
+	sb = xy1.x;
+	cb = xy1.y;
+	// rotate on x by alpha
+	m._11 = 1.f;
+	m._13 = 0.f;
+	m._31 = 0.f;
+	m._22 = ca;
+	m._33 = ca;
+	m._23 = sa;
+	m._32 = -sa;
+	vout.posH = mul(vout.posH, m);
+			
+	// rotate on z by beta
+	m._33 = 1.f;
+	m._23 = 0.f;
+	m._32 = 0.f;
+	m._11 = cb;
+	m._22 = cb;
+	m._21 = sb;
+	m._12 = -sb;
+	vout.posH = mul(vout.posH, m);
+
+	// translation
+	vout.posH += float4(lightPos,0);
+	// view transform
+	vout.posH = mul(vout.posH, viewProj);
+
+	// --- --- texcoord --- --- //
+	vout.tex0.x = vout.posH.x / vout.posH.w * 0.5f + 0.5;
+	vout.tex0.y = vout.posH.y / vout.posH.w * -0.5f + 0.5;
+
+	// --- --- view ray --- --- //
+	float4 viewRay = vout.posH.x * invViewProj[0] + (
+					 vout.posH.y * invViewProj[1] + (
+					 invViewProj[2] +
+					 invViewProj[3]));
+
+	vout.viewRay = viewRay.xyz * (1.0f / viewRay.w);
+	vout.viewRay -= camPos;
+
+	return vout;
+}
+
+//------------------------------------------------------------------------------
+//	Helper functions
+//------------------------------------------------------------------------------
+
+
+float LightAttenuation(float dist, float atten0, float atten1, float atten2) {
+	return 1.0f / (atten0 + atten1*dist + atten2*dist*dist);
+}
+
+
+//------------------------------------------------------------------------------
+//	Pixel shader
+//------------------------------------------------------------------------------
+float4 PS_MAIN(VS_OUT In) : COLOR0 {
+	float4 color;
+	
+	float3 normal;
+	float3 worldPos;
+	float3 diffuseColor;
+	float depth;
+	float glossiness, specLevel;
+	SampleGBuffer(In.tex0, diffuseColor, normal, glossiness, specLevel);	
+	depth = tex2D(depthBuffer, In.tex0);
+	worldPos = GetWorldPosition(camPos, In.viewRay, depth);
+	
+	// calculate lighting terms
+	// calculate lighting terms
+	float3 negViewNorm = normalize(camPos - worldPos);
+	float3 halfVec = (-lightDir + negViewNorm) / 2.0f;
+	float diffuseTerm = Diffuse_OrenNayar(1 - glossiness, dot(normal, negViewNorm), -dot(normal, lightDir), dot(negViewNorm, halfVec));
+	const float IOR = 1.6f;
+	float specTerm = Specular_CookTorrance(normal, negViewNorm, -lightDir, 1 - glossiness, IOR) * specLevel;
+
+	// calculate light attenuation
+	float dist = length(worldPos-lightPos);
+	float atten = LightAttenuation(dist, lightAtten.x, lightAtten.y, lightAtten.z);
+	// calculate distance and inner-outer fade
+	float fade = Fade((1.0f-dist/lightRange)*3.0f);
+
+	color.rgb *= atten;
+	color.rgb *= fade;
+
+	color.rgb = (atten*fade) * (diffuseTerm*diffuseColor + specTerm) * lightColor;
+	
+	color.rgb = max(color.rgb, float3(0,0,0));
+	color.a = 1.f;
+	
+	//return float4(0.5f, 0.5f, 0.5f, 1.0f);
+	return float4(0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+technique t
+{
+	pass p
+	{
+		VertexProgram = compile vs_4_0 VS_MAIN();
+		FragmentProgram = compile ps_4_0 PS_MAIN();
+	}
+}

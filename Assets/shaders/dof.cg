@@ -1,0 +1,192 @@
+#include "common.cginc"
+
+// TODO, we do not need clamp if dof_adapt_focal_plane do the right thing ( nearPlane + retinaLensDist ) causes big problems when pixels are close to nearPlane
+
+sampler2D inputTexture = {
+	MipFilter = POINT,
+    MinFilter = POINT,
+    MagFilter = POINT,
+	AddressU = CLAMP,
+	AddressV = CLAMP,
+};
+ 
+sampler2D depthTexture = {
+	MipFilter = POINT,
+    MinFilter = POINT,
+    MagFilter = POINT,
+	AddressU = CLAMP,
+	AddressV = CLAMP,
+};
+
+sampler2D adaptedFocalPlaneTex = {
+	MipFilter = POINT,
+    MinFilter = POINT,
+    MagFilter = POINT,
+	AddressU = CLAMP,
+	AddressV = CLAMP,
+};
+
+struct {
+	float4x4	invViewProj;
+	float3		camPos;
+	float		frameDeltaTime; // just shader :dof_focal_plane_adaption  use it
+	float		minFocalDist;	// just shader :dof_focal_plane_adaption  use it
+	float		maxFocalDist;	// just shader :dof_focal_plane_adaption  use it
+	float		focalAdaptSpeed;// just shader :dof_focal_plane_adaption  use it
+	float		nearPlane;		// just shader :dof_focal_plane_adaption  use it
+	float4x4	invView;		// just shader :dof_focal_plane_adaption  use it
+	float		retinaLensDist; // just shader :dof_focal_plane_adaption  use it
+	float		invRetinaRadius;
+	float       inputTexWidth;
+	float		invTexWidth;
+	float		invTexHeight;
+	float		minusInvTexWidth;
+	float		minusInvTexHeight;
+	float		aperture;
+	int			quality;
+} c : register(c0);
+
+struct VS_IN {
+	float3 posL 	: POSITION;
+	float2 tex0 	: TEXCOORD0;
+};
+
+struct VS_OUT {
+	float4 posH 	: POSITION;
+	float2 tex0 	: TEXCOORD0;
+	float3 viewRay  : TEXCOORD1;
+};
+
+
+VS_OUT VS_MAIN(VS_IN In, uint VertexID : VERTEXID) {
+	VS_OUT Out;
+	Out.tex0 = float2( (VertexID << 1) & 2, VertexID & 2 );
+	Out.posH = float4(  Out.tex0 * float2( 2.0f, -2.0f ) + float2( -1.0f, 1.0f), 0.0f, 1.0f );
+
+	float4 viewRay =	Out.posH.x * c.invViewProj[0] + (
+						Out.posH.y * c.invViewProj[1] + (
+						c.invViewProj[2] +
+						c.invViewProj[3]));
+
+	Out.viewRay = viewRay.xyz * (1.0f / viewRay.w);
+	Out.viewRay -= c.camPos;
+
+	return Out;
+}
+
+
+float4 PS_MAIN(VS_OUT In) : COLOR0 {
+
+	// OLD CALC
+	/*
+	// The plane that we choose in focus (currently adapted across frames in dof_focal_plane_adaption shader
+	float focusedPointDist = tex2D(adaptedFocalPlaneTex, float2(0.5f, 0.5f)).r;
+
+	// Then we calculate the belonging focal length to our eye
+	// f = k * t / ( k + t)
+	float focalLength = (c.retinaLensDist * focusedPointDist) * (1.0f / (c.retinaLensDist + focusedPointDist));
+
+	// obj world space pos
+	float3 posW = GetWorldPosition(c.camPos, In.viewRay, tex2D(depthTexture, In.tex0));
+
+	// Lens center in world space
+	float3 lensCenterPosW = mul(float4(0, 0, c.nearPlane + c.retinaLensDist, 1), c.invView);
+
+	// Current pixel distance from lens
+	float pointDist = distance(lensCenterPosW, posW);
+
+	// Calculate Circle Of Confusion
+	float CoC = c.aperture * focalLength * (focusedPointDist - pointDist) * (1.0f / ( pointDist * (focusedPointDist - focalLength)));
+
+	// Interesting example : CoC * (1.0f / ~retinaRadius) * inputTextureWidth;
+	// Normalize CoC to our retina, result will be [0,1]
+	float normalizedBlurFactor = CoC / 2 * c.invRetinaRadius;
+	*/
+
+	// new CALC
+	
+	// Calculate eye focus based on focalPlaneDist and ImagePlane dist
+	// f = I * P / ( I + P );
+	float I = c.retinaLensDist; // ImagePlane dist
+	float P = tex2D(adaptedFocalPlaneTex, float2(0.5f, 0.5f)).r; //FocalPlane dist
+
+	// Our eye focus length
+	float f = I * P / (I + P);
+
+	//After some equation solve we get
+	// CoC = c.aperture * ( k - c.retinaLensDist ) / k;
+	
+	// world space pos of object 
+	float3 posW = GetWorldPosition(c.camPos, In.viewRay, tex2D(depthTexture, In.tex0));
+
+	// Lens center in world space
+	float3 lensCenterPosW = mul(float4(0, 0, c.nearPlane + c.retinaLensDist, 1), c.invView); // Todo nP + retinaDist + lensZextend / 2
+	 
+	float t = distance(lensCenterPosW, posW);
+
+	float k = abs(-f * t / (f - t)); // Todo abs needed?
+
+	float CoC = c.aperture * (k - c.retinaLensDist) / k;
+
+	float normalizedBlurFactor = CoC / 2 * c.invRetinaRadius;
+
+	
+
+	float blurCircleDiameter = normalizedBlurFactor * c.inputTexWidth;
+
+	float4 color = tex2D(inputTexture, In.tex0);
+	float alpha = color.a; // Save alpha
+
+	const float2 poissonDisk[8] = {
+		float2(	 -0.0914861f / 2.0f,	-0.9040616f / 2.0f ),
+		float2(	 -0.7357999f / 2.0f,	-0.4860847f / 2.0f ),
+		float2(	  0.0052135f / 2.0f,	-0.1503162f / 2.0f ),
+		float2(	 -0.6150167f / 2.0f,	 0.2418161f / 2.0f ),
+		float2(	  0.9692842f / 2.0f,	-0.1548799f / 2.0f ),
+		float2(	  0.3041316f / 2.0f,	 0.5059290f / 2.0f ),
+		float2(	 -0.3363325f / 2.0f,	 0.9149118f / 2.0f ),
+		float2(	  0.5941941f / 2.0f,	-0.7803356f / 2.0f )
+	};
+
+	// Each quality iteration rotates poisson disk
+	float2x2 poissonRot;
+	//c.quality
+	float dx = ddx(In.tex0);
+	float dy = ddy(In.tex0);
+
+	uint nSamples = c.quality;
+
+	for(uint i = 1; i < nSamples; i++)
+	{
+		int idx0 = i % 8; 
+		int idx1 = (i + 1) % 8;
+
+		poissonRot = float2x2(	float2(cos(poissonDisk[idx0].x + In.tex0.x), -sin(poissonDisk[idx0].y + In.tex0.y)), 
+								float2(sin(poissonDisk[idx1].x + In.tex0.x),  cos(poissonDisk[idx1].y + In.tex0.y)));
+
+		float2 ndcSpaceToTexcoordSpace =  float2(c.invTexWidth, c.invTexHeight) * (((float)i * blurCircleDiameter) * (1.0f / (float)c.quality));
+
+		for(int j = 0; j < 8; j++)
+		{
+			// Poisson disk based on poisson rotation sample coord :)
+			float2 poissonOffset = mul(poissonDisk[j], poissonRot) * ndcSpaceToTexcoordSpace;
+			//float2 poissonOffset = poissonDisk[j] * ndcSpaceToTexcoordSpace;
+			color += tex2D(inputTexture, In.tex0 + poissonOffset, dx, dy);
+		}
+	}
+
+	color /= (nSamples - 1) * 8 + 1;
+	color.a = alpha; // Reset old alpha
+
+	return color;
+
+}
+
+technique t
+{
+	pass p
+	{
+		VertexProgram = compile vs_4_0 VS_MAIN();
+		FragmentProgram = compile ps_4_0 PS_MAIN();
+	}
+}

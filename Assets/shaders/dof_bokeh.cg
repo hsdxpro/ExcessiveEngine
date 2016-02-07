@@ -1,0 +1,121 @@
+#include "common.cginc"
+
+sampler2D colorTexture : register( s0 ) = {
+	MipFilter = POINT,
+	MinFilter = POINT,
+	MagFilter = POINT,
+	AddressU = CLAMP,
+	AddressV = CLAMP,
+};
+ 
+sampler2D depthTexture : register( s1 ) = {
+	MipFilter = POINT,
+	MinFilter = POINT,
+	MagFilter = POINT,
+	AddressU = CLAMP,
+	AddressV = CLAMP,
+};
+ 
+float blurclamp : register(c0); // = 3.0;  // max blur amount
+float bias : register(c1); //= 0.6; //aperture - bigger values for shallower depth of field
+float4x4 invViewProj : register(c2);
+float3 camPos : register(c6);
+//uniform float focus;  // this value comes from ReadDepth script.
+ 
+
+struct VS_IN {
+	float3 posL 	: TEXCOORD0;
+	float2 tex0 	: TEXCOORD1;
+};
+
+struct VS_OUT {
+	float4 posH 	 : POSITION;
+	float2 tex0 	 : TEXCOORD0;
+	float3 viewRayW  : TEXCOORD1;
+};
+
+
+VS_OUT VS_MAIN(VS_IN In, uint VertexID : VERTEXID) {
+	VS_OUT Out;
+	Out.tex0 = float2( (VertexID << 1) & 2, VertexID & 2 );
+	Out.posH = float4(  Out.tex0 * float2( 2.0f, -2.0f ) + float2( -1.0f, 1.0f), 0.0f, 1.0f );
+
+	float4 viewRay = Out.posH.x * invViewProj[0] + (Out.posH.y * invViewProj[1] + (invViewProj[2] + invViewProj[3]));
+
+	Out.viewRayW = viewRay.xyz * (1.0f / viewRay.w);
+	Out.viewRayW -= camPos;
+
+	return Out;
+}
+
+float4 PS_MAIN(VS_IN In) : COLOR0
+{
+    float aspectratio = 800.0/600.0;
+    float2 aspectcorrect = vec2(1.0,aspectratio);
+   
+    float4 depth1 = tex2D(depthTexture, In.tex0);
+
+	float focus = 500; // TMP !!
+    float factor = ( depth1.x - focus );  // CoC value will be there ^^
+     
+    vec2 dofblur = vec2 (clamp( factor * bias, -blurclamp, blurclamp ));
+
+
+    float4 col = float4(0.0);
+   
+    col += tex2D(colorTexture, In.tex0);
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.0,0.4 )*aspectcorrect) * dofblur);
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.15,0.37 )*aspectcorrect) * dofblur);
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.29,0.29 )*aspectcorrect) * dofblur);
+    col += tex2D(colorTexture, In.tex0 + (float2( -0.37,0.15 )*aspectcorrect) * dofblur);       
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.4,0.0 )*aspectcorrect) * dofblur);   
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.37,-0.15 )*aspectcorrect) * dofblur);       
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.29,-0.29 )*aspectcorrect) * dofblur);       
+    col += tex2D(colorTexture, In.tex0 + (float2( -0.15,-0.37 )*aspectcorrect) * dofblur);
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.0,-0.4 )*aspectcorrect) * dofblur); 
+    col += tex2D(colorTexture, In.tex0 + (float2( -0.15,0.37 )*aspectcorrect) * dofblur);
+    col += tex2D(colorTexture, In.tex0 + (float2( -0.29,0.29 )*aspectcorrect) * dofblur);
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.37,0.15 )*aspectcorrect) * dofblur); 
+    col += tex2D(colorTexture, In.tex0 + (float2( -0.4,0.0 )*aspectcorrect) * dofblur); 
+    col += tex2D(colorTexture, In.tex0 + (float2( -0.37,-0.15 )*aspectcorrect) * dofblur);       
+    col += tex2D(colorTexture, In.tex0 + (float2( -0.29,-0.29 )*aspectcorrect) * dofblur);       
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.15,-0.37 )*aspectcorrect) * dofblur);
+
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.15,0.37 )*aspectcorrect) * dofblur*0.9);
+    col += tex2D(colorTexture, In.tex0 + (float2( -0.37,0.15 )*aspectcorrect) * dofblur*0.9);           
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.37,-0.15 )*aspectcorrect) * dofblur*0.9);           
+    col += tex2D(colorTexture, In.tex0 + (float2( -0.15,-0.37 )*aspectcorrect) * dofblur*0.9);
+    col += tex2D(colorTexture, In.tex0 + (float2( -0.15,0.37 )*aspectcorrect) * dofblur*0.9);
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.37,0.15 )*aspectcorrect) * dofblur*0.9);            
+    col += tex2D(colorTexture, In.tex0 + (float2( -0.37,-0.15 )*aspectcorrect) * dofblur*0.9);   
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.15,-0.37 )*aspectcorrect) * dofblur*0.9);   
+
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.29,0.29 )*aspectcorrect) * dofblur*0.7);
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.4,0.0 )*aspectcorrect) * dofblur*0.7);       
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.29,-0.29 )*aspectcorrect) * dofblur*0.7);   
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.0,-0.4 )*aspectcorrect) * dofblur*0.7);     
+    col += tex2D(colorTexture, In.tex0 + (float2( -0.29,0.29 )*aspectcorrect) * dofblur*0.7);
+    col += tex2D(colorTexture, In.tex0 + (float2( -0.4,0.0 )*aspectcorrect) * dofblur*0.7);     
+    col += tex2D(colorTexture, In.tex0 + (float2( -0.29,-0.29 )*aspectcorrect) * dofblur*0.7);   
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.0,0.4 )*aspectcorrect) * dofblur*0.7);
+
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.29,0.29 )*aspectcorrect) * dofblur*0.4);
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.4,0.0 )*aspectcorrect) * dofblur*0.4);       
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.29,-0.29 )*aspectcorrect) * dofblur*0.4);   
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.0,-0.4 )*aspectcorrect) * dofblur*0.4);     
+    col += tex2D(colorTexture, In.tex0 + (float2( -0.29,0.29 )*aspectcorrect) * dofblur*0.4);
+    col += tex2D(colorTexture, In.tex0 + (float2( -0.4,0.0 )*aspectcorrect) * dofblur*0.4);     
+    col += tex2D(colorTexture, In.tex0 + (float2( -0.29,-0.29 )*aspectcorrect) * dofblur*0.4);   
+    col += tex2D(colorTexture, In.tex0 + (float2( 0.0,0.4 )*aspectcorrect) * dofblur*0.4);       
+           
+	return col / 41.f;
+}
+
+technique t
+{
+	pass p
+	{
+		VertexProgram = compile vs_4_0 VS_MAIN();
+		FragmentProgram = compile ps_4_0 PS_MAIN();
+	}
+}

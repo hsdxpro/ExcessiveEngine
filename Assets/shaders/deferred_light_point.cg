@@ -1,0 +1,103 @@
+////////////////////////////////////////////////////////////////////////////////
+//	Lighting shader for POINT lights
+//
+////////////////////////////////////////////////////////////////////////////////
+
+#include "deferred_lightpass_cmn.cginc"
+
+
+//------------------------------------------------------------------------------
+//	Vertex shader
+//------------------------------------------------------------------------------
+
+struct VS_IN {
+	float4 posL 	: POSITION;
+	float4 misc 	: COLOR0;
+};
+struct VS_OUT {
+	float4 posH 	: POSITION;
+	float3 viewRay	: COLOR0;
+	float2 tex0 	: TEXCOORD0;
+};
+
+VS_OUT VS_MAIN(VS_IN In) {
+	VS_OUT vout;
+
+	// scale vertices up to range
+	vout.posH = In.posL*lightRange*2.0f; // sphere radius is like 0.54m, scale by 2.0
+	vout.posH.w = 1.0f;
+
+	// add light position to verts
+	vout.posH.xyz += lightPos;
+	// add view and proj transformation
+	vout.posH = mul(vout.posH, viewProj);
+	
+	vout.tex0.x = vout.posH.x / vout.posH.w * 0.5f + 0.5;
+	vout.tex0.y = vout.posH.y / vout.posH.w * -0.5f + 0.5;
+
+	// view ray
+	float4 viewRay = vout.posH.x * invViewProj[0] + (
+					 vout.posH.y * invViewProj[1] + (
+					 invViewProj[2] +
+					 invViewProj[3]));
+
+	vout.viewRay = viewRay.xyz * (1.0f / viewRay.w);
+	vout.viewRay -= camPos;
+
+	return vout;
+}
+
+//------------------------------------------------------------------------------
+//	Helper functions
+//------------------------------------------------------------------------------
+
+
+float LightAttenuation(float dist, float atten0, float atten1, float atten2) {
+	return 1.0f / (atten0 + atten1*dist + atten2*dist*dist);
+}
+
+
+//------------------------------------------------------------------------------
+//	Pixel shader
+//------------------------------------------------------------------------------
+float4 PS_MAIN(VS_OUT In) : COLOR0 {
+	float4 color;
+	
+	float3 normal;
+	float3 worldPos;
+	float3 diffuseColor;
+	float depth;
+	float glossiness, specLevel;
+	SampleGBuffer(In.tex0, diffuseColor, normal, glossiness, specLevel);	
+	depth = tex2D(depthBuffer, In.tex0);
+	worldPos = GetWorldPosition(camPos, In.viewRay, depth);
+
+	// calculate lighting terms
+	float3 negViewNorm = normalize(camPos - worldPos);
+	float3 halfVec = (-lightDir + negViewNorm) / 2.0f;
+	float diffuseTerm = Diffuse_OrenNayar(1 - glossiness, dot(normal, negViewNorm), -dot(normal, lightDir), dot(negViewNorm, halfVec));
+	const float IOR = 1.6f;
+	float specTerm = Specular_CookTorrance(normal, negViewNorm, -lightDir, 1 - glossiness, IOR) * specLevel;
+
+	// calculate light attenuation
+	float dist = length(worldPos-lightPos);
+	float atten = LightAttenuation(dist, lightAtten.x, lightAtten.y, lightAtten.z);
+	// calculate distance fade
+	float fade = Fade((1.0f-dist/lightRange)*3.0f);
+
+	color.rgb = (atten*fade) * (diffuseTerm*diffuseColor + specTerm) * lightColor;
+		
+	color.rgb = max(color.rgb, float3(0,0,0));
+	color.a = 1.f;
+
+	return color;
+}
+
+technique t
+{
+	pass p
+	{
+		VertexProgram = compile vs_4_0 VS_MAIN();
+		FragmentProgram = compile ps_4_0 PS_MAIN();
+	}
+}

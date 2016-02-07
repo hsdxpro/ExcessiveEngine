@@ -1,0 +1,162 @@
+// heeeeeeee Ricsi! ez kopirájt! do not másold le!
+// 2014, Péter Kardos, [insert copyright symbol]
+
+//------------------------------------------------------------------------------
+//	Constant buffer
+//------------------------------------------------------------------------------
+
+float4x4 invViewProj	: register(c0);
+float3 camPos			: register(c4);
+float3 sunDir			: register(c5);
+float3 sunColor			: register(c6);
+float3 horizonColor		: register(c7);
+float3 zenithColor		: register(c8);
+float rayleighFactor	: register(c9);
+
+
+
+//------------------------------------------------------------------------------
+//	Vertex shader
+//------------------------------------------------------------------------------
+
+struct VS_IN {
+	float4 posW : POSITION;
+};
+struct VS_OUT {
+	float4 posH : POSITION;
+	float2 clipPos : TEXTURE0;
+};
+
+VS_OUT VS_MAIN(VS_IN In, uint vertexId : VERTEXID) {
+	VS_OUT vout;
+
+	float2 tex0 = float2( (vertexId << 1) & 2, vertexId & 2 );
+	vout.posH = float4(tex0 * float2( 2.0f, -2.0f ) + float2( -1.0f, 1.0f), 0.0f, 1.0f );
+	vout.clipPos = vout.posH.xy;
+
+	return vout;
+}
+
+
+//------------------------------------------------------------------------------
+//	Functions
+//------------------------------------------------------------------------------
+
+static const float airMassLookup[92] = {
+	35.34702265702, 25.03345901695, 18.82383912497, 14.841587689799, 12.135143856789, 
+	10.206460817283, 8.7774380923265, 7.683854750501, 6.8241957946941, 6.132986854173, 
+	5.5666123169945, 5.0948231937226, 4.6964061279255, 4.3558205102075, 4.0616019565882, 
+	3.8051054723326, 3.5796902068684, 3.3800910357009, 3.2022826862325, 3.0429022724957, 
+	2.8993342165155, 2.7693535785862, 2.6512279629063, 2.5434457692177, 2.4447161928055, 
+	2.3540201773158, 2.2704066034852, 2.1931791161385, 2.1215564387377, 2.0550969801963, 
+	1.9932402595197, 1.9355277013486, 1.8816366045042, 1.8311253779001, 1.7838581473555, 
+	1.7394103060566, 1.6976629640952, 1.6583273888379, 1.6212507218316, 1.5862631203506, 
+	1.5532117259418, 1.5219606644247, 1.4923740616189, 1.464350011889, 1.4377866095995, 
+	1.4126159176602, 1.3886850776181, 1.3659771052006, 1.3443900947722, 1.3238730935154, 
+	1.3043411800673, 1.2857943544278, 1.2681307109616, 1.2513162811237, 1.2353340806413, 
+	1.2200991881518, 1.2055946193825, 1.1917864057882, 1.1786235945514, 1.1661741227623, 
+	1.1542341791501, 1.1429736064404, 1.1322055776351, 1.1219980298244, 1.1123000101906, 
+	1.1030945344611, 1.0943646183634, 1.08612724617, 1.0783314650634, 1.0709602907707, 
+	1.0640137232922, 1.0574747783552, 1.0513434559598, 1.0455688032882, 1.0402017731581, 
+	1.0352083970244, 1.0305547063419, 1.0262237168382, 1.0222663813309, 1.01868269982, 
+	1.0153707666701, 1.0124494717891, 1.0097829409966, 1.0074900642006, 1.0055029043106, 
+	1.0038214613268, 1.0024457352492, 1.0013757260777, 1.0005944495397, 1.0001698427256, 
+	1, 1,
+};
+
+float AirMass(float angle) {
+	// convert angle to index
+	angle /= 1.5707963267949;
+	angle = saturate(angle) * 90.0f;
+	int idx1 = (int)abs(angle);
+	int idx2 = idx1+1;
+	
+	float sample1 = airMassLookup[idx1];
+	float sample2 = airMassLookup[idx2];
+
+	return (angle-(float)idx1)*sample2 + ((float)idx2-angle)*sample1;
+};
+float AirMass0() {
+	return 35.34702265702;
+}
+
+
+//------------------------------------------------------------------------------
+//	Pixel shader
+//------------------------------------------------------------------------------
+float4 PS_MAIN(float4 posH : POSITION, float2 clipPos : TEXTURE0) : COLOR0 {
+	float3 color = float3(0.0f, 0.0f, 0.0f);
+	float t;
+
+	// compute look direction
+	float4 viewTarget = mul(float4(clipPos, 0.2f, 1.0f), invViewProj);
+	viewTarget /= viewTarget.w;
+	float3 lookDir = normalize(viewTarget.xyz - camPos);
+	lookDir = normalize(lookDir);
+
+	// compute latitude & longitude (relative to sun) of view
+	float viewLatitude = asin(clamp(normalize(float2(length(lookDir.xy), lookDir.z)).y, -1, 1));	
+	//float sunLatitude = asin(clamp(normalize(float2(length(-sunDir.xy), -sunDir.z)).y, -1, 1));
+	//float viewLongitude = 
+	//	acos(clamp(dot(normalize(float3(lookDir.xy, 0.f)), normalize(float3(sunDir.xy, 0.f))), -1, 1));
+
+	// no sky below horizon
+	if (viewLatitude < 0.0f) {
+		return float4(0.6f, 0.6f, 0.6, 0.0f);
+	}
+
+	// CIE sky model
+	float a = -1.0,
+		b = -0.32,
+		c = 10.0,
+		d = -3.0,
+		e = 0.45; // hardcoded bullshit
+
+	float cosZenithAngle = clamp(dot(lookDir, float3(0.0f,0.0f,1.0f)), -1.0f, 1.0f);
+	float cosElementAngle = clamp(dot(-sunDir, lookDir), -1.0f, 1.0f);
+	
+	// phi: luminance graduation, f: scattering indicatrix
+	float phi = 1.0f + a*exp(b/cosZenithAngle);
+	float f = 1.0f + c*(exp(d*acos(cosElementAngle)) - exp(d*3.1415926f/2.0f)) + e * cosElementAngle*cosElementAngle;
+	float Lr = phi*f;
+
+	// horizon color
+	float phiZenith = 1.0f + a*exp(b);
+	float relGrad = phi / phiZenith;
+	float tHorizon = (relGrad-1.0f) / (1.0f/phiZenith);
+
+	// sun corona color
+	float relCorona = f;
+	float tCorona = (relCorona) / (c*(1.0f - exp(d*3.1415926f/2.0f)) + e);
+
+	// blending params
+	tHorizon *= relGrad / (relGrad + relCorona);
+	tCorona *= relCorona / (relGrad + relCorona);
+
+	color = float3(Lr, Lr, Lr)
+		* (tHorizon*horizonColor
+			+ tCorona*sunColor
+			+ (1.0f-tHorizon-tCorona)*zenithColor);
+
+	//float showTemp = tHorizon;
+	//color = float3(showTemp, showTemp, showTemp);
+
+	// add sun disk
+	//float sunDisk = saturate(sign(cosElementAngle - 0.99995934231156f));
+	float sunDisk = saturate((cosElementAngle - 0.9993908270191f)*2188.7050f);
+	color += sunColor * (10.f*pow(sunDisk, 10.f));
+
+	return float4(max(color, float3(0,0,0)), 0.0f);
+}
+
+
+// technique
+technique t
+{
+	pass p
+	{
+		VertexProgram = compile vs_4_0 VS_MAIN();
+		FragmentProgram = compile ps_4_0 PS_MAIN();
+	}
+}
+

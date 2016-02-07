@@ -1,0 +1,58 @@
+// texture input sampler
+sampler2D textureInput = {
+    	MipFilter = LINEAR,
+    	MinFilter = LINEAR,
+    	MagFilter = LINEAR,
+	AddressU = Clamp,
+	AddressV = Clamp,
+};
+
+// constant buffers
+
+
+// in/out structures
+struct VS_IN {
+	float3 posL 	: POSITION;
+	float2 tex0 	: TEXCOORD0;
+};
+
+struct VS_OUT {
+	float4 posH 	: POSITION;
+	float2 tex0 	: TEXCOORD2;
+};
+
+// vertex shader
+VS_OUT VS_MAIN(VS_IN In, uint VertexID : VERTEXID) {
+	VS_OUT Out;
+	Out.tex0 = float2( (VertexID << 1) & 2, VertexID & 2 );
+	Out.posH = float4(  Out.tex0 * float2( 2.0f, -2.0f ) + float2( -1.0f, 1.0f), 0.0f, 1.0f );
+	return Out;
+}
+
+
+// pixel shader
+float4 PS_MAIN(VS_OUT In) : COLOR0 {
+	float4 sum = float4(0,0,0,0);
+	float4 s;
+	
+	float scSum = 0.0f;
+	for (float i=-0.1; i<=0.1; i+=0.002f) {
+		s = tex2D(textureInput, float2(In.tex0.x, clamp(In.tex0.y+i, 0.0, 1.0)));
+		float x = 3.0f/0.1f * i;
+		float weight = (1.0f/(2.506628274631) * exp(-x*x * 0.5f));
+		scSum += weight;
+		sum += s * weight;
+	}
+	sum /= scSum;
+	
+	return sum;
+}
+
+technique t
+{
+	pass p
+	{
+		VertexProgram = compile vs_4_0 VS_MAIN();
+		FragmentProgram = compile ps_4_0 PS_MAIN();
+	}
+}

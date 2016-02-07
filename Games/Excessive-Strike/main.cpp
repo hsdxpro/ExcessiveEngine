@@ -49,7 +49,7 @@ int main()
 	rGraphicsEngineRaster graphicsDesc;
 		graphicsDesc.gapiType = eGapiType::DX11;
 		graphicsDesc.targetWindow = window;
-	Core.InitGraphicsEngineRasterZsiros(graphicsDesc);
+	Core.InitGraphicsEngineRaster(graphicsDesc);
 	rPhysicsEngineBullet physicsDesc;
 		physicsDesc.gravity = mm::vec3(0, 0, -9.81f);
 	Core.InitPhysicsEngineBullet(physicsDesc);	

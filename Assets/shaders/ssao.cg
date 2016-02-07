@@ -1,0 +1,171 @@
+////////////////////////////////////////////////////////////////////////////////
+//	Zsiroskenyer Team
+////////////////////////////////////////////////////////////////////////////////
+//	Screen-space Ambient Occlusion.
+//	AO data written to 1 channel output buffer
+////////////////////////////////////////////////////////////////////////////////
+
+#include "common.cginc"
+
+//------------------------------------------------------------------------------
+//	Input textures (normal & depth)
+//------------------------------------------------------------------------------
+
+sampler2D normalTexture = {
+    MipFilter = POINT,
+    MinFilter = POINT,
+    MagFilter = POINT,
+	AddressU = CLAMP,
+	AddressV = CLAMP,
+};
+sampler2D depthTexture = {
+    MipFilter = POINT,
+    MinFilter = POINT,
+    MagFilter = POINT,
+	AddressU = CLAMP,
+	AddressV = CLAMP,
+};
+
+float4x4 projMat		: register(c0);
+float4x4 invViewProj	: register(c4);
+float3 camPos			: register(c8);
+
+//------------------------------------------------------------------------------
+//	Shader I/O sturctures
+//------------------------------------------------------------------------------
+
+struct VS_IN {
+	float3 posL 	: POSITION;
+};
+
+struct VS_OUT {
+	float4 posH 	: POSITION;
+	float2 tex0 	: TEXCOORD0;
+	float3 viewRay	: TEXCOORD1;
+};
+
+
+
+//------------------------------------------------------------------------------
+//	Vertex shader
+//------------------------------------------------------------------------------
+VS_OUT VS_MAIN(VS_IN In, uint VertexID : VERTEXID) {
+	VS_OUT Out;
+	Out.tex0 = float2( (VertexID << 1) & 2, VertexID & 2 );
+	Out.posH = float4(  Out.tex0 * float2( 2.0f, -2.0f ) + float2( -1.0f, 1.0f), 0.0f, 1.0f );
+
+	float4 viewRay =	Out.posH.x * invViewProj[0] + (
+						Out.posH.y * invViewProj[1] + (
+						invViewProj[2] +
+						invViewProj[3]));
+
+	Out.viewRay = viewRay.xyz * (1.0f / viewRay.w);
+	Out.viewRay -= camPos;
+
+	return Out;
+}
+
+float3 GetPosition(float2 texCoord) {
+	return GetWorldPosition(texCoord, tex2Dlod(depthTexture, float4(texCoord,0,0)).r, invViewProj).xyz;
+}
+
+float3 GetNormal(float2 texCoord) {
+	return UnpackNormal(tex2D(normalTexture, texCoord).xy).xyz;
+}
+
+//PER_PIXEL SSAO összetevõ számolás
+float doAmbientOcclusion(in float2 texcoord,in float2 delta_uv, in float3 pos1, in float3 norm1)
+{
+ float3 pos2 = GetPosition(texcoord + delta_uv);
+
+ //HALO eltüntetése (próbálkozás) sajna csak pár helyzetben nagyon jó
+ if(distance(pos1,pos2) > 0.03)
+ 	return 0.3f;
+
+ float3 diff = pos2 - pos1;
+ float3 dir = normalize(diff);
+
+ return 1.0f -  clamp(dot(dir,norm1),0.1f,1.0f);
+}
+
+float ProcessAO(float2 projtex, float3 viewRayVS)
+{
+
+  float SSAOraylength = 2.000150f;
+
+  float SSAOiterations = 2;
+
+  // Try depth independency, but not expected result TODO...
+  //float4 vsDeltaCoord  = float4(SSAOraylength, distance(camPos, GetWorldPosition(projtex, tex2D(depthTexture, projtex).r, invViewProj)), 0, 1);
+  float4 vsDeltaCoord = float4(SSAOraylength, distance(camPos, GetWorldPosition(camPos, viewRayVS, tex2D(depthTexture, projtex))), 0, 1);
+
+  // Transform that to proj space, then divide, transform x,y to texture space,  now ssao will be depth independent
+  float4 deltaCoord = mul(vsDeltaCoord, projMat);
+
+
+  float SMAP_DX = (deltaCoord.x + 1) /  2.0f / 768.0f; // MAGICS, TODO
+  float SMAP_DY = SMAP_DX;
+
+//Ambient Gyüjtés folyamat kezdete 0
+ float ao = 0.0f;
+                                                   //  . .
+//Kiindulási pixel, normalja,pozíciója, és majd ezek körül mászkálunk négyzetekben..     . <- kiindulási pont
+ float3 refpos = GetPosition(projtex);
+ float3 refnorm = GetNormal(projtex);
+
+ float SSAORadius = 2.0f;
+ for (int j = 1; j <= SSAOiterations; ++j)
+ {
+   //8 körül levõ ponton mintavétel
+   //kezdés bal felsõ sarok órajárás irányban..
+   float2 coord1 = float2(-SMAP_DX,-SMAP_DY)*j * SSAORadius;
+   float2 coord2 = float2(0       ,-SMAP_DY)*j * SSAORadius;
+   float2 coord3 = float2(SMAP_DX ,-SMAP_DY)*j * SSAORadius;
+   float2 coord4 = float2(SMAP_DX ,0       )*j * SSAORadius;
+   float2 coord5 = float2(SMAP_DX ,SMAP_DY )*j * SSAORadius;
+   float2 coord6 = float2(0       ,SMAP_DY )*j * SSAORadius;
+   float2 coord7 = float2(-SMAP_DX,SMAP_DY )*j * SSAORadius;
+   float2 coord8 = float2(-SMAP_DX,0       )*j * SSAORadius;
+
+
+   ao+= doAmbientOcclusion(projtex,coord1,refpos,refnorm);
+   ao+= doAmbientOcclusion(projtex,coord2,refpos,refnorm);
+   ao+= doAmbientOcclusion(projtex,coord3,refpos,refnorm);
+   ao+= doAmbientOcclusion(projtex,coord4,refpos,refnorm);
+   ao+= doAmbientOcclusion(projtex,coord5,refpos,refnorm);
+   ao+= doAmbientOcclusion(projtex,coord6,refpos,refnorm);
+   ao+= doAmbientOcclusion(projtex,coord7,refpos,refnorm);
+   ao+= doAmbientOcclusion(projtex,coord8,refpos,refnorm);
+
+
+ } 
+ 
+  float SSAOintensity = 1.0f;
+  return ao / SSAOiterations / 8.0f * SSAOintensity;
+
+return 0;
+}
+
+//------------------------------------------------------------------------------
+//	Pixel shader
+//------------------------------------------------------------------------------
+float PS_MAIN(VS_OUT In) : COLOR0 {
+	// sample normal and depth
+	float2 packedNormal = tex2D(normalTexture, In.tex0).xy;
+	float3 normal = UnpackNormal(packedNormal).xyz;
+	float depth = tex2D(depthTexture, In.tex0).r;	
+	
+	// ! COMPUTE AO FROM "normal" AND "depth" !
+	return ProcessAO(In.tex0, In.viewRay);
+};
+
+
+
+technique t
+{
+	pass p
+	{
+		VertexProgram = compile vs_4_0 VS_MAIN();
+		FragmentProgram = compile ps_4_0 PS_MAIN();
+	}
+}

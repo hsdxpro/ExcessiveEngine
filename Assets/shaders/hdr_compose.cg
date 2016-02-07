@@ -1,0 +1,103 @@
+#include "tone_mapping.cginc"
+
+//------------------------------------------------------------------------------
+// Textures
+//------------------------------------------------------------------------------
+sampler2D textureInput = {
+    	MipFilter = LINEAR,
+    	MinFilter = LINEAR,
+    	MagFilter = LINEAR,
+	AddressU = CLAMP,
+	AddressV = CLAMP,
+};
+sampler2D blurTexture = {
+    	MipFilter = LINEAR,
+    	MinFilter = LINEAR,
+    	MagFilter = LINEAR,
+	AddressU = CLAMP,
+	AddressV = CLAMP,
+};
+
+//------------------------------------------------------------------------------
+// Constants
+//------------------------------------------------------------------------------
+/*
+struct {
+	float avgLum;
+	float blueShift;
+} constants : register(c0);
+*/
+float avgLum : register(c0);
+float blueShift : register(c1);
+
+//------------------------------------------------------------------------------
+// VS & PS structs
+//------------------------------------------------------------------------------
+
+struct VS_IN {
+	float3 posL 	: POSITION;
+	float2 tex0 	: TEXCOORD0;
+};
+
+struct VS_OUT {
+	float4 posH 	: POSITION;
+	float2 tex0 	: TEXCOORD2;
+};
+
+//------------------------------------------------------------------------------
+// Vertex shader
+//------------------------------------------------------------------------------
+
+VS_OUT VS_MAIN(VS_IN In, uint VertexID : VERTEXID) {
+	VS_OUT Out;
+	Out.tex0 = float2( (VertexID << 1) & 2, VertexID & 2 );
+	Out.posH = float4(  Out.tex0 * float2( 2.0f, -2.0f ) + float2( -1.0f, 1.0f), 0.0f, 1.0f );
+	return Out;
+}
+
+//------------------------------------------------------------------------------
+// Helpers
+//------------------------------------------------------------------------------
+
+float3 toXyz(float3 arg) {
+	return mul(
+		float3x3(0.4124564, 0.3575761, 0.1804375, 
+				 0.2126729, 0.7151522, 0.0721750,
+				 0.0193339, 0.1191920, 0.9503041),
+		arg
+	);
+}
+
+//------------------------------------------------------------------------------
+// Pixel Shader
+//------------------------------------------------------------------------------
+
+float4 PS_MAIN(VS_OUT In) : COLOR0 {
+	float4 color = tex2D(textureInput, In.tex0);
+	
+	float3 haloColor = tex2D(blurTexture, In.tex0).rgb;
+	color.rgb += haloColor;
+	
+	color.rgb = ToneMap(color.rgb, avgLum);
+	
+	// apply blueshift
+	/*
+	float3 colorXyz = toXyz(color.rgb);
+	float scotopicLum = colorXyz.y*(1.33f*(1.0f+(colorXyz.y+colorXyz.z)/colorXyz.x)-1.68f);
+		
+	color.rgb = (1.0f-blueShift)*color.rgb + blueShift*0.1f*float3(1.05f, 0.97f, 1.27f)*scotopicLum;
+	color.rgb = max(color.rgb, float3(0.0f, 0.0f, 0.0f));
+	*/
+	return color;
+}
+
+
+
+technique t
+{
+	pass p
+	{
+		VertexProgram = compile vs_4_0 VS_MAIN();
+		FragmentProgram = compile ps_4_0 PS_MAIN();
+	}
+}

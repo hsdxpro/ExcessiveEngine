@@ -1,0 +1,248 @@
+#include "common.cginc"
+
+/**
+ \file SAO_AO.pix
+ \author Morgan McGuire and Michael Mara, NVIDIA Research
+
+ Reference implementation of the Scalable Ambient Obscurance (SAO) screen-space ambient obscurance algorithm. 
+ 
+ The optimized algorithmic structure of SAO was published in McGuire, Mara, and Luebke, Scalable Ambient Obscurance,
+ <i>HPG</i> 2012, and was developed at NVIDIA with support from Louis Bavoil.
+
+ The mathematical ideas of AlchemyAO were first described in McGuire, Osman, Bukowski, and Hennessy, The 
+ Alchemy Screen-Space Ambient Obscurance Algorithm, <i>HPG</i> 2011 and were developed at 
+ Vicarious Visions.  
+ 
+ DX11 HLSL port by Leonardo Zide of Treyarch
+
+ <hr>
+
+  Open Source under the "BSD" license: http://www.opensource.org/licenses/bsd-license.php
+
+  Copyright (c) 2011-2012, NVIDIA
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+  Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+  Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  */
+
+// Total number of direct samples to take at each pixel
+#define NUM_SAMPLES (22)
+
+// If using depth mip levels, the log of the maximum pixel offset before we need to switch to a lower 
+// miplevel to maintain reasonable spatial locality in the cache
+// If this number is too small (< 3), too many taps will land in the same pixel, and we'll get bad variance that manifests as flashing.
+// If it is too high (> 5), we'll get bad performance because we're not using the MIP levels effectively
+#define LOG_MAX_OFFSET 3
+
+// This must be less than or equal to the MAX_MIP_LEVEL defined in SSAO.cpp
+#define MAX_MIP_LEVEL 5.f
+
+/** Used for preventing AO computation on the sky (at infinite depth) and defining the CS Z to bilateral depth key scaling. 
+    This need not match the real far plane*/
+#define FAR_PLANE_Z 300.0
+
+// This is the number of turns around the circle that the spiral pattern makes.  This should be prime to prevent
+// taps from lining up.  This particular choice was tuned for NUM_SAMPLES == 9
+#define NUM_SPIRAL_TURNS 7
+
+//////////////////////////////////////////////////
+
+/** Negative, "linear" values in world-space units */
+sampler2D depthTexture : register( s0 ) = {
+    MipFilter = POINT,
+    MinFilter = POINT,
+    MagFilter = POINT,
+	AddressU = CLAMP,
+	AddressV = CLAMP,
+};
+
+sampler2D normalTexture : register( s1 ) = {
+    MipFilter = POINT,
+    MinFilter = POINT,
+    MagFilter = POINT,
+	AddressU = CLAMP,
+	AddressV = CLAMP,
+};
+
+
+/**  vec4(-2.0f / (width*P[0][0]), 
+          -2.0f / (height*P[1][1]),
+          ( 1.0f - P[0][2]) / P[0][0], 
+          ( 1.0f + P[1][2]) / P[1][1])
+    
+    where P is the projection matrix that maps camera space points 
+    to [-1, 1] x [-1, 1].  That is, GCamera::getProjectUnit(). */
+float4 projInfo		: register(c0);
+
+float projScale		: register(c1);			//  The height in pixels of a 1m object if viewed from 1m away
+float radius		: register(c2);			//  World-space AO radius in scene units (r).  e.g., 1.0m */
+float radius2		: register(c3);
+float bias			: register(c4);			//  Bias to avoid AO in smooth corners, e.g., 0.01m */	
+
+float2 inputTexRes	: register(c5);
+float  negFarPlane	: register(c6);
+float intensity		: register(c7);	/// Darkending factor, e.g., 1.0 */
+float4x4 matView	: register(c8);
+float4x4 matInvViewProj	: register(c12);
+float3	 camPos		: register(c16);
+
+
+
+
+struct VS_IN {
+	float3 posL 	: POSITION;
+	float2 tex0 	: TEXCOORD0;
+};
+
+struct VS_OUT {
+	float4 posH 	: POSITION; 
+	float2 tex0 	: TEXCOORD0;
+	float3 viewRayW : TEXCOORD1;
+};
+
+VS_OUT VS_MAIN(VS_IN In, uint VertexID : VERTEXID) {
+	VS_OUT Out;
+	Out.tex0 = float2( (VertexID << 1) & 2, VertexID & 2 );
+	Out.posH = float4(  Out.tex0 * float2( 2.0f, -2.0f ) + float2( -1.0f, 1.0f), 0.0f, 1.0f );
+
+	float4 viewRay = Out.posH.x * matInvViewProj[0] + (Out.posH.y * matInvViewProj[1] + (matInvViewProj[2] + matInvViewProj[3]));
+
+	Out.viewRayW = viewRay.xyz * (1.0f / viewRay.w);
+	Out.viewRayW -= camPos;
+	return Out;
+}
+
+
+/** Returns a unit vector and a screen-space radius for the tap on a unit disk (the caller should scale by the actual disk radius) */
+float2 tapLocation(int sampleNumber, float spinAngle, out float ssR) {
+	// Radius relative to ssR
+	float alpha = float(sampleNumber + 0.5) * (1.0 / NUM_SAMPLES);
+	float angle = alpha * (NUM_SPIRAL_TURNS * 6.28) + spinAngle;
+
+	ssR = alpha;
+	return float2(cos(angle), sin(angle));
+}
+
+
+/** Used for packing Z into the GB channels */
+float CSZToKey(float z) {
+	return clamp(z * (1.0 / FAR_PLANE_Z), 0.0, 1.0);
+}
+
+/** Used for packing Z into the GB channels */
+void packKey(float key, out float2 p) {
+	// Round to the nearest 1/256.0
+	float temp = floor(key * 256.0);
+
+	// Integer part
+	p.x = temp * (1.0 / 256.0);
+
+	// Fractional part
+	p.y = key * 256.0 - temp;
+}
+
+
+/** Read the camera-space position of the point at screen-space pixel ssP + unitOffset * ssR.  Assumes length(unitOffset) == 1 */
+float3 getOffsetPosition(int2 ssC, float2 unitOffset, float ssR, float3 viewRayW) {
+	// Derivation:
+	//  mipLevel = floor(log(ssR / MAX_OFFSET));
+	int mipLevel = clamp((float)((int)floor(log2(ssR)) - LOG_MAX_OFFSET), 0.f, MAX_MIP_LEVEL);
+
+	int2 ssP = int2(ssR*unitOffset) + ssC;
+
+	float3 P;
+
+	// Divide coordinate by 2^mipLevel
+	P.z = tex2Dfetch(depthTexture, int4(ssP >> mipLevel, 0, mipLevel)).r;
+
+	// World space point being shaded
+	P.xy = mul(float4(GetWorldPosition(camPos, viewRayW, P.z), 1.f), matView).xy;
+	P.z *= negFarPlane;
+
+	return P;
+}
+
+
+/** Compute the occlusion due to sample with index \a i about the pixel at \a ssC that corresponds
+    to camera-space point \a C with unit normal \a n_C, using maximum screen-space sampling radius \a ssDiskRadius */
+float sampleAO(in int2 ssC, in float3 C, in float3 n_C, in float ssDiskRadius, in int tapIndex, in float randomPatternRotationAngle, float3 viewRayW) {
+	// Offset on the unit disk, spun for this pixel
+	float ssR;
+	float2 unitOffset = tapLocation(tapIndex, randomPatternRotationAngle, ssR);
+	ssR *= ssDiskRadius;
+
+	// The occluding point in camera space
+	float3 Q = getOffsetPosition(ssC, unitOffset, ssR, viewRayW);
+
+	float3 v = Q - C;
+
+	float vv = dot(v, v);
+	float vn = dot(v, n_C);
+
+    const float epsilon = 0.01;
+    float f = max(radius2 - vv, 0.0); return f * f * f * max((vn - bias) / (epsilon + vv), 0.0);
+}
+
+float PS_MAIN(VS_OUT In) : COLOR0
+{
+	float4 color = float4(0,0,0,0);
+
+	// Pixel being shaded 
+	int2 ssC = In.tex0 * inputTexRes;
+
+	// World space point being shaded
+	float3 C = mul(float4(GetWorldPosition(camPos, In.viewRayW, tex2D(depthTexture, float2(ssC) + float2(0.5, 0.5))), 1.f), matView);
+	C.z = -C.z;
+
+	//packKey(CSZToKey(C.z), color.gb);
+
+	// Hash function used in the HPG12 AlchemyAO paper
+	float randomPatternRotationAngle = (3 * ssC.x ^ ssC.y + ssC.x * ssC.y) * 10;
+
+	// Reconstruct normals from positions. These will lead to 1-pixel black lines
+	// at depth discontinuities, however the blur will wipe those out so they are not visible
+	// in the final image.
+	float3 normalW = UnpackNormal(tex2D(normalTexture, In.tex0).xy).xyz;
+	float3 n_C = mul(normalW, (float3x3)matView);
+	n_C.z = -n_C.z;
+
+	// Choose the screen-space sample radius
+	// proportional to the projected area of the sphere
+	float ssDiskRadius = -projScale * radius / C.z;
+
+	float sum = 0.0;
+	for (int i = 0; i < NUM_SAMPLES; ++i) {
+	     sum += sampleAO(ssC, C, n_C, ssDiskRadius, i, randomPatternRotationAngle, In.viewRayW);
+	}
+
+        float temp = radius2 * radius;
+        sum /= temp * temp;
+	float A = max(0.0, 1.0 - sum * intensity * (5.0 / NUM_SAMPLES));
+
+	// Bilateral box-filter over a quad for free, respecting depth edges
+	// (the difference that this makes is subtle)
+	if (abs(ddx(C.z)) < 0.02) {
+		A -= ddx(A) * ((ssC.x & 1) - 0.5);
+	}
+	if (abs(ddy(C.z)) < 0.02) {
+		A -= ddy(A) * ((ssC.y & 1) - 0.5);
+	}
+
+	color.r = A;
+
+	return color;
+}
+
+technique t
+{
+	pass p
+	{
+		VertexProgram = compile vs_4_0 VS_MAIN();
+		FragmentProgram = compile ps_4_0 PS_MAIN();
+	}
+}

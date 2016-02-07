@@ -1,0 +1,67 @@
+sampler2D inputTexture = {
+	MipFilter = POINT,
+	MinFilter = POINT,
+	MagFilter = POINT, 
+	AddressU = CLAMP,
+	AddressV = CLAMP,
+};
+
+sampler2D velocity2DTex = {
+	MipFilter = POINT,
+	MinFilter = POINT,  
+	MagFilter = POINT,
+	AddressU = CLAMP,
+	AddressV = CLAMP,
+};
+
+struct VS_IN {
+	float3 posL 	: POSITION;
+	float2 tex0 	: TEXCOORD;
+};
+
+struct VS_OUT {
+	float4 posH 	: POSITION;
+	float2 tex0 	: TEXCOORD;
+};
+
+VS_OUT VS_MAIN(VS_IN In, uint VertexID : VERTEXID) {
+	VS_OUT Out;
+	Out.tex0 = float2( (VertexID << 1) & 2, VertexID & 2 );
+	Out.posH = float4(  Out.tex0 * float2( 2.0f, -2.0f ) + float2( -1.0f, 1.0f), 0.0f, 1.0f );
+	return Out;
+}
+
+float4 PS_MAIN(VS_OUT In) : COLOR0 {
+
+	// Get 2D velocity of pixel
+	float2 velocity = tex2D(velocity2DTex, In.tex0).xy;
+
+	// Reference pixel
+   	float4 color = tex2D(inputTexture, In.tex0);
+
+	// Save non blurred alpha
+	float alpha = color.a;
+
+	// Sample along velocity vector
+	const float nSamples = 8;
+   for (int i = 1; i < nSamples; ++i) {
+      float2 offset = velocity * (float(i) / float(nSamples - 1) - 0.5); // Centered sampling (reducing artifacts)
+      color += tex2D(inputTexture, In.tex0 + offset);
+   }
+
+	float4 finalColor = color * (1.0f / nSamples);
+
+	// Assign non blurred alpha
+	finalColor.a = alpha;
+
+	return finalColor;
+}
+
+technique t
+{
+	pass p
+	{
+		VertexProgram = compile vs_4_0 VS_MAIN();
+		FragmentProgram = compile ps_4_0 PS_MAIN();
+	}
+}

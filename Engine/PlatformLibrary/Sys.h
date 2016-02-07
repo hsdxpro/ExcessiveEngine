@@ -136,10 +136,16 @@ public:
 	static void			SetCursorVisible(bool b);
 
 	static void*		GetDLLProcAddress(DLLHandle h, const std::string& procName);
+
+	// TODO REMOVE
 	static std::wstring	GetExeDirW();
+
 	static std::string	GetExeDir();
 	static mm::ivec2	GetCursorPos();
 	static mm::uvec2	GetScreenSize();
 };
 
 std::string GetAssetsPath();
+
+// TODO REMOVE
+std::wstring GetAssetsPathW();
