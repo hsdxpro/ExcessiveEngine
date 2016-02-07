@@ -142,6 +142,21 @@ set(EXC_LINK_LIBRARY_GLEW
 	debug glew-d
 	optimized glew
 )
+
+set(EXC_LINK_LIBRARY_CG
+	Cg/cg
+	Cg/cgD3D11
+	Cg/cgGL
+)
+
+set(EXC_LINK_LIBRARY_DX11
+	DX11/d3d11
+	DX11/d3dx11
+	DX11/dxgi
+	DX11/dxerr
+	DX11/d3dcompiler
+	DX11/dxguid
+)
 	
 	
 	

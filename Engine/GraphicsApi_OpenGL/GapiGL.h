@@ -33,7 +33,6 @@ public:
 
 	// buffer data manipulation
 	void WriteTexture(ITextureGapi* t, const rTextureUpdate& d) override;
-	void writeTexture(ITextureGapi* t, const rTextureUpdate& d) override;
 
 	void WriteBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) override;
 	void ReadBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) override;

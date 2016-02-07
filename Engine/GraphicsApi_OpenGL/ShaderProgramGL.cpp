@@ -57,7 +57,7 @@ GLenum shader_types[] =
 };
 
 
-void ShaderProgramGL::destroy()
+void ShaderProgramGL::Release()
 {
 	delete this;
 }

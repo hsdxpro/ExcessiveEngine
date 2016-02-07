@@ -1,15 +1,15 @@
 #pragma once
-#include "GraphicsEngine/ICamera.h"
 
 #include <mymath/mm_common.h>
 #include <mymath/mymath.h>
+#include "ICamera.h"
 
-class Camera : public graphics::ICamera 
+class Camera : public ICamera 
 {
 public:
 	Camera();
-	Camera(graphics::rProjOrtho proj, float nearPlane, float farPlane);
-	Camera(graphics::rProjPersp proj, float nearPlane, float farPlane);
+	Camera(rProjOrtho proj, float nearPlane, float farPlane);
+	Camera(rProjPersp proj, float nearPlane, float farPlane);
 
 	void SetFOV(float rad) override;
 	void SetNearPlane(float nP) override;
@@ -51,8 +51,8 @@ protected:
 	float farPlane;
 
 	// Projection params ( TODO: little bit stupid to prepare camera class for every projection )
-	graphics::eProjType projType;
-	graphics::rProjOrtho projOrtho;
-	graphics::rProjPersp projPersp;
+	eProjType projType;
+	rProjOrtho projOrtho;
+	rProjPersp projPersp;
 	mm::mat4 proj;
 };

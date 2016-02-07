@@ -2,10 +2,10 @@
 #include "Entity.h"
 #include "Light.h"
 #include "GraphicsEngine/IScene.h"
+#include "GraphicsEngine/ILight.h"
+#include "SupportLibrary/Camera.h"
 
 #include <unordered_set>
-
-
 
 class Scene : public graphics::IScene
 {
@@ -23,16 +23,17 @@ public:
 
 	void clear() override;
 
-	void SetCamera(graphics::ICamera* c) override;
+	void SetCamera(ICamera* c) override;
 
-	graphics::ICamera* GetCamera() override;
+	ICamera* GetCamera() override;
 
 	// access content
-	const std::unordered_set<graphics::Entity*>& GetEntities();
-	const std::unordered_set<Light*>& GetLights();	
-private:
-	std::unordered_set<graphics::Entity*> entities;
-	std::unordered_set<Light*> lights;
+	const std::unordered_set<graphics::IEntity*>& GetEntities() const override;
+	const std::unordered_set<graphics::ILight*>& GetLights() const override;
 
-	graphics::ICamera* cam;
+private:
+	std::unordered_set<graphics::IEntity*> entities;
+	std::unordered_set<graphics::ILight*> lights;
+
+	Camera* cam;
 };

@@ -470,10 +470,6 @@ void GapiGL::WriteTexture(ITextureGapi* t, const rTextureUpdate& d) {
 		//glTextureSubImage3D(tex->ID, d.level, d.x_offset, d.y_offset, d.z_offset, d.width, d.height, d.depth, texture_formats[d.format], texture_types[d.format], d.data);
 	}
 }
-void GapiGL::writeTexture(ITextureGapi* t, const rTextureUpdate& d) {
-	auto id = ((TextureGL*)t)->ID;
-	glGetTextureSubImage(id, d.level, d.x_offset, d.y_offset, d.z_offset, d.width, d.height, d.depth, texture_formats[(int)d.format], texture_types[(int)d.format], ((d.width - d.x_offset) * (d.height - d.y_offset) * (d.depth - d.z_offset) * texture_sizes[(int)d.format]) / 8, d.data);
-}
 
 // vertex buffers
 void GapiGL::WriteBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t offset) {

@@ -8,6 +8,7 @@
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
+#include "GraphicsEngine\IMesh.h"
 
 static const char vertexShaderCode[] =
 /**
@@ -237,7 +238,7 @@ void GraphicsEngineRaster::Update(float deltaTime)
 	for (auto entity : entities) {
 
 		// Get mesh
-		Mesh* mesh = entity->GetMesh();
+		Mesh* mesh = (Mesh*)entity->GetMesh();
 
 		if (!mesh)
 		{
@@ -373,7 +374,7 @@ void GraphicsEngineRaster::Update(float deltaTime)
 			gapi->SetIndexBuffer(mesh->GetIndexBuffer());
 
 		// Get material
-		Material* mtl = entity->GetMaterial();
+		Material* mtl = (Material*)entity->GetMaterial();
 
 		struct {
 			mm::vec4 diffuse;

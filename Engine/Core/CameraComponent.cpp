@@ -1,6 +1,6 @@
 #include "CameraComponent.h"
 
-CameraComponent::CameraComponent(graphics::ICamera* cam)
+CameraComponent::CameraComponent(ICamera* cam)
 :cam(cam)
 {
 
@@ -12,7 +12,7 @@ void CameraComponent::SetDirNormed(const mm::vec3& dir)
 	SetRot(cam->GetRot());
 }
 
-graphics::ICamera* CameraComponent::GetCam()
+ICamera* CameraComponent::GetCam()
 {
 	return cam;
 }

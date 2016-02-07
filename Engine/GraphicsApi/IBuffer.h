@@ -14,7 +14,7 @@ struct rBuffer {
 class IBuffer
 {
 public:
-	virtual void destroy() = 0;
+	virtual void Release() = 0;
 	virtual rBuffer GetDesc() = 0;
 };
 

@@ -1,13 +1,13 @@
 #pragma once
 #include "WorldComponent.h"
-#include "GraphicsEngine\ICamera.h"
+#include "SupportLibrary\ICamera.h"
 
 namespace graphics { class IEntity; }
 
 class CameraComponent : public WorldComponent
 {
 public:
-	CameraComponent(graphics::ICamera* cam);
+	CameraComponent(ICamera* cam);
 
 	void SetDirNormed(const mm::vec3& dir);
 
@@ -23,7 +23,7 @@ public:
 	__inline mm::vec3 GetRightDirNormed()	{ return cam->GetRightDirNormed(); }
 	__inline mm::vec3 GetLeftDirNormed()	{ return cam->GetLeftDirNormed(); }
 
-	graphics::ICamera* GetCam();
+	ICamera* GetCam();
 
 protected:
 	void _InnerReflectPos() override;
@@ -31,5 +31,5 @@ protected:
 	void _InnerReflectSkew() override;
 
 protected:
-	graphics::ICamera* cam;
+	ICamera* cam;
 };

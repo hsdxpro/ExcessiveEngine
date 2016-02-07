@@ -217,6 +217,7 @@ bool Mesh::Update(MeshData data) {
 	ib_desc.is_persistent = false;
 	ib_desc.prefer_cpu_storage = false;
 	ib_desc.size = data.index_num * sizeof(u32);
+	ib_desc.initial_data = nullptr;
 
 	IIndexBuffer* _ib = gapi->CreateIndexBuffer(ib_desc);
 	gapi->WriteBuffer(_ib, data.index_data, ib_desc.size, 0);
@@ -294,7 +295,7 @@ void Mesh::Reset() {
 	// delete and nullify buffers
 	for (auto& stream : vertex_streams) {
 		if (stream.vb) {
-			stream.vb->destroy();
+			stream.vb->Release();
 			stream.vb = nullptr;
 		}
 		stream.stride = 0;
@@ -312,7 +313,7 @@ void Mesh::Reset() {
 	}
 	// delete and nullify index buffer
 	if (index_buffer) {
-		index_buffer->destroy();
+		index_buffer->Release();
 		index_buffer = nullptr;
 	}
 	// clear mat ids

@@ -1,0 +1,18 @@
+-- visual quality algorithms
+1. shadow mapping (at least some basic)
+2. order-independent transparency
+
+-- engine structure & resource handling
+1. different g-buffer shaders
+	- different if has feature or not (is there normal map?, cutout map?)
+	- proper processing of input material
+		(diffuse color vs. diffuse texture)
+	- different vertex formats
+2. lightpass shaders
+	- support for most physical material properties
+		-> multiple shaders (when to use which?!)
+		-> one uber shader (won't it be slow as fuck?!)
+3. instanced rendering
+	- what type of instanced rendering...?
+	- does the graphics api handle it implicitly...?
+	- anyway, we're gonna implement it if 4 cores are not enough!

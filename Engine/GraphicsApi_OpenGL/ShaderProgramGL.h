@@ -18,7 +18,7 @@ public:
 	ShaderProgramGL(GLuint program_id);
 	~ShaderProgramGL();
 
-	void destroy() override;
+	void Release() override;
 
 	/// Provide program id for gapi.
 	GLuint GetProgramId() { return program; }

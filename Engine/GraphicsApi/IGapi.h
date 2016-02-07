@@ -51,7 +51,6 @@ public:
 	///////////////////////////////////////
 	// buffer data manipulation
 	virtual void WriteTexture(ITextureGapi* t, const rTextureUpdate& d) = 0;
-	virtual void writeTexture(ITextureGapi* t, const rTextureUpdate& d) = 0;
 
 	virtual void WriteBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) = 0;
 	virtual void ReadBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) = 0;

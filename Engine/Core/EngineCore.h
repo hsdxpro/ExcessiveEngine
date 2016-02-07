@@ -35,6 +35,9 @@ public:
 	// Init raster graphics engine, if one already exists will be destroyed, then instantiate it
 	IGraphicsEngine* InitGraphicsEngineRaster(const rGraphicsEngineRaster& d = rGraphicsEngineRaster());
 
+	// Init raster graphics engine, if one already exists will be destroyed, then instantiate it
+	IGraphicsEngine* InitGraphicsEngineRasterZsiros(const rGraphicsEngineRaster& d = rGraphicsEngineRaster());
+
 	// Init raytracer graphics engine, if one already exists will be destroyed, then instantiate it
 	IGraphicsEngine* InitGraphicsEngineRT(const rGraphicsEngineRT& d = rGraphicsEngineRT());
 	

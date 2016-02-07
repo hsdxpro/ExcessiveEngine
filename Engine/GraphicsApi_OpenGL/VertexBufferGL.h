@@ -6,9 +6,9 @@
 class VertexBufferGL : public BufferGL, public IVertexBuffer
 {
 public:
-	void destroy()
+	void Release()
 	{
-		BufferGL::destroy();
+		BufferGL::Release();
 	}
 
 	rBuffer GetDesc()

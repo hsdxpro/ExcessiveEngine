@@ -56,26 +56,26 @@ mm::mat4 Matrix44ViewRH(const mm::vec3& eye, const mm::vec3& target, const mm::v
 }
 
 Camera::Camera()
-:nearPlane(0.01f), farPlane(4000), pos(0, 0, 0), projType(graphics::eProjType::PERSP)
+:nearPlane(0.01f), farPlane(4000), pos(0, 0, 0), projType(eProjType::PERSP)
 {
 	SetDirNormed({ 0, 1, 0 });
 }
 
-Camera::Camera(graphics::rProjOrtho proj, float nearPlane, float farPlane)
-:nearPlane(nearPlane), farPlane(farPlane), pos(0, 0, 0), projOrtho(proj), projType(graphics::eProjType::ORTHO)
+Camera::Camera(rProjOrtho proj, float nearPlane, float farPlane)
+:nearPlane(nearPlane), farPlane(farPlane), pos(0, 0, 0), projOrtho(proj), projType(eProjType::ORTHO)
 {
 	SetDirNormed({ 0, 1, 0 });
 }
 
-Camera::Camera(graphics::rProjPersp proj, float nearPlane, float farPlane)
-:nearPlane(nearPlane), farPlane(farPlane), pos(0, 0, 0), projPersp(proj), projType(graphics::eProjType::PERSP)
+Camera::Camera(rProjPersp proj, float nearPlane, float farPlane)
+:nearPlane(nearPlane), farPlane(farPlane), pos(0, 0, 0), projPersp(proj), projType(eProjType::PERSP)
 {
 	SetDirNormed({ 0, 1, 0 });
 }
 
 void Camera::SetFOV(float rad)
 {
-	assert(projType == graphics::eProjType::PERSP);
+	assert(projType == eProjType::PERSP);
 
 	projPersp.fovRad = rad;
 }
@@ -142,11 +142,11 @@ mm::mat4 Camera::GetProjMatrix(float aspectRatio) const
 {
 	switch (projType)
 	{
-	case graphics::eProjType::ORTHO:
+	case eProjType::ORTHO:
 	{
 		return mymath::ortographic(projOrtho.left, projOrtho.right, projOrtho.bottom, projOrtho.top, nearPlane, farPlane);
 	}
-	case graphics::eProjType::PERSP:
+	case eProjType::PERSP:
 	{
 		auto& proj = mymath::perspective(projPersp.fovRad, aspectRatio, nearPlane, farPlane);
 

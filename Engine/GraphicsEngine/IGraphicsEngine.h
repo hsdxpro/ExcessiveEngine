@@ -3,13 +3,13 @@
 #include "PlatformLibrary\Window.h"
 
 class IGapi;
+class ICamera;
 
 namespace graphics {
 	class IScene;
 	class IMesh;
 	class IMaterial;
 	class ITexture;
-	class ICamera;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ public:
 	virtual graphics::ITexture* CreateTexture() = 0;
 
 	/// Create new virtual camera.
-	virtual graphics::ICamera* CreateCam() = 0;
+	virtual ICamera* CreateCam() = 0;
 
 	virtual void Update(float deltaTime) = 0;
 
