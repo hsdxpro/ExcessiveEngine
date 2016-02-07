@@ -8,22 +8,34 @@
 #include <fstream>
 #include <memory>
 
-extern volatile int calldepth;
-
 namespace exc {
 
-
+/// <summary>
+/// <para> Event log facility with file/stream output. </para>
+/// <para> A logger can create multiple distinct logstreams.
+///		Each logstream represents a flow of events, which are logged into file
+///		through the logger. Streams are identified by their names, and can
+///		be distinguished in the log file. </para>
+/// <para> This class is completely thread-safe. </para>
+/// </summary>
 class Logger {
 public:
 	Logger();
 	~Logger();
 
+	/// <summary> Open a log file for output. </summary>
 	bool OpenFile(const std::string& path);
+
+	/// <summary> Use an already opened output stream. </summary>
 	void OpenStream(std::ostream* stream);
+
+	/// <summary> Stop logging to output stream, close file, if any. </summary>
 	void CloseStream();
 
+	/// <summary> Create a logstream. Use logstreams to log events. </summary>
 	LogStream CreateLogStream(const std::string& name);
 
+	/// <summary> Write all pending events to log file immediately. </summary>
 	void Flush();
 private:
 	// do not ever flip the order of the two below!

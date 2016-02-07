@@ -80,7 +80,6 @@ void LogNode::Flush() {
 		else {
 			// flush file
 			if (outputStream && outputStream->good()) {
-				*outputStream << "[NOTE] Flushed.\n";
 				outputStream->flush();
 			}
 

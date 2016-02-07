@@ -72,7 +72,7 @@ void TestLoggerConcurrency() {
 	for (auto& t : threads) {
 		t = std::thread([&] {
 			unsigned myId = threadId++;
-			
+
 			// create a bunch of pipes concurrently
 			int pipesLeft;
 			while ((pipesLeft = --numPipesToCreate) >= 0) {
@@ -86,6 +86,7 @@ void TestLoggerConcurrency() {
 			std::stringstream ss;
 			ss << myId;
 			exc::LogStream s = logger.CreateLogStream("stream " + ss.str());
+			s.Event("helló józsi", exc::eEventDisplayMode::STDOUT);
 
 			// write a bunch of events to pipe
 			int myEvent;
