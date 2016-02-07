@@ -20,8 +20,7 @@ bool cFileUtil::Clear(const zsString& path) {
 
 void cFileUtil::Delete(const zsString& path) 
 {
-	// TODO
-	//boost::filesystem::remove(path.c_str());
+	DeleteFile(std::string(path.begin(), path.end()).c_str());
 }
 
 void cFileUtil::ReplaceIncludeDirectives(const zsString& filePath, std::list<zsString>& fileLines_out, std::list<zsString>& includedFilesPaths_out/* = std::list<zsString>()*/) {
