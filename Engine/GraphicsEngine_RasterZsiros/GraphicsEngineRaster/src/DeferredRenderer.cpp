@@ -315,7 +315,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	gApi->ClearTexture(gBuffer[0],		  eClearFlag::COLOR, Vec4(0.5f, 0.7f, 0.8f, 0.0f));
 	gApi->ClearTexture(gBuffer[1],		  eClearFlag::COLOR, Vec4(0.5f, 0.5f, 0.0f, 0.0f));
 	gApi->ClearTexture(gBuffer[2],		  eClearFlag::COLOR, Vec4(0.0f, 0.0f, 0.0f, 0.0f));
-	gApi->ClearTexture(compositionBuffer, eClearFlag::COLOR, Vec4(0.0f, 0.0f, 0.0f, 0.0f));
+	gApi->ClearTexture(compositionBuffer, eClearFlag::COLOR, Vec4(1.0f, 0.0f, 0.0f, 0.0f));
 
 	//----------------------------------------------------------------------//
 	// --- --- --- --- --- --- --- GBUFFER PASS --- --- --- --- --- --- --- //
@@ -431,43 +431,32 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 			gApi->SetVSConstantBuffer(&mtlConstants, sizeof(mtlConstants), 20);
 			gApi->SetPSConstantBuffer(&mtlConstants, sizeof(mtlConstants), 20);
 
-			// Foreach: Entity -> Draw this group
-			//for (auto& entity : group->entities) {
-				// Entity world matrix
+			mm::mat4 posMat = mm::create_translation(entity->GetPos());
+			mm::mat4 rotMat = mm::mat4(entity->GetRot());
+			mm::mat4 skewMat = mm::mat4(entity->GetSkew());
+			mm::mat4 worldMat = rotMat * skewMat;
 
-			//Matrix44 worldMat;
+			worldMat = posMat;// *worldMat;
 
-			mm::mat4 worldMat =
-				mm::create_translation(entity->GetPos())
-				*mm::mat4(entity->GetRot())
-				*mm::mat4(entity->GetSkew());
+			// cbuffer
+			struct {
+				mm::mat4 worldViewProj;
+				mm::mat4 worldView;
+				mm::mat4 world;
+				mm::vec3 camPos;
+				float	 farPlane;
+			} shaderTransform;
+			shaderTransform.worldViewProj = viewProjMat * worldMat;
+			shaderTransform.worldView = viewMat * worldMat;
+			shaderTransform.world = worldMat;
+			shaderTransform.farPlane = cam->GetFarPlane();
+			shaderTransform.camPos = cam->GetPos();
 
-			//worldMat[0] = Vec4(prs[0].x, prs[0].y, prs[0].z, prs[0].w);
-			//worldMat[0] = Vec4(prs[1].x, prs[1].y, prs[1].z, prs[1].w);
-			//worldMat[0] = Vec4(prs[2].x, prs[2].y, prs[2].z, prs[2].w);
-			//worldMat[0] = Vec4(prs[3].x, prs[3].y, prs[3].z, prs[3].w);
-				
-				
-				// cbuffer
-				struct {
-					mm::mat4 worldViewProj;
-					mm::mat4 worldView;
-					mm::mat4 world;
-					mm::vec3 camPos;
-					float	 farPlane;
-				} shaderTransform;
-				shaderTransform.worldViewProj = viewProjMat * worldMat;
-				shaderTransform.worldView = viewMat * worldMat;
-				shaderTransform.world = worldMat;
-				shaderTransform.farPlane = cam->GetFarPlane();
-				shaderTransform.camPos = cam->GetPos();
+			gApi->SetVSConstantBuffer(&shaderTransform, sizeof(shaderTransform), 0);
+			gApi->SetPSConstantBuffer(&shaderTransform, sizeof(shaderTransform), 0);
 
-				gApi->SetVSConstantBuffer(&shaderTransform, sizeof(shaderTransform), 0);
-				gApi->SetPSConstantBuffer(&shaderTransform, sizeof(shaderTransform), 0);
-
-				// draw
-				gApi->DrawIndexed((matGroup.endFace - matGroup.beginFace) * 3, matGroup.beginFace * 3);
-			//}
+			// draw
+			gApi->DrawIndexed((matGroup.endFace - matGroup.beginFace) * 3, matGroup.beginFace * 3);
 		}
 	}
 
@@ -958,7 +947,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	gApi->SetVSConstantBuffer(&skyConstants, sizeof(skyConstants), 0);
 	gApi->SetPSConstantBuffer(&skyConstants, sizeof(skyConstants), 0);
 	
-	//gApi->Draw(3);
+	gApi->Draw(3);
 
 	// Set back render state to default
 	gApi->SetDepthStencilState(depthStencilDefault, 0x00);

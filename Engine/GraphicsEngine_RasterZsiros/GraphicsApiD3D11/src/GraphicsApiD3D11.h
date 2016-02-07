@@ -117,8 +117,6 @@ public:
 
 	virtual void SetVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers) override;
 
-	void SetIndexBuffer(const IIndexBuffer* ib);
-
 	virtual void SetIndexBuffer(IIndexBuffer* ibo) override;
 
 	eGapiResult SetDepthStencilState(const tDepthStencilDesc& desc, uint8_t stencilRef);

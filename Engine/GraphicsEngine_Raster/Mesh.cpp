@@ -229,10 +229,11 @@ bool Mesh::Update(MeshData data) {
 	// vertex buffer(s)
 	rBuffer vb_desc;
 	vb_desc.is_readable = false;
-	vb_desc.is_writable = false;
+	vb_desc.is_writable = true;
 	vb_desc.is_persistent = true;
 	vb_desc.prefer_cpu_storage = false;
 	vb_desc.size = internal_stride * num_vertices;
+	vb_desc.initial_data = nullptr;
 
 	IVertexBuffer* _vb = nullptr;
 	RawUniquePtr vb_data(operator new(4 * sizeof(float) * num_vertices));
