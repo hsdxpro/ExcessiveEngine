@@ -227,6 +227,11 @@ bool Mesh::Update(MeshData data) {
 	}
 
 	// vertex buffer(s)
+
+	////////////////////////////////////////////////////////////////////////////
+	/* CORRECT CODE FOR NON-INTERLEAVED (SEPARATE) BUFFERS
+	 * DO NOT DELETE UNDER ANY CIRCUMSTANCES
+
 	rBuffer vb_desc;
 	vb_desc.is_readable = false;
 	vb_desc.is_writable = false;
@@ -277,6 +282,51 @@ bool Mesh::Update(MeshData data) {
 		elements[i].buffer_index = i;
 		elements[i].offset = 0;
 	}
+
+	NON-INTERLEAVED BUFFERS CODE END */
+	////////////////////////////////////////////////////////////////////////////
+
+
+	////////////////////////////////////////////////////////////////////////////
+	// UNSTABLE CODE FOR INTERLEAVED BUFFERS
+	// GOD BE WITH US
+	rBuffer vb_desc;
+	vb_desc.is_readable = false;
+	vb_desc.is_writable = false;
+	vb_desc.is_persistent = true;
+	vb_desc.prefer_cpu_storage = false;
+	vb_desc.size = internal_stride * num_vertices;
+
+	IVertexBuffer* _vb = nullptr;
+
+	_vb = gapi->CreateVertexBuffer(vb_desc);
+	if (!_vb) {
+		return false;
+	}
+	gapi->WriteBuffer(_vb, packed_vertex_data.get(), vb_desc.size, 0);
+	vertex_streams[0].vb = _vb;
+	vertex_streams[0].offset = 0;
+	vertex_streams[0].stride = internal_stride;
+
+	// END WARNING
+	////////////////////////////////////
+
+	num_streams = 1;
+	index_buffer = _ib;
+
+
+	// Set elements (vb and offset, as other params are Set)
+	u32 offset = 0;
+	for (int i = 0; i < num_elements; i++) {
+		vertex_stream_content[i] = elements[i].semantic;
+		elements[i].buffer_index = 0;
+		elements[i].offset = offset;
+
+		u32 chunk_size = elements[i].num_components * GetElementTypeSize(elements[i].type);
+		offset += chunk_size;
+	}
+	// UNSTABLE INTERLEAVED CODE END
+	////////////////////////////////////////////////////////////////////////////
 
 	scope_guard.perform_cleanup = false;
 	return true;
