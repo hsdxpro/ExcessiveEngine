@@ -11,6 +11,7 @@
 
 #include <d3d11shader.h>
 #include <d3dcompiler.h>
+#include "PlatformLibrary/Sys.h"
 
 cCgShaderHelper::cCgShaderHelper(const zsString& shaderPath) {
 
@@ -82,7 +83,7 @@ cCgShaderHelper::cCgShaderHelper(const zsString& shaderPath) {
 bool cCgShaderHelper::CompileCg(const zsString& cgFilePath, const zsString& shaderOut, cCgShaderHelper::eProfileCG compileProfile) 
 {
 	// Paths
-	zsString cgcExePath = L"cgc.exe";
+	zsString cgcExePath = Sys::GetExeDir() + "cgc.exe";
 	zsString entryAndProfile;
 	switch (compileProfile)
 	{

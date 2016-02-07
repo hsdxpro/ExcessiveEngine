@@ -453,7 +453,7 @@ cResourceManager* cGraphicsEngine::GetResourceManager() {
 auto SafeLoadShader(cGraphicsApiD3D11* gApi, const wchar_t* shader)->IShaderProgram* {
 	// create shader program
 	IShaderProgram* shaderProg;
-	auto r = gApi->CreateShaderProgram(&shaderProg, shader);
+	auto r = gApi->CreateShaderProgram(&shaderProg, (GetAssetsPathW() + shader).c_str());
 	// check results
 	switch (r) {
 		case eGapiResult::OK: {

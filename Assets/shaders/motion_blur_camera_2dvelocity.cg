@@ -1,0 +1,78 @@
+#include "common.cginc"
+
+sampler2D depthTexture = {
+	MipFilter = POINT,
+	MinFilter = POINT,
+	MagFilter = POINT,
+	AddressU = CLAMP,
+	AddressV = CLAMP,
+};
+
+
+struct {
+ float4x4 viewProj;
+ float4x4 invViewProj;
+ float4x4 prevViewProj;
+ float3	  camPos;
+ float2	  invframeDeltaTimeDiv2DivInputRes;
+ float2	  invFourPercentInputRes;
+ float2	  negInvFourPercentInputRes;
+} c : register(c0);
+
+struct VS_IN {
+	float3 posL 	: POSITION;
+	float2 tex0 	: TEXCOORD0;
+};
+
+struct VS_OUT {
+	float4 posH 		: POSITION;
+	float2 tex0 		: TEXCOORD1;
+	float3 viewRay		: TEXCOORD2;
+};
+
+VS_OUT VS_MAIN(VS_IN In, uint VertexID : VERTEXID) {
+	VS_OUT Out;
+	Out.tex0 = float2( (VertexID << 1) & 2, VertexID & 2 );
+	Out.posH = float4(  Out.tex0 * float2( 2.0f, -2.0f ) + float2( -1.0f, 1.0f), 0.0f, 1.0f );
+
+	float4 viewRay =	Out.posH.x * c.invViewProj[0] + (
+						Out.posH.y * c.invViewProj[1] + (
+						c.invViewProj[2] +
+						c.invViewProj[3]));
+
+	Out.viewRay = viewRay.xyz * (1.0f / viewRay.w);
+	Out.viewRay -= c.camPos;
+
+	return Out;
+}
+
+float2 PS_MAIN(VS_OUT In) : COLOR0 {
+
+	// Current world pos
+	float3 posW = GetWorldPosition(c.camPos, In.viewRay, tex2D(depthTexture , In.tex0).r);
+
+
+	// Current frame NDC position // x,y,w  // we not need the z component
+	float3 currPosH = float3(	 dot(posW, float3(c.viewProj[0].x, c.viewProj[1].x, c.viewProj[2].x)) + c.viewProj[3].x,
+								-dot(posW, float3(c.viewProj[0].y, c.viewProj[1].y, c.viewProj[2].y)) - c.viewProj[3].y, // y *= -1; // The calced y velocity need to be in texSpace.y * 2
+								 dot(posW, float3(c.viewProj[0].w, c.viewProj[1].w, c.viewProj[2].w)) + c.viewProj[3].w );
+	currPosH.xy *= (1.0f / currPosH.z); // .z now the W component !!!!
+
+	// Previous frame NDC position // x,y,w  // we not need the z component
+	float3 prevPosH = float3(	 dot(posW, float3(c.prevViewProj[0].x, c.prevViewProj[1].x, c.prevViewProj[2].x)) + c.prevViewProj[3].x,
+								-dot(posW, float3(c.prevViewProj[0].y, c.prevViewProj[1].y, c.prevViewProj[2].y)) - c.prevViewProj[3].y, // y *= -1; // The calced y velocity need to be in texSpace.y * 2
+								 dot(posW, float3(c.prevViewProj[0].w, c.prevViewProj[1].w, c.prevViewProj[2].w)) + c.prevViewProj[3].w );
+	prevPosH.xy *= (1.0f / prevPosH.z); // .z now the W component !!!!
+	
+	// v   =             s               /       t;     result = pixels per second
+	return  clamp((currPosH.xy - prevPosH.xy) * c.invframeDeltaTimeDiv2DivInputRes, c.negInvFourPercentInputRes, c.invFourPercentInputRes);
+}
+
+technique t
+{
+	pass p
+	{
+		VertexProgram = compile vs_4_0 VS_MAIN();
+		FragmentProgram = compile ps_4_0 PS_MAIN();
+	}
+}

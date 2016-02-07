@@ -1467,15 +1467,11 @@ void cGraphicsApiD3D11::Draw(u32 nVertices, u32 offset /*= 0*/)
 	d3dcon->Draw(nVertices, offset);
 }
 
-void cGraphicsApiD3D11::DrawIndexed(size_t nIndices, size_t idxStartIndex /*= 0*/) {
+void cGraphicsApiD3D11::DrawIndexed(u32 nIndices, u32 idxStart)
+{
 	ApplySamplerStates();
 	ApplyConstantBuffers();
-	d3dcon->DrawIndexed(nIndices, idxStartIndex, 0);
-}
-
-void cGraphicsApiD3D11::DrawIndexed(u32 num_indices, u32 index_byte_offset /*= 0*/)
-{
-	DrawIndexed((size_t)num_indices, (size_t)index_byte_offset / sizeof(u32));
+	d3dcon->DrawIndexed(nIndices, idxStart, 0);
 }
 
 void cGraphicsApiD3D11::DrawInstanced(size_t nVerticesPerInstance, size_t nInstances, size_t idxStartVertex /*= 0*/, size_t idxStartInstance /*= 0*/) {

@@ -31,12 +31,23 @@ public:
 	zsString(zsBasicString&& other) : zsBasicString(other) {}
 
 	// Construct from numbers
-	template<class ValType>
-	zsString(ValType val) {
+	//template<class ValType>
+	zsString(const std::string& str)
+	{
+		*this = std::wstring(str.begin(), str.end());
+	}
+
+	zsString(const char* str)
+	{
+		std::string tmp = str;
+		*this = std::wstring(tmp.begin(), tmp.end());
+	}
+
+	zsString(size_t val) {
 		std::wstringstream ss;
 
-		if (val)
-			ss << val;
+		//if (val)
+		ss << val;
 
 		auto str = ss.str();
 		for (size_t i = 0; i < str.length(); i++)

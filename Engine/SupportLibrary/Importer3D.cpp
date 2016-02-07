@@ -105,9 +105,11 @@ bool Importer3D::LoadModelFromFile(const std::string& path, eImporter3DFlag flag
 	u32 boneIndices_attribOffset;
 	u32 boneWeights_attribOffset;
 
+	bool b = (int)flags & (int)eImporter3DFlag::VERT_ATTR_TEX0;
+
 	u32 offset = 0;
 	if (flags & eImporter3DFlag::VERT_ATTR_POS)				{ vertexSize += sizeof(mm::vec3);	pos_attribOffset = offset;			offset += sizeof(mm::vec3);  }
-	if (flags & eImporter3DFlag::VERT_ATTR_TEX0)			{ vertexSize += sizeof(mm::vec2);	tex0_attribOffset = offset;			offset += sizeof(mm::vec2);  }
+	if (b)													{ vertexSize += sizeof(mm::vec2);	tex0_attribOffset = offset;			offset += sizeof(mm::vec2);  }
 	if (flags & eImporter3DFlag::VERT_ATTR_NORM)			{ vertexSize += sizeof(mm::vec3);	norm_attribOffset = offset;			offset += sizeof(mm::vec3);  }
 	if (flags & eImporter3DFlag::VERT_ATTR_TAN)				{ vertexSize += sizeof(mm::vec3);	tan_attribOffset = offset;			offset += sizeof(mm::vec3);  }
 	if (flags & eImporter3DFlag::VERT_ATTR_BITAN)			{ vertexSize += sizeof(mm::vec3);	bitan_attribOffset = offset;		offset += sizeof(mm::vec3);  }

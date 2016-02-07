@@ -47,12 +47,12 @@ int main()
 	// Init Engine core
 	Core.InitSoundEngineSFML();
 	rGraphicsEngineRaster graphicsDesc;
-		graphicsDesc.gapiType = eGapiType::DX11;
+		graphicsDesc.gapiType = eGapiType::GL_4_5;
 		graphicsDesc.targetWindow = window;
-	Core.InitGraphicsEngineRasterZsiros(graphicsDesc);
+	Core.InitGraphicsEngineRaster(graphicsDesc);
 	rPhysicsEngineBullet physicsDesc;
 		physicsDesc.gravity = mm::vec3(0, 0, -9.81f);
-	Core.InitPhysicsEngineBullet(physicsDesc);	
+	Core.InitPhysicsEngineBullet(physicsDesc);
 
 	InitScript(); // Manual bullshit, TODO !!!
 

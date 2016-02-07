@@ -78,11 +78,9 @@ public:
 	void Clear(bool target = true, bool depth = false, bool stencil = false, const Vec4& clearColor = Vec4(0.3f, 0.3f, 0.3f, 1.0f));
 	void ClearTexture(ITexture2D* t, eClearFlag clearFlag = eClearFlag::COLOR_DEPTH_STENCIL, const Vec4& clearColor = Vec4(), float depthVal = 1.0f, size_t stencilVal = 0);
 
-	virtual void Draw(u32 nVertices, u32 offset = 0) override;
+	void Draw(u32 nVertices, u32 offset = 0) override;
 
-	void DrawIndexed(size_t nIndices, size_t idxStartIndex = 0);
-
-	virtual void DrawIndexed(u32 num_indices, u32 index_byte_offset = 0) override;
+	void DrawIndexed(u32 nIndices, u32 idxStart = 0) override;
 
 	void DrawInstanced(size_t nVerticesPerInstance, size_t nInstances, size_t idxStartVertex = 0, size_t idxStartInstance = 0);
 	void DrawInstancedIndexed(size_t nIndicesPerInstance, size_t nInstances, size_t idxStartIndex = 0, size_t idxStartInstance = 0);
@@ -94,7 +92,7 @@ public:
 	eGapiResult SetBackBufferSize(unsigned width, unsigned height);
 	eGapiResult SetRenderTargets(unsigned nTargets, const ITexture2D* const* renderTargets, ITexture2D* depthStencilTarget = nullptr);
 
-	virtual void SetRenderTargets(const rRenderTargetInfo* render_targets, u32 size) override;
+	void SetRenderTargets(const rRenderTargetInfo* render_targets, u32 size) override;
 
 	eGapiResult SetVSConstantBuffer(const void* data, size_t size, size_t slotIdx);
 	eGapiResult SetPSConstantBuffer(const void* data, size_t size, size_t slotIdx);
@@ -102,7 +100,7 @@ public:
 	eGapiResult SetTexture(int slotIdx, const ITexture2D* t);
 	eGapiResult SetTexture(const wchar_t* varName, const ITextureGapi* t);
 
-	virtual void SetTexture(ITextureGapi* t, u32 idx) override;
+	void SetTexture(ITextureGapi* t, u32 idx) override;
 
 	void SetPrimitiveTopology(ePrimitiveTopology t);
 	void SetShaderProgram(IShaderProgram* shProg);
@@ -115,14 +113,14 @@ public:
 		u32 start_slot,
 		u32 num_buffers);
 
-	virtual void SetVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers) override;
+	void SetVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers) override;
 
-	virtual void SetIndexBuffer(IIndexBuffer* ibo) override;
+	void SetIndexBuffer(IIndexBuffer* ibo) override;
 
 	eGapiResult SetDepthStencilState(const tDepthStencilDesc& desc, uint8_t stencilRef);
 	eGapiResult SetBlendState(const tBlendDesc& desc);
 
-	virtual void SetBlendState(const rBlendState& state) override;
+	void SetBlendState(const rBlendState& state) override;
 
 	// --- misc --- //
 	eGapiResult SetWindow(Window *renderWindow);
@@ -171,57 +169,57 @@ private:
 	// Vertex format
 	std::vector<D3D11_INPUT_ELEMENT_DESC> ConvertToNativeVertexFormat(cVertexFormat format);
 
-	virtual IShaderProgram* CreateShaderSource(const char* vertex_shader_source, const char* pixel_shader_source, const char* geometry_shader_source = nullptr, const char* tess_control_shader_source = nullptr, const char* tess_eval_shader_source = nullptr) override;
+	IShaderProgram* CreateShaderSource(const char* vertex_shader_source, const char* pixel_shader_source, const char* geometry_shader_source = nullptr, const char* tess_control_shader_source = nullptr, const char* tess_eval_shader_source = nullptr) override;
 
-	virtual IShaderProgram* CreateShaderBinary(void* data, size_t size) override;
+	IShaderProgram* CreateShaderBinary(void* data, size_t size) override;
 
-	virtual IUniformBuffer* CreateUniformBuffer(const rBuffer& data) override;
+	IUniformBuffer* CreateUniformBuffer(const rBuffer& data) override;
 
-	virtual void WriteBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) override;
+	void WriteBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) override;
 
-	virtual void WriteBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t offset) override;
+	void WriteBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t offset) override;
 
-	virtual void WriteBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t offset) override;
+	void WriteBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t offset) override;
 
-	virtual void ReadBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) override;
+	void ReadBuffer(IIndexBuffer* buffer, void* data, size_t size, size_t offset) override;
 
-	virtual void ReadBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t offset) override;
+	void ReadBuffer(IVertexBuffer* buffer, void* data, size_t size, size_t offset) override;
 
-	virtual void ReadBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t offset) override;
+	void ReadBuffer(IUniformBuffer* buffer, void* data, size_t size, size_t offset) override;
 
-	virtual void ResetStatesToDefault() override;
+	void ResetStatesToDefault() override;
 
-	virtual void SetDepthState(const rDepthState& state) override;
+	void SetDepthState(const rDepthState& state) override;
 
-	virtual void SetStencilState(const rStencilState& state) override;
+	void SetStencilState(const rStencilState& state) override;
 
-	virtual void SetRasterizationState(const rRasterizerState& state) override;
+	void SetRasterizationState(const rRasterizerState& state) override;
 
-	virtual void SetSamplerState(const char* slotName, const rSamplerState& smpdata, ITextureGapi* t) override;
+	void SetSamplerState(const char* slotName, const rSamplerState& smpdata, ITextureGapi* t) override;
 
-	virtual void SetSRGBWrites(bool val) override;
+	void SetSRGBWrites(bool val) override;
 
-	virtual void SetSeamlessCubeMaps(bool val) override;
+	void SetSeamlessCubeMaps(bool val) override;
 
-	virtual void SetViewport(int x, int y, unsigned w, unsigned h) override;
+	void SetViewport(int x, int y, unsigned w, unsigned h) override;
 
-	virtual bool GetError() override;
+	bool GetError() override;
 
-	virtual void SetDebugOutput(bool val) override;
+	void SetDebugOutput(bool val) override;
 
-	virtual void SetSyncDebugOutput(bool val) override;
+	void SetSyncDebugOutput(bool val) override;
 
-	virtual void SetUniformBuffer(IUniformBuffer* buf, u32 idx) override;
+	void SetUniformBuffer(IUniformBuffer* buf, u32 idx) override;
 
-	virtual void ClearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth = 0, i32 stencil = 0) override;
+	void ClearFrameBuffer(eClearFlag f, const mm::vec4& color, float depth = 0, i32 stencil = 0) override;
 
-	virtual u32 GetNumVertexBufferSlots() const override;
+	u32 GetNumVertexBufferSlots() const override;
 
-	virtual IInputLayout* CreateInputLayout(rInputElement* elements, size_t num_elements) override;
+	IInputLayout* CreateInputLayout(rInputElement* elements, size_t num_elements) override;
 
-	virtual void SetInputLayout(IInputLayout* layout) override;
+	void SetInputLayout(IInputLayout* layout) override;
 
-	virtual void WriteTexture(ITextureGapi* t, const rTextureUpdate& d) override;
+	void WriteTexture(ITextureGapi* t, const rTextureUpdate& d) override;
 
 protected:
 	// Error handling

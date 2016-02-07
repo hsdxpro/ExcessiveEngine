@@ -1,0 +1,60 @@
+
+
+struct {
+ float4x4 currWorldViewProj;
+ float4x4 prevWorldViewProj;
+ float2	  invframeDeltaTimeDiv2DivInputRes;
+ float2	  invFourPercentInputRes;
+ float2	  negInvFourPercentInputRes;
+} c : register(c0);
+
+
+struct VS_IN {
+	float3 posL : POSITION;
+};
+
+struct VS_OUT {
+	float4 posH : SV_POSITION;
+	float3 currPosH : TEXCOORD0;
+	float3 prevPosH : TEXCOORD1;
+};
+
+VS_OUT VS_MAIN(VS_IN In) {
+	VS_OUT Out;
+
+	// Previous frame NDC position // x,y,w  // we not need the z component
+	Out.posH = float4(	  dot(In.posL, float3(c.currWorldViewProj[0].x, c.currWorldViewProj[1].x, c.currWorldViewProj[2].x)) + c.currWorldViewProj[3].x,
+						  dot(In.posL, float3(c.currWorldViewProj[0].y, c.currWorldViewProj[1].y, c.currWorldViewProj[2].y)) + c.currWorldViewProj[3].y,
+						  dot(In.posL, float3(c.currWorldViewProj[0].z, c.currWorldViewProj[1].z, c.currWorldViewProj[2].z)) + c.currWorldViewProj[3].z,
+						  dot(In.posL, float3(c.currWorldViewProj[0].w, c.currWorldViewProj[1].w, c.currWorldViewProj[2].w)) + c.currWorldViewProj[3].w );
+
+	Out.currPosH = Out.posH.xyw;
+
+	// Previous frame NDC position // x,y,w  // we not need the z component
+	Out.prevPosH = float3(	 dot(In.posL, float3(c.prevWorldViewProj[0].x, c.prevWorldViewProj[1].x, c.prevWorldViewProj[2].x)) + c.prevWorldViewProj[3].x,
+							-dot(In.posL, float3(c.prevWorldViewProj[0].y, c.prevWorldViewProj[1].y, c.prevWorldViewProj[2].y)) - c.prevWorldViewProj[3].y, // y *= -1; // The calced y velocity need to be in texSpace.y * 2
+							 dot(In.posL, float3(c.prevWorldViewProj[0].w, c.prevWorldViewProj[1].w, c.prevWorldViewProj[2].w)) + c.prevWorldViewProj[3].w );
+
+	return Out;
+}
+
+float2 PS_MAIN(VS_OUT In) : COLOR0 { 
+	In.currPosH.xy *= (1.0f / In.currPosH.z); // z = w
+	In.prevPosH.xy *= (1.0f / In.prevPosH.z); // z = w
+
+	In.currPosH.y *= -1;
+	
+	// v   =             s               /       t;     result = pixels per second
+	// Clamp the velocity, 1.0 depth make so large velocity that ruins the motion blur sampling
+	return clamp((In.currPosH.xy - In.prevPosH.xy) * c.invframeDeltaTimeDiv2DivInputRes, c.negInvFourPercentInputRes, c.invFourPercentInputRes);
+	//return clamp(vel, -4.0f / 768.0f, 4 / 768.0f);
+}
+
+technique t
+{
+	pass p
+	{
+		VertexProgram = compile vs_4_0 VS_MAIN();
+		FragmentProgram = compile ps_4_0 PS_MAIN();
+	}
+}

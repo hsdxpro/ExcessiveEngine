@@ -371,7 +371,7 @@ MeshComponent* EngineCore::SpawnComp_MeshFromFile(const std::string& modelFilePa
 		meshData.mat_ids = matIDs.data();
 		meshData.mat_ids_num = (u32)matIDs.size();
 		meshData.vertex_bytes = importedMesh->nVertices * importedMesh->vertexSize;
-		meshData.vertex_data = importedMesh->vertexBuffers[0];
+		meshData.vertex_data = importedMesh->vertexBuffers[0]; // We know imported thing has interleaved buffer...
 
 		graphics::IMesh::ElementDesc elements[] = {
 			graphics::IMesh::POSITION, 3,

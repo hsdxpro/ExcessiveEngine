@@ -1,0 +1,60 @@
+////////////////////////////////////////////////////////////////////////////////
+//	Shader for rendering shadow maps of directional lights.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+
+
+//------------------------------------------------------------------------------
+// Shader constants
+//------------------------------------------------------------------------------
+
+float4x4 lightWorldViewProj : register(c0);
+
+
+//------------------------------------------------------------------------------
+// Vertex shader
+//------------------------------------------------------------------------------
+
+struct VS_IN {
+	float3 posL : POSITION;
+};
+
+struct VS_OUT {
+	float4 posH : POSITION;
+	float3 posL : COLOR0;
+};
+
+VS_OUT VS_MAIN(VS_IN In) {
+	VS_OUT Out;
+	Out.posH = mul(float4(In.posL, 1.0f), lightWorldViewProj);
+	Out.posL = Out.posH.xyz / Out.posH.w;
+	return Out;
+}
+
+//------------------------------------------------------------------------------
+// Pixel shader
+//------------------------------------------------------------------------------
+
+
+// omg such pixel shader
+float PS_MAIN(float3 posL : COLOR0) : DEPTH {
+	float3 x = ddx(posL);
+	float3 y = ddy(posL);
+	float bias = length(x+y);
+	return posL.z + bias * 0.01f;
+}
+
+
+
+
+
+// f'cking technique
+technique t
+{
+	pass p
+	{
+		VertexProgram = compile vs_4_0 VS_MAIN();
+		FragmentProgram = compile ps_4_0 PS_MAIN();
+	}
+}

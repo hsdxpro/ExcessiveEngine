@@ -1,0 +1,42 @@
+// input texture sampler
+sampler2D textureInput = {
+    	MipFilter = LINEAR,
+    	MinFilter = LINEAR,
+    	MagFilter = LINEAR,
+	AddressU = Clamp,
+	AddressV = Clamp,
+};
+
+// in/out structures
+struct VS_IN {
+	float3 posL 	: POSITION;
+	float2 tex0 	: TEXCOORD0;
+};
+
+struct VS_OUT {
+	float4 posH 	: POSITION;
+	float2 tex0 	: TEXCOORD2;
+};
+
+// vertex shader
+VS_OUT VS_MAIN(VS_IN In, uint VertexID : VERTEXID) {
+	VS_OUT Out;
+	Out.tex0 = float2( (VertexID << 1) & 2, VertexID & 2 );
+	Out.posH = float4(  Out.tex0 * float2( 2.0f, -2.0f ) + float2( -1.0f, 1.0f), 0.0f, 1.0f );
+	return Out;
+}
+
+// pixel shader
+float PS_MAIN(VS_OUT In) : COLOR0 {
+	float color = tex2D(textureInput, In.tex0).r;
+	return color;
+}
+
+technique t
+{
+	pass p
+	{
+		VertexProgram = compile vs_4_0 VS_MAIN();
+		FragmentProgram = compile ps_4_0 PS_MAIN();
+	}
+}

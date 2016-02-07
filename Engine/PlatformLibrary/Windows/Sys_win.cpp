@@ -7,6 +7,7 @@
 #include <codecvt>
 
 #include <iostream>
+#include <tchar.h>
 
 Sys::DLLHandle Sys::LoadDLL(const wchar_t* path) 
 {
@@ -40,29 +41,11 @@ void* Sys::GetDLLProcAddress(DLLHandle h, const std::string& procName)
 	return (void*)GetProcAddress((HMODULE)h, procName.c_str());
 }
 
+// TODO REMOVE
 std::wstring Sys::GetExeDirW()
 {
-	// TODO make define or constant somewhere (128)
-	wchar_t path[128];
-	GetModuleFileNameW(0, path, 128);
-
-	// Preserve only directory
-	for (int i = 127; i > 0; i--)
-		if (path[i] == '\\' && i < 127)
-		{
-			path[i + 1] = 0;
-			break;
-		}
-
-	// TODO: lassít, de legalább szép replace '\\' with '/'
-	int idx = 0;
-	while (path[idx] != '\0') {
-		if (path[idx] == '\\')
-			path[idx] = '/';
-		idx++;
-	}
-
-	return path;
+	std::string exeDir = GetExeDir();
+	return std::wstring(exeDir.begin(), exeDir.end());
 }
 
 std::string	Sys::GetExeDir()
@@ -104,5 +87,11 @@ mm::uvec2 Sys::GetScreenSize()
 std::string GetAssetsPath()
 {
 	return EXCESSIVE_ASSET_DIR;
-	//return Sys::GetExeDir() + "../../Assets/";
+}
+
+// TODO REMOVE
+std::wstring GetAssetsPathW()
+{
+	std::string str = EXCESSIVE_ASSET_DIR;
+	return std::wstring(str.begin(), str.end());
 }

@@ -1,0 +1,134 @@
+// Screen Space Analytic Reflection
+
+#include "common.cginc"
+
+sampler2D colorTexture : register( s0 ) = {
+	MipFilter = POINT,
+	MinFilter = POINT,
+	MagFilter = POINT,
+	AddressU = CLAMP,
+	AddressV = CLAMP,
+};
+ 
+sampler2D depthTexture : register( s1 ) = {
+	MipFilter = LINEAR,
+	MinFilter = LINEAR,
+	MagFilter = LINEAR,
+	AddressU = CLAMP,
+	AddressV = CLAMP,
+};
+
+sampler2D normalTexture : register( s2 ) = {
+	MipFilter = LINEAR,
+	MinFilter = LINEAR,
+	MagFilter = LINEAR,
+	AddressU = CLAMP,
+	AddressV = CLAMP,
+};
+
+struct {
+	float4x4	invViewProj;
+	float4x4 	viewProj;
+	float4x4 	view;
+	float4x4 	invView;
+	float3		camPos;
+	float2		invOutputRes;
+	float		farPlane;
+	float		stepLength;
+	int			maxRange;
+} c : register(c0);
+
+struct VS_IN {
+	float3 posL 	: POSITION;
+	float2 tex0 	: TEXCOORD0;
+};
+
+struct VS_OUT {
+	float4 posH 	: POSITION;
+	float2 tex0 	: TEXCOORD0;
+	float3 viewRayW  : TEXCOORD1;
+};
+
+
+VS_OUT VS_MAIN(VS_IN In, uint VertexID : VERTEXID) {
+	VS_OUT Out;
+	Out.tex0 = float2( (VertexID << 1) & 2, VertexID & 2 );
+	Out.posH = float4(  Out.tex0 * float2( 2.0f, -2.0f ) + float2( -1.0f, 1.0f), 0.0f, 1.0f );
+
+	float4 viewRay = Out.posH.x * c.invViewProj[0] + (Out.posH.y * c.invViewProj[1] + (c.invViewProj[2] + c.invViewProj[3]));
+
+	Out.viewRayW = viewRay.xyz * (1.0f / viewRay.w);
+	Out.viewRayW -= c.camPos;
+
+	return Out;
+}
+
+
+float4 PS_MAIN(VS_OUT In) : COLOR0 {
+	float4 color =  tex2D(colorTexture, In.tex0).xyzw;
+
+	//return color;
+
+	float3 normalW = UnpackNormal(tex2D(normalTexture, In.tex0).xy).xyz;
+
+	float3 reflectDirW = normalize(reflect(In.viewRayW, normalize(normalW)).xyz) * c.stepLength;
+
+	// Important, more fade when reflect vector dofacing camera
+	float reflectFadeFactor = 1.f;
+	float reflectViewZ = mul(reflectDirW, (float3x3)c.view).z / c.stepLength;
+	if(reflectViewZ < 0)
+		reflectFadeFactor = abs(reflectViewZ);
+
+	float depth = tex2D(depthTexture, In.tex0).r;
+	if( depth == 1.0f) // Leave sky
+		return color;
+
+	reflectDirW *= c.maxRange;  // max trace range : "maxRange" world unit
+	float3 posW = GetWorldPosition(c.camPos, In.viewRayW, depth).xyz;
+	float4 collectedReflectionColor = float4(0,0,0,0);
+	static int count = c.maxRange % 81; // Help unrolling
+	float2 dx = ddx(In.tex0);
+	float2 dy = ddy(In.tex0);
+	for(int i = 1; i < count; i++ )
+	{
+		float3 tracedPosW = posW + reflectDirW * (float)i / (float)count;
+		float4 reflectSamplePosH = mul(float4(tracedPosW, 1.0f), c.viewProj).xyzw;
+		reflectSamplePosH.xyz /= reflectSamplePosH.w;
+
+		float2 currUV;
+		currUV.x = ((reflectSamplePosH.x + 1.f) /  2.f);
+		currUV.y = ((reflectSamplePosH.y - 1.f) / -2.f);
+
+		if( currUV.x > 1 || currUV.x < 0 || currUV.y > 1 ||currUV.y < 0)
+			break;
+
+		float currSampledDepth = tex2D(depthTexture, currUV, dx, dy).r;
+		float currTracedDepth = reflectSamplePosH.w / c.farPlane; //  div by farPlane
+
+		if( currSampledDepth == 1.0f)
+		{
+			collectedReflectionColor = float4(0,0,0,0);
+			break;
+		}
+
+		// Ez a feltetel alapvetoen szarra se jo, TODO CSERELD LE
+		if( (currTracedDepth > currSampledDepth) && (currTracedDepth - currSampledDepth < 0.0005) )
+		{
+			collectedReflectionColor = tex2D(colorTexture, currUV, dx, dy);
+			// TODO FADE OUT
+			break;
+		}
+	}
+
+	//return collectedReflectionColor;
+	return color + collectedReflectionColor * reflectFadeFactor * 0.25f; // TODO, glossiness
+}
+
+technique t
+{
+	pass p
+	{
+		VertexProgram = compile vs_4_0 VS_MAIN();
+		FragmentProgram = compile ps_4_0 PS_MAIN();
+	}
+}

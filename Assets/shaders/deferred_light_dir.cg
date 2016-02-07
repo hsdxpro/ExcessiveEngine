@@ -1,0 +1,247 @@
+////////////////////////////////////////////////////////////////////////////////
+//	Lighting shader for DIRECTIONAL lights
+//
+////////////////////////////////////////////////////////////////////////////////
+
+#include "deferred_lightpass_cmn.cginc"
+#include "BRDF.cg"
+
+//------------------------------------------------------------------------------
+//	Shadow maps
+//------------------------------------------------------------------------------
+
+#define NUM_MAX_CASCADES 12
+
+struct {
+	float4x4 lightViewProj[NUM_MAX_CASCADES];
+	int nCascades;
+	bool castShadows;
+	float baseBias;
+} shadowConst : register(c100);
+
+static const float3 DEBUG_CASCADE_COLOR[NUM_MAX_CASCADES] = {
+	float3(0.2f, 1.0f, 0.2f), // green
+	float3(1.0f, 0.5f, 0.2f), // orange
+	float3(0.7f, 0.2f, 1.0f), // purple
+	float3(0.95f, 0.95f, 0.1f), // yellow
+	float3(0.2f, 0.95f, 0.95f), // cyan
+	float3(0.6f, 0.45f, 0.3f), // brown
+	float3(0.3f, 0.3f, 0.9f), // blue
+	float3(1.0f, 0.2f, 0.2f), // red
+	float3(0.5f, 0.95f, 0.15f), // greenish yellow
+	float3(0.95f, 0.2f, 0.5f), // reddish pink
+	// repeat ------------------------------------
+	float3(0.2f, 1.0f, 0.2f), // green
+	float3(1.0f, 0.5f, 0.2f), // orange
+};
+
+sampler2DARRAY shadowMap_Array = {
+	MipFilter = POINT,
+	MinFilter = POINT,
+	MagFilter = POINT,
+	AddressU = Clamp,
+	AddressV = Clamp,
+};
+
+//------------------------------------------------------------------------------
+//	Vertex shader
+//------------------------------------------------------------------------------
+
+struct VS_IN {
+	float3 posL 	: POSITION;
+	float2 tex0 	: TEXCOORD0;
+};
+struct VS_OUT {
+	float4 posH 	: POSITION;
+	float3 viewRay	: COLOR0;
+	float2 tex0 	: TEXCOORD2;
+};
+
+VS_OUT VS_MAIN(VS_IN In, uint VertexID : VERTEXID) {
+	VS_OUT vout;
+	// texture coordinates
+	vout.tex0 = float2( (VertexID << 1) & 2, VertexID & 2 );
+	// output position (unused in pixel shader)
+	vout.posH = float4(  vout.tex0 * float2( 2.0f, -2.0f ) + float2( -1.0f, 1.0f), 0.0f, 1.0f );
+
+	// view ray
+	float4 viewRay = vout.posH.x * invViewProj[0] + (
+					 vout.posH.y * invViewProj[1] + (
+					 invViewProj[2] +
+					 invViewProj[3]));
+
+	vout.viewRay = viewRay.xyz * (1.0f / viewRay.w);
+	vout.viewRay -= camPos;
+
+	return vout;
+}
+
+
+//------------------------------------------------------------------------------
+//	Pixel shader
+//------------------------------------------------------------------------------
+float4 PS_MAIN(VS_OUT In) : COLOR0 {
+	float4 color;
+	float3 normal;
+	float3 worldPos;
+	float3 diffuseColor;
+	float depth;
+	float glossiness, specLevel;
+	SampleGBuffer(In.tex0, diffuseColor, normal, glossiness, specLevel);
+
+	depth = tex2D(depthBuffer, In.tex0);
+	worldPos = GetWorldPosition(camPos, In.viewRay, depth);
+
+	// calculate lighting terms
+	float3 lightDir = normalize(float3(1,1,-1));//worldPos - camPos);
+	float3 negViewNorm = normalize(camPos - worldPos);
+	float3 halfVec = normalize(-lightDir + negViewNorm);
+	float intensity = 1.f;
+	
+	float3 V = normalize(negViewNorm);
+	float3 H = normalize(halfVec);
+	float3 N = normalize(normal);
+
+	float VoH = saturate(dot(V,H));
+	float NoV = saturate(dot(N,V));
+	float NoL = saturate(dot(N, -lightDir));
+	float NoH = saturate(dot(N,H));
+
+	
+	float Roughness = 1;
+	float3 SpecularColor = float3(0.04, 0.04, 0.04);
+	
+	float4 diffuse = float4(NoL * Fr_DisneyDiffuse ( NoV, NoL, VoH, Roughness, 1 - SpecularColor), 1.f);
+	//float4 diffuse = float4(NoL * Diffuse_Nemeth(NoL, Roughness, SpecularColor), 1.f);
+	//float4 diffuse = float4(0,0,0,1);
+	//return diffuse;
+
+	//float GRicsi2 = Vis_SmithJointApprox_C(Roughness, NoV, NoL);
+	//float GUE4 = Vis_SmithJointApprox(Roughness, NoV, NoL) * (4 * NoL * NoV);
+	//float GRicsi = Vis_Schlick_C(Roughness, NoV, NoL);
+	//float GUE4 = Vis_Schlick(Roughness, NoV, NoL) * (4 * NoL * NoV);
+	//float GRicsi = Vis_Smith_C(Roughness, NoV, NoL);
+	//float GUE4 = Vis_Smith(Roughness, NoV, NoL);
+
+	//return GRicsi;
+	//return GUE4;
+
+	float3 F = Fresnel(SpecularColor, VoH);
+	float G = GeometricVisibility(Roughness, NoV, NoL, VoH) * (4 * NoL * NoV);
+	float D = Distribution(Roughness, NoH);
+
+	return float4(NoL * F * G * D + diffuse, 1.f) * intensity;
+
+	//return float4(diffuseTerm, diffuseTerm, diffuseTerm, 1.f);
+	//const float IOR = 1.6f;
+	//// TODO i don't know why, that Specular_CookTorrance roughness parameter behave as GLOSSINESS !!
+	//float specTerm = Specular_CookTorrance(normal, negViewNorm, -lightDir, glossiness, IOR) * specLevel; 
+	//
+	//color.rgb += lightColor*(diffuseTerm * diffuseColor + specTerm); // note: no light attenuation
+	//color.a = 1.0f;
+	//
+	//// shadow map
+	//float3 shadowPos;
+	//
+	//// determine wich cascade
+	//int cascadeIdx = -1;
+	//for (int i=0; i<shadowConst.nCascades; i++) {
+	//	float3 p =  worldPos.x * shadowConst.lightViewProj[i][0].xyz + (
+	//				worldPos.y * shadowConst.lightViewProj[i][1].xyz + (
+	//				worldPos.z * shadowConst.lightViewProj[i][2].xyz +
+	//				shadowConst.lightViewProj[i][3].xyz )).xyz;
+	//
+	//	bool isInside = ((-1.0f < p.x && p.x < 1.0f) && 
+	//					(-1.0f < p.y && p.y < 1.0f) &&
+	//					(0.0f < p.z && p.z < 1.0f));
+	//	if (isInside && cascadeIdx==-1) {
+	//		cascadeIdx = i;
+	//		shadowPos = p;
+	//	}
+	//}
+	//
+	//if (shadowConst.castShadows && cascadeIdx >= 0) {
+	//	float2 sampleCoord = float2(shadowPos.x*0.5f+0.5f, -shadowPos.y*0.5f+0.5f);
+	//	float bias = shadowConst.baseBias*exp((float)cascadeIdx);
+	//
+	//	// simple
+	//	//*/
+	//	float shadowSample = tex2DARRAY(shadowMap_Array, float3(sampleCoord, (float)cascadeIdx)).r;
+	//	
+	//	if (shadowSample + bias < shadowPos.z)
+	//		discard;
+	//	
+	//
+	//	// pcf
+	//	/*/
+	//	
+	//	float u = sampleCoord.x;
+	//	float v = sampleCoord.y;
+	//	u = u * 2048.0f - 0.5f;
+	//	v = v * 2048.0f - 0.5f;
+	//	int x = u;
+	//	int y = v;
+	//	float u_ratio = u-x;
+	//	float v_ratio = v-y;
+	//	float u_opposite = 1.0f - u_ratio;
+	//	float v_opposite = 1.0f - v_ratio;
+	//
+	//	float4 lookup;
+	//	lookup.x = (tex2DARRAY(shadowMap_Array, float3(x/2048.f,y/2048.f, (float)cascadeIdx))		+ 1e-5*exp((float)cascadeIdx)) < shadowPos.z ? 0 : 1;
+	//	lookup.y = (tex2DARRAY(shadowMap_Array, float3((x+1)/2048.f,y/2048.f, (float)cascadeIdx))	+ 1e-5*exp((float)cascadeIdx)) < shadowPos.z ? 0 : 1;
+	//	lookup.z = (tex2DARRAY(shadowMap_Array, float3(x/2048.f,(y+1)/2048.f, (float)cascadeIdx))	+ 1e-5*exp((float)cascadeIdx)) < shadowPos.z ? 0 : 1;
+	//	lookup.w = (tex2DARRAY(shadowMap_Array, float3((x+1)/2048.f,(y+1)/2048.f, (float)cascadeIdx))	+ 1e-5*exp((float)cascadeIdx)) < shadowPos.z ? 0 : 1;
+	//
+	//	float weight = 
+	//		(lookup.x * u_opposite + lookup.y * u_ratio) * v_opposite +
+	//		(lookup.z * u_opposite + lookup.w * u_ratio) * v_ratio;
+	//	color.rgb *= weight;
+	//	//*/
+	//
+	//	/*/
+	//	// poisson bullshit
+	//	const float2 offsets[16] = {
+	//		float2(-0.4196638f, -0.02463483f),
+	//		float2(-0.7678005f, -0.3304808f),
+	//		float2(-0.3262545f, -0.5949141f),
+	//		float2(0.01858935f, 0.4807127f),
+	//		float2(-0.5285667f, 0.667186f),
+	//		float2(0.1139563f, 0.05669546f),
+	//		float2(-0.906117f, 0.3519302f),
+	//		float2(0.0861346f, -0.4920678f),
+	//		float2(-0.0889305f, 0.941887f),
+	//		float2(0.8102639f, -0.5403672f),
+	//		float2(0.2520212f, -0.9279014f),
+	//		float2(0.7000272f, -0.1061493f),
+	//		float2(-0.1747759f, -0.9748725f),
+	//		float2(0.783489f, 0.5137001f),
+	//		float2(0.4036024f, 0.349364f),
+	//		float2(0.3292646f, 0.7605681f),
+	//	};
+	//	float weight = 0.0f;
+	//	float total = 0.0f;
+	//	#pragma unroll
+	//	for (int i = 0; i<16; i++) {
+	//		float2 offset = offsets[i];
+	//		offset /= 768.0f;
+	//		offset /= bias*4e4;
+	//		float lookup = (tex2DARRAY(shadowMap_Array, float3(sampleCoord+offset, (float)cascadeIdx)) + 1e-5*exp((float)cascadeIdx)) < shadowPos.z ? 0 : 1;
+	//		float len = length(offset);
+	//		total += len;
+	//		weight += lookup*len;
+	//	}
+	//	weight /= total;
+	//	color.rgb *= weight;
+	//	//*/
+	//}
+	//return color;
+}
+
+technique t
+{
+	pass p
+	{
+		VertexProgram = compile vs_4_0 VS_MAIN();
+		FragmentProgram = compile ps_4_0 PS_MAIN();
+	}
+}

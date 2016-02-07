@@ -1,0 +1,202 @@
+#include "common.cginc"
+
+// texture maps
+sampler2D diffuseMap = {
+	MipFilter = LINEAR,
+    MinFilter = LINEAR,
+    MagFilter = LINEAR,
+	AddressU = WRAP,
+	AddressV = WRAP,
+};
+
+sampler2D normalMap = {
+	MipFilter = LINEAR,
+    MinFilter = LINEAR,
+   	MagFilter = LINEAR,
+	AddressU = WRAP,
+	AddressV = WRAP,
+};
+
+sampler2D glossinessMap = {
+	MipFilter = LINEAR,
+    MinFilter = LINEAR,
+    MagFilter = LINEAR,
+	AddressU = WRAP,
+	AddressV = WRAP,
+};
+
+sampler2D specLevelMap = {
+	MipFilter = LINEAR,
+    MinFilter = LINEAR,
+    MagFilter = LINEAR,
+	AddressU = WRAP,
+	AddressV = WRAP,
+};
+
+
+#include "deferred_gbuffer_material.cginc"
+
+
+//------------------------------------------------------------------------------
+//	Shader constants
+//------------------------------------------------------------------------------
+struct {
+	float4x4 worldViewProj;
+	float4x4 worldView;
+	float4x4 world;
+	float3	 camPos;
+	float	 far;
+} transform : register(c0);
+
+
+//------------------------------------------------------------------------------
+// Shader in/out structures
+//------------------------------------------------------------------------------
+struct VS_IN {
+	float3 posL 	: POSITION;
+	float3 normalL 	: NORMAL;
+	float3 tangentL : COLOR0;
+	float2 tex0 	: TEXCOORD0;
+};
+
+struct VS_OUT {
+	float4 posH 		: POSITION;
+	float3 normalW 		: TEXCOORD0;
+	float3 tangentW		: TEXCOORD1;
+	float2 tex0 		: TEXCOORD2;
+	float3x3 TBN		: TEXCOORD4;
+	float3 posW			: TEXCOORD7;
+	float linearDepth	: COLOR0;
+};
+
+
+//------------------------------------------------------------------------------
+// Vertex shader
+//------------------------------------------------------------------------------
+VS_OUT VS_MAIN(VS_IN In) {
+	VS_OUT Out;
+
+	Out.posH = 
+		In.posL.x * transform.worldViewProj[0] + (
+		In.posL.y * transform.worldViewProj[1] + (
+		In.posL.z * transform.worldViewProj[2] + 
+		transform.worldViewProj[3]));
+	Out.normalW = 
+		In.normalL.x * transform.world[0].xyz + (
+		In.normalL.y * transform.world[1].xyz + (
+		In.normalL.z * transform.world[2].xyz));
+	Out.tangentW = 
+		In.tangentL.x * transform.world[0].xyz + ( 
+		In.tangentL.y * transform.world[1].xyz + (
+		In.tangentL.z * transform.world[2].xyz)); 
+
+	Out.posW = In.posL.x * transform.world[0].xyz + ( In.posL.y * transform.world[1].xyz + (In.posL.z * transform.world[2].xyz + transform.world[3].xyz));
+
+	float viewZ = transform.worldView[0][2] * In.posL.x + 
+				  transform.worldView[1][2] * In.posL.y + 
+				  transform.worldView[2][2] * In.posL.z + 
+				  transform.worldView[3][2];
+	
+	// Scale from [0, farPlane] to [0,1] range
+	Out.linearDepth = viewZ / transform.far;
+
+	Out.tex0 = In.tex0;
+
+	// Calculate TBN base per vertex (CHEAP) (Tangent to World space) for normal mapping, etc.
+	float3 N = normalize(Out.normalW);
+	float3 T = normalize(Out.tangentW - dot(Out.tangentW,N) * N);
+	float3 B = normalize(cross(N,T));
+	Out.TBN = float3x3(T,B,N);
+	return Out;
+}
+
+
+//------------------------------------------------------------------------------
+// Vertex shader
+//------------------------------------------------------------------------------
+
+
+float3 ParallaxOcclusionMapping(float3 viewDirW,float3 normalW,float3 tangentW,float2 OriginalUW)
+{
+	float3x3 worldToTangent = transpose(float3x3(tangentW, cross(tangentW, normalW), normalW));
+
+	float3 viewDirTS = mul(viewDirW, worldToTangent);
+	float3 normalTS = mul(normalW, worldToTangent);
+
+	float2 currUV = OriginalUW;
+	float currDepth = 1.0f;
+	float rayDepth = 1.0f;
+
+	float2 dx = ddx(OriginalUW);
+	float2 dy = ddx(OriginalUW);
+
+	int nMaxSamples = lerp(5, 100, saturate(dot(-viewDirTS, normalTS)) );
+
+	// xy, and z magicstepper
+	const float invHeightScale = 20;
+	viewDirTS.z *= invHeightScale;
+	float3 stepTS = viewDirTS / viewDirTS.z / (float)nMaxSamples; // z: [0, -1.0f / nSamples],
+
+	int nSamples = 0;
+	while(nSamples < nMaxSamples)
+	{
+		currDepth = tex2D(specLevelMap, currUV, dx, dy).r;
+
+		if(currDepth > rayDepth)
+		{
+			nSamples = nMaxSamples;
+		}
+		else
+		{
+			currUV -= stepTS.xy;
+			rayDepth -= stepTS.z;
+			nSamples++;
+		}
+	}
+
+	return float3(currUV, rayDepth);
+}
+
+
+struct PS_OUT {
+	float4 gb0 : COLOR0;
+	float2 gb1 : COLOR1;
+	float4 gb2 : COLOR2;
+	float depth : DEPTH;
+};
+PS_OUT PS_MAIN(VS_OUT In) {
+	PS_OUT Out;
+	GBUFFER gb;
+
+	//POM IT
+	//In.tex0 = ParallaxOcclusionMapping(In.posW - transform.camPos, In.normalW, In.tangentW, In.tex0).xy;
+
+
+	if (mtlProperties.hasNormalMap) {
+		gb = PixelShader_NormalMap(In.TBN, In.tex0);
+		Out.gb0 = gb.diffuse;
+		Out.gb1 = gb.normal;
+		Out.gb2 = gb.misc;
+	}
+	else {
+		gb = PixelShader_Simple(In.normalW, In.tex0);
+		Out.gb0 = gb.diffuse;
+		Out.gb1 = gb.normal;
+		Out.gb2 = gb.misc;
+	}
+
+	//Out.gb0 = float4(0,0,0,0);
+	Out.gb0 = pow(Out.gb0, 2.2f);
+	Out.depth = In.linearDepth;	
+
+	return Out;
+};
+
+technique t
+{
+	pass p
+	{
+		VertexProgram = compile vs_4_0 VS_MAIN();
+		FragmentProgram = compile ps_4_0 PS_MAIN();
+	}
+}
