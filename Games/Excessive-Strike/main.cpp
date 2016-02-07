@@ -47,9 +47,9 @@ int main()
 	// Init Engine core
 	Core.InitSoundEngineSFML();
 	rGraphicsEngineRaster graphicsDesc;
-		graphicsDesc.gapiType = eGapiType::GL_4_5;
+		graphicsDesc.gapiType = eGapiType::DX11;
 		graphicsDesc.targetWindow = window;
-	Core.InitGraphicsEngineRaster(graphicsDesc);
+	Core.InitGraphicsEngineRasterZsiros(graphicsDesc);
 	rPhysicsEngineBullet physicsDesc;
 		physicsDesc.gravity = mm::vec3(0, 0, -9.81f);
 	Core.InitPhysicsEngineBullet(physicsDesc);

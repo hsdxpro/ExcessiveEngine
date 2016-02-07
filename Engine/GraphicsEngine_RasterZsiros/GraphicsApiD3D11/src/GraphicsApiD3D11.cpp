@@ -572,7 +572,8 @@ IVertexBuffer* cGraphicsApiD3D11::CreateVertexBuffer(const rBuffer& data)
 {
 	cVertexFormat dummy;
 	IVertexBuffer* pBuffer;
-	CreateVertexBuffer(&pBuffer, data.is_writable ? eUsage::DYNAMIC : eUsage::DEFAULT, dummy, data.size, data.initial_data);
+	CreateVertexBuffer(&pBuffer, eUsage::DYNAMIC, dummy, data.size, data.initial_data);
+	//CreateVertexBuffer(&pBuffer, data.is_writable ? eUsage::DYNAMIC : eUsage::DEFAULT, dummy, data.size, data.initial_data);
 	return pBuffer;
 }
 
@@ -611,7 +612,7 @@ eGapiResult	cGraphicsApiD3D11::CreateIndexBuffer(IIndexBuffer** resource, eUsage
 IIndexBuffer* cGraphicsApiD3D11::CreateIndexBuffer(const rBuffer& data)
 {
 	IIndexBuffer* pBuffer;
-	CreateIndexBuffer( &pBuffer, data.is_writable ? eUsage::DYNAMIC : eUsage::DEFAULT, data.size, data.initial_data );
+	CreateIndexBuffer( &pBuffer, eUsage::DYNAMIC, data.size, data.initial_data );
 	return pBuffer;
 }
 

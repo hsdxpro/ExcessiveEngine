@@ -12,7 +12,7 @@
 EngineCore Core;
 
 EngineCore::EngineCore()
-:graphicsEngine(0), physicsEngine(0), soundEngine(0), networkEngine(0)
+	:graphicsEngine(0), physicsEngine(0), soundEngine(0), networkEngine(0)
 {
 	prevFrameActorCollideList.reserve(1000);
 	curFrameActorCollideList.reserve(1000);
@@ -54,7 +54,7 @@ IGraphicsEngine* EngineCore::InitGraphicsEngineRaster(const rGraphicsEngineRaste
 
 	// Load error diffuse texture, that we place on materials which fails load their own texture by path
 	texError = graphicsEngine->CreateTexture();
-	
+
 	bool bSuccess = texError->Load(GetAssetsPath() + "error.jpg");
 	assert(bSuccess);
 
@@ -93,7 +93,7 @@ IGraphicsEngine* EngineCore::InitGraphicsEngineRT(const rGraphicsEngineRT& d /*=
 {
 	if (graphicsEngine)
 		graphicsEngine->Release();
-	
+
 	graphicsEngine = new GraphicsEngineRT(d);
 
 	// Default scene and layer for GraphicsEngine
@@ -159,7 +159,7 @@ sound::IEmitter* EngineCore::CreateSoundMono(const std::string& filePath, float 
 	sound::ISoundData* soundData;
 
 	auto it = importedSounds.find(filePath);
-	if(it != importedSounds.end())
+	if (it != importedSounds.end())
 	{
 		soundData = it->second.soundData;
 		soundEmitter = it->second.soundEmitter;
@@ -178,8 +178,8 @@ sound::IEmitter* EngineCore::CreateSoundMono(const std::string& filePath, float 
 		soundEmitter->SetLooped(bLoop);
 
 		rMonoSound d;
-			d.soundData = soundData;
-			d.soundEmitter = soundEmitter;
+		d.soundData = soundData;
+		d.soundEmitter = soundEmitter;
 		importedSounds[filePath] = d;
 	}
 
@@ -229,16 +229,16 @@ Actor* EngineCore::SpawnActor_MeshFromFile(const std::string& modelFilePath)
 Actor* EngineCore::SpawnActor_RigidBodyFromFile(const std::string& modelFilePath, float mass)
 {
 	RigidBodyComponent* rigidComp = SpawnComp_RigidBodyFromFile(modelFilePath, mass);
-		Actor* actor = SpawnActor(rigidComp);
+	Actor* actor = SpawnActor(rigidComp);
 	rigidComp->SetUserPointer(actor);
-	
+
 	return actor;
 }
 
 Actor* EngineCore::SpawnActor_RigidBodyCapsule(float height, float radius, float mass /*= 0*/)
 {
 	RigidBodyComponent* rigidComp = SpawnComp_RigidBodyCapsule(height, radius, mass);
-		Actor* actor = SpawnActor(rigidComp);
+	Actor* actor = SpawnActor(rigidComp);
 	rigidComp->SetUserPointer(actor);
 
 	return actor;
@@ -252,8 +252,8 @@ Actor* EngineCore::SpawnActor_Camera()
 void EngineCore::AddTask(const std::function<void()>& callb, float timeToProceed)
 {
 	rTask task;
-		task.callb = callb;
-		task.timeLeft = timeToProceed;
+	task.callb = callb;
+	task.timeLeft = timeToProceed;
 	tasks.push_back(task); // TODO slow
 }
 
@@ -279,18 +279,15 @@ MeshComponent* EngineCore::SpawnComp_MeshFromFile(const std::string& modelFilePa
 		else
 		{
 			// Config for importing
-				
-
-			
-			eImporter3DFlag importFlags = eImporter3DFlag::VERT_BUFF_INTERLEAVED |
-										  eImporter3DFlag::VERT_ATTR_POS |
-										  eImporter3DFlag::VERT_ATTR_NORM |
-										  eImporter3DFlag::VERT_ATTR_TAN |
-										  eImporter3DFlag::VERT_ATTR_TEX0 |
-										  eImporter3DFlag::PIVOT_RECENTER;
+			rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED,
+				eImporter3DFlag::VERT_ATTR_POS,
+				eImporter3DFlag::VERT_ATTR_NORM,
+				eImporter3DFlag::VERT_ATTR_TAN,
+				eImporter3DFlag::VERT_ATTR_TEX0,
+				eImporter3DFlag::PIVOT_RECENTER });
 
 			modelDesc = new rImporter3DData();
-			Importer3D::LoadModelFromFile(GetAssetsPath() + modelFilePath, importFlags, *modelDesc);
+			Importer3D::LoadModelFromFile(GetAssetsPath() + modelFilePath, cfg, *modelDesc);
 
 			modelDesc->Serialize(binPath);
 		}
@@ -358,7 +355,7 @@ MeshComponent* EngineCore::SpawnComp_MeshFromFile(const std::string& modelFilePa
 		// Material groups (face assignment)
 		std::vector<graphics::IMesh::MaterialGroup> matIDs;
 		matIDs.resize(importedMesh->materials.size());
-		for (u32 i = 0; i < matIDs.size(); i++) 
+		for (u32 i = 0; i < matIDs.size(); i++)
 		{
 			matIDs[i].beginFace = importedMesh->materials[i].faceStartIdx;
 			matIDs[i].endFace = importedMesh->materials[i].faceEndIdx;
@@ -371,7 +368,7 @@ MeshComponent* EngineCore::SpawnComp_MeshFromFile(const std::string& modelFilePa
 		meshData.mat_ids = matIDs.data();
 		meshData.mat_ids_num = (u32)matIDs.size();
 		meshData.vertex_bytes = importedMesh->nVertices * importedMesh->vertexSize;
-		meshData.vertex_data = importedMesh->vertexBuffers[0]; // We know imported thing has interleaved buffer...
+		meshData.vertex_data = importedMesh->vertexBuffers[0];
 
 		graphics::IMesh::ElementDesc elements[] = {
 			graphics::IMesh::POSITION, 3,
@@ -402,7 +399,6 @@ RigidBodyComponent* EngineCore::SpawnComp_RigidBodyFromFile(const std::string& m
 	}
 	else // Not loaded, check bin format first
 	{
-		// TODO modelFilePath.ReplaceFromBack(".", ".exm") rather than modelFilePath.substr(0, modelFilePath.rfind('.')) + ".exm"
 		std::string binPath = GetAssetsPath() + modelFilePath.substr(0, modelFilePath.rfind('.')) + ".exm"; // Excessive Mesh
 
 		if (File::IsExists(binPath))
@@ -412,10 +408,11 @@ RigidBodyComponent* EngineCore::SpawnComp_RigidBodyFromFile(const std::string& m
 		}
 		else
 		{
-			eImporter3DFlag importFlags = eImporter3DFlag::PIVOT_RECENTER | eImporter3DFlag::VERT_ATTR_POS | eImporter3DFlag::VERT_BUFF_INTERLEAVED;
+			// Config for importing
+			rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED, eImporter3DFlag::VERT_ATTR_POS});
 
 			modelDesc = new rImporter3DData();
-			Importer3D::LoadModelFromFile(GetAssetsPath() + modelFilePath, importFlags, *modelDesc);
+			Importer3D::LoadModelFromFile(GetAssetsPath() + modelFilePath, cfg, *modelDesc);
 
 			modelDesc->Serialize(binPath);
 		}
@@ -438,13 +435,17 @@ RigidBodyComponent* EngineCore::SpawnComp_RigidBodyFromFile(const std::string& m
 			vertices[i] = *(mm::vec3*)((u8*)mesh->vertexBuffers[0] + i * mesh->vertexSize);
 			loadedPhysicalVertexPositions[i] = vertices[i]; // RT TMP
 		}
-			
+
 	}
 
 	if (mass == 0)
 		rigidEntity = physicsEngine->AddEntityRigidStatic(vertices, mesh->nVertices, mesh->indices, mesh->indexSize, mesh->nIndices);
 	else
 		rigidEntity = physicsEngine->AddEntityRigidDynamic(vertices, mesh->nVertices, mass);
+
+	//loadedPhysicalVertexPositions = vertices;
+	//delete vertices;
+	//vertices = nullptr; // Important
 
 	auto c = new RigidBodyComponent(rigidEntity);
 	worldComponents.push_back(c);
@@ -521,7 +522,7 @@ void EngineCore::Update(float deltaTime)
 		}
 		actorsToDestroy.clear();
 	}
-	
+
 	{
 		PROFILE_SCOPE("Modules Update");
 
@@ -570,7 +571,7 @@ void EngineCore::Update(float deltaTime)
 		PROFILE_SCOPE("Game Logic");
 
 		// Collision, enter, exit calls
-		if(physicsEngine)
+		if (physicsEngine)
 		{
 			PROFILE_SCOPE("Core & onCollision(Enter, Exit, ...)");
 
@@ -789,5 +790,5 @@ void EngineCore::Update(float deltaTime)
 #endif
 
 	// Present opengl window
-	//graphicsEngine->GetTargetWindow()->Present();
+	graphicsEngine->GetTargetWindow()->Present();
 }

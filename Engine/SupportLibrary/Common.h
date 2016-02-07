@@ -47,7 +47,7 @@ inline zzzEnum_##enumClass operator | (enumClass a, enumClass b) \
 }\
 inline bool operator & (enumClass a, enumClass b)\
 {\
-	return ((enumType)a & (enumType)b) == 1;\
+	return ((enumType)a & (enumType)b) > 0;\
 }\
 inline zzzEnum_##enumClass operator ~ (zzzEnum_##enumClass a)\
 {\

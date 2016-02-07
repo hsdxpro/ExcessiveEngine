@@ -51,14 +51,14 @@ static void cFileUtil::Write(std::ofstream& o, const T& data) {
 
 template<>
 static void cFileUtil::Write<const wchar_t*>(std::ofstream& o, const wchar_t* const& str) {
-	size_t size = (wcslen(str) + 1) * sizeof(wchar_t);
+	uint32_t size = (wcslen(str) + 1) * sizeof(wchar_t);
 	cFileUtil::Write(o, size);
 	o.write((const char*)str, size);
 }
 
 template<>
 static void cFileUtil::Write<zsString>(std::ofstream& o, const zsString& str) {
-	size_t size = (str.size() + 1) * sizeof(wchar_t);
+	uint32_t size = (str.size() + 1) * sizeof(wchar_t);
 	cFileUtil::Write(o, size);
 	o.write((const char*)str.c_str(), size);
 }
