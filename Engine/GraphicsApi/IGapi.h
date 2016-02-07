@@ -94,7 +94,7 @@ public:
 
 	///////////////////////////////////////
     // Draw calls
-	virtual void DrawIndexed(u32 num_indices, u32 index_byte_offset = 0) = 0;
+	virtual void DrawIndexed(u32 nIndices, u32 idxStart = 0) = 0;
 
 	virtual void Draw(u32 nVertices, u32 offset = 0) = 0;
 
