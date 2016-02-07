@@ -30,12 +30,12 @@ private:
 	std::vector<PipeInfo> pipes;
 	std::shared_timed_mutex mtx;
 	std::atomic_bool prohibitPipes;
-	std::atomic_size_t pendingEvents;
+	std::atomic_ptrdiff_t pendingEvents;
 
 	std::ostream* outputStream;
 	std::chrono::high_resolution_clock::time_point startTime;
 
-	static constexpr size_t flushThreshold = 5;
+	static constexpr ptrdiff_t flushThreshold = 1000;
 };
 
 

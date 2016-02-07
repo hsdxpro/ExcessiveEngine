@@ -12,6 +12,7 @@ LogNode::LogNode() {
 	prohibitPipes = false;
 	startTime = std::chrono::high_resolution_clock::now();
 	outputStream = nullptr;
+	pendingEvents = 0;
 }
 
 LogNode::~LogNode() {
@@ -79,6 +80,7 @@ void LogNode::Flush() {
 		else {
 			// flush file
 			if (outputStream && outputStream->good()) {
+				*outputStream << "[NOTE] Flushed.\n";
 				outputStream->flush();
 			}
 
@@ -104,7 +106,7 @@ void LogNode::NotifyClose(LogPipe* pipe) {
 	prohibitPipes = false;
 
 	auto it = pipes.begin();
-	while (it != pipes.end() || it->pipe.get() != pipe) {
+	while (it != pipes.end() && it->pipe.get() != pipe) {
 		++it;
 	}
 	assert(it != pipes.end());
