@@ -7,7 +7,7 @@
 
 namespace exc {
 
-
+/// <summary> Denotes the type of polimorphic EventParameters. </summary>
 enum class eEventParameterType {
 	DEFAULT,
 	FLOAT,
@@ -16,13 +16,24 @@ enum class eEventParameterType {
 };
 
 
-
+/// <summary> 
+/// Attach to events as parameters.
+/// This class is extended to provide parameters that have values
+/// of type float, int or raw bytes. See <see cref="EventParameterFloat"/>,
+/// <see cref="EventParameterInt"/> and <see cref="EventParameterRaw"/>.
+/// </summary>
 struct EventParameter {
 	EventParameter() = default;
-	EventParameter(const std::string name) : name(name) {}
+	EventParameter(const std::string& name) : name(name) {}
+	EventParameter(const char* name) : name(name) {}
 
+	/// <summary> Name of the parameter. </summary>
 	std::string name;
+
+	/// <summary> Convert the parameter's value to string. </summary>
 	virtual std::string ToString() const { return std::string{}; }
+
+	/// <summary> Get the underlying type (Float, Int or Raw). </summary>
 	virtual eEventParameterType Type() const { return eEventParameterType::DEFAULT; }
 };
 
@@ -30,66 +41,103 @@ struct EventParameter {
 struct EventParameterFloat : public EventParameter {
 	EventParameterFloat() = default;
 	EventParameterFloat(const std::string name) : EventParameter(name) {}
-	EventParameterFloat(const std::string name, float value) : EventParameter(name), value(value) {}
+	EventParameterFloat(const char* name) : EventParameter(name) {}
+	EventParameterFloat(const std::string& name, float value) : EventParameter(name), value(value) {}
 
+	/// <summary> Value associated with the parameter. </summary>
 	float value;
+
+	/// <summary> Convert the float value to string. </summary>
 	std::string ToString() const override {
 		std::stringstream ss;
 		ss << value;
 		return ss.str();
 	}
+
+	/// <summary> Get the underlying type which is Float. </summary>
 	eEventParameterType Type() const override { return eEventParameterType::FLOAT; }
 };
 
 
 struct EventParameterInt : public EventParameter {
 	EventParameterInt() = default;
-	EventParameterInt(const std::string name) : EventParameter(name) {}
-	EventParameterInt(const std::string name, int value) : EventParameter(name), value(value) {}
+	EventParameterInt(const std::string& name) : EventParameter(name) {}
+	EventParameterInt(const char* name) : EventParameter(name) {}
+	EventParameterInt(const std::string& name, int value) : EventParameter(name), value(value) {}
 
+	/// <summary> Value associated with the parameter. </summary>
 	int value;
+
+	/// <summary> Convert the int value to string. </summary>
 	std::string ToString() const override {
 		std::stringstream ss;
 		ss << value;
 		return ss.str();
 	}
+
+	/// <summary> Get the underlying type which is Int. </summary>
 	eEventParameterType Type() const override { return eEventParameterType::INT; }
 };
 
 struct EventParameterRaw : public EventParameter {
+	/// <summary> Raw binary data associated with parameter. </summary>
 	std::vector<uint8_t> data;
+
+	/// <summary> Binary data cannot be converted to string, so it just returns "binary data". </summary>
 	std::string ToString() const override {
 		return "binary data";
 	}
+
+	/// <summary> Get the underlying type which is Raw. </summary>
 	eEventParameterType Type() const override { return eEventParameterType::RAW; }
 };
 
 
-
+/// <summary>
+/// Describes an event which is to be logged.
+/// An event contains a message and can have
+/// any number of parameters associated with it.
+/// </summary>
 class Event {
 public:
 	Event();
+
+	/// <summary> Create an event with specific message. </sumary>
 	Event(const std::string& message);
 
+	/// <summary> Create an event with specific message. </sumary>
+	Event(const char* message) : Event(std::string(message)) {}
+
+	/// <summary> Construct object with message and a list of parameters. </summary>
+	/// <param name="message"> The message of the event. </param>
+	/// <param name="parameters"> Any number of EventParameters which describe the event's parameters. </param>
 	template <class... Args>
-	Event(const std::string& message, Args&&... args);
+	Event(const std::string& message, Args&&... parameters);
 
 	Event(const Event&);
 	Event(Event&&) = default;
 	~Event() = default;
 
+	/// <summary> Set message of the event. </summary>
 	void SetMessage(const std::string& message);
+	/// <summary> Get current message. </summary>
 	const std::string& GetMessage() const;
 
+	/// <summary> Append a parameter to the end of the parameter list. </summary>
 	void PutParameter(const EventParameter& parameter);
+	/// <summary> Get number of parameters. </summary>
 	size_t GetNumParameters() const;
 
+	/// <summary> Modify indexth parameter. </summary>
 	EventParameter& operator[](size_t index);
+	/// <summary> Read indexth parameter. </summary>
 	const EventParameter& operator[](size_t index) const;
 private:
+	/// <summary> Helper function for variadic ctor. </summary>
 	template <size_t Index, class Head, class... Args>
 	void AddVariadicParams(Head&& head, Args&&... args);
-
+	
+	/// <summary> Recursion terminator overload. </summary>
 	template <size_t Index>
 	void AddVariadicParams();
 
@@ -100,9 +148,9 @@ private:
 
 
 template <class... Args>
-Event::Event(const std::string& message, Args&&... args) : message(message) {
-	parameters.reserve(sizeof...(Args));
-	AddVariadicParams<0, Args...>(std::forward<Args>(args)...);
+Event::Event(const std::string& message, Args&&... parameters) : message(message) {
+	this->parameters.reserve(sizeof...(Args));
+	AddVariadicParams<0, Args...>(std::forward<Args>(parameters)...);
 }
 
 
@@ -115,7 +163,7 @@ void Event::AddVariadicParams(Head&& head, Args&&... args) {
 
 template <size_t Index>
 void Event::AddVariadicParams() {
-
+	// empty
 }
 
 

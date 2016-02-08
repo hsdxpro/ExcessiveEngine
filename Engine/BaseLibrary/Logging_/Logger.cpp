@@ -3,11 +3,9 @@
 
 #include <cassert>
 
-#include <iostream>
-using std::cout;
-using std::endl;
 
 namespace exc {
+
 
 Logger::Logger() {
 	myNode = std::make_unique<LogNode>();
