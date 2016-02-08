@@ -570,7 +570,30 @@ eGapiResult	cGraphicsApiD3D11::CreateVertexBuffer(IVertexBuffer** resource, eUsa
 
 IVertexBuffer* cGraphicsApiD3D11::CreateVertexBuffer(const rBuffer& data)
 {
+	cVertexFormat::Attribute attrs[4];
+	attrs[0].bitsPerComponent = cVertexFormat::eBits::_32_BIT;
+	attrs[0].nComponents = 3;
+	attrs[0].semantic = cVertexFormat::POSITION;
+	attrs[0].type = cVertexFormat::eType::FLOAT;
+
+	attrs[1].bitsPerComponent = cVertexFormat::eBits::_32_BIT;
+	attrs[1].nComponents = 3;
+	attrs[1].semantic = cVertexFormat::NORMAL;
+	attrs[1].type = cVertexFormat::eType::FLOAT;
+
+	attrs[2].bitsPerComponent = cVertexFormat::eBits::_32_BIT;
+	attrs[2].nComponents = 3;
+	attrs[2].semantic = cVertexFormat::COLOR;
+	attrs[2].type = cVertexFormat::eType::FLOAT;
+
+	attrs[3].bitsPerComponent = cVertexFormat::eBits::_32_BIT;
+	attrs[3].nComponents = 2;
+	attrs[3].semantic = cVertexFormat::TEXCOORD;
+	attrs[3].type = cVertexFormat::eType::FLOAT;
+
 	cVertexFormat dummy;
+	dummy.Create(attrs, 4);
+
 	IVertexBuffer* pBuffer;
 	CreateVertexBuffer(&pBuffer, eUsage::DYNAMIC, dummy, data.size, data.initial_data);
 	//CreateVertexBuffer(&pBuffer, data.is_writable ? eUsage::DYNAMIC : eUsage::DEFAULT, dummy, data.size, data.initial_data);
@@ -1517,51 +1540,7 @@ void cGraphicsApiD3D11::SetVertexBuffers(
 		pBuffers[i] = ((cVertexBufferD3D11*)buffers[i])->GetBufferPointer();
 
 	d3dcon->IASetVertexBuffers(start_slot, num_buffers, pBuffers, strides, offsets);
-
-	static bool bInputLayoutCreated = false;
-	static ID3D11InputLayout* inputLayout = nullptr;
-
-	if (!bInputLayoutCreated)
-	{
-		bInputLayoutCreated = true;
-
-		// Typical vertex
-		// Pos 
-		// Norm
-		// Tex0...
-
-		D3D11_INPUT_ELEMENT_DESC d[3];
-		d[0].AlignedByteOffset = 0;
-		d[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-		d[0].InputSlot = 0;
-		d[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-		d[0].InstanceDataStepRate = 0;
-		d[0].SemanticIndex = 0;
-		d[0].SemanticName = "POSITION";
-
-		d[1].AlignedByteOffset = 0;
-		d[1].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-		d[1].InputSlot = 1;
-		d[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-		d[1].InstanceDataStepRate = 0;
-		d[1].SemanticIndex = 0;
-		d[1].SemanticName = "NORMAL";
-
-		d[2].AlignedByteOffset = 0;
-		d[2].Format = DXGI_FORMAT_R32G32_FLOAT;
-		d[2].InputSlot = 1;
-		d[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-		d[2].InstanceDataStepRate = 0;
-		d[2].SemanticIndex = 0;
-		d[2].SemanticName = "TEX0";
-
-		HRESULT hr = d3ddev->CreateInputLayout( d, 3, activeShaderProg->GetVSByteCode(), activeShaderProg->GetVSByteCodeSize(), &inputLayout );
-
-	}
-
-	d3dcon->IASetInputLayout(inputLayout);
-
-	//AutoSetInputLayout(activeShaderProg, (cVertexBufferD3D11*)&buffers[0]);
+	AutoSetInputLayout(activeShaderProg, (cVertexBufferD3D11*)&buffers[0]);
 }
 
 void cGraphicsApiD3D11::SetVertexBuffers(IVertexBuffer** buffers, const rVertexAttrib* attrib_data, u32 num_buffers)
@@ -2081,9 +2060,9 @@ eGapiResult cGraphicsApiD3D11::GenerateMips(ITexture2D* t)
 ID3D11InputLayout* cGraphicsApiD3D11::GetInputLayout(cShaderProgramD3D11* shader, cVertexFormat bufferFormat) {
 	cVertexFormat shaderFormat = shader->GetVSInputFormat();
 
-	if (!shaderFormat.IsSubsetOf(bufferFormat)) {
-		return nullptr;
-	}
+	//if (!shaderFormat.IsSubsetOf(bufferFormat)) {
+	//	return nullptr;
+	//}
 
 	std::pair<cVertexFormat, cVertexFormat> key(shaderFormat, bufferFormat);
 
@@ -2092,7 +2071,7 @@ ID3D11InputLayout* cGraphicsApiD3D11::GetInputLayout(cShaderProgramD3D11* shader
 		// create new input layout
 		ID3D11InputLayout* layout = nullptr;
 
-		auto vertexDesc = ConvertToNativeVertexFormat(bufferFormat);
+		auto vertexDesc = ConvertToNativeVertexFormat(shaderFormat);
 
 		d3ddev->CreateInputLayout(vertexDesc.data(), vertexDesc.size(), shader->GetVSByteCode(), shader->GetVSByteCodeSize(), &layout);
 

@@ -315,7 +315,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	gApi->ClearTexture(gBuffer[0],		  eClearFlag::COLOR, Vec4(0.5f, 0.7f, 0.8f, 0.0f));
 	gApi->ClearTexture(gBuffer[1],		  eClearFlag::COLOR, Vec4(0.5f, 0.5f, 0.0f, 0.0f));
 	gApi->ClearTexture(gBuffer[2],		  eClearFlag::COLOR, Vec4(0.0f, 0.0f, 0.0f, 0.0f));
-	gApi->ClearTexture(compositionBuffer, eClearFlag::COLOR, Vec4(1.0f, 0.0f, 0.0f, 0.0f));
+	gApi->ClearTexture(compositionBuffer, eClearFlag::COLOR, Vec4(0.0f, 0.0f, 0.0f, 0.0f));
 
 	//----------------------------------------------------------------------//
 	// --- --- --- --- --- --- --- GBUFFER PASS --- --- --- --- --- --- --- //
@@ -434,9 +434,8 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 			mm::mat4 posMat = mm::create_translation(entity->GetPos());
 			mm::mat4 rotMat = mm::mat4(entity->GetRot());
 			mm::mat4 skewMat = mm::mat4(entity->GetSkew());
-			mm::mat4 worldMat = rotMat * skewMat;
 
-			worldMat = posMat;// *worldMat;
+			mm::mat4 worldMat = posMat * (rotMat * skewMat);
 
 			// cbuffer
 			struct {

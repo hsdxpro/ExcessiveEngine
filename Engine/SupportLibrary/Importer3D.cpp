@@ -109,12 +109,12 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 	{
 		switch (f)
 		{
-		case eImporter3DFlag::VERT_ATTR_POS:			vertexSize += sizeof(mm::vec3);  pos_attribOffset = offset;	offset += sizeof(mm::vec3); break;
-		case eImporter3DFlag::VERT_ATTR_TEX0:			vertexSize += sizeof(mm::vec2);  tex0_attribOffset = offset;	offset += sizeof(mm::vec2); break;
-		case eImporter3DFlag::VERT_ATTR_NORM:			vertexSize += sizeof(mm::vec3);  norm_attribOffset = offset;	offset += sizeof(mm::vec3); break;
-		case eImporter3DFlag::VERT_ATTR_TAN:			vertexSize += sizeof(mm::vec3);  tan_attribOffset = offset;	offset += sizeof(mm::vec3); break;
-		case eImporter3DFlag::VERT_ATTR_BITAN:			vertexSize += sizeof(mm::vec3);  bitan_attribOffset = offset;	offset += sizeof(mm::vec3); break;
-		case eImporter3DFlag::VERT_ATTR_BONE_INDICES:	vertexSize += sizeof(u32) * 4;	 boneIndices_attribOffset = offset;	offset += sizeof(mm::vec2); break;
+		case eImporter3DFlag::VERT_ATTR_POS:			vertexSize += sizeof(mm::vec3);  pos_attribOffset = offset;			offset += sizeof(mm::vec3);  break;
+		case eImporter3DFlag::VERT_ATTR_TEX0:			vertexSize += sizeof(mm::vec2);  tex0_attribOffset = offset;		offset += sizeof(mm::vec2);  break;
+		case eImporter3DFlag::VERT_ATTR_NORM:			vertexSize += sizeof(mm::vec3);  norm_attribOffset = offset;		offset += sizeof(mm::vec3);  break;
+		case eImporter3DFlag::VERT_ATTR_TAN:			vertexSize += sizeof(mm::vec3);  tan_attribOffset = offset;			offset += sizeof(mm::vec3);  break;
+		case eImporter3DFlag::VERT_ATTR_BITAN:			vertexSize += sizeof(mm::vec3);  bitan_attribOffset = offset;		offset += sizeof(mm::vec3);  break;
+		case eImporter3DFlag::VERT_ATTR_BONE_INDICES:	vertexSize += sizeof(u32) * 4;	 boneIndices_attribOffset = offset;	offset += sizeof(mm::vec2);	 break;
 		case eImporter3DFlag::VERT_ATTR_BONE_WEIGHTS:	vertexSize += sizeof(float) * 4; boneWeights_attribOffset = offset;	offset += sizeof(float) * 4; break;
 		}
 	}
@@ -210,6 +210,11 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 
 				// Gather Index data
 				indices[globalIndicesIdx + k] = localVertIdx + globalVertexIdx;
+
+				if (localVertIdx + globalVertexIdx >= nVertices)
+				{
+					assert(0);
+				}
 
 				// Gather position
 				if (bHasPos & cfg.isContain(eImporter3DFlag::VERT_ATTR_POS))

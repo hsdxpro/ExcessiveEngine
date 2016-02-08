@@ -154,10 +154,6 @@ bool Mesh::Update(MeshData data) {
 	}
 
 	// sort internal elements
-	if (is_tangent) {
-		elements[data.vertex_elements_num] = GetBaseInfo(ElementDesc{BITANGENT, 3});
-		num_elements++;
-	}
 	std::sort(elements, elements + num_elements, [](const ElementInfo& o1, const ElementInfo& o2){ return o1.semantic < o2.semantic; });
 
 
@@ -297,6 +293,7 @@ bool Mesh::Update(MeshData data) {
 	vb_desc.is_persistent = true;
 	vb_desc.prefer_cpu_storage = false;
 	vb_desc.size = internal_stride * num_vertices;
+	vb_desc.initial_data = 0;
 
 	IVertexBuffer* _vb = nullptr;
 

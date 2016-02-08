@@ -409,7 +409,12 @@ RigidBodyComponent* EngineCore::SpawnComp_RigidBodyFromFile(const std::string& m
 		else
 		{
 			// Config for importing
-			rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED, eImporter3DFlag::VERT_ATTR_POS});
+			rImporter3DCfg cfg({ eImporter3DFlag::VERT_BUFF_INTERLEAVED,
+				eImporter3DFlag::VERT_ATTR_POS,
+				eImporter3DFlag::VERT_ATTR_NORM,
+				eImporter3DFlag::VERT_ATTR_TAN,
+				eImporter3DFlag::VERT_ATTR_TEX0,
+				eImporter3DFlag::PIVOT_RECENTER });
 
 			modelDesc = new rImporter3DData();
 			Importer3D::LoadModelFromFile(GetAssetsPath() + modelFilePath, cfg, *modelDesc);
@@ -790,5 +795,5 @@ void EngineCore::Update(float deltaTime)
 #endif
 
 	// Present opengl window
-	graphicsEngine->GetTargetWindow()->Present();
+	//graphicsEngine->GetTargetWindow()->Present();
 }
