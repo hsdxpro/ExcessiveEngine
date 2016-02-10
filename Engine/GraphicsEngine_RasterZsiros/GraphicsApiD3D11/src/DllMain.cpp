@@ -12,7 +12,7 @@
 
 #ifdef _WIN32
 
-#define _WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
 BOOL WINAPI DllMain(HINSTANCE hInstDll, DWORD reason, void* reserved) {

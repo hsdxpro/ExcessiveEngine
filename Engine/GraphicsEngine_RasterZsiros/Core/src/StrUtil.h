@@ -110,7 +110,7 @@ static void cStrUtil::LastNumber(const zsString& str, T& out, wchar_t* char_out,
 		*s++;
 
 	// Search for totally last digit
-	uint32_t lastDigitIdx = str.size();
+	size_t lastDigitIdx = str.size();
 	while ( ! isdigit(*s)) {
 		s--;
 		lastDigitIdx--;

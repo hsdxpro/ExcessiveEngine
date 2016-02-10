@@ -3,6 +3,7 @@
 #include <iostream>
 
 #define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <windows.h>
 
 void cLog::MsgBox(const zsString& str) {

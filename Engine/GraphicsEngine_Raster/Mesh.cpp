@@ -49,7 +49,7 @@ Mesh::Mesh(IGapi* gapi) : gapi(gapi) {
 
 Mesh::~Mesh() {
 	Reset();
-	std::cout << "Mesh @" << this << ": kthxbai";
+	//std::cout << "Mesh @" << this << ": kthxbai";
 }
 
 

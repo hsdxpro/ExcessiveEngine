@@ -347,10 +347,6 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	// Foreach: Instance group
 	for (auto& entity : scene.GetEntities())
 	{
-		//cGeometry& geom = *group->geom.get();
-		//cMaterial& mtl = *group->mtl.get();
-		
-		
 		Mesh* mesh = (Mesh*)entity->GetMesh();
 
 		Material& mtl = *(Material*)entity->GetMaterial();
@@ -364,10 +360,9 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 			gApi->SetVertexBuffers(&stream.vb, &stream.stride, &stream.offset, i, 1);
 		}
 
-		//gApi->SetVertexBuffer(geom.GetVertexBuffer());
-		
 		// Foreach: Entity per-poly material group
-		for (auto& matGroup : mesh->GetMaterialIds()) {
+		for (auto& matGroup : mesh->GetMaterialIds()) 
+		{
 			// Set material
 			struct {
 				// basic parameters
@@ -513,36 +508,36 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	//
 	//	where P is the projection matrix that maps camera space points
 	//	to [-1, 1] x [-1, 1].  That is, GCamera::getProjectUnit(). */
-	//	Vec4		projInfo;
+	//	mm::vec4		projInfo;
 	//
-	//	float		projScale;		Vec3 _pad0;	//  The height in pixels of a 1m object if viewed from 1m away
-	//	float		radius;			Vec3 _pad1;	//  World-space AO radius in scene units (r).  e.g., 1.0m */
-	//	float		radius2;		Vec3 _pad2;
-	//	float		bias;			Vec3 _pad3;	//  Bias to avoid AO in smooth corners, e.g., 0.01m */	
+	//	float		projScale;		mm::vec4 _pad0;	//  The height in pixels of a 1m object if viewed from 1m away
+	//	float		radius;			mm::vec4 _pad1;	//  World-space AO radius in scene units (r).  e.g., 1.0m */
+	//	float		radius2;		mm::vec4 _pad2;
+	//	float		bias;			mm::vec4 _pad3;	//  Bias to avoid AO in smooth corners, e.g., 0.01m */	
 	//
-	//	Vec2		inputTexRes;	Vec2 _pad4;
-	//	float		negFarPlane;	Vec3 _pad5;
-	//	float		intensity;		Vec3 _pad6;	/// Darkending factor, e.g., 1.0 */
-	//	Matrix44	matView;
-	//	Matrix44	matInvViewProj;
-	//	Vec3		camPos;
+	//	mm::vec2	inputTexRes;	mm::vec2 _pad4;
+	//	float		negFarPlane;	mm::vec3 _pad5;
+	//	float		intensity;		mm::vec3 _pad6;	/// Darkending factor, e.g., 1.0 */
+	//	mm::mat4	matView;
+	//	mm::mat4	matInvViewProj;
+	//	mm::vec3	camPos;
 	//} tSaoConstant;
 	//
-	//Matrix44 proj = cam->GetProjMatrix();
+	//mm::mat4 proj = cam->GetProjMatrix(1.0);
 	//
-	//tSaoConstant.projInfo = Vec4(	-2.f / (depthBufferCopy->GetWidth() * proj[0][0]),
-	//								-2.f / (depthBufferCopy->GetHeight() * proj[1][1]),
-	//								 (1.0f - proj[0][2]) / proj[0][0],
-	//								 (1.0f + proj[1][2]) / proj[1][1]);
+	//tSaoConstant.projInfo = mm::vec4(	-2.f / (depthBufferCopy->GetWidth() * proj[0][0]),
+	//									-2.f / (depthBufferCopy->GetHeight() * proj[1][1]),
+	//									(1.0f - proj[0][2]) / proj[0][0],
+	//									(1.0f + proj[1][2]) / proj[1][1]);
 	//tSaoConstant.projScale = 10;
 	//tSaoConstant.radius = 1;
 	//tSaoConstant.radius2 = tSaoConstant.radius * tSaoConstant.radius;
 	//tSaoConstant.bias = 0.01f;
-	//tSaoConstant.inputTexRes = Vec2((float)depthBufferCopy->GetWidth(), (float)depthBufferCopy->GetHeight());
+	//tSaoConstant.inputTexRes = mm::vec2((float)depthBufferCopy->GetWidth(), (float)depthBufferCopy->GetHeight());
 	//tSaoConstant.negFarPlane = -cam->GetFarPlane();
 	//tSaoConstant.intensity = 1;
 	//tSaoConstant.matView = cam->GetViewMatrix();
-	//tSaoConstant.matInvViewProj = Matrix44Inverse(tSaoConstant.matView * cam->GetProjMatrix());
+	//tSaoConstant.matInvViewProj = mm::inverse(cam->GetProjMatrix(1.0) * tSaoConstant.matView);
 	//tSaoConstant.camPos = cam->GetPos();
 	//
 	//gApi->SetShaderProgram(shaderSAO);
@@ -560,8 +555,8 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	// --- --- --- --- --- --- --- --- -- HBAO --- --- --- --- --- --- --- ---- //
 	//--------------------------------------------------------------------------//
 
-	// HBAO FUCK YEAH, I really like the small and smart constant buffer :D
-	// wow, such constant buffer, much beauty, so incomprehensible
+	//HBAO FUCK YEAH, I really like the small and smart constant buffer :D
+	//wow, such constant buffer, much beauty, so incomprehensible
 	struct {
 		float AOResolution[2];		float _pad0[2];
 		float InvAOResolution[2];	float _pad1[2];
@@ -603,42 +598,41 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	
 	data.AngleBias = 10;
 	data.TanAngleBias = tanf(data.AngleBias);
-	data.Strength = 1.0;
+	data.Strength = 1;
 	
 	gApi->SetShaderProgram(shaderHBAO);
 	gApi->SetRenderTargets(1, &aoBuffer, nullptr);
 	
-	//gApi->SetTexture(L"tRandom", randomTexture);
-	//gApi->SetTexture(L"tLinearDepth", depthBufferCopy);
-	//gApi->SetPSConstantBuffer(&data, sizeof(data), 0);
-	//gApi->Draw(3);
-	//
-	//
-	//// HBAO HOR BLUR YEAH !!!
-	//gApi->SetShaderProgram(shaderHBAOblurHor);
-	//gApi->SetRenderTargets(1, &aoBlurHelperBuffer, NULL);
-	//gApi->SetTexture(L"inputTexture", aoBuffer);
-	//gApi->Draw(3);
-	//
-	//
-	//// HBAO VER BLUR YEAH !!!
-	//gApi->SetShaderProgram(shaderHBAOblurVer);
-	//gApi->SetRenderTargets(1, &aoBuffer, nullptr);
-	//gApi->SetTexture(L"inputTexture", aoBlurHelperBuffer);
-	//gApi->Draw(3);
-
+	gApi->SetTexture(L"tRandom", randomTexture);
+	gApi->SetTexture(L"tLinearDepth", depthBufferCopy);
+	gApi->SetPSConstantBuffer(&data, sizeof(data), 0);
+	gApi->Draw(3);
+	
+	
+	// HBAO HOR BLUR YEAH !!!
+	gApi->SetShaderProgram(shaderHBAOblurHor);
+	gApi->SetRenderTargets(1, &aoBlurHelperBuffer, NULL);
+	gApi->SetTexture(L"inputTexture", aoBuffer);
+	gApi->Draw(3);
+	
+	
+	// HBAO VER BLUR YEAH !!!
+	gApi->SetShaderProgram(shaderHBAOblurVer);
+	gApi->SetRenderTargets(1, &aoBuffer, nullptr);
+	gApi->SetTexture(L"inputTexture", aoBlurHelperBuffer);
+	gApi->Draw(3);
 
 	//--------------------------------------------------------------------------//
 	// --- --- --- --- --- --- --- --- -- SSAO --- --- --- --- --- --- --- ---- //
 	//--------------------------------------------------------------------------//
 
 	//struct _aoShaderConstants {
-	//	Matrix44 projMat;
-	//	Matrix44 invViewProj;
-	//	Vec3 camPos; float pad1;
+	//	mm::mat4 projMat;
+	//	mm::mat4 invViewProj;
+	//	mm::vec3 camPos; float pad1;
 	//} aoShaderConstants;
 	//aoShaderConstants.projMat = projMat;
-	//aoShaderConstants.invViewProj = Matrix44Inverse(viewProjMat);;
+	//aoShaderConstants.invViewProj = mm::inverse(viewProjMat);
 	//aoShaderConstants.camPos = cam->GetPos();
 	//
 	//gApi->SetShaderProgram(shaderSSAO);
@@ -647,7 +641,6 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	//gApi->SetTexture(L"depthTexture", depthBufferCopy);
 	//gApi->SetPSConstantBuffer(&aoShaderConstants, sizeof(aoShaderConstants), 0);
 	//gApi->Draw(3);
-
 
 	//--------------------------------------------------------------------------//
 	// --- --- --- --- --- RENDER STATES (composition pass) --- --- --- --- --- //
@@ -689,7 +682,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	std::vector<std::pair<cGraphicsLight, cShadowMap>*> directionalLights;
 	std::vector<std::pair<cGraphicsLight, cShadowMap>*> spotLights;
 	std::vector<std::pair<cGraphicsLight, cShadowMap>*> pointLights;
-	mm::vec3 ambientLight(0.0f, 0.0f, 0.0f);
+	mm::vec3 ambientLight(1.0f, 1.0f, 1.0f);
 
 	//auto& lightList = parent.sceneManager->GetLights();
 	//for (auto light : lightList) 

@@ -104,7 +104,7 @@ void InputCore::MouseMidRelease()
 		callb(clientMousePos);
 }
 
-void InputCore::MouseMove(const mm::ivec2& mouseDelta, const mm::uvec2& clientMousePos)
+void InputCore::MouseMove(const mm::ivec2& mouseDelta, const mm::ivec2& clientMousePos)
 {
 	this->mouseDelta += mouseDelta;
 	this->clientMousePos = clientMousePos;
@@ -293,7 +293,7 @@ bool InputCore::IsMouseMidDown()
 	return bMouseMidDownCurFrame;
 }
 
-bool InputCore::IsMouseMove(mm::uvec2& mouseDelta_out)
+bool InputCore::IsMouseMove(mm::ivec2& mouseDelta_out)
 {
 	mouseDelta_out = mouseDelta;
 	return mouseDelta.x != 0 || mouseDelta.y != 0;

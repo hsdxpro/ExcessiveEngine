@@ -20,7 +20,7 @@ public:
 	void MouseMidPress();
 	void MouseMidRelease();
 	
-	void MouseMove(const mm::ivec2& mouseDelta, const mm::uvec2& clientMousePos);
+	void MouseMove(const mm::ivec2& mouseDelta, const mm::ivec2& clientMousePos);
 
 	void RegOnKeyDown(eKey key, const std::function<void()> callb);
 	void RegOnKeyPressed(eKey key, const std::function<void()> callb);
@@ -54,7 +54,7 @@ public:
 	bool IsMouseMidReleased();
 	bool IsMouseMidDown();
 	
-	bool IsMouseMove(mm::uvec2& mouseDelta_out);
+	bool IsMouseMove(mm::ivec2& mouseDelta_out);
 
 protected:
 	struct rKeyDownInfo
@@ -74,7 +74,7 @@ protected:
 	bool bMouseMidDownCurFrame;
 	bool bMouseMidDownPrevFrame;
 	mm::ivec2 mouseDelta;
-	mm::uvec2 clientMousePos;
+	mm::ivec2 clientMousePos;
 
 	// Registered keyboard callbacks
 	std::vector<std::pair<eKey, std::function<void()>>> onKeyDownCallbacks;

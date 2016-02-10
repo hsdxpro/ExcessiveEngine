@@ -10,7 +10,6 @@
 #include "GraphicsEngine.h"
 
 // TODO REMOVE IT OR I KILL MYSELF
-#include <windows.h>
 #include "GraphicsEntity.h"
 #include "..\..\Core\src\math\Vec2.h"
 

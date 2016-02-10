@@ -29,7 +29,7 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 	is.close();
 
 	// Assimp will parse memory
-	const aiScene* scene = importer.ReadFileFromMemory(mem, fileSize, aiProcess_MakeLeftHanded | aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph | aiProcess_OptimizeMeshes | aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
+	const aiScene* scene = importer.ReadFileFromMemory(mem, fileSize, aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph | aiProcess_OptimizeMeshes | aiProcess_ConvertToLeftHanded);
 
 	// Free memory
 	free(mem);
@@ -225,7 +225,7 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 					u32 vertexIdx = localVertIdx + globalVertexIdx;
 
 					// Then copy the data to the appropriate attrib offset in that vertex
-					memcpy(((u8*)vertices) + vertexSize * vertexIdx + pos_attribOffset, &mm::vec3(pos.x, pos.z, pos.y), sizeof(mm::vec3)); // z and y swapped !!
+					memcpy(((u8*)vertices) + vertexSize * vertexIdx + pos_attribOffset, &mm::vec3(pos.x, pos.y, pos.z), sizeof(mm::vec3));
 				}
 
 				// Gather normal
@@ -275,7 +275,6 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 					u32 vertexIdx = localVertIdx + globalVertexIdx;
 
 					// Then copy the data to the appropriate attrib offset in that vertex
-					//memcpy(((u8*)vertices) + vertexSize * vertexIdx + tex0_attribOffset, &mm::vec2(tex0.x, 1 - tex0.y), sizeof(mm::vec2)); // UV flip y
 					memcpy(((u8*)vertices) + vertexSize * vertexIdx + tex0_attribOffset, &mm::vec2(tex0.x, tex0.y), sizeof(mm::vec2));
 				}
 			}

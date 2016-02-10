@@ -13,7 +13,7 @@ Material::Material() {
 }
 
 Material::~Material() {
-	std::cout << "Material @" << this << ": kthxbai";
+	//std::cout << "Material @" << this << ": kthxbai";
 }
 
 

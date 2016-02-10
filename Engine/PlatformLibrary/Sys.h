@@ -106,6 +106,15 @@ enum class eKey
 	F13,			///< The F13 key
 	F14,			///< The F14 key
 	F15,			///< The F15 key
+	F16,			///< The F16 key
+	F17,			///< The F17 key
+	F18,			///< The F18 key
+	F19,			///< The F19 key
+	F20,			///< The F20 key
+	F21,			///< The F21 key
+	F22,			///< The F22 key
+	F23,			///< The F23 key
+	F24,			///< The F24 key
 	PAUSE,			///< The Pause key
 	COUNT,			///< Keep last -- the total number of keyboard keys
 	INVALID = -1,	///< Unhandled key
@@ -132,7 +141,7 @@ public:
 
 	static void			ShowMsgBox(const std::wstring& msg);
 
-	static void			SetCursorPos(const mm::uvec2& pos);
+	static void			SetCursorPos(const mm::ivec2& pos);
 	static void			SetCursorVisible(bool b);
 
 	static void*		GetDLLProcAddress(DLLHandle h, const std::string& procName);

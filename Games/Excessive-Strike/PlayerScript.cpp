@@ -1,7 +1,6 @@
 #include "PlayerScript.h"
 #include "PlatformLibrary\Sys.h"
 #include "ExcessiveStrikeCommon.h"
-#include <windows.h>
 
 PlayerScript::PlayerScript()
 {
@@ -20,7 +19,6 @@ PlayerScript::PlayerScript()
 	playerMaxMoveSpeed = 2.6f;
 	playerMoveSpeed = playerMaxMoveSpeed;
 	pixelsToRot360 = 1000;
-	windowCenter = Graphics.GetTargetWindow()->GetCenterPos();
 
 	// Weapon model
 	//auto& ak47ModelPath = "ak47/ak.obj";
@@ -71,6 +69,7 @@ PlayerScript::PlayerScript()
 	ak47Graphics->SetScaleLocal({ 1.f / 3, 1.f / 3, 1.f / 3 });
 	ak47Graphics->SetPos(camComp->GetPos() + mm::vec3(0.7f, 1.5f, -0.6f));
 	ak47Graphics->Rot(mm::quat(-90.f / 180.f * 3.1415f, { 0, 0, 1 }));
+	ak47Graphics->Rot(mm::quat(-90.f / 180.f * 3.1415f, { 0, 1, 0 }));
 
 	// Old trans
 	//ak47Graphics->SetScaleLocal({ 1.f / 1800, 1.f / 1800, 1.f / 1800 });
@@ -212,26 +211,28 @@ void PlayerScript::Update(float deltaSeconds)
 	{
 		mousePosWhenPress = Sys::GetCursorPos();
 		Sys::SetCursorVisible(false);
-		Sys::SetCursorPos(mm::uvec2((u32)mousePosWhenPress.x, (u32)mousePosWhenPress.y));
 	}
 
 	if (Input.IsMouseRightReleased())
+	{
+		//Sys::SetCursorPos(mm::ivec2(mousePosWhenPress.x, mousePosWhenPress.y));
 		Sys::SetCursorVisible(true);
+	}
 
 	if (Input.IsMouseRightDown())
 	{
 		// Roting camera
-		mm::uvec2 mouseDelta;
+		mm::ivec2 mouseDelta;
 		if (Input.IsMouseMove(mouseDelta))
 		{
 			static float angleZ = 0;
 			static float angleX = 0;
 
 			// Input read up finished, now we can recenter cursor for our fps game
-			auto mousePos = Sys::GetCursorPos();
+			//auto mousePos = Sys::GetCursorPos();
 
-			float mouseDx = mousePos.x - mousePosWhenPress.x;
-			float mouseDy = mousePos.y - mousePosWhenPress.y;
+			float mouseDx = mouseDelta.x;// mousePos.x - mousePosWhenPress.x;
+			float mouseDy = mouseDelta.y;//mousePos.y - mousePosWhenPress.y;
 
 			angleZ += -(float)mouseDx / pixelsToRot360 * 6.28;
 			angleX += -(float)mouseDy / pixelsToRot360 * 6.28;
@@ -245,8 +246,7 @@ void PlayerScript::Update(float deltaSeconds)
 			mm::quat rotAroundX(angleX, { 1, 0, 0 });
 
 			camComp->SetRot(rotAroundZ * rotAroundX);
+			Sys::SetCursorPos(mm::ivec2(mousePosWhenPress.x, mousePosWhenPress.y));
 		}
-
-		Sys::SetCursorPos(mm::uvec2((u32)mousePosWhenPress.x, (u32)mousePosWhenPress.y));
 	}
 }

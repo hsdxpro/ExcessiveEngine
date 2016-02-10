@@ -20,7 +20,7 @@ To change choice press SPACE while waiting for launch.
 #include <SupportLibrary/BasicTypes.h>
 
 #ifdef _MSC_VER
-#define _WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
 #include <conio.h>

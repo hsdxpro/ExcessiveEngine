@@ -18,7 +18,6 @@
 #include <memory>
 
 // FUCK YOU SHADER RELOAD FAILED
-#include <windows.h>
 #include "..\..\GraphicsApiD3D11\src\GraphicsApiD3D11.h"
 
 

@@ -54,9 +54,11 @@
 
 #include "BasicTypes.h"
 #include "mymath/mymath.h"
-#include <vector>
 #include "PlatformLibrary/File.h"
 #include "PlatformLibrary/WindowCommon.h"
+
+#include <vector>
+#include <limits>
 
 // Flags for importing
 ENUM_CLASS_BITFLAG( eImporter3DFlag, u32 )

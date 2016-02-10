@@ -6,6 +6,7 @@
 #include "Sys.h"
 #include <string>
 
+
 ENUM_CLASS_BITFLAG( eWindowStyle, int )
 {
 	DEFAULT = 1,

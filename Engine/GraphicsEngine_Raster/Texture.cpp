@@ -20,7 +20,7 @@ Texture::Texture(IGapi* gapi)
 }
 
 Texture::~Texture() {
-	std::cout << "Texture @" << this << ": kthxbai";
+	//std::cout << "Texture @" << this << ": kthxbai";
 }
 
 

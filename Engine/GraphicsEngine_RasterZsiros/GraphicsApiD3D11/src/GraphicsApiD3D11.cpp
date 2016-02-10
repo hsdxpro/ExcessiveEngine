@@ -496,6 +496,22 @@ eGapiResult cGraphicsApiD3D11::CreateDefaultStates() {
 	// Set default samplers
 	d3dcon->PSSetSamplers(0, 16, defaultSamplers);
 
+
+	ID3D11RasterizerState* pRasterState;
+	D3D11_RASTERIZER_DESC rasterDesc;
+		rasterDesc.AntialiasedLineEnable = true;
+		rasterDesc.CullMode = D3D11_CULL_NONE;
+		rasterDesc.DepthBias = 0;
+		rasterDesc.DepthBiasClamp = 0;
+		rasterDesc.DepthClipEnable = true;
+		rasterDesc.FillMode = D3D11_FILL_SOLID;
+		rasterDesc.FrontCounterClockwise = false;
+		rasterDesc.MultisampleEnable = false;
+		rasterDesc.ScissorEnable = false;
+		rasterDesc.SlopeScaledDepthBias = 0.0f;
+	HRESULT hr = d3ddev->CreateRasterizerState(&rasterDesc, &pRasterState);
+	assert(hr == S_OK);
+	d3dcon->RSSetState(pRasterState);
 	return eGapiResult::OK;
 }
 
@@ -861,7 +877,7 @@ ITextureGapi* cGraphicsApiD3D11::CreateTexture(const rTextureGapi& data)
 HRESULT cGraphicsApiD3D11::CompileShaderFromFile(const zsString& fileName, const zsString& entry, const zsString& profile, zsString* compilerMessage, ID3DBlob** ppBlobOut) {
 	HRESULT hr = S_OK;
 
-	DWORD dwShaderFlags = D3D10_SHADER_OPTIMIZATION_LEVEL3 | D3D10_SHADER_PARTIAL_PRECISION;
+	DWORD dwShaderFlags = D3D10_SHADER_OPTIMIZATION_LEVEL3 | D3D10_SHADER_PACK_MATRIX_ROW_MAJOR;
 
 	ID3DBlob* pErrorBlob;
 	char ansiEntry[256];

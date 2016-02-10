@@ -537,7 +537,7 @@ void GapiGL::SetDepthState(const rDepthState& state)
 
 	glDepthMask(state.enable_write);
 
-	glDepthRangef(state.near, state.far);
+	glDepthRangef(state.nearPlane, state.farPlane);
 
 	glDepthFunc(func_data[(u32)state.func]);
 }

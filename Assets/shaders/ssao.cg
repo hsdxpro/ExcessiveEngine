@@ -142,8 +142,6 @@ float ProcessAO(float2 projtex, float3 viewRayVS)
  
   float SSAOintensity = 1.0f;
   return ao / SSAOiterations / 8.0f * SSAOintensity;
-
-return 0;
 }
 
 //------------------------------------------------------------------------------

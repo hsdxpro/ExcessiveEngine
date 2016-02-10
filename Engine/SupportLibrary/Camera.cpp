@@ -3,56 +3,47 @@
 
 #include <cassert>
 #include "mymath/mm_quat_func.h"
+#include "GraphicsEngine_RasterZsiros/Core/src/math/Matrix44.h"
+#include "GraphicsEngine_RasterZsiros/Core/src/math/vec3.h"
 
 // TODO REMOVE IT OR I KILL MYSELF
-mm::mat4 Matrix44ViewRHGL(const mm::vec3& eye, const mm::vec3& target, const mm::vec3& up)
+//mm::mat4 Matrix44ViewRHGL(const mm::vec3& eye, const mm::vec3& target, const mm::vec3& up)
+//{
+//	// Negate cuz of OpenGL -z front...
+//	mm::vec3 baseFront = mymath::normalize(-(target - eye));		// The "look-at" vector.
+//	mm::vec3 baseRight = mymath::normalize(mymath::cross(up, baseFront));	// The "right" vector.
+//	mm::vec3 baseUp = mymath::cross(baseFront, baseRight);			// The "up" vector.
+//
+//	// Create a 4x4 orientation matrix from the right, up, and at vectors
+//	// TRANPOSE of ROT
+//	mm::mat4 orientation(baseRight.x, baseUp.x, baseFront.x, 0,
+//		baseRight.y, baseUp.y, baseFront.y, 0,
+//		baseRight.z, baseUp.z, baseFront.z, 0,
+//		0, 0, 0, 1);
+//
+//	// Create a 4x4 translation matrix by negating the eye position.
+//	// NEGATE POS
+//	mm::mat4 translation(
+//		1, 0, 0, 0,
+//		0, 1, 0, 0,
+//		0, 0, 1, 0,
+//		-eye.x, -eye.y, -eye.z, 1);
+//
+//	return orientation * translation;
+//}
+
+mm::mat4 Matrix44ViewLH(const mm::vec3& eye, const mm::vec3& target, const mm::vec3& up)
 {
-	// Negate cuz of OpenGL -z front...
-	mm::vec3 baseFront = mymath::normalize(-(target - eye));		// The "look-at" vector.
-	mm::vec3 baseRight = mymath::normalize(mymath::cross(up, baseFront));	// The "right" vector.
-	mm::vec3 baseUp = mymath::cross(baseFront, baseRight);			// The "up" vector.
+	mm::vec3 baseFront = mymath::normalize(target - eye);
+	mm::vec3 baseRight = mymath::normalize(mymath::cross(baseFront, up));
+	mm::vec3 baseUp = mymath::cross(baseRight, baseFront);
 
 	// Create a 4x4 orientation matrix from the right, up, and at vectors
 	// TRANPOSE of ROT
-	mm::mat4 orientation(baseRight.x, baseUp.x, baseFront.x, 0,
-		baseRight.y, baseUp.y, baseFront.y, 0,
-		baseRight.z, baseUp.z, baseFront.z, 0,
-		0, 0, 0, 1);
-
-	// Create a 4x4 translation matrix by negating the eye position.
-	// NEGATE POS
-	mm::mat4 translation(
-		1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, 1, 0,
-		-eye.x, -eye.y, -eye.z, 1);
-
-	return orientation * translation;
-}
-
-mm::mat4 Matrix44ViewRH(const mm::vec3& eye, const mm::vec3& target, const mm::vec3& up)
-{
-	// Negate cuz of OpenGL -z front...
-	mm::vec3 baseFront = mymath::normalize(target - eye);		// The "look-at" vector.
-	mm::vec3 baseRight = mymath::normalize(mymath::cross(up, baseFront));	// The "right" vector.
-	mm::vec3 baseUp = mymath::cross(baseFront, baseRight);			// The "up" vector.
-
-	// Create a 4x4 orientation matrix from the right, up, and at vectors
-	// TRANPOSE of ROT
-	mm::mat4 orientation(baseRight.x, baseFront.x, baseUp.x, 0,
-						 baseRight.y, baseFront.y, baseUp.y, 0,
-						 baseRight.z, baseFront.z, baseUp.z, 0,
-						 0, 0, 0, 1);
-
-	// Create a 4x4 translation matrix by negating the eye position.
-	// NEGATE POS
-	mm::mat4 translation(
-		1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, 1, 0,
-		-eye.x, -eye.y, -eye.z, 1);
-
-	return orientation * translation;
+	return mm::mat4(	baseRight.x, baseUp.x, baseFront.x, 0,
+						baseRight.y, baseUp.y, baseFront.y, 0,
+						baseRight.z, baseUp.z, baseFront.z, 0,
+						-mm::dot(baseRight, eye), -mm::dot(baseUp, eye), -mm::dot(baseFront, eye), 1);
 }
 
 Camera::Camera()
@@ -105,7 +96,7 @@ void Camera::SetDirNormed(const mm::vec3& p)
 	// Important, roll is 0
 	const mm::vec3 up(0.0f, 0.0f, 1.0f);
 
-	auto mat = Matrix44ViewRH(pos, pos + p, up);
+	auto mat = Matrix44ViewLH(pos, pos + p, up);
 	// TODO FIX THAT MATRIX -> QUAT NOT WORKING
 	rot = (mm::quat)mat;
 }
@@ -132,10 +123,14 @@ float Camera::GetFarPlane() const
 
 mm::mat4 Camera::GetViewMatrix() const
 {
-	const mm::vec3 up(0.0f, 0.0f, 1.0f);
+	const Vec3 up(0.0f, 0.0f, 1.0f);
+
+	mm::mat4 result;
+
 	mm::vec3 frontDirNormed = mm::rotate_vector(rot, mm::vec3(0, 1, 0));
 	mm::vec3 upDirNormed = mm::rotate_vector(rot, mm::vec3(0, 0, 1));
-	return Matrix44ViewRHGL(pos, pos + frontDirNormed, upDirNormed);
+
+	return Matrix44ViewLH(pos, pos + frontDirNormed, upDirNormed);
 }
 
 mm::mat4 Camera::GetProjMatrix(float aspectRatio) const
@@ -148,15 +143,20 @@ mm::mat4 Camera::GetProjMatrix(float aspectRatio) const
 	}
 	case eProjType::PERSP:
 	{
-		auto& proj = mymath::perspective(projPersp.fovRad, aspectRatio, nearPlane, farPlane);
+		Matrix44 ad = Matrix44ProjPerspective(nearPlane, farPlane, projPersp.fovRad, aspectRatio);
+
+		memcpy((float*)&proj[0], (float*)&ad[0], sizeof(float) * 16);
+		return proj;
+
+		//auto& proj = mymath::perspective(projPersp.fovRad, aspectRatio, nearPlane, farPlane);
 
 		// Remap z from [-1,1] to [0,1]
-		return mm::mat4(
-			1, 0, 0, 0,
-			0, 1, 0, 0,
-			0, 0, -0.5, 0,
-			0, 0, 0.5, 1
-			) * proj;
+		//return mm::mat4(
+		//	1, 0, 0, 0,
+		//	0, 1, 0, 0,
+		//	0, 0, -0.5, 0,
+		//	0, 0, 0.5, 1
+		//	) * proj;
 	}
 	default:
 		assert(0);

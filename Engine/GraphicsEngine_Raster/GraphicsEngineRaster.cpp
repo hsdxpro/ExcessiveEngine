@@ -203,8 +203,8 @@ void GraphicsEngineRaster::Update(float deltaTime)
 	rDepthState ds;
 		ds.enable_test = false;
 		ds.enable_write = true;
-		ds.far = 1.0f;
-		ds.near = 0.0f;
+		ds.farPlane = 1.0f;
+		ds.nearPlane = 0.0f;
 		ds.func = eCompareFunc::LESSER;
 	gapi->SetDepthState(ds);
 

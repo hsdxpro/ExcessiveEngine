@@ -48,7 +48,8 @@ float4 PS_MAIN(VS_OUT In) : COLOR0 {
 
 	float ambientOcclusion = tex2D(ambientOcclusionTexture, In.tex0).r;
 
-	color.rgb = 0.f;//diffuseColor * lightColor * ambientOcclusion;
+	// TODO remove diffuseColor from here !
+	color.rgb = diffuseColor * lightColor * ambientOcclusion;
 	color.a = 1.0f;
 	
 	return color;

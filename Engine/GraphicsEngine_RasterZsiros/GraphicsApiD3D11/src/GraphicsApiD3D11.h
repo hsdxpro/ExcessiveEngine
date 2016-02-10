@@ -11,7 +11,7 @@
 #include <dxgi.h>
 
 #undef ERROR_FILE_NOT_FOUND // fucking dx collides with eGapiResult::ERROR_FILE_NOT_FOUND
-#undef max // fasz kivan már ezzel a buzi windowssal
+//#undef max // fasz kivan már ezzel a buzi windowssal
 
 #include "../../Core/src/GAPI.h"
 #include "../../Core/src/common.h"

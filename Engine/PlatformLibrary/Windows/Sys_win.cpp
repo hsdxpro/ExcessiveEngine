@@ -1,8 +1,10 @@
 
 #include "../Sys.h"
 
+#define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+
 #include <xlocbuf>
 #include <codecvt>
 
@@ -26,7 +28,7 @@ void Sys::ShowMsgBox(const std::wstring& msg)
 
 }
 
-void Sys::SetCursorPos(const mm::uvec2& pos)
+void Sys::SetCursorPos(const mm::ivec2& pos)
 {
 	::SetCursorPos(pos.x, pos.y);
 }

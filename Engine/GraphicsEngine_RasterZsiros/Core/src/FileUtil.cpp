@@ -2,6 +2,8 @@
 #include "StrUtil.h"
 
 // WINDOWS IMPLEMENTATION
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <windows.h>
 
 // For determining size of a file

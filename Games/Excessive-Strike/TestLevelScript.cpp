@@ -14,7 +14,7 @@ TestLevelScript::TestLevelScript()
 	groundRigidActor->SetCollisionGroup(eES_CollisionGroup::GROUND);
 	groundRigidActor->SetName("ground");
 	groundRigidActor->Attach(World.SpawnComp_MeshFromFile(groundModelPath));
-	//groundRigidActor->Rot(mm::quat(3.14159265 / 2, mm::vec3(1, 0, 0)));
+	groundRigidActor->Rot(mm::quat(3.14159265 / 2, mm::vec3(1, 0, 0)));
 	
 	// Add sky to game
 	auto sky = World.SpawnComp_MeshFromFile("skybox.dae");

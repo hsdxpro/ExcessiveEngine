@@ -285,7 +285,8 @@ Matrix44& Matrix44::ViewRH(const Vec3& eye, const Vec3& target, const Vec3& up) 
 
 	return *this;
 }
-Matrix44& Matrix44::ProjPerspective(float nearPlane, float farPlane, float fovRad, float aspectRatio) {
+Matrix44& Matrix44::ProjPerspective(float nearPlane, float farPlane, float fovRad, float aspectRatio) 
+{
 	_12 = _13 = _14 = 0;
 	_21 = _23 = _24 = 0;
 	_31 = _32 = 0;

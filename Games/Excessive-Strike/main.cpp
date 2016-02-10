@@ -40,7 +40,7 @@ int main()
 {
 	// Full screen popup window for our game
 	rWindow d;
-		d.clientSize = mm::uvec2(1024, 768);
+		d.clientSize = mm::uvec2(800, 600);
 		//d.bVSync = true;
 	Window* window = new Window(d);
 
@@ -66,7 +66,10 @@ int main()
 
 		// Process input events coming from O.S.-> Window
 		rWindowEvent evt;
-		while(window->PopEvent(evt))
+
+		// Process 100 message
+		int nProcessesMessages = 0;
+		while(nProcessesMessages++ < 100 && window->PopEvent(evt))
 		{
 			switch(evt.msg)
 			{
@@ -82,8 +85,7 @@ int main()
 
 			case eWindowMsg::MOUSE_MOVE:
 			{
-				//assert(evt.x >= 0 && evt.y >= 0);
-				Input.MouseMove(mm::ivec2(evt.deltaX, evt.deltaY), mm::uvec2((u32)evt.x, (u32)evt.y));
+				Input.MouseMove(mm::ivec2(evt.deltaX, evt.deltaY), mm::ivec2(evt.x, evt.y));
 				break;
 			}
 
