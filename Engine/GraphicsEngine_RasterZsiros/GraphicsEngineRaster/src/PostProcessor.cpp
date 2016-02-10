@@ -12,6 +12,7 @@
 // TODO REMOVE IT OR I KILL MYSELF
 #include "GraphicsEntity.h"
 #include "..\..\Core\src\math\Vec2.h"
+#include "GraphicsEngine_Raster\Material.h"
 
 cGraphicsEngine::cPostProcessor::cPostProcessor(cGraphicsEngine& parent)
 :parent(parent), gApi(parent.gApi)
@@ -71,232 +72,249 @@ cGraphicsEngine::cPostProcessor::~cPostProcessor() {
 }
 
 // Motion Blur
-void cGraphicsEngine::cPostProcessor::ProcessMB(float frameDeltaTime, const cCamera& cam, Scene& scene) 
+void cGraphicsEngine::cPostProcessor::ProcessMB(float frameDeltaTime, const Camera& cam, Scene& scene, float aspectRatio) 
 {
-	////-------------------------------------------------------------------------------------//
-	//// --------- FIRST PASS : FED CAMERA BASED SKY MOTION BLUR TO VELOCITYBUFFER ----------//
-	////-------------------------------------------------------------------------------------//
-	//// Apply to 0x00 sky stencil pixels..
-	////(StencilRef & StencilMask) CompFunc (StencilBufferValue & StencilMask)
-	//// 0x00 & 0x11 == ( 0x00 && 0x11) // SKY	: CATCHED
-	//// 0x00 & 0x11 == ( 0x01 && 0x11) // OBJECT : DROPPED
-	//tDepthStencilDesc dsd;
-	//	dsd.depthEnable = false;
-	//	dsd.stencilEnable = true;
-	//	dsd.stencilOpBackFace.stencilCompare = eComparisonFunc::EQUAL;
-	//	dsd.stencilReadMask = 0x01;
-	//	dsd.stencilOpFrontFace = dsd.stencilOpBackFace;
-	//gApi->SetDepthStencilState(dsd, 0x00);
+	mm::mat4 projMat = cam.GetProjMatrix(aspectRatio);
+	mm::mat4 viewMat = cam.GetViewMatrix();
+	mm::mat4 viewProjMat = projMat * viewMat;
 
-	//struct s
-	//{
-	//	Matrix44 viewProj;
-	//	Matrix44 invViewProj;
-	//	Matrix44 prevViewProj;
-	//	Vec3	 camPos; float pad;
-	//	Vec2	 InvframeDeltaTimeDiv2DivInputRes;
-	//	Vec2	 invFourPercentInputRes;
-	//	Vec2	 negInvFourPercentInputRes;
-	//} mbConstants;
+	//-------------------------------------------------------------------------------------//
+	// --------- FIRST PASS : FED CAMERA BASED SKY MOTION BLUR TO VELOCITYBUFFER ----------//
+	//-------------------------------------------------------------------------------------//
+	// Apply to 0x00 sky stencil pixels..
+	//(StencilRef & StencilMask) CompFunc (StencilBufferValue & StencilMask)
+	// 0x00 & 0x11 == ( 0x00 && 0x11) // SKY	: CATCHED
+	// 0x00 & 0x11 == ( 0x01 && 0x11) // OBJECT : DROPPED
+	tDepthStencilDesc dsd;
+		dsd.depthEnable = false;
+		dsd.stencilEnable = true;
+		dsd.stencilOpBackFace.stencilCompare = eComparisonFunc::EQUAL;
+		dsd.stencilReadMask = 0x01;
+		dsd.stencilOpFrontFace = dsd.stencilOpBackFace;
+	gApi->SetDepthStencilState(dsd, 0x00);
 
-	//Matrix44 viewMat = cam.GetViewMatrix();
-	//Matrix44 projMat = cam.GetProjMatrix();
-	//mbConstants.viewProj = viewMat * projMat;
-	//mbConstants.invViewProj = Matrix44Inverse(mbConstants.viewProj);
-	//mbConstants.prevViewProj = lastViewMat * projMat;
-	//mbConstants.camPos = cam.GetPos();
+	struct s
+	{
+		mm::mat4 viewProj;
+		mm::mat4 invViewProj;
+		mm::mat4 prevViewProj;
+		mm::vec3 camPos; float pad;
+		mm::vec2 InvframeDeltaTimeDiv2DivInputRes;
+		mm::vec2 invFourPercentInputRes;
+		mm::vec2 negInvFourPercentInputRes;
+	} mbConstants;
 
-	//
-	//mbConstants.InvframeDeltaTimeDiv2DivInputRes = Vec2(1.0f / (frameDeltaTime * 2.0f * inputTexDepth->GetWidth()),
-	//													1.0f / (frameDeltaTime * 2.0f * inputTexDepth->GetHeight()));
+	//mm::mat4 viewMat = cam.GetViewMatrix();
+	//mm::mat4 projMat = cam.GetProjMatrix();
+	mbConstants.viewProj = viewProjMat;// viewMat * projMat;
+	mbConstants.invViewProj = mm::inverse(mbConstants.viewProj);
+	mbConstants.prevViewProj = projMat * lastViewMat;
+	mbConstants.camPos = mm::vec3( cam.GetPos().x, cam.GetPos().y, cam.GetPos().z );
 
-	//// Increase to 60 ^^
-	//mbConstants.invFourPercentInputRes = Vec2(60.0f / inputTexDepth->GetWidth(), 60.0f / inputTexDepth->GetHeight());
-	//mbConstants.negInvFourPercentInputRes = -mbConstants.invFourPercentInputRes;
+	
+	mbConstants.InvframeDeltaTimeDiv2DivInputRes = mm::vec2(1.0f / (frameDeltaTime * 2.0f * inputTexDepth->GetWidth()),
+															1.0f / (frameDeltaTime * 2.0f * inputTexDepth->GetHeight()));
 
-	//mbConstants.InvframeDeltaTimeDiv2DivInputRes *= 17.5f; // Motion blur BOOST
+	// Increase to 60 ^^
+	mbConstants.invFourPercentInputRes = mm::vec2(60.0f / inputTexDepth->GetWidth(), 60.0f / inputTexDepth->GetHeight());
+	mbConstants.negInvFourPercentInputRes = -mbConstants.invFourPercentInputRes;
 
-	//gApi->SetRenderTargets(1, &outputTexVelocity2D, outputTexDepthStencil);
-	//gApi->SetShaderProgram(shaderMBCamera2DVelocity);
-	//gApi->SetTexture(L"depthTexture", inputTexDepth);
+	mbConstants.InvframeDeltaTimeDiv2DivInputRes *= 11.0f; // Motion blur BOOST
 
-	//gApi->SetPSConstantBuffer(&mbConstants, sizeof(mbConstants), 0);
-	//gApi->SetVSConstantBuffer(&mbConstants, sizeof(mbConstants), 0);
+	gApi->SetRenderTargets(1, &outputTexVelocity2D, outputTexDepthStencil);
+	gApi->SetShaderProgram(shaderMBCamera2DVelocity);
+	gApi->SetTexture(L"depthTexture", inputTexDepth);
 
-	//// Current cam became last
-	//lastViewMat = viewMat;
+	gApi->SetPSConstantBuffer(&mbConstants, sizeof(mbConstants), 0);
+	gApi->SetVSConstantBuffer(&mbConstants, sizeof(mbConstants), 0);
 
-	//gApi->Draw(3);
-	//
+	// Current cam became last
+	lastViewMat = viewMat;
 
-	////-------------------------------------------------------------------------------------//
-	//// ----------- SECOND PASS : FED OBJECT BASED MOTION BLUR TO VELOCITYBUFFER ------------//
-	////-------------------------------------------------------------------------------------//
+	gApi->Draw(3);
+	
 
-	//// We catch on the objects and NOT SKY
-	////(StencilRef & StencilMask) CompFunc (StencilBufferValue & StencilMask)
-	//// 0x01 & 0x01 == ( 0x00 && 0x01) // SKY	: DROPPED
-	//// 0x01 & 0x01 == ( 0x01 && 0x01) // OBJECT : CATCHED
-	////dsd.stencilReadMask = 0x01;
-	//tDepthStencilDesc dsd2;
-	//dsd2.depthEnable = true;
-	//dsd2.stencilEnable = true;
-	//dsd2.depthCompare = eComparisonFunc::LESS_EQUAL;
-	//dsd2.stencilOpBackFace.stencilCompare = eComparisonFunc::EQUAL;
-	//dsd2.stencilReadMask = 0x01;
-	//dsd2.stencilOpFrontFace = dsd.stencilOpBackFace;
+	//-------------------------------------------------------------------------------------//
+	// ----------- SECOND PASS : FED OBJECT BASED MOTION BLUR TO VELOCITYBUFFER ------------//
+	//-------------------------------------------------------------------------------------//
 
-	//gApi->ClearTexture(outputTexDepthStencil, eClearFlag::DEPTH);
+	// We catch on the objects and NOT SKY
+	//(StencilRef & StencilMask) CompFunc (StencilBufferValue & StencilMask)
+	// 0x01 & 0x01 == ( 0x00 && 0x01) // SKY	: DROPPED
+	// 0x01 & 0x01 == ( 0x01 && 0x01) // OBJECT : CATCHED
+	//dsd.stencilReadMask = 0x01;
+	tDepthStencilDesc dsd2;
+	dsd2.depthEnable = true;
+	dsd2.stencilEnable = true;
+	dsd2.depthCompare = eComparisonFunc::LESS_EQUAL;
+	dsd2.stencilOpBackFace.stencilCompare = eComparisonFunc::EQUAL;
+	dsd2.stencilReadMask = 0x01;
+	dsd2.stencilOpFrontFace = dsd.stencilOpBackFace;
 
-	//gApi->SetDepthStencilState(dsd2, 0x01);
+	gApi->ClearTexture(outputTexDepthStencil, eClearFlag::DEPTH);
 
-	//gApi->SetRenderTargets(1, &outputTexVelocity2D, outputTexDepthStencil);
-	//gApi->SetShaderProgram(shaderMBObject2DVelocity);
-	//
-	//struct s2 {
-	//	Matrix44 currWorldViewProj;
-	//	Matrix44 prevWorldViewProj;
-	//	Vec2	 InvframeDeltaTimeDiv2DivInputRes;
-	//	Vec2	 invFourPercentInputRes;
-	//	Vec2	 negInvFourPercentInputRes;
-	//} mbObjConstants;
+	gApi->SetDepthStencilState(dsd2, 0x01);
 
-	//mbObjConstants.InvframeDeltaTimeDiv2DivInputRes = mbConstants.InvframeDeltaTimeDiv2DivInputRes;
-	//mbObjConstants.negInvFourPercentInputRes = mbConstants.negInvFourPercentInputRes;
-	//mbObjConstants.invFourPercentInputRes = mbConstants.invFourPercentInputRes;
+	gApi->SetRenderTargets(1, &outputTexVelocity2D, outputTexDepthStencil);
+	gApi->SetShaderProgram(shaderMBObject2DVelocity);
+	
+	struct s2 {
+		mm::mat4 currWorldViewProj;
+		mm::mat4 prevWorldViewProj;
+		mm::vec2 InvframeDeltaTimeDiv2DivInputRes;
+		mm::vec2 invFourPercentInputRes;
+		mm::vec2 negInvFourPercentInputRes;
+	} mbObjConstants;
 
-	//// Foreach: Instance group
-	//for (auto& group : parent.sceneManager->GetInstanceGroups()) {
-	//	cGeometry& geom = *group->geom.get();
-	//	cMaterial& mtl = *group->mtl.get();
+	mbObjConstants.InvframeDeltaTimeDiv2DivInputRes = mbConstants.InvframeDeltaTimeDiv2DivInputRes;
+	mbObjConstants.negInvFourPercentInputRes = mbConstants.negInvFourPercentInputRes;
+	mbObjConstants.invFourPercentInputRes = mbConstants.invFourPercentInputRes;
 
-	//	// Set Geometry
-	//	gApi->SetIndexBuffer(geom.GetIndexBuffer());
-	//	gApi->SetVertexBuffer(geom.GetVertexBuffer());
 
-	//	size_t indexCount = 0;
-	//	for (auto& matGroup : geom.GetMatGroups()) {
-	//		indexCount += matGroup.indexCount;
-	//	}
+	for (auto& entity : scene.GetEntities())
+	{
+		Mesh* mesh = (Mesh*)entity->GetMesh();
 
-	//	// Foreach: Entity -> Draw this group
-	//	for (cGraphicsEntity* entity : group->entities) {
+		if (!mesh)
+			continue;
 
-	//		// Entity world matrix
-	//		Matrix44 worldMat = entity->GetWorldMatrix();
+		size_t indexCount = 0;
+		for (auto& a : mesh->GetMaterialIds())
+		{
+			indexCount += (a.endFace - a.beginFace) * 3;
+		}
 
-	//		mbObjConstants.currWorldViewProj = worldMat * mbConstants.viewProj;
-	//		
-	//		// Get Prev WorldViewProj mat ( UGLY, SO SLOW, TOO MANY COPY)
-	//		auto it = entityPrevWorldViewProjs.find(entity);
-	//		if (it == entityPrevWorldViewProjs.end()) {
-	//			mbObjConstants.prevWorldViewProj = mbObjConstants.currWorldViewProj;
-	//		}
-	//		else
-	//			mbObjConstants.prevWorldViewProj = it->second;
-	//		
-	//		gApi->SetVSConstantBuffer(&mbObjConstants, sizeof(mbObjConstants), 0);
-	//		gApi->SetPSConstantBuffer(&mbObjConstants, sizeof(mbObjConstants), 0);
+		// Set Geometry
+		gApi->SetIndexBuffer(mesh->GetIndexBuffer());
 
-	//		// draw
-	//		gApi->DrawIndexed(indexCount);
+		for (int i = 0; i < mesh->GetNumVertexBuffers(); i++)
+		{
+			auto stream = mesh->GetVertexBuffers()[i];
+			gApi->SetVertexBuffers(&stream.vb, &stream.stride, &stream.offset, i, 1);
+		}
 
-	//		// curr worldviewproj become prev
-	//		entityPrevWorldViewProjs[entity] = mbObjConstants.currWorldViewProj;
-	//	}
-	//}
-	//
-	//// Default
-	//tDepthStencilDesc dsdDefault;
-	//	dsdDefault.stencilEnable = false;
-	//	dsdDefault.depthEnable = false;
-	//gApi->SetDepthStencilState(dsdDefault, 0x00);
+		// Entity world matrix
+		mm::mat4 posMat = mm::create_translation(entity->GetPos());
+		mm::mat4 rotMat = mm::mat4(entity->GetRot());
+		mm::mat4 skewMat = mm::mat4(entity->GetSkew());
 
-	////-------------------------------------------------------------------------------------//
-	//// -------------------THIRD PASS : USE VELOCITY BUFFER FOR BLURING---------------------//
-	////-------------------------------------------------------------------------------------//
-	//gApi->SetRenderTargets(1, &outputTexColor, nullptr);
-	//gApi->SetShaderProgram(shaderMB);
-	//gApi->SetTexture(L"velocity2DTex", outputTexVelocity2D);
-	//gApi->SetTexture(L"inputTexture", inputTexColor);
-	//gApi->Draw(3);
+		mm::mat4 worldMat = posMat * (rotMat * skewMat);
+
+		//Matrix44 worldMat = entity->GetWorldMatrix();
+
+		mbObjConstants.currWorldViewProj = mbConstants.viewProj * worldMat;
+
+		// Get Prev WorldViewProj mat ( UGLY, SO SLOW, TOO MANY COPY)
+		auto it = entityPrevWorldViewProjs.find(entity);
+		if (it == entityPrevWorldViewProjs.end()) {
+			mbObjConstants.prevWorldViewProj = mbObjConstants.currWorldViewProj;
+		}
+		else
+			mbObjConstants.prevWorldViewProj = it->second;
+
+		gApi->SetVSConstantBuffer(&mbObjConstants, sizeof(mbObjConstants), 0);
+		gApi->SetPSConstantBuffer(&mbObjConstants, sizeof(mbObjConstants), 0);
+
+		// draw
+		gApi->DrawIndexed(indexCount);
+
+		// curr worldviewproj become prev
+		entityPrevWorldViewProjs[entity] = mbObjConstants.currWorldViewProj;
+	}
+	
+	// Default
+	tDepthStencilDesc dsdDefault;
+		dsdDefault.stencilEnable = false;
+		dsdDefault.depthEnable = false;
+	gApi->SetDepthStencilState(dsdDefault, 0x00);
+
+	//-------------------------------------------------------------------------------------//
+	// -------------------THIRD PASS : USE VELOCITY BUFFER FOR BLURING---------------------//
+	//-------------------------------------------------------------------------------------//
+	gApi->SetRenderTargets(1, &outputTexColor, nullptr);
+	gApi->SetShaderProgram(shaderMB);
+	gApi->SetTexture(L"velocity2DTex", outputTexVelocity2D);
+	gApi->SetTexture(L"inputTexture", inputTexColor);
+	gApi->Draw(3);
 }
 
-void cGraphicsEngine::cPostProcessor::ProcessDOF(float frameDeltaTime, const cCamera& cam) 
+void cGraphicsEngine::cPostProcessor::ProcessDOF(float frameDeltaTime, const Camera& cam, float aspectRatio) 
 {
-	//// These constants shared across two DOF specific shaders...
-	//// Pass1 : FocalLength adaption, only uses invViewProj, camPos
-	//// Pass2 : CoC calc and blur, uses all of these shits
-	//struct tDofConstants
-	//{
-	//	Matrix44 invViewProj;
-	//	Vec3	 camPos;
-	//	float	 frameDeltaTime; // just shader :dof_focal_plane_adaption  use it
-	//	float	 minFocalDist;	 // just shader :dof_focal_plane_adaption  use it
-	//	float	 maxFocalDist;	 // just shader :dof_focal_plane_adaption  use it
-	//	float	 focalAdaptSpeed;// just shader :dof_focal_plane_adaption  use it
-	//	float	 nearPlane;
-	//	Matrix44 invView;
-	//	float	 retinaLensDist;
-	//	float	 invRetinaRadius;
-	//	float	 inputTexWidth;
-	//	float	 invTexWidth;
-	//	float	 invTexHeight;
-	//	float	 minusInvTexWidth;
-	//	float	 minusInvTexHeight;
-	//	float	 aperture;
-	//	int		 quality;
-	//} dofConstants;
+	mm::mat4 projMat = cam.GetProjMatrix(aspectRatio);
+	mm::mat4 viewMat = cam.GetViewMatrix();
+	mm::mat4 viewProjMat = projMat * viewMat;
 
-	//dofConstants.invRetinaRadius = 26.793927f;// That magic number (27.793927) normalizes (a CoC that belonging to an average sized human eye and lens) into [0,1]
-	//dofConstants.inputTexWidth = (float)inputTexColor->GetWidth();
-	//dofConstants.invViewProj = Matrix44Inverse(cam.GetViewMatrix() *  cam.GetProjMatrix());
-	//dofConstants.invTexWidth = 1.0f / inputTexColor->GetWidth();
-	//dofConstants.invTexHeight = 1.0f / inputTexColor->GetHeight();
-	//dofConstants.minusInvTexWidth = -dofConstants.invTexWidth;
-	//dofConstants.minusInvTexHeight = -dofConstants.invTexHeight;
-	//dofConstants.frameDeltaTime = frameDeltaTime;
-	//dofConstants.retinaLensDist = 0.019f;
-	////dofConstants.retinaLensDist = 0.44f;
-	////dofConstants.aperture = 0.40f; // Increases coc
-	//dofConstants.aperture = 0.05f; // Increases coc
-	//dofConstants.camPos = cam.GetPos();
-	//dofConstants.quality = 8;
-	//dofConstants.minFocalDist = 0;
-	//dofConstants.maxFocalDist = 3000;
-	//dofConstants.focalAdaptSpeed = 6.0f;
-	//dofConstants.nearPlane = cam.GetNearPlane();
-	//dofConstants.invView = Matrix44Inverse(cam.GetViewMatrix());
+	// These constants shared across two DOF specific shaders...
+	// Pass1 : FocalLength adaption, only uses invViewProj, camPos
+	// Pass2 : CoC calc and blur, uses all of these shits
+	struct tDofConstants
+	{
+		mm::mat4 invViewProj;
+		mm::vec3 camPos;
+		float	 frameDeltaTime; // just shader :dof_focal_plane_adaption  use it
+		float	 minFocalDist;	 // just shader :dof_focal_plane_adaption  use it
+		float	 maxFocalDist;	 // just shader :dof_focal_plane_adaption  use it
+		float	 focalAdaptSpeed;// just shader :dof_focal_plane_adaption  use it
+		float	 nearPlane;
+		mm::mat4 invView;
+		float	 retinaLensDist;
+		float	 invRetinaRadius;
+		float	 inputTexWidth;
+		float	 invTexWidth;
+		float	 invTexHeight;
+		float	 minusInvTexWidth;
+		float	 minusInvTexHeight;
+		float	 aperture;
+		int		 quality;
+	} dofConstants;
 
-	//// Set it for shaders to use
-	//gApi->SetPSConstantBuffer(&dofConstants, sizeof(dofConstants), 0);
-	//gApi->SetVSConstantBuffer(&dofConstants, sizeof(dofConstants), 0);
+	dofConstants.invRetinaRadius = 26.793927f;// That magic number (27.793927) normalizes (a CoC that belonging to an average sized human eye and lens) into [0,1]
+	dofConstants.inputTexWidth = (float)inputTexColor->GetWidth();
+	dofConstants.invViewProj = mm::inverse(viewProjMat);
+	dofConstants.invTexWidth = 1.0f / inputTexColor->GetWidth();
+	dofConstants.invTexHeight = 1.0f / inputTexColor->GetHeight();
+	dofConstants.minusInvTexWidth = -dofConstants.invTexWidth;
+	dofConstants.minusInvTexHeight = -dofConstants.invTexHeight;
+	dofConstants.frameDeltaTime = frameDeltaTime;
+	dofConstants.retinaLensDist = 0.019f;
+	dofConstants.aperture = 0.025f; // Linearly increases CoC
+	dofConstants.camPos = mm::vec3(cam.GetPos().x, cam.GetPos().y, cam.GetPos().z);
+	dofConstants.quality = 8;
+	dofConstants.minFocalDist = 0;
+	dofConstants.maxFocalDist = 3000;
+	dofConstants.focalAdaptSpeed = 6.0f;
+	dofConstants.nearPlane = cam.GetNearPlane();
+	dofConstants.invView = mm::inverse(viewMat);
 
-
-
-	////-------------------------------------------------------------------------------------//
-	//// --------------------------- FIRST PASS : ADAPT FOCAL PLANE -------------------------//
-	////-------------------------------------------------------------------------------------//
-	//gApi->SetShaderProgram(shaderFocalPlaneAdaption);
-	//gApi->SetRenderTargets(1, &focalPlaneTexB);
-	//gApi->SetTexture(L"inputFocalPlaneTex", focalPlaneTexA);	// Input focal plane
-	//gApi->SetTexture(L"depthTexture", inputTexDepth);			// Input depth  (need posW)
-	//gApi->Draw(3);
-
-	//// So the result now in 'A', next time we use that to render again into B, then use a....
-	//std::swap(focalPlaneTexA, focalPlaneTexB);
+	// Set it for shaders to use
+	gApi->SetPSConstantBuffer(&dofConstants, sizeof(dofConstants), 0);
+	gApi->SetVSConstantBuffer(&dofConstants, sizeof(dofConstants), 0);
 
 
 
-	////-------------------------------------------------------------------------------------//
-	////----------------Circle Of Confusion Calc  AND  Bluring Based On It ------------------//
-	////-------------------------------------------------------------------------------------//
-	//gApi->SetRenderTargets(1, &outputTexColor, nullptr);
-	//gApi->SetShaderProgram(shaderDOF);
-	//gApi->SetTexture(L"adaptedFocalPlaneTex", focalPlaneTexA);	// Input focal plane
-	//gApi->SetTexture(L"inputTexture", inputTexColor);			// Input color
-	//gApi->SetTexture(L"depthTexture", inputTexDepth);			// Input depth (need posW)
-	//gApi->Draw(3);
+	//-------------------------------------------------------------------------------------//
+	// --------------------------- FIRST PASS : ADAPT FOCAL PLANE -------------------------//
+	//-------------------------------------------------------------------------------------//
+	gApi->SetShaderProgram(shaderFocalPlaneAdaption);
+	gApi->SetRenderTargets(1, &focalPlaneTexB);
+	gApi->SetTexture(L"inputFocalPlaneTex", focalPlaneTexA);	// Input focal plane
+	gApi->SetTexture(L"depthTexture", inputTexDepth);			// Input depth  (need posW)
+	gApi->Draw(3);
+
+	// So the result now in 'A', next time we use that to render again into B, then use a....
+	std::swap(focalPlaneTexA, focalPlaneTexB);
+
+
+
+	//-------------------------------------------------------------------------------------//
+	//----------------Circle Of Confusion Calc  AND  Bluring Based On It ------------------//
+	//-------------------------------------------------------------------------------------//
+	gApi->SetRenderTargets(1, &outputTexColor, nullptr);
+	gApi->SetShaderProgram(shaderDOF);
+	gApi->SetTexture(L"adaptedFocalPlaneTex", focalPlaneTexA);	// Input focal plane
+	gApi->SetTexture(L"inputTexture", inputTexColor);			// Input color
+	gApi->SetTexture(L"depthTexture", inputTexDepth);			// Input depth (need posW)
+	gApi->Draw(3);
 }
 
 
@@ -316,44 +334,48 @@ void cGraphicsEngine::cPostProcessor::ProcessFXAA()
 	//gApi->Draw(3);
 }
 
-void cGraphicsEngine::cPostProcessor::ProcessSSAR(const cCamera& cam)
+void cGraphicsEngine::cPostProcessor::ProcessSSAR(const Camera& cam, float aspectRatio)
 {
-	//gApi->SetRenderTargets(1, &outputTexColor, nullptr);
-	//gApi->SetShaderProgram(shaderSSAR);
+	mm::mat4 projMat = cam.GetProjMatrix(aspectRatio);
+	mm::mat4 viewMat = cam.GetViewMatrix();
+	mm::mat4 viewProjMat = projMat * viewMat;
 
-	//struct tDofConstants
-	//{
-	//	Matrix44 invViewProj;
-	//	Matrix44 viewProj;
-	//	Matrix44 view;
-	//	Matrix44 invView;
-	//	Vec3	 camPos;		float _pad0;
-	//	Vec2	 invOutputRes;
-	//	float	 farPlane;
-	//	float	 stepLength;
-	//	int		 maxRange;
-	//} sslrConstants;
+	gApi->SetRenderTargets(1, &outputTexColor, nullptr);
+	gApi->SetShaderProgram(shaderSSAR);
 
-	//sslrConstants.view = cam.GetViewMatrix();
-	//sslrConstants.viewProj = sslrConstants.view *  cam.GetProjMatrix();
-	//sslrConstants.invViewProj = Matrix44Inverse(sslrConstants.viewProj);
-	//sslrConstants.camPos = cam.GetPos();
-	//sslrConstants.invView = Matrix44Inverse(sslrConstants.view);
-	//sslrConstants.invOutputRes = Vec2( 1.f / outputTexColor->GetWidth(), 1.f / outputTexColor->GetHeight());
-	//sslrConstants.farPlane = cam.GetFarPlane();
-	//sslrConstants.stepLength = 0.25f;
-	//sslrConstants.maxRange = 80;
+	struct tDofConstants
+	{
+		mm::mat4 invViewProj;
+		mm::mat4 viewProj;
+		mm::mat4 view;
+		mm::mat4 invView;
+		mm::vec3 camPos;		float _pad0;
+		mm::vec2 invOutputRes;
+		float	 farPlane;
+		float	 stepLength;
+		int		 maxRange;
+	} sslrConstants;
 
-	//// Set it for shaders to use
-	//gApi->SetVSConstantBuffer(&sslrConstants, sizeof(sslrConstants), 0);
-	//gApi->SetPSConstantBuffer(&sslrConstants, sizeof(sslrConstants), 0);
-	//gApi->SetTexture(0, inputTexColor);
-	//gApi->SetTexture(1, inputTexDepth);
-	//gApi->SetTexture(2, inputTexNormal);
-	//gApi->Draw(3);
+	sslrConstants.view = viewMat;// cam.GetViewMatrix();
+	sslrConstants.viewProj = viewProjMat;// sslrConstants.view *  cam.GetProjMatrix();
+	sslrConstants.invViewProj = mm::inverse(viewProjMat);
+	sslrConstants.camPos = mm::vec3(cam.GetPos().x, cam.GetPos().y, cam.GetPos().z);
+	sslrConstants.invView = mm::inverse(viewMat);
+	sslrConstants.invOutputRes = mm::vec2( 1.f / outputTexColor->GetWidth(), 1.f / outputTexColor->GetHeight());
+	sslrConstants.farPlane = cam.GetFarPlane();
+	sslrConstants.stepLength = 0.25f;
+	sslrConstants.maxRange = 80;
+
+	// Set it for shaders to use
+	gApi->SetVSConstantBuffer(&sslrConstants, sizeof(sslrConstants), 0);
+	gApi->SetPSConstantBuffer(&sslrConstants, sizeof(sslrConstants), 0);
+	gApi->SetTexture(0, inputTexColor);
+	gApi->SetTexture(1, inputTexDepth);
+	gApi->SetTexture(2, inputTexNormal);
+	gApi->Draw(3);
 }
 
-void cGraphicsEngine::cPostProcessor::ProcessSSVR(const cCamera& cam)
+void cGraphicsEngine::cPostProcessor::ProcessSSVR(const Camera& cam)
 {
 	//gApi->SetRenderTargets(1, &outputTexColor, nullptr);
 	//gApi->SetShaderProgram(shaderSSVR);

@@ -62,7 +62,7 @@ PlayerScript::PlayerScript()
 	// Attach camera to player physics
 	camComp->Move({ 0, 0, 1 });
 	playerCapsule->Attach(camComp);
-	playerCapsule->SetPos({ 0, 0, 2 });
+	playerCapsule->SetPos({ 0, 0, -0.2f });
 	
 	ak47Graphics = World.SpawnComp_MeshFromFile(ak47ModelPath);
 
@@ -185,25 +185,26 @@ void PlayerScript::Update(float deltaSeconds)
 		params.AddIgnoreCollisionLayer(eES_CollisionGroup::SHELL);
 
 		//params. Trace pls ignoráld már a shelleket
-		if (Physics.TraceClosestPoint(camComp->GetPos(), camComp->GetPos() + camComp->GetFrontDirNormed() * 999999, result, params))
-		{
-			//MeshComponent* boxComp = World.SpawnComp_MeshFromFile("box.DAE");
-			MeshComponent* boxComp = World.SpawnComp_MeshFromFile("sziv.DAE");
-			boxComp->SetScaleLocal({ 1.f / 2, 1.f / 2, 1.f / 2});
-			boxComp->SetPos(result.pos);//cuki <3 <3 <3 I <3 U Rici
-			boxComp->SetRot(camComp->GetRot());
-		}
+		//if (Physics.TraceClosestPoint(camComp->GetPos(), camComp->GetPos() + camComp->GetFrontDirNormed() * 999999, result, params))
+		//{
+		//	//MeshComponent* boxComp = World.SpawnComp_MeshFromFile("box.DAE");
+		//	MeshComponent* boxComp = World.SpawnComp_MeshFromFile("characterwoman1.obj");
+		//	//MeshComponent* boxComp = World.SpawnComp_MeshFromFile("sziv.DAE");
+		//	//boxComp->SetScaleLocal({ 1.f / 2, 1.f / 2, 1.f / 2});
+		//	boxComp->SetPos(result.pos);//cuki <3 <3 <3 I <3 U Rici
+		//	//boxComp->SetRot(camComp->GetRot());
+		//}
 
-		//Actor* bullet = Core.SpawnActor_RigidBodyFromFile("box.DAE", 100);
-		//bullet->Attach(Core.SpawnComp_MeshFromFile("box.DAE"));
-		//bullet->SetScaleLocal({ 1.f / 3, 1.f / 3, 1.f / 3 });
-		//
-		//bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);
-		//
-		//mm::vec3 bulletDirNormed = camComp->GetFrontDirNormed();
-		//bullet->SetPos(ak47Graphics->GetPos());
-		//bullet->SetVelocity(bulletDirNormed * 7);
-		//bullet->Scale(bulletDirNormed * 3);
+		Actor* bullet = Core.SpawnActor_RigidBodyFromFile("box.DAE", 100);
+		bullet->Attach(Core.SpawnComp_MeshFromFile("box.DAE"));
+		bullet->SetScaleLocal({ 1.f / 3, 1.f / 3, 1.f / 3 });
+		
+		bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);
+		
+		mm::vec3 bulletDirNormed = camComp->GetFrontDirNormed();
+		bullet->SetPos(ak47Graphics->GetPos());
+		bullet->SetVelocity(bulletDirNormed * 7);
+		bullet->Scale(bulletDirNormed * 3);
 	}
 
 
@@ -215,7 +216,7 @@ void PlayerScript::Update(float deltaSeconds)
 
 	if (Input.IsMouseRightReleased())
 	{
-		//Sys::SetCursorPos(mm::ivec2(mousePosWhenPress.x, mousePosWhenPress.y));
+		Sys::SetCursorPos(mm::ivec2(mousePosWhenPress.x, mousePosWhenPress.y));
 		Sys::SetCursorVisible(true);
 	}
 
@@ -231,8 +232,8 @@ void PlayerScript::Update(float deltaSeconds)
 			// Input read up finished, now we can recenter cursor for our fps game
 			//auto mousePos = Sys::GetCursorPos();
 
-			float mouseDx = mouseDelta.x;// mousePos.x - mousePosWhenPress.x;
-			float mouseDy = mouseDelta.y;//mousePos.y - mousePosWhenPress.y;
+			float mouseDx = mouseDelta.x;
+			float mouseDy = mouseDelta.y;
 
 			angleZ += -(float)mouseDx / pixelsToRot360 * 6.28;
 			angleX += -(float)mouseDy / pixelsToRot360 * 6.28;

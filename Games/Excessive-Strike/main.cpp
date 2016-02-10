@@ -66,10 +66,7 @@ int main()
 
 		// Process input events coming from O.S.-> Window
 		rWindowEvent evt;
-
-		// Process 100 message
-		int nProcessesMessages = 0;
-		while(nProcessesMessages++ < 100 && window->PopEvent(evt))
+		while(window->PopEvent(evt))
 		{
 			switch(evt.msg)
 			{

@@ -295,11 +295,11 @@ private:
 		~cPostProcessor();
 		cPostProcessor& operator=(const cPostProcessor&) = delete;
 
-		void ProcessMB(float frameDeltaTime, const cCamera& cam, Scene& scene);
-		void ProcessDOF(float frameDeltaTime, const cCamera& cam);
+		void ProcessMB(float frameDeltaTime, const Camera& cam, Scene& scene, float aspectRatio);
+		void ProcessDOF(float frameDeltaTime, const Camera& cam, float aspectRatio);
 		void ProcessFXAA();
-		void ProcessSSAR(const cCamera& cam);
-		void ProcessSSVR(const cCamera& cam);
+		void ProcessSSAR(const Camera& cam, float aspectRatio);
+		void ProcessSSVR(const Camera& cam);
 
 		// Set inputs
 		void SetInputMB(ITexture2D* color, ITexture2D* depth);
@@ -338,8 +338,8 @@ private:
 		ITexture2D* focalPlaneTexA, *focalPlaneTexB;
 
 		// Motion blur vars
-		Matrix44 lastViewMat;
-		std::unordered_map<cGraphicsEntity*, Matrix44> entityPrevWorldViewProjs;
+		mm::mat4 lastViewMat;
+		std::unordered_map<graphics::IEntity*, mm::mat4> entityPrevWorldViewProjs;
 
 		cGraphicsEngine& parent;
 		cGraphicsApiD3D11* gApi;

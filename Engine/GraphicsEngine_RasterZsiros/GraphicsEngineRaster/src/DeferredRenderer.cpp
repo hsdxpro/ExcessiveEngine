@@ -349,6 +349,9 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	{
 		Mesh* mesh = (Mesh*)entity->GetMesh();
 
+		if (!mesh)
+			continue;
+
 		Material& mtl = *(Material*)entity->GetMaterial();
 
 		// Set Geometry
@@ -591,10 +594,10 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	data.UVToViewB[0] = -1.0f * (1.0f / data.FocalLen[0]);
 	data.UVToViewB[1] = 1.0f * (1.0f / data.FocalLen[1]);
 	
-	data.R = 0.3; // drop ao accum neighbour far than that
+	data.R = 0.13; // drop ao accum neighbour far than that
 	data.R2 = data.R * data.R;
 	data.NegInvR2 = -1.0f / data.R2;
-	data.MaxRadiusPixels = 60.0f;
+	data.MaxRadiusPixels = 60.f;
 	
 	data.AngleBias = 10;
 	data.TanAngleBias = tanf(data.AngleBias);
@@ -614,8 +617,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	gApi->SetRenderTargets(1, &aoBlurHelperBuffer, NULL);
 	gApi->SetTexture(L"inputTexture", aoBuffer);
 	gApi->Draw(3);
-	
-	
+
 	// HBAO VER BLUR YEAH !!!
 	gApi->SetShaderProgram(shaderHBAOblurVer);
 	gApi->SetRenderTargets(1, &aoBuffer, nullptr);

@@ -6,11 +6,12 @@
 #include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/RenderTexture.hpp"
 #include <windows.h>
+#include <windowsx.h>
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	//Window* pWin = (Window*)GetWindowLongPtr(hWnd, 0);
-
+	PAINTSTRUCT ps;
 	switch (Msg)
 	{
 	case WM_CREATE:
@@ -20,6 +21,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	case WM_ACTIVATE:
 		break;
 	case WM_PAINT:
+		BeginPaint(hWnd, &ps);
+		EndPaint(hWnd, &ps);
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(WM_QUIT);
@@ -46,7 +49,7 @@ Window::Window(const rWindow& d)
 	//	windowStyle = ConvertToSFMLWindowStyle(d.style);
 
 	int interpretedStyle = WS_OVERLAPPEDWINDOW;
-	int interpretedBrush = NULL_BRUSH;
+	int interpretedBrush = BLACK_BRUSH;
 
 	// Application ID for window class registration, and window creation
 	HINSTANCE appID = GetModuleHandle(nullptr);
@@ -65,7 +68,7 @@ Window::Window(const rWindow& d)
 	wC.lpszMenuName = nullptr;
 	wC.hInstance = appID;
 	wC.lpfnWndProc = WndProc;
-	wC.style = CS_HREDRAW | CS_VREDRAW;
+	wC.style = 0;// CS_HREDRAW | CS_VREDRAW;
 	RegisterClassEx(&wC);
 
 	RECT adjustedsize = { 0 };
@@ -131,9 +134,42 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 	//}
 
 	MSG msg;
-	if(PeekMessage(&msg, hwnd, 0, 0, PM_REMOVE))
+	bool b = PeekMessage(&msg, 0, 0, 0, PM_REMOVE);
+	if(b)
 	{
-		if (msg.message == WM_KEYDOWN)
+		if (msg.message == WM_LBUTTONDOWN)
+		{
+			evt_out.msg = eWindowMsg::MOUSE_PRESS;
+			evt_out.mouseBtn = eMouseBtn::LEFT;
+
+			evt_out.x = GET_X_LPARAM(msg.lParam);
+			evt_out.y = GET_Y_LPARAM(msg.lParam);
+		}
+		else if (msg.message == WM_RBUTTONDOWN)
+		{
+			evt_out.msg = eWindowMsg::MOUSE_PRESS;
+			evt_out.mouseBtn = eMouseBtn::RIGHT;
+
+			evt_out.x = GET_X_LPARAM(msg.lParam);
+			evt_out.y = GET_Y_LPARAM(msg.lParam);
+		}
+		else if (msg.message == WM_LBUTTONUP)
+		{
+			evt_out.msg = eWindowMsg::MOUSE_RELEASE;
+			evt_out.mouseBtn = eMouseBtn::LEFT;
+
+			evt_out.x = GET_X_LPARAM(msg.lParam);
+			evt_out.y = GET_Y_LPARAM(msg.lParam);
+		}
+		else if (msg.message == WM_RBUTTONUP)
+		{
+			evt_out.msg = eWindowMsg::MOUSE_RELEASE;
+			evt_out.mouseBtn = eMouseBtn::RIGHT;
+
+			evt_out.x = GET_X_LPARAM(msg.lParam);
+			evt_out.y = GET_Y_LPARAM(msg.lParam);
+		}
+		else if (msg.message == WM_KEYDOWN)
 		{
 			evt_out.key = ConvertFromWindowsKey(msg.wParam);
 			evt_out.msg = eWindowMsg::KEY_PRESS;
@@ -174,16 +210,17 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 			evt_out.msg = eWindowMsg::CLOSE;
 			Close();
 		}
+		else if (msg.message == WM_QUIT)
+		{
+			evt_out.msg = eWindowMsg::CLOSE;
+			Close();
+		}
 
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-	else
-	{
-		Close();
-		return false;
-	}
-
+	
+	return b;
 	//// Key press release,
 	//if (evt.type == sf::Event::EventType::KeyPressed || evt.type == sf::Event::EventType::KeyReleased)
 	//{
@@ -229,7 +266,7 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 	//
 	//evt_out.msg = ConvertFromSFMLWindowMsg(evt.type);
 
-	return true;
+	//return true;
 }
 
 void Window::Close() 

@@ -154,9 +154,7 @@ bool Mesh::Update(MeshData data) {
 	}
 
 	// sort internal elements
-	std::sort(elements, elements + num_elements, [](const ElementInfo& o1, const ElementInfo& o2){ return o1.semantic < o2.semantic; });
-
-
+	//std::sort(elements, elements + num_elements, [](const ElementInfo& o1, const ElementInfo& o2){ return o1.semantic < o2.semantic; });
 
 	// calculate input stride, internal stride, vertex count
 	int input_stride = GetFormatStrideInput(data.vertex_elements, data.vertex_elements_num);
@@ -164,26 +162,25 @@ bool Mesh::Update(MeshData data) {
 	u32 num_vertices = data.vertex_bytes / (u32)input_stride;
 
 
-
 	// validate data
-	MaterialGroup default_mat_id;
-	default_mat_id.beginFace = 0;
-	default_mat_id.endFace = data.index_num / 3;
-	if (!data.mat_ids) {
-		data.mat_ids = &default_mat_id;
-		data.mat_ids_num = 1;
-	}
-
-	bool is_valid = validate(num_vertices, data.index_data, data.index_num, data.mat_ids, data.mat_ids_num);
-	if (!is_valid) {
-		return false; // out of bounds
-	}
+	//MaterialGroup default_mat_id;
+	//default_mat_id.beginFace = 0;
+	//default_mat_id.endFace = data.index_num / 3;
+	//if (!data.mat_ids) {
+	//	data.mat_ids = &default_mat_id;
+	//	data.mat_ids_num = 1;
+	//}
+	//
+	//bool is_valid = validate(num_vertices, data.index_data, data.index_num, data.mat_ids, data.mat_ids_num);
+	//if (!is_valid) {
+	//	return false; // out of bounds
+	//}
 
 
 
 	// pack components
-	RawUniquePtr packed_vertex_data(operator new(internal_stride * num_vertices));
-	packVertices(data.vertex_elements, elements, data.vertex_elements_num,  num_elements, data.vertex_data, packed_vertex_data.get(), num_vertices);
+	//RawUniquePtr packed_vertex_data(operator new(internal_stride * num_vertices));
+	//packVertices(data.vertex_elements, elements, data.vertex_elements_num,  num_elements, data.vertex_data, packed_vertex_data.get(), num_vertices);
 
 
 
@@ -194,7 +191,7 @@ bool Mesh::Update(MeshData data) {
 	}
 
 	// optimize mesh
-	optimize(packed_vertex_data.get(), num_vertices, internal_stride, data.index_data, data.index_num, data.mat_ids, data.mat_ids_num);
+	//optimize(packed_vertex_data.get(), num_vertices, internal_stride, data.index_data, data.index_num, data.mat_ids, data.mat_ids_num);
 
 
 
@@ -301,7 +298,7 @@ bool Mesh::Update(MeshData data) {
 	if (!_vb) {
 		return false;
 	}
-	gapi->WriteBuffer(_vb, packed_vertex_data.get(), vb_desc.size, 0);
+	gapi->WriteBuffer(_vb, data.vertex_data, vb_desc.size, 0);
 	vertex_streams[0].vb = _vb;
 	vertex_streams[0].offset = 0;
 	vertex_streams[0].stride = internal_stride;

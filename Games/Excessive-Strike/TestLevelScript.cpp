@@ -19,7 +19,7 @@ TestLevelScript::TestLevelScript()
 	// Add sky to game
 	auto sky = World.SpawnComp_MeshFromFile("skybox.dae");
 	sky->SetScaleLocal({ 1000, 1000, 1000 });
-	//sky->Rot(mm::quat(3.14159265 / 2, mm::vec3(1, 0, 0)));
+	sky->Rot(mm::quat(3.14159265 / 2, mm::vec3(1, 0, 0)));
 
 	// Set up collision layers..
 	Physics.SetLayerCollision(eES_CollisionGroup::PLAYER, eES_CollisionGroup::SHELL, false);

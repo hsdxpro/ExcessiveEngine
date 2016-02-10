@@ -39,7 +39,7 @@ EngineCore::~EngineCore()
 	for (auto& a : importedTextures)
 		a.second->Release();
 
-	if (graphicsEngine)	graphicsEngine->Release();
+	//if (graphicsEngine)	graphicsEngine->Release();
 	if (physicsEngine)	physicsEngine->Release();
 	if (networkEngine)	networkEngine->Release();
 	if (soundEngine)	soundEngine->Release();

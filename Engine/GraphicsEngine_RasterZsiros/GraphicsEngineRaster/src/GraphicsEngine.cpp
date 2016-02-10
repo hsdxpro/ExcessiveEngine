@@ -304,6 +304,9 @@ void cGraphicsEngine::Update(float elapsed) {
 
 // Render a graphics scene
 void cGraphicsEngine::RenderScene(Scene& scene, ITexture2D* target, float elapsed) {
+
+	float aspectRatio = (float)screenWidth / screenHeight;
+
 	// load settings from scene
 	camera = (Camera*)scene.GetCamera();
 	//camera->SetAspectRatio(float((double)screenWidth / (double)screenHeight));
@@ -320,58 +323,50 @@ void cGraphicsEngine::RenderScene(Scene& scene, ITexture2D* target, float elapse
 	//--- --- Deferred rendering result --- --- //
 	ITexture2D* deferredComposition = deferredRenderer->GetCompositionBuffer();
 
-
-	auto tex = gApi->GetDefaultRenderTarget();
-	gApi->SetRenderTargets(1, &tex);
-	gApi->SetShaderProgram(shaderScreenCopy);
-	gApi->SetTexture(0, deferredComposition);
-	gApi->Draw(3);
-	gApi->Present();
-	return;
-
 	// Screen Space Analytic Reflection
 	//postProcessor->SetInputSSAR(deferredComposition, deferredRenderer->GetDepthBuffer(), deferredRenderer->GetGBuffer(1)); // Color, depth, normal
 	//postProcessor->SetOutputSSAR(hdrTextures[0]);
-	//postProcessor->ProcessSSAR(scene.GetCamera());
-	//
-	//// TODO Graphics Option -> Screen Space Variance Reflection
-	////postProcessor->SetInputSSVR(deferredComposition, deferredRenderer->GetDepthBuffer(), deferredRenderer->GetGBuffer(1)); // Color, depth, normal
-	////postProcessor->SetOutputSSVR(hdrTextures[0]);
-	////postProcessor->ProcessSSVR(scene.GetCamera());
-	//
-	//// Motion blur
-	//postProcessor->SetInputMB(hdrTextures[0], deferredRenderer->GetDepthBuffer());
-	//postProcessor->SetOutputMB(deferredComposition, hdrTextures[1], deferredRenderer->GetDepthStencilBuffer()); // Color, velocityBuffer, depth
-	//postProcessor->ProcessMB(elapsed, scene.GetCamera());
-	//
-	//// Depth of field
-	//postProcessor->SetInputDOF(deferredComposition, deferredRenderer->GetDepthBuffer());
-	//postProcessor->SetOutputDOF(hdrTextures[0]);
-	//postProcessor->ProcessDOF(elapsed, scene.GetCamera());
-	//
-	//
-	//// Lol using GBuffer0
+	//postProcessor->ProcessSSAR(*(Camera*)scene.GetCamera(), aspectRatio);
+	
+	// TODO Graphics Option -> Screen Space Variance Reflection
+	//postProcessor->SetInputSSVR(deferredComposition, deferredRenderer->GetDepthBuffer(), deferredRenderer->GetGBuffer(1)); // Color, depth, normal
+	//postProcessor->SetOutputSSVR(hdrTextures[0]);
+	//postProcessor->ProcessSSVR(scene.GetCamera());
+	
+	// Motion blur
+	postProcessor->SetInputMB(deferredComposition, deferredRenderer->GetDepthBuffer());
+	postProcessor->SetOutputMB(hdrTextures[0], hdrTextures[1], deferredRenderer->GetDepthStencilBuffer()); // Color, velocityBuffer, depth
+	postProcessor->ProcessMB(elapsed, *(Camera*)scene.GetCamera(), scene, aspectRatio);
+	
+	// Depth of field
+	postProcessor->SetInputDOF(hdrTextures[0], deferredRenderer->GetDepthBuffer());
+	postProcessor->SetOutputDOF(deferredComposition);
+	postProcessor->ProcessDOF(elapsed, *(Camera*)scene.GetCamera(), aspectRatio);
+	
+	// Lol using GBuffer0
 	//ITexture2D* gBuffer0 = deferredRenderer->GetGBuffer(0);
-	//
-	//// Need write luminance value to alpha channel for FXAA
-	//// HDR
-	//if (scene.state.hdr.enabled) {
+	
+	// Need write luminance value to alpha channel for FXAA
+	// HDR
+	//if (true) {
 	//	hdrProcessor->SetSource(hdrTextures[0]);
 	//	hdrProcessor->SetDestination(gBuffer0);						// set destination
 	//	hdrProcessor->adaptedLuminance = scene.luminanceAdaptation; // copy luminance value
 	//	hdrProcessor->Update(elapsed);								// update hdr
 	//	scene.luminanceAdaptation = hdrProcessor->adaptedLuminance; // copy luminance value
 	//}
-	//else {
-	//	gApi->SetRenderTargets(1, &gBuffer0);
-	//	gApi->SetShaderProgram(shaderScreenCopy);
-	//	gApi->SetTexture(0, hdrTextures[0]);
-	//	gApi->Draw(3);
-	//}
-	//
-	//
-	//// FXAA
-	//// gBuffer0 holds LDR values
+	/*else*/ {
+	auto target = gApi->GetDefaultRenderTarget();
+		gApi->SetRenderTargets(1, &target);
+		gApi->SetShaderProgram(shaderScreenCopy);
+		gApi->SetTexture(0, deferredComposition);
+		gApi->Draw(3);
+	}
+	
+	gApi->Present();
+	
+	// FXAA
+	// gBuffer0 holds LDR values
 	//postProcessor->SetInputFXAA(gBuffer0);
 	//postProcessor->SetOutputFXAA(gApi->GetDefaultRenderTarget());
 	//postProcessor->ProcessFXAA();
