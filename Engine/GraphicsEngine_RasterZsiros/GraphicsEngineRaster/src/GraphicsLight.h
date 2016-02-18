@@ -61,7 +61,8 @@ public:
 	// enable/disable
 	void Enable(bool val) override;
 	bool IsEnabled() const override;
-private:
+
+public:
 	eLightType type;
 	mm::vec3 color;
 	mm::vec3 position, direction;

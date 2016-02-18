@@ -71,6 +71,8 @@ float4 PS_MAIN(VS_OUT In) : COLOR0 {
 
 	float3 normalW = UnpackNormal(tex2D(normalTexture, In.tex0).xy).xyz;
 
+	//return float4(normalW, 1.0f);
+
 	float3 reflectDirW = normalize(reflect(In.viewRayW, normalize(normalW)).xyz) * c.stepLength;
 
 	// Important, more fade when reflect vector dofacing camera

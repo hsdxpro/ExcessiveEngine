@@ -36,8 +36,9 @@ public:
 	cShadowMapDir();
 	cShadowMapDir(cGraphicsApiD3D11* gApi, unsigned resolution, eFormat readFormat, eFormat depthFormat, int cascades = 1);
 	~cShadowMapDir();
-	cShadowMapDir(const cShadowMapDir&) = delete;
-	cShadowMapDir& operator=(const cShadowMapDir&) = delete;
+
+	//cShadowMapDir(const cShadowMapDir&);
+	//cShadowMapDir& operator=(const cShadowMapDir&);
 
 	// Init
 	void Init(cGraphicsApiD3D11* gApi, unsigned resolution, eFormat readFormat, eFormat depthFormat, int cascades = 1);
@@ -82,7 +83,7 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////
 //	Shadow map helper class
-class cShadowMap : private cShadowMapDir {
+class cShadowMap : public cShadowMapDir {
 public:
 	// type
 	void SetType(cGraphicsLight::eLightType type) {

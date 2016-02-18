@@ -56,7 +56,7 @@ struct GBUFFER {
 GBUFFER EncodeGBuffer(float3 diffuse, float3 normal, float glossiness, float specLevel) {
 	GBUFFER o;
 	o.diffuse.rgb = diffuse; o.diffuse.a = 1.0f;
-	o.normal = PackNormal(normal);
+	o.normal = PackNormal(normalize(normal));
 	o.misc.r = glossiness;
 	o.misc.g = specLevel;
 	o.misc.b = o.misc.a = 0.0f;
@@ -65,7 +65,7 @@ GBUFFER EncodeGBuffer(float3 diffuse, float3 normal, float glossiness, float spe
 
 void DecodeGBuffer(GBUFFER gb, out float3 diffuse, out float3 normal, out float glossiness, out float specLevel) {
 	diffuse = gb.diffuse.rgb;
-	normal = UnpackNormal(gb.normal.rg);
+	normal = normalize(UnpackNormal(gb.normal.rg));
 	glossiness = gb.misc.r;
 	specLevel = gb.misc.g;
 }

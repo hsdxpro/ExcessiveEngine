@@ -4,12 +4,12 @@
 
 
 cCamera::cCamera(cCamera::tProjOrtho proj, float nearPlane, float farPlane)
-:nearPlane(nearPlane), farPlane(farPlane), target(0, 1, 0), pos(0, 0, 0), projOrtho(proj), projType(cCamera::ORTHO) {
+:nearPlane(nearPlane), farPlane(farPlane), target(1, 0, 0), pos(0, 0, 0), projOrtho(proj), projType(cCamera::ORTHO) {
 	CalcProjMatrix();
 }
 
 cCamera::cCamera(cCamera::tProjPersp proj, float nearPlane, float farPlane)
-:nearPlane(nearPlane), farPlane(farPlane), target(0, 1, 0), pos(0, 0, 0), projPersp(proj), projType(cCamera::PERSP) {
+:nearPlane(nearPlane), farPlane(farPlane), target(1, 0, 0), pos(0, 0, 0), projPersp(proj), projType(cCamera::PERSP) {
 	CalcProjMatrix();
 }
 

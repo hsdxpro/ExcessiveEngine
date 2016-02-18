@@ -119,7 +119,7 @@ void cGraphicsEngine::cPostProcessor::ProcessMB(float frameDeltaTime, const Came
 	mbConstants.invFourPercentInputRes = mm::vec2(60.0f / inputTexDepth->GetWidth(), 60.0f / inputTexDepth->GetHeight());
 	mbConstants.negInvFourPercentInputRes = -mbConstants.invFourPercentInputRes;
 
-	mbConstants.InvframeDeltaTimeDiv2DivInputRes *= 11.0f; // Motion blur BOOST
+	mbConstants.InvframeDeltaTimeDiv2DivInputRes *= 16.0f; // Motion blur BOOST
 
 	gApi->SetRenderTargets(1, &outputTexVelocity2D, outputTexDepthStencil);
 	gApi->SetShaderProgram(shaderMBCamera2DVelocity);
@@ -375,41 +375,45 @@ void cGraphicsEngine::cPostProcessor::ProcessSSAR(const Camera& cam, float aspec
 	gApi->Draw(3);
 }
 
-void cGraphicsEngine::cPostProcessor::ProcessSSVR(const Camera& cam)
+void cGraphicsEngine::cPostProcessor::ProcessSSVR(const Camera& cam, float aspectRatio)
 {
-	//gApi->SetRenderTargets(1, &outputTexColor, nullptr);
-	//gApi->SetShaderProgram(shaderSSVR);
+	mm::mat4 projMat = cam.GetProjMatrix(aspectRatio);
+	mm::mat4 viewMat = cam.GetViewMatrix();
+	mm::mat4 viewProjMat = projMat * viewMat;
 
-	//struct constants
-	//{
-	//	Matrix44 invViewProj;
-	//	Matrix44 viewProj;
-	//	Matrix44 view;
-	//	Matrix44 invView;
-	//	Vec3	 camPos;		float _pad0;
-	//	Vec2	 invOutputRes;
-	//	float	 farPlane;
-	//	float	 stepLength;
-	//	int		 maxRange;
-	//} c;
+	gApi->SetRenderTargets(1, &outputTexColor, nullptr);
+	gApi->SetShaderProgram(shaderSSVR);
 
-	//c.view = cam.GetViewMatrix();
-	//c.viewProj = c.view *  cam.GetProjMatrix();
-	//c.invViewProj = Matrix44Inverse(c.viewProj);
-	//c.camPos = cam.GetPos();
-	//c.invView = Matrix44Inverse(c.view);
-	//c.invOutputRes = Vec2(1.f / outputTexColor->GetWidth(), 1.f / outputTexColor->GetHeight());
-	//c.farPlane = cam.GetFarPlane();
-	//c.stepLength = 0.25f;
-	//c.maxRange = 80;
+	struct constants
+	{
+		mm::mat4 invViewProj;
+		mm::mat4 viewProj;
+		mm::mat4 view;
+		mm::mat4 invView;
+		mm::vec3 camPos;		float _pad0;
+		mm::vec2 invOutputRes;
+		float	 farPlane;
+		float	 stepLength;
+		int		 maxRange;
+	} c;
 
-	//// Set it for shaders to use
-	//gApi->SetVSConstantBuffer(&c, sizeof(c), 0);
-	//gApi->SetPSConstantBuffer(&c, sizeof(c), 0);
-	//gApi->SetTexture(0, inputTexColor);
-	//gApi->SetTexture(1, inputTexDepth);
-	//gApi->SetTexture(2, inputTexNormal);
-	//gApi->Draw(3);
+	c.view = viewMat;// cam.GetViewMatrix();
+	c.viewProj = viewProjMat;// c.view *  cam.GetProjMatrix();
+	c.invViewProj = mm::inverse(c.viewProj);
+	c.camPos = mm::vec3(cam.GetPos().x, cam.GetPos().y, cam.GetPos().z);
+	c.invView = mm::inverse(c.view);
+	c.invOutputRes = mm::vec2(1.f / outputTexColor->GetWidth(), 1.f / outputTexColor->GetHeight());
+	c.farPlane = cam.GetFarPlane();
+	c.stepLength = 0.25f;
+	c.maxRange = 80;
+
+	// Set it for shaders to use
+	gApi->SetVSConstantBuffer(&c, sizeof(c), 0);
+	gApi->SetPSConstantBuffer(&c, sizeof(c), 0);
+	gApi->SetTexture(0, inputTexColor);
+	gApi->SetTexture(1, inputTexDepth);
+	gApi->SetTexture(2, inputTexNormal);
+	gApi->Draw(3);
 }
 
 // Set inputs

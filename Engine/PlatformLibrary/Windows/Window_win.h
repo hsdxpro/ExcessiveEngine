@@ -57,6 +57,8 @@ private:
 protected:
 	HWND hwnd;
 	bool bClosed;
+
+	bool bGenerateSysKeyAltDown;
 	//sf::RenderWindow w;
 	//mm::ivec2 lastMousePos;
 };

@@ -36,6 +36,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 Window::Window(const rWindow& d)
 {
 	bClosed = false;
+	bGenerateSysKeyAltDown = false;
 
 	//lastMousePos.x = std::numeric_limits<int>::min();
 	//lastMousePos.y = std::numeric_limits<int>::min();
@@ -122,21 +123,17 @@ Window::Window(const rWindow& d)
 Window::~Window()
 {
 	Close();
-	//w.close();
 }
 
 bool Window::PopEvent(rWindowEvent& evt_out)
 {
-	//sf::Event evt;
-	//if (!w.pollEvent(evt))
-	//{
-	//	return false;
-	//}
-
 	MSG msg;
 	bool b = PeekMessage(&msg, 0, 0, 0, PM_REMOVE);
 	if(b)
 	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+
 		if (msg.message == WM_LBUTTONDOWN)
 		{
 			evt_out.msg = eWindowMsg::MOUSE_PRESS;
@@ -174,6 +171,15 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 			evt_out.key = ConvertFromWindowsKey(msg.wParam);
 			evt_out.msg = eWindowMsg::KEY_PRESS;
 		}
+		else if (msg.message == WM_SYSKEYDOWN)
+		{
+			if (HIWORD(msg.lParam) & KF_ALTDOWN)
+			{
+				bGenerateSysKeyAltDown = true;
+			}
+			evt_out.key = ConvertFromWindowsKey(msg.wParam);
+			evt_out.msg = eWindowMsg::KEY_PRESS;
+		}
 		else if (msg.message == WM_KEYUP)
 		{
 			evt_out.key = ConvertFromWindowsKey(msg.wParam);
@@ -199,12 +205,6 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 				evt_out.msg = eWindowMsg::MOUSE_MOVE;
 			}
 		}
-		else if (msg.message == WM_SIZING)
-		{
-			evt_out.x = LOWORD(msg.lParam);
-			evt_out.y = HIWORD(msg.lParam);
-			evt_out.msg = eWindowMsg::RESIZE;
-		}
 		else if (msg.message == WM_CLOSE)
 		{
 			evt_out.msg = eWindowMsg::CLOSE;
@@ -215,58 +215,19 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 			evt_out.msg = eWindowMsg::CLOSE;
 			Close();
 		}
-
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+	}
+	else // !b
+	{
+		if (bGenerateSysKeyAltDown)
+		{
+			evt_out.msg = eWindowMsg::KEY_PRESS;
+			evt_out.key = eKey::LALT;
+			bGenerateSysKeyAltDown = false;
+			return true;
+		}
 	}
 	
 	return b;
-	//// Key press release,
-	//if (evt.type == sf::Event::EventType::KeyPressed || evt.type == sf::Event::EventType::KeyReleased)
-	//{
-	//	evt_out.key = ConvertFromSFMLKey(evt.key.code);
-	//}
-	////else if (evt.type == sf::Event::EventType::MouseMoved) 
-	////{
-	////	// TODO: worst idea ever
-	////	if (lastMousePos.x == std::numeric_limits<int>::min())
-	////	{
-	////		lastMousePos.x = evt.mouseMove.x;
-	////		lastMousePos.y = evt.mouseMove.y;
-	////	}
-	////
-	////	evt_out.deltaX = evt.mouseMove.x - lastMousePos.x;
-	////	evt_out.deltaY = evt.mouseMove.y - lastMousePos.y;
-	////	
-	////	evt_out.x = evt.mouseMove.x;
-	////	evt_out.y = evt.mouseMove.y;
-	////
-	////	lastMousePos.x = evt.mouseMove.x;
-	////	lastMousePos.y = evt.mouseMove.y;
-	////}
-	//if (evt.type == sf::Event::EventType::MouseButtonPressed || evt.type == sf::Event::EventType::MouseButtonReleased)
-	//{
-	//	evt_out.x = evt.mouseButton.x;
-	//	evt_out.y = evt.mouseButton.y;
-	//	evt_out.mouseBtn = ConvertFromSFMLMouseBtn(evt.mouseButton.button);
-	//}
-	//else if (evt.type == sf::Event::EventType::MouseWheelMoved)
-	//{
-	//	evt_out.deltaY = evt.mouseWheel.delta;
-	//}
-	//else if (evt.type == sf::Event::EventType::Closed)
-	//{
-	//	Close();
-	//}
-	//else if (evt.type == sf::Event::EventType::Resized)
-	//{
-	//	evt_out.x = evt.size.width;
-	//	evt_out.y = evt.size.height;
-	//}
-	//
-	//evt_out.msg = ConvertFromSFMLWindowMsg(evt.type);
-
-	//return true;
 }
 
 void Window::Close() 
@@ -463,15 +424,13 @@ eKey Window::ConvertFromWindowsKey(WPARAM key)
 	case VK_ESCAPE:		return eKey::ESC;
 	case VK_LCONTROL:	return eKey::LCTRL;
 	case VK_LSHIFT:		return eKey::LSHIFT;
-	// TODO
-	//case sf::Keyboard::LAlt:		return eKey::LALT;
-		
+	case VK_LMENU:		return eKey::LALT;
 	case VK_LWIN:		return eKey::LSYS;
 	case VK_RCONTROL:	return eKey::RCTRL;
 	case VK_RSHIFT:		return eKey::RSHIFT;
-	//case sf::Keyboard::RAlt:		return eKey::RALT;
+	case VK_RMENU:		return eKey::RALT;
 	case VK_RWIN:		return eKey::RSYS;
-	case VK_MENU:		return eKey::MENU;
+	case VK_MENU:		return eKey::LALT;
 	// TODO
 	//case sf::Keyboard::LBracket:	return eKey::LBRACKET;
 	//case sf::Keyboard::RBracket:	return eKey::RBRACKET;
@@ -485,7 +444,7 @@ eKey Window::ConvertFromWindowsKey(WPARAM key)
 	//case sf::Keyboard::Equal:		return eKey::EQUAL;
 	//case sf::Keyboard::Dash:		return eKey::DASH;
 	case VK_SPACE:					return eKey::SPACE;
-	case VK_RETURN:					return eKey::RETURN;
+	case VK_RETURN:					return eKey::ENTER;
 	case VK_BACK:					return eKey::BACKSPACE;
 	case VK_TAB:					return eKey::TAB;
 	//case sf::Keyboard::PageUp:		return eKey::PAGEUP;

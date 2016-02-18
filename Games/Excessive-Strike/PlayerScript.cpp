@@ -85,7 +85,7 @@ PlayerScript::PlayerScript()
 	gunSound = Sound.CreateSoundMono("GUN_FIRE-stereo.ogg", 0.5);
 	shellSound = Sound.CreateSoundMono("shell_fall.ogg", 0.5);
 
-	playerCapsule->SetPos(mm::vec3(0, 0, 5));
+	playerCapsule->SetPos(mm::vec3(0, 0, 20));
 }
 
 void PlayerScript::Update(float deltaSeconds)
@@ -188,14 +188,14 @@ void PlayerScript::Update(float deltaSeconds)
 		//if (Physics.TraceClosestPoint(camComp->GetPos(), camComp->GetPos() + camComp->GetFrontDirNormed() * 999999, result, params))
 		//{
 		//	//MeshComponent* boxComp = World.SpawnComp_MeshFromFile("box.DAE");
-		//	MeshComponent* boxComp = World.SpawnComp_MeshFromFile("characterwoman1.obj");
+		//	MeshComponent* boxComp = World.SpawnComp_MeshFromFile("csaje.DAE");
 		//	//MeshComponent* boxComp = World.SpawnComp_MeshFromFile("sziv.DAE");
 		//	//boxComp->SetScaleLocal({ 1.f / 2, 1.f / 2, 1.f / 2});
 		//	boxComp->SetPos(result.pos);//cuki <3 <3 <3 I <3 U Rici
 		//	//boxComp->SetRot(camComp->GetRot());
 		//}
 
-		Actor* bullet = Core.SpawnActor_RigidBodyFromFile("box.DAE", 100);
+		Actor* bullet = Core.SpawnActor_RigidBodyFromFile("box.DAE", 1);
 		bullet->Attach(Core.SpawnComp_MeshFromFile("box.DAE"));
 		bullet->SetScaleLocal({ 1.f / 3, 1.f / 3, 1.f / 3 });
 		
@@ -204,7 +204,7 @@ void PlayerScript::Update(float deltaSeconds)
 		mm::vec3 bulletDirNormed = camComp->GetFrontDirNormed();
 		bullet->SetPos(ak47Graphics->GetPos());
 		bullet->SetVelocity(bulletDirNormed * 7);
-		bullet->Scale(bulletDirNormed * 3);
+		//bullet->Scale(bulletDirNormed * 3);
 	}
 
 

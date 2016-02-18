@@ -64,7 +64,7 @@ enum class eKey
 	EQUAL,			///< The = key
 	DASH,			///< The - key
 	SPACE,			///< The Space key
-	RETURN,			///< The Return key
+	ENTER,			///< The Return key
 	BACKSPACE,		///< The Backspace key
 	TAB,			///< The Tabulation key
 	PAGEUP,			///< The Page up key

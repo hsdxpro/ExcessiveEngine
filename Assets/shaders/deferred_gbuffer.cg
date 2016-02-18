@@ -44,6 +44,7 @@ struct {
 	float4x4 worldViewProj;
 	float4x4 worldView;
 	float4x4 world;
+	float4x4 rot;
 	float3	 camPos;
 	float	 far;
 } transform : register(c0);
@@ -81,14 +82,9 @@ VS_OUT VS_MAIN(VS_IN In) {
 		In.posL.y * transform.worldViewProj[1] + (
 		In.posL.z * transform.worldViewProj[2] + 
 		transform.worldViewProj[3]));
-	Out.normalW = 
-		In.normalL.x * transform.world[0].xyz + (
-		In.normalL.y * transform.world[1].xyz + (
-		In.normalL.z * transform.world[2].xyz));
-	Out.tangentW = 
-		In.tangentL.x * transform.world[0].xyz + ( 
-		In.tangentL.y * transform.world[1].xyz + (
-		In.tangentL.z * transform.world[2].xyz)); 
+
+	Out.normalW = normalize(mul(In.normalL, (float3x3)transform.rot));
+	Out.tangentW = normalize(mul(In.tangentL, (float3x3)transform.rot));
 
 	Out.posW = In.posL.x * transform.world[0].xyz + ( In.posL.y * transform.world[1].xyz + (In.posL.z * transform.world[2].xyz + transform.world[3].xyz));
 

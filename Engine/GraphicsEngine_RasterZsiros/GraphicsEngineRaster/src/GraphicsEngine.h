@@ -233,6 +233,8 @@ private:
 	// misc
 	std::string lastErrorMessage;
 
+	float luminanceAdaptation;
+
 	////////////////////////////////////////////////
 	// --- --- --- --- SUBCLASSES --- --- --- --- //
 	////////////////////////////////////////////////
@@ -299,7 +301,7 @@ private:
 		void ProcessDOF(float frameDeltaTime, const Camera& cam, float aspectRatio);
 		void ProcessFXAA();
 		void ProcessSSAR(const Camera& cam, float aspectRatio);
-		void ProcessSSVR(const Camera& cam);
+		void ProcessSSVR(const Camera& cam, float aspectRatio);
 
 		// Set inputs
 		void SetInputMB(ITexture2D* color, ITexture2D* depth);

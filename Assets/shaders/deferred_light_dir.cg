@@ -89,57 +89,35 @@ float4 PS_MAIN(VS_OUT In) : COLOR0 {
 	float glossiness, specLevel;
 	SampleGBuffer(In.tex0, diffuseColor, normal, glossiness, specLevel);
 
+	return float4(diffuseColor, 1.0f);
+
 	depth = tex2D(depthBuffer, In.tex0);
-	worldPos = GetWorldPosition(camPos, In.viewRay, depth);
+	worldPos = GetWorldPosition(camPos, In.viewRay, depth) / 10.f;
 
 	// calculate lighting terms
-	float3 lightDir = normalize(float3(1,1,-1));//worldPos - camPos);
 	float3 negViewNorm = normalize(camPos - worldPos);
 	float3 halfVec = normalize(-lightDir + negViewNorm);
 	float intensity = 1.f;
-	
+
 	float3 V = normalize(negViewNorm);
 	float3 H = normalize(halfVec);
 	float3 N = normalize(normal);
 
-	float VoH = saturate(dot(V,H));
-	float NoV = saturate(dot(N,V));
-	float NoL = saturate(dot(N, -lightDir));
-	float NoH = saturate(dot(N,H));
+	float bias = 1e-5f;
 
+	float VoH = saturate(dot(V,H) + bias);
+	float NoV = saturate(dot(N,V) + bias);
+	float NoL = saturate(dot(N, -lightDir) + bias);
+	float NoH = saturate(dot(N,H) + bias);
 	
-	float Roughness = 1;
-	float3 SpecularColor = float3(0.04, 0.04, 0.04);
-	
-	float4 diffuse = float4(NoL * Fr_DisneyDiffuse ( NoV, NoL, VoH, Roughness, 1 - SpecularColor), 1.f);
-	//float4 diffuse = float4(NoL * Diffuse_Nemeth(NoL, Roughness, SpecularColor), 1.f);
-	//float4 diffuse = float4(0,0,0,1);
-	//return diffuse;
+	float roughness = 0.1f;
+	float3 specularColor = float3(0.04, 0.04, 0.04);
 
-	//float GRicsi2 = Vis_SmithJointApprox_C(Roughness, NoV, NoL);
-	//float GUE4 = Vis_SmithJointApprox(Roughness, NoV, NoL) * (4 * NoL * NoV);
-	//float GRicsi = Vis_Schlick_C(Roughness, NoV, NoL);
-	//float GUE4 = Vis_Schlick(Roughness, NoV, NoL) * (4 * NoL * NoV);
-	//float GRicsi = Vis_Smith_C(Roughness, NoV, NoL);
-	//float GUE4 = Vis_Smith(Roughness, NoV, NoL);
+	float3 diffuse = lightColor * NoL * diffuseColor * DisneyDiffuse_Extended(NoV, NoL, VoH, roughness, specularColor);
+	float3 specular = float3(0,0,0);//lightColor * NoL * SpecularBRDF(NoL, NoV, VoH, NoH, specularColor, roughness);
 
-	//return GRicsi;
-	//return GUE4;
+	return float4(diffuse + specular, 1.0f);
 
-	float3 F = Fresnel(SpecularColor, VoH);
-	float G = GeometricVisibility(Roughness, NoV, NoL, VoH) * (4 * NoL * NoV);
-	float D = Distribution(Roughness, NoH);
-
-	return float4(NoL * F * G * D + diffuse, 1.f) * intensity;
-
-	//return float4(diffuseTerm, diffuseTerm, diffuseTerm, 1.f);
-	//const float IOR = 1.6f;
-	//// TODO i don't know why, that Specular_CookTorrance roughness parameter behave as GLOSSINESS !!
-	//float specTerm = Specular_CookTorrance(normal, negViewNorm, -lightDir, glossiness, IOR) * specLevel; 
-	//
-	//color.rgb += lightColor*(diffuseTerm * diffuseColor + specTerm); // note: no light attenuation
-	//color.a = 1.0f;
-	//
 	//// shadow map
 	//float3 shadowPos;
 	//

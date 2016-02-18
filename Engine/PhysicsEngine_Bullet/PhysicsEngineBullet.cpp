@@ -94,7 +94,8 @@ void PhysicsEngineBullet::Update(float deltaTime)
 {
 	{
 		PROFILE_SCOPE("Simulate");
-		world->stepSimulation(deltaTime, 0);
+		//world->stepSimulation(deltaTime, 0);
+		world->stepSimulation(deltaTime, 20, 1.0f / 60);
 	}
 	
 	{

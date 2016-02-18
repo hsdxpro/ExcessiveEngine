@@ -33,6 +33,8 @@
 #include "Core\InputCore.h"
 #include "PlatformLibrary\File.h"
 #include "Core\EngineCore.h"
+#include <string>
+#include "GraphicsEngine_RasterZsiros\Core\src\zsString.h"
 
 void InitScript();
 
@@ -51,7 +53,7 @@ int main()
 		graphicsDesc.targetWindow = window;
 	Core.InitGraphicsEngineRasterZsiros(graphicsDesc);
 	rPhysicsEngineBullet physicsDesc;
-		physicsDesc.gravity = mm::vec3(0, 0, -9.81f);
+		physicsDesc.gravity = mm::vec3(0, 0, -9.81);
 	Core.InitPhysicsEngineBullet(physicsDesc);
 
 	InitScript(); // Manual bullshit, TODO !!!
@@ -65,18 +67,22 @@ int main()
 		Input.ClearFrameData();
 
 		// Process input events coming from O.S.-> Window
+		int nEnter = 0;
 		rWindowEvent evt;
 		while(window->PopEvent(evt))
 		{
 			switch(evt.msg)
 			{
 			case eWindowMsg::KEY_PRESS:
-				if (evt.key != eKey::INVALID)
+				if (evt.key == eKey::ENTER)
+					nEnter++;
+
+				if (evt.key != eKey::INVALID);
 					Input.KeyPress(evt.key);
 				break;
 
 			case eWindowMsg::KEY_RELEASE:
-				if (evt.key != eKey::INVALID)
+				if(evt.key != eKey::INVALID);
 					Input.KeyRelease(evt.key);
 				break;
 
@@ -107,6 +113,20 @@ int main()
 		}
 
 		Input.Update();
+
+		// Valamiért két enter, wtf
+		if (nEnter > 1)
+		{
+			int asd = 5;
+			asd++;
+		}
+
+		// IsKeyPressed Enterre sose lesz igaz, mert asszem hogy a window message - ben kétszer szerepel az enter megnyomása, mert system message is jön, meg egy nem system message is
+		if(Input.IsKeyDown(eKey::LALT) && Input.IsKeyPressed(eKey::ENTER))
+		{
+			int asd = 5;
+			asd++;
+		}
 
 		float deltaSeconds = timer->GetSecondsPassed();
 		timer->Reset();

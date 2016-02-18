@@ -434,18 +434,21 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 			mm::mat4 skewMat = mm::mat4(entity->GetSkew());
 
 			mm::mat4 worldMat = posMat * (rotMat * skewMat);
+			//mm::mat4 worldMat = posMat * rotMat * skewMat;
 
 			// cbuffer
 			struct {
 				mm::mat4 worldViewProj;
 				mm::mat4 worldView;
 				mm::mat4 world;
+				mm::mat4 rot;
 				mm::vec3 camPos;
 				float	 farPlane;
 			} shaderTransform;
 			shaderTransform.worldViewProj = viewProjMat * worldMat;
 			shaderTransform.worldView = viewMat * worldMat;
 			shaderTransform.world = worldMat;
+			shaderTransform.rot = rotMat;
 			shaderTransform.farPlane = cam->GetFarPlane();
 			shaderTransform.camPos = cam->GetPos();
 
@@ -601,7 +604,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	
 	data.AngleBias = 10;
 	data.TanAngleBias = tanf(data.AngleBias);
-	data.Strength = 1;
+	data.Strength = 0.75;
 	
 	gApi->SetShaderProgram(shaderHBAO);
 	gApi->SetRenderTargets(1, &aoBuffer, nullptr);
@@ -684,7 +687,10 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	std::vector<std::pair<cGraphicsLight, cShadowMap>*> directionalLights;
 	std::vector<std::pair<cGraphicsLight, cShadowMap>*> spotLights;
 	std::vector<std::pair<cGraphicsLight, cShadowMap>*> pointLights;
-	mm::vec3 ambientLight(1.0f, 1.0f, 1.0f);
+	mm::vec3 ambientLight(0.15f, 0.15f, 0.15f);
+
+	cShadowMap asd;
+	directionalLights.push_back(&std::make_pair(cGraphicsLight(), asd));
 
 	//auto& lightList = parent.sceneManager->GetLights();
 	//for (auto light : lightList) 
@@ -737,16 +743,16 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 		float nearPlane; float _pad8[3];
 		float farPlane; float _pad9[3];
 	} shaderConstants;
-	float f = 2.0f;
-	memset(&shaderConstants, *((int*)&f), sizeof(shaderConstants));
+	//float f = 2.0f;
+	//memset(&shaderConstants, *((int*)&f), sizeof(shaderConstants));
 
-	mm::mat4 viewProj = viewProjMat;
-	shaderConstants.viewProj = viewProj;
-	shaderConstants.invViewProj = mm::inverse(viewProj);
+	//* viewProjMat;*/
+	shaderConstants.viewProj = viewProjMat;
+	shaderConstants.invViewProj = mm::inverse(viewProjMat);
 	shaderConstants.camPos = cam->GetPos();
 	shaderConstants.nearPlane = cam->GetNearPlane();
 	shaderConstants.farPlane = cam->GetFarPlane();
-	mm::mat4 test = shaderConstants.viewProj * shaderConstants.invViewProj;
+	//mm::mat4 test = shaderConstants.viewProj * shaderConstants.invViewProj;
 
 
 	//------------------------------------------------------------------------//
@@ -764,7 +770,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 
 	skyConstants.invViewProj = shaderConstants.invViewProj;
 	skyConstants.camPos = cam->GetPos();
-	skyConstants.sunDir = directionalLights.size() > 0 ? directionalLights[0]->first.direction : mm::vec3(0, 0, -1);
+	skyConstants.sunDir = mm::normalize(mm::vec3(0.0, -1.0, -0.5));
 
 	IntensitySpectrum spectrum;
 	spectrum.BlackBody(6400);
@@ -791,7 +797,8 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	skyConstants.rayleighFactor = 1.0f;	
 
 	if (directionalLights.size() > 0) {
-		directionalLights[0]->first.color = sunColor * 1.4f;
+		directionalLights[0]->first.color = sunColor;
+		directionalLights[0]->first.direction = skyConstants.sunDir;
 	}
 
 
@@ -808,11 +815,11 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 
 	for (auto light_ : directionalLights) {
 		auto& light = light_->first;
-		auto& shadowMap = (cShadowMapDir&)light_->second;
+		//auto& shadowMap = (cShadowMapDir&)light_->second;
 
 		// load shader constants
 		shaderConstants.lightColor = light.color;
-		shaderConstants.lightDir = light.direction;
+		shaderConstants.lightDir = mm::vec3(light.direction.x, light.direction.z, -light.direction.y);
 		gApi->SetVSConstantBuffer(&shaderConstants, sizeof(shaderConstants), 0);
 		gApi->SetPSConstantBuffer(&shaderConstants, sizeof(shaderConstants), 0);
 
@@ -826,22 +833,22 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 		shadowConst.baseBias = 1e-5f;
 
 		// compute shadow map constants, if any
-		if (shadowMap) {
-			// get maps
-			auto& transforms = shadowMap.GetTransforms();
-			shadowConst.nCascades = shadowMap.GetNumCascades();
-			shadowConst.castShadows = true;
-
-			// for each cascade set shader values
-			for (int i = 0; i < shadowConst.nCascades; i++) {
-				shadowConst.lightViewProj[i] = transforms[i].viewMat * transforms[i].projMat;
-			}
-			// set shadow maps in shader
-			gApi->SetTexture(L"shadowMap_Array", shadowMap.GetTexture());
-		}
-		else {
+		//if (shadowMap) {
+		//	// get maps
+		//	auto& transforms = shadowMap.GetTransforms();
+		//	shadowConst.nCascades = shadowMap.GetNumCascades();
+		//	shadowConst.castShadows = true;
+		//
+		//	// for each cascade set shader values
+		//	for (int i = 0; i < shadowConst.nCascades; i++) {
+		//		shadowConst.lightViewProj[i] = transforms[i].viewMat * transforms[i].projMat;
+		//	}
+		//	// set shadow maps in shader
+		//	gApi->SetTexture(L"shadowMap_Array", shadowMap.GetTexture());
+		//}
+		//else {
 			shadowConst.castShadows = false;
-		}
+		//}
 
 		gApi->SetPSConstantBuffer(&shadowConst, sizeof(shadowConst), 100);
 

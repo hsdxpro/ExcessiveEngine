@@ -194,7 +194,8 @@ public:
 
 	__inline void Scale(const mm::vec3& v)
 	{
-		assert(0);
+		// TODO NOT LOCAL SCLAE !!!!!
+		SetScaleLocal(GetScaleLocal() * v);
 	}
 
 	__inline void ScaleLocal(const mm::vec3& v)

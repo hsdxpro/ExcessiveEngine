@@ -29,7 +29,7 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 	is.close();
 
 	// Assimp will parse memory
-	const aiScene* scene = importer.ReadFileFromMemory(mem, fileSize, aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph | aiProcess_OptimizeMeshes | aiProcess_ConvertToLeftHanded);
+	const aiScene* scene = importer.ReadFileFromMemory(mem, fileSize, aiProcess_MakeLeftHanded);
 
 	// Free memory
 	free(mem);
@@ -240,7 +240,7 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 					memcpy(((u8*)vertices) + vertexSize * vertexIdx + norm_attribOffset, &mm::vec3(normal.x, normal.y, normal.z), sizeof(mm::vec3));
 				}
 
-				if (mesh->HasTangentsAndBitangents()) 
+				if (mesh->HasTangentsAndBitangents())
 				{
 					if(cfg.isContain(eImporter3DFlag::VERT_ATTR_TAN))
 					{

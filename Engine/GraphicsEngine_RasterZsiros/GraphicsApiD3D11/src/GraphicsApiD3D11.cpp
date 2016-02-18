@@ -471,8 +471,8 @@ eGapiResult cGraphicsApiD3D11::CreateDefaultStates() {
 	d.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	d.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	d.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
-	d.Filter = D3D11_FILTER_ANISOTROPIC;
-	d.MaxAnisotropy = 16;
+	d.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	d.MaxAnisotropy = 1;
 	d.MaxLOD = 1;
 	d.MinLOD = 0;
 	d.MipLODBias = 0;
@@ -941,6 +941,8 @@ eGapiResult cGraphicsApiD3D11::CreateShaderProgram(IShaderProgram** resource, co
 		if (cgHelper->GetLastErrorMsg() != nullptr)
 		{
 			lastErrorMsg = cgHelper->GetLastErrorMsg();
+			
+			OutputDebugStringW(lastErrorMsg.c_str());
 			return eGapiResult::ERROR_UNKNOWN;
 		}
 
@@ -1266,8 +1268,8 @@ eGapiResult cGraphicsApiD3D11::CreateShaderProgram(IShaderProgram** resource, co
 		}
 
 		// Not found, so create, add
-		if (state == nullptr) {
-			sDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+		if (state == nullptr) 
+		{
 			HRESULT hr = d3ddev->CreateSamplerState(&sDesc, &state);
 			if (FAILED(hr)) {
 				lastErrorMsg = L"Can't create SamplerState";
@@ -1445,6 +1447,7 @@ eGapiResult cGraphicsApiD3D11::CopyResource(ITexture2D* src, ITexture2D* dst) {
 	ASSERT(src != nullptr && dst != nullptr);
 
 	d3dcon->CopyResource((ID3D11Resource*)((cTexture2DD3D11*)dst)->Get(), (ID3D11Resource*)((cTexture2DD3D11*)src)->Get());
+	d3dcon->Flush();
 	return eGapiResult::OK;
 }
 

@@ -7,6 +7,13 @@
 
 TestLevelScript::TestLevelScript()
 {
+	//Actor* plane = Core.SpawnActor_RigidBodyFromFile("box.DAE", 0);
+	//plane->Attach(Core.SpawnComp_MeshFromFile("box.DAE"));
+	//plane->SetKinematic(true);
+	////plane->SetPos(mm::vec3(0,0,0));
+	//plane->SetScaleLocal(mm::vec3(100, 100, 1));
+	//plane->SetCollisionGroup(eES_CollisionGroup::GROUND);
+
 	// Add ground to game
 	auto groundModelPath = "Terminal/terminal_blender.dae";
 	//demo_ground.dae
@@ -17,11 +24,11 @@ TestLevelScript::TestLevelScript()
 	groundRigidActor->Rot(mm::quat(3.14159265 / 2, mm::vec3(1, 0, 0)));
 	
 	// Add sky to game
-	auto sky = World.SpawnComp_MeshFromFile("skybox.dae");
-	sky->SetScaleLocal({ 1000, 1000, 1000 });
-	sky->Rot(mm::quat(3.14159265 / 2, mm::vec3(1, 0, 0)));
+	//auto sky = World.SpawnComp_MeshFromFile("skybox.dae");
+	//sky->SetScaleLocal({ 1000, 1000, 1000 });
+	//sky->Rot(mm::quat(3.14159265 / 2, mm::vec3(1, 0, 0)));
 
-	// Set up collision layers..
+	//// Set up collision layers..
 	Physics.SetLayerCollision(eES_CollisionGroup::PLAYER, eES_CollisionGroup::SHELL, false);
 	Physics.SetLayerCollision(eES_CollisionGroup::GROUND, eES_CollisionGroup::GROUND, false);
 	Physics.SetLayerCollision(eES_CollisionGroup::SHELL, eES_CollisionGroup::SHELL, false);
