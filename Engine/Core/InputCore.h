@@ -44,15 +44,15 @@ public:
 	bool IsKeyPressed(eKey key);
 	bool IsKeyReleased(eKey key);
 
-	bool IsMouseRightPressed();
-	bool IsMouseRightReleased();
-	bool IsMouseRightDown();
-	bool IsMouseLeftPressed();
-	bool IsMouseLeftReleased();
-	bool IsMouseLeftDown();
-	bool IsMouseMidPressed();
-	bool IsMouseMidReleased();
-	bool IsMouseMidDown();
+	bool IsRightMouseBtnPressed();
+	bool IsRightMouseBtnReleased();
+	bool IsRightMouseBtnDown();
+	bool IsLeftMouseBtnPressed();
+	bool IsLeftMouseBtnReleased();
+	bool IsLeftMouseBtnDown();
+	bool IsMidMouseBtnPressed();
+	bool IsMidMouseBtnReleased();
+	bool IsMidMouseBtnDown();
 	
 	bool IsMouseMove(mm::ivec2& mouseDelta_out);
 
@@ -64,7 +64,7 @@ protected:
 	};
 
 	// Storing key downs (current, previous) frame
-	std::array<rKeyDownInfo, (size_t)eKey::COUNT> keyDownArray;
+	std::array<rKeyDownInfo, (size_t)COUNT_eKey> keyDownArray;
 
 	// Mouse inputs
 	bool bMouseRightDownCurFrame;

@@ -2,13 +2,20 @@
 #include "RigidBodyComponent.h"
 #include "SoftBodyComponent.h"
 #include "CameraComponent.h"
+#include "GameWorld.h"
 
-WorldComponent::WorldComponent()
-:parent(0)
+CameraComponent* WorldComponent::AddComponent_Camera()
 {
+	CameraComponent* c = World.AddComponent_Camera();
+	childs.push_back(c);
+
+	return c;
 }
 
-WorldComponent::~WorldComponent()
+MeshComponent* WorldComponent::AddComponent_Mesh(const std::string& modelPath)
 {
+	MeshComponent* c = World.AddComponent_Mesh(modelPath);
+	childs.push_back(c);
 
+	return c;
 }

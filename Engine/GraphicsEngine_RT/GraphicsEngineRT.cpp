@@ -44,8 +44,6 @@ Camera* GraphicsEngineRT::CreateCam()
 
 void GraphicsEngineRT::Update(float deltaTime)
 {
-	std::vector<mm::vec3> vertices = Core.loadedPhysicalVertexPositions;
-
 	// Need view, proj matrix
 	// Transform each vertex into screen space
 	// Then rasterize it

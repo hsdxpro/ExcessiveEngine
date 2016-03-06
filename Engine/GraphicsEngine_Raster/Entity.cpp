@@ -24,9 +24,9 @@ void Entity::SetRot(const mm::quat& q)
 	transform.SetRot(q);
 }
 
-void Entity::SetScaleLocal(const mm::vec3& v)
+void Entity::SetScale(const mm::vec3& v)
 {
-	transform.SetScaleLocal(v);
+	transform.SetScale(v);
 }
 
 void Entity::SetSkew(const mm::mat3& m)
@@ -43,9 +43,9 @@ const mm::quat& Entity::GetRot()
 	return transform.GetRot();
 }
 
-const mm::vec3 Entity::GetScaleLocal()
+const mm::vec3 Entity::GetScale()
 {
-	return transform.GetScaleLocal();
+	return transform.GetScale();
 }
 
 const mm::mat3& Entity::GetSkew()

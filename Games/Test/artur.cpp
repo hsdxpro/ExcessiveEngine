@@ -1,7 +1,7 @@
 ﻿//#include "Core/EngineCore.h"
 //#include "Core/InputCore.h"
 //#include "Core/EngineCore.h"
-//#include "Core/EngineWorld.h"
+//#include "Core/GameWorld.h"
 //#include "Core/CameraComponent.h"
 //
 //#include "PlatformLibrary/Window.h"
@@ -61,10 +61,10 @@
 //		//Entity* simpleEntity = Core.AddActor();
 //		World.SpawnComp_RigidBodyFromFile(assetName, 0)->Attach(Core.SpawnComp_MeshFromFile(assetName));
 //
-//		World.SpawnComp_MeshFromFile("skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
+//		World.SpawnComp_MeshFromFile("skybox.dae")->SetScale({ 1000, 1000, 1000 });
 //
 //		auto pMusicSourceRepresenterModel = World.SpawnComp_MeshFromFile(teapotModelPath);
-//		pMusicSourceRepresenterModel->SetScaleLocal({ 0.1f, 0.1f, 0.1f });
+//		pMusicSourceRepresenterModel->SetScale({ 0.1f, 0.1f, 0.1f });
 //		pMusicSourceRepresenterModel->SetPos(musicPosition);
 //
 //		//sound::IListener* listener = sEngine->CreateListener();
@@ -182,7 +182,7 @@
 //					case eKey::D: bDDown = true; break;
 //					case eKey::LSHIFT: gCamSpeedMultiplier = 5; break;
 //					case eKey::SPACE: {
-//						musicPosition = cam->GetPos() + cam->GetFrontDirNormed() * 3;
+//						musicPosition = cam->GetPos() + cam->GetFrontDir() * 3;
 //						pMusicSourceRepresenterModel->SetPos(musicPosition);
 //						//pMusicSource->SetPos(musicPosition);
 //					} break;
@@ -205,13 +205,13 @@
 //
 //			// Camera move
 //			if (bWDown) // W
-//				cam->SetPos(cam->GetPos() + cam->GetFrontDirNormed() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+//				cam->SetPos(cam->GetPos() + cam->GetFrontDir() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 //			if (bSDown) // S									 
-//				cam->SetPos(cam->GetPos() + cam->GetBackDirNormed()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+//				cam->SetPos(cam->GetPos() + cam->GetBackDir()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 //			if (bADown) // A									 
-//				cam->SetPos(cam->GetPos() + cam->GetLeftDirNormed()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+//				cam->SetPos(cam->GetPos() + cam->GetLeftDir()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 //			if (bDDown) // D									 
-//				cam->SetPos(cam->GetPos() + cam->GetRightDirNormed() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+//				cam->SetPos(cam->GetPos() + cam->GetRightDir() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 //
 ////			listener->SetPos(cam->GetPos());
 //			// Update everything

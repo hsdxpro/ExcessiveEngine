@@ -67,46 +67,54 @@ int main()
 		Input.ClearFrameData();
 
 		// Process input events coming from O.S.-> Window
-		int nEnter = 0;
 		rWindowEvent evt;
 		while(window->PopEvent(evt))
 		{
 			switch(evt.msg)
 			{
-			case eWindowMsg::KEY_PRESS:
-				if (evt.key == eKey::ENTER)
-					nEnter++;
-
-				if (evt.key != eKey::INVALID);
+			case KEY_PRESS:
+			{
+				if (evt.key != INVALID_eKey)
 					Input.KeyPress(evt.key);
-				break;
 
-			case eWindowMsg::KEY_RELEASE:
-				if(evt.key != eKey::INVALID);
+				if (evt.key == ENTER)
+					OutputDebugStringW(L"ENTER_PRESS\n");
+
+				break;
+			}
+
+			case KEY_RELEASE:
+			{
+				if (evt.key != INVALID_eKey)
 					Input.KeyRelease(evt.key);
-				break;
 
-			case eWindowMsg::MOUSE_MOVE:
+				if (evt.key == ENTER)
+					OutputDebugStringW(L"ENTER_RELEASE\n");
+
+				break;
+			}
+
+			case MOUSE_MOVE:
 			{
 				Input.MouseMove(mm::ivec2(evt.deltaX, evt.deltaY), mm::ivec2(evt.x, evt.y));
 				break;
 			}
 
-			case eWindowMsg::MOUSE_PRESS:
+			case MOUSE_PRESS:
 				switch (evt.mouseBtn)
 				{
-				case eMouseBtn::LEFT:  Input.MouseLeftPress();  break;
-				case eMouseBtn::MID:   Input.MouseMidPress();	 break;
-				case eMouseBtn::RIGHT: Input.MouseRightPress(); break;
+				case LEFT:	Input.MouseLeftPress();		break;
+				case RIGHT:	Input.MouseRightPress();	break;
+				case MID:	Input.MouseMidPress();		break;
 				}
 				break;
 
-			case eWindowMsg::MOUSE_RELEASE:
+			case MOUSE_RELEASE:
 				switch (evt.mouseBtn)
 				{
-				case eMouseBtn::LEFT:  Input.MouseLeftRelease();  break;
-				case eMouseBtn::MID:   Input.MouseMidRelease();   break;
-				case eMouseBtn::RIGHT: Input.MouseRightRelease(); break;
+				case LEFT:	Input.MouseLeftRelease();	break;
+				case RIGHT: Input.MouseRightRelease();	break;
+				case MID:	Input.MouseLeftRelease();	break;
 				}
 				break;
 			}
@@ -114,18 +122,24 @@ int main()
 
 		Input.Update();
 
-		// Valamiért két enter, wtf
-		if (nEnter > 1)
+		// IsKeyPressed Enterre sose lesz igaz, mert asszem hogy a window message - ben kétszer szerepel az enter megnyomása, mert system message is jön, meg egy nem system message is
+		if(Input.IsKeyPressed(ENTER))
 		{
-			int asd = 5;
-			asd++;
+			OutputDebugStringW(L"ALT + ENTER\n");
+			//window->Close();
+			//break;
 		}
 
-		// IsKeyPressed Enterre sose lesz igaz, mert asszem hogy a window message - ben kétszer szerepel az enter megnyomása, mert system message is jön, meg egy nem system message is
-		if(Input.IsKeyDown(eKey::LALT) && Input.IsKeyPressed(eKey::ENTER))
+		if (Input.IsKeyReleased(ENTER))
 		{
-			int asd = 5;
-			asd++;
+			OutputDebugStringW(L"e r\n");
+			//window->Close();
+			//break;
+		}
+
+		if (Input.IsKeyDown(ENTER))
+		{
+			//OutputDebugStringW(L"Enter pressed\n");
 		}
 
 		float deltaSeconds = timer->GetSecondsPassed();

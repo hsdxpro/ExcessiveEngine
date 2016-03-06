@@ -6,19 +6,19 @@
 #include "SoundEngine\IEmitter.h"
 #include <functional>
 
-struct rMonoSound
+struct MonoSound
 {
 	sound::ISoundData* soundData;
 	sound::IEmitter* soundEmitter;
 };
 
-struct rTask
+struct Task
 {
 	std::function<void()> callb;
 	float timeLeft;
 };
 
-struct rCollide
+struct Collide
 {
 	// self RigidBody colliding, otherwise nullptr
 	RigidBodyComponent* rigidBodyA;
@@ -33,17 +33,16 @@ struct rCollide
 	SoftBodyComponent* softBodyB;
 
 	// Contact points generated between bodyA and bodyB
-	std::vector<physics::rContactPoint> contacts;
+	std::vector<physics::ContactPoint> contacts;
 };
 
-class Actor;
-struct rCollision
+struct Collision
 {
 	Actor*  actorA;
 	Actor*  actorB;
 
 	// All collisions between actorA and actorB in that frame, it contains "Current bodyA bodyB collision" too
-	std::vector<rCollide> collisions;
+	std::vector<Collide> collisions;
 
 // Current bodyA bodyB collision
 	// self RigidBody colliding, otherwise nullptr
@@ -59,10 +58,15 @@ struct rCollision
 	SoftBodyComponent* softBodyB;
 	
 	// Contact points generated between bodyA and bodyB
-	std::vector<physics::rContactPoint> contacts;
+	std::vector<physics::ContactPoint> contacts;
 };
 
-struct rPhysicsTraceResult
+struct ContactPoint : public physics::ContactPoint
+{
+
+};
+
+struct PhysicsTraceResult
 {
 	Actor* actor;
 
@@ -70,6 +74,6 @@ struct rPhysicsTraceResult
 	mm::vec3 normal;
 };
 
-struct rPhysicsTraceParams : public physics::rTraceParams
+struct PhysicsTraceParams : public physics::TraceParams
 {
 };

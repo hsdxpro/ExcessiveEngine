@@ -3,7 +3,15 @@
 
 class Transform3DComponent : public WorldComponent
 {
-	void _InnerReflectPos() {};
-	void _InnerReflectRot() {};
-	void _InnerReflectSkew() {};
+public:
+	static const eWorldComponentType TYPE = TRANSFORM;
+
+public:
+	inline Transform3DComponent();
 };
+
+Transform3DComponent::Transform3DComponent()
+:WorldComponent(TYPE)
+{
+
+}

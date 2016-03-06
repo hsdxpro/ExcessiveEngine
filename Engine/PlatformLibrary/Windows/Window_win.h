@@ -59,6 +59,7 @@ protected:
 	bool bClosed;
 
 	bool bGenerateSysKeyAltDown;
+	bool bGenerateSysKeyAltUp;
 	//sf::RenderWindow w;
 	//mm::ivec2 lastMousePos;
 };

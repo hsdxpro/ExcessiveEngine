@@ -6,18 +6,18 @@
 class Behavior
 {
 public:
-	__inline void AddScript(ActorScript* s)
+	inline void AddScript(ActorScript* s)
 	{
 		entityScripts.push_back(s);
 	}
 
-	__inline void SetActor(Actor* a)
+	inline void SetActor(Actor* a)
 	{
 		for (auto& s : entityScripts)
 			s->SetActor(a);
 	}
 
-	__inline std::vector<ActorScript*> GetScripts() {return entityScripts;}
+	inline std::vector<ActorScript*> GetScripts() {return entityScripts;}
 
 protected:
 	std::vector<ActorScript*> entityScripts;

@@ -166,32 +166,32 @@ mm::mat4 Camera::GetProjMatrix(float aspectRatio) const
 	return mm::mat4();
 }
 
-mm::vec3 Camera::GetFrontDirNormed() const
+mm::vec3 Camera::GetFrontDir() const
 {
 	return mm::rotate_vector(rot, mm::vec3(0, 1, 0));
 }
 
-mm::vec3 Camera::GetBackDirNormed() const
+mm::vec3 Camera::GetBackDir() const
 {
 	return mm::rotate_vector(rot, mm::vec3(0, -1, 0));
 }
 
-mm::vec3 Camera::GetUpDirNormed() const
+mm::vec3 Camera::GetUpDir() const
 {
 	return mm::rotate_vector(rot, mm::vec3(0, 0, 1));
 }
 
-mm::vec3 Camera::GetDownDirNormed() const
+mm::vec3 Camera::GetDownDir() const
 {
 	return mm::rotate_vector(rot, mm::vec3(0, 0, -1));
 }
 
-mm::vec3 Camera::GetRightDirNormed() const
+mm::vec3 Camera::GetRightDir() const
 {
 	return mm::rotate_vector(rot, mm::vec3(1, 0, 0));
 }
 
-mm::vec3 Camera::GetLeftDirNormed() const
+mm::vec3 Camera::GetLeftDir() const
 {
 	return mm::rotate_vector(rot, mm::vec3(-1, 0, 0));
 }

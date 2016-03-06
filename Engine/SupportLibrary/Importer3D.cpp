@@ -266,7 +266,7 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 				}
 
 				// @TODO not general algorithm, wee need to handle more UV channels
-				auto vecPtr = mesh->mTextureCoords[0];
+				aiVector3D* vecPtr = mesh->mTextureCoords[0];
 				if ((bool)vecPtr & cfg.isContain(eImporter3DFlag::VERT_ATTR_TEX0))
 				{
 					const aiVector3D& tex0 = vecPtr[localVertIdx];

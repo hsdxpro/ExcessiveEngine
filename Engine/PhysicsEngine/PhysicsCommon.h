@@ -1,14 +1,18 @@
 #pragma once
-#include "IRigidBodyEntity.h"
-#include "ISoftBodyEntity.h"
+//#include "IRigidBodyEntity.h"
+//#include "ISoftBodyEntity.h"
 
 #include "..\..\Externals\include\mymath\mymath.h"
+
 #include <vector>
 
 namespace physics
 {
 
-struct rContactPoint
+class IRigidBodyEntity;
+class ISoftBodyEntity;
+
+struct ContactPoint
 {
 	mm::vec3 normalA;
 	mm::vec3 normalB;
@@ -16,18 +20,18 @@ struct rContactPoint
 	mm::vec3 posB;
 };
 
-struct rCollision
+struct Collision
 {
-	physics::IRigidBodyEntity* rigidBodyA;
-	physics::IRigidBodyEntity* rigidBodyB;
+	IRigidBodyEntity* rigidBodyA;
+	IRigidBodyEntity* rigidBodyB;
 
-	physics::ISoftBodyEntity* softBodyA;
-	physics::ISoftBodyEntity* softBodyB;
+	ISoftBodyEntity* softBodyA;
+	ISoftBodyEntity* softBodyB;
 
-	std::vector<rContactPoint> contacts;
+	std::vector<ContactPoint> contacts;
 };
 
-struct rTraceResult
+struct TraceResult
 {
 	void* userPointer;
 
@@ -35,9 +39,12 @@ struct rTraceResult
 	mm::vec3 normal;
 };
 
-struct rTraceParams
+struct TraceParams
 {
-	void AddIgnoreCollisionLayer(size_t collisionLayerID) { ignoredCollisionLayers.push_back(collisionLayerID); }
+	inline void AddIgnoreCollisionLayer(size_t collisionLayerID) 
+	{ 
+		ignoredCollisionLayers.push_back(collisionLayerID);
+	}
 	
 	std::vector<size_t> ignoredCollisionLayers;
 };

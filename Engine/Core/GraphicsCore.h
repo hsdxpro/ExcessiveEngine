@@ -4,12 +4,12 @@
 class GraphicsCore
 {
 public:
-	__inline Window* GetTargetWindow()
+	inline Window* GetTargetWindow()
 	{
 		return Core.GetTargetWindow();
 	}
 
-	__inline void SetCam(CameraComponent* c)
+	inline void SetCam(CameraComponent* c)
 	{
 		Core.SetCam(c);
 	}

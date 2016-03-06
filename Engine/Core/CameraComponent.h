@@ -1,4 +1,5 @@
 #pragma once
+
 #include "WorldComponent.h"
 #include "SupportLibrary\ICamera.h"
 
@@ -7,29 +8,94 @@ namespace graphics { class IEntity; }
 class CameraComponent : public WorldComponent
 {
 public:
-	CameraComponent(ICamera* cam);
+	static const eWorldComponentType TYPE = CAMERA;
 
-	void SetDirNormed(const mm::vec3& dir);
+public:
+	inline CameraComponent(ICamera* cam);
 
-	__inline void SetFOV(float angleRad)		{cam->SetFOV(angleRad);}
-	__inline void SetNearPlane(float val)		{cam->SetNearPlane(val);}
-	__inline void SetFarPlane(float val)		{cam->SetFarPlane(val);}
-	__inline void SetTarget(const mm::vec3& p)	{cam->SetTarget(p);}
+	inline void SetDirNormed(const mm::vec3& dir);
 
-	__inline mm::vec3 GetFrontDirNormed()	{ return cam->GetFrontDirNormed(); }
-	__inline mm::vec3 GetBackDirNormed()	{ return cam->GetBackDirNormed(); }
-	__inline mm::vec3 GetUpDirNormed()		{ return cam->GetUpDirNormed(); }
-	__inline mm::vec3 GetDownDirNormed()	{ return cam->GetDownDirNormed(); }
-	__inline mm::vec3 GetRightDirNormed()	{ return cam->GetRightDirNormed(); }
-	__inline mm::vec3 GetLeftDirNormed()	{ return cam->GetLeftDirNormed(); }
+	inline void SetFOV(float angleRad);
+	inline void SetNearPlane(float val);
+	inline void SetFarPlane(float val);
+	inline void SetTarget(const mm::vec3& p);
 
-	ICamera* GetCam();
+	inline mm::vec3 GetFrontDir();
+	inline mm::vec3 GetBackDir();
+	inline mm::vec3 GetUpDir();
+	inline mm::vec3 GetDownDir();
+	inline mm::vec3 GetRightDir();
+	inline mm::vec3 GetLeftDir();
 
-protected:
-	void _InnerReflectPos() override;
-	void _InnerReflectRot() override;
-	void _InnerReflectSkew() override;
+	inline ICamera* GetCam();
 
 protected:
 	ICamera* cam;
 };
+
+CameraComponent::CameraComponent(ICamera* cam)
+:WorldComponent(TYPE), cam(cam)
+{
+	
+}
+
+void CameraComponent::SetDirNormed(const mm::vec3& dir)
+{
+	cam->SetDirNormed(dir);
+	SetRot(cam->GetRot());
+}
+
+void CameraComponent::SetFOV(float angleRad)
+{
+	cam->SetFOV(angleRad);
+}
+
+void CameraComponent::SetNearPlane(float val)
+{
+	cam->SetNearPlane(val);
+}
+
+void CameraComponent::SetFarPlane(float val)
+{
+	cam->SetFarPlane(val);
+}
+
+void CameraComponent::SetTarget(const mm::vec3& p)
+{
+	cam->SetTarget(p);
+}
+
+mm::vec3 CameraComponent::GetFrontDir()
+{
+	return cam->GetFrontDir();
+}
+
+mm::vec3 CameraComponent::GetBackDir()
+{
+	return cam->GetBackDir();
+}
+
+mm::vec3 CameraComponent::GetUpDir()
+{
+	return cam->GetUpDir();
+}
+
+mm::vec3 CameraComponent::GetDownDir()
+{
+	return cam->GetDownDir();
+}
+
+mm::vec3 CameraComponent::GetRightDir()
+{
+	return cam->GetRightDir();
+}
+
+mm::vec3 CameraComponent::GetLeftDir()
+{
+	return cam->GetLeftDir();
+}
+
+ICamera* CameraComponent::GetCam()
+{
+	return cam;
+}

@@ -33,7 +33,7 @@ public:
 
 	void Update(float deltaTime) override;
 
-	bool TraceClosestPoint(const mm::vec3& from, const mm::vec3& to, physics::rTraceResult& traceResult_out, const physics::rTraceParams& params = physics::rTraceParams()) override;
+	bool TraceClosestPoint(const mm::vec3& from, const mm::vec3& to, physics::TraceResult& traceResult_out, const physics::TraceParams& params = physics::TraceParams()) override;
 
 	// Create, Add DYNAMIC rigid body to physics world
 	physics::IRigidBodyEntity* AddEntityRigidDynamic(mm::vec3* vertices, u32 nVertices, float mass = 1) override;
@@ -46,31 +46,31 @@ public:
 
 	bool RemoveEntity(physics::IRigidBodyEntity* e) override;
 
-	void SetLayerCollision(size_t ID0, size_t ID1, bool bEnableCollision) override;
+	void SetLayeCollision(size_t ID0, size_t ID1, bool bEnableCollision) override;
 
-	__inline bool IsLayersCanCollide(size_t ID0, size_t ID1) const override
+	inline bool IsLayersCanCollide(size_t ID0, size_t ID1) const override
 	{
-		assert(ID0 < sqrt(layerCollisionMatrix.size()));
-		assert(ID1 < sqrt(layerCollisionMatrix.size()));
+		assert(ID0 < sqrt(layeCollisionMatrix.size()));
+		assert(ID1 < sqrt(layeCollisionMatrix.size()));
 
-		return layerCollisionMatrix[ID0 + ID1 * nLayerCollisionMatrixRows] > 0;
+		return layeCollisionMatrix[ID0 + ID1 * nLayeCollisionMatrixRows] > 0;
 	}
 
-	__inline std::vector<physics::rCollision>& GetCollisionList() override { return contactList; }
+	inline std::vector<physics::Collision>& GetCollisionList() override { return contactList; }
 
 	bool GetDebugData(mm::vec3*& linesFromNonUniqPoints_out, size_t& nLines_out) const override;
 
-	//__inline bool IsOverlapCallbacksEnabled(){ return bOverlapCallbacksEnabled; }
+	//inline bool IsOverlapCallbacksEnabled(){ return bOverlapCallbacksEnabled; }
 private:
 	btDiscreteDynamicsWorld* world;
 
 	std::vector<physics::IRigidBodyEntity*> entities;
 
-	std::vector<physics::rCollision> contactList;
+	std::vector<physics::Collision> contactList;
 
 	// byte bool array bitch pls
-	std::vector<u8> layerCollisionMatrix;
-	size_t nLayerCollisionMatrixRows;
+	std::vector<u8> layeCollisionMatrix;
+	size_t nLayeCollisionMatrixRows;
 };
 
 
@@ -87,8 +87,8 @@ public:
 	{
 		bool bCollide = btCollisionDispatcher::needsCollision(bodyA, bodyB);
 
-		i64 colGroupA;
-		i64 colGroupB;
+		u64 colGroupA;
+		u64 colGroupB;
 
 		if (bCollide)
 		{
@@ -103,7 +103,7 @@ public:
 				colGroupB = ((SoftBodyEntity*)bodyB->getUserPointer())->GetCollisionGroup();
 		}
 
-		bCollide &= colGroupA == -1 || colGroupB == -1 || physicsEngine->IsLayersCanCollide(colGroupA, colGroupB);
+		bCollide &= colGroupA == std::numeric_limits<u64>::max() || colGroupB == std::numeric_limits<u64>::max() || physicsEngine->IsLayersCanCollide(colGroupA, colGroupB);
 
 		return bCollide;
 	}

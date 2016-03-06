@@ -9,14 +9,14 @@ InputCore::InputCore()
 		keyDownInfo.bDownCurFrame = false;
 		keyDownInfo.bDownPrevFrame = false;
 	}
-
+	
 	bMouseRightDownCurFrame = false;
 	bMouseRightDownPrevFrame = false;
 	bMouseLeftDownCurFrame = false;
 	bMouseLeftDownPrevFrame = false;
 	bMouseMidDownCurFrame = false;
 	bMouseMidDownPrevFrame = false;
-
+	
 	mouseDelta.x = 0;
 	mouseDelta.y = 0;
 	clientMousePos.x = 0;
@@ -26,7 +26,7 @@ InputCore::InputCore()
 void InputCore::KeyPress(eKey key)
 {
 	keyDownArray[(size_t)key].bDownCurFrame = true;
-
+	
 	// Dispatch registered callbacks binded to that key
 	for (auto& info : onKeyPressedCallbacks)
 		if (info.first == key)
@@ -37,7 +37,7 @@ void InputCore::KeyRelease(eKey key)
 {
 	keyDownArray[(size_t)key].bDownCurFrame = false;
 	keyDownArray[(size_t)key].bDownPrevFrame = true;
-
+	
 	// Dispatch registered callbacks binded to that key
 	for (auto& info : onKeyReleasedCallbacks)
 		if (info.first == key)
@@ -48,7 +48,7 @@ void InputCore::MouseRightPress()
 {
 	bMouseRightDownCurFrame = true;
 	bMouseRightDownPrevFrame = false;
-
+	
 	// Dispatch callbacks binded to right mouse press
 	for (auto& callb : onMouseRightPressedCallbacks)
 		callb(clientMousePos);
@@ -58,7 +58,7 @@ void InputCore::MouseRightRelease()
 {
 	bMouseRightDownCurFrame = false;
 	bMouseRightDownPrevFrame = true;
-
+	
 	// Dispatch callbacks binded to right mouse release
 	for (auto& callb : onMouseRightReleasedCallbacks)
 		callb(clientMousePos);
@@ -68,9 +68,9 @@ void InputCore::MouseLeftPress()
 {
 	bMouseLeftDownCurFrame = true;
 	bMouseLeftDownPrevFrame = false;
-
+	
 	// Dispatch callbacks binded to left mouse press
-	for(auto& callb : onMouseLeftPressedCallbacks)
+	for (auto& callb : onMouseLeftPressedCallbacks)
 		callb(clientMousePos);
 }
 
@@ -78,7 +78,7 @@ void InputCore::MouseLeftRelease()
 {
 	bMouseLeftDownCurFrame = false;
 	bMouseLeftDownPrevFrame = true;
-
+	
 	// Dispatch callbacks binded to left mouse release
 	for (auto& callb : onMouseLeftReleasedCallbacks)
 		callb(clientMousePos);
@@ -88,7 +88,7 @@ void InputCore::MouseMidPress()
 {
 	bMouseMidDownCurFrame = true;
 	bMouseMidDownPrevFrame = false;
-
+	
 	// Dispatch callbacks binded to mid mouse press
 	for (auto& callb : onMouseMidPressedCallbacks)
 		callb(clientMousePos);
@@ -98,7 +98,7 @@ void InputCore::MouseMidRelease()
 {
 	bMouseMidDownCurFrame = false;
 	bMouseMidDownPrevFrame = true;
-
+	
 	// Dispatch callbacks binded to mid mouse release
 	for (auto& callb : onMouseMidReleasedCallbacks)
 		callb(clientMousePos);
@@ -108,7 +108,7 @@ void InputCore::MouseMove(const mm::ivec2& mouseDelta, const mm::ivec2& clientMo
 {
 	this->mouseDelta += mouseDelta;
 	this->clientMousePos = clientMousePos;
-
+	
 	// Dispatch registered mouseMove callbacks
 	for(auto& callb : onMouseMoveCallbacks)
 		callb(mouseDelta, clientMousePos);
@@ -181,7 +181,6 @@ void InputCore::RegOnMouseMove(const std::function<void(const mm::ivec2& mouseDe
 
 void InputCore::ClearFrameData()
 {
-
 	// General equation downPrevFrame = downCurFrame | (downPrevFrame & downCurFrame)
 	//// Simply if button is down, then prevFrame must become true cuz 1 frame passed...
 	// and if button is not down, but prevFrame true, this means we release button previous frame, so 1 frame passed, and prevFrame must become false
@@ -192,7 +191,7 @@ void InputCore::ClearFrameData()
 	////0 1 -> false
 	////1 0 -> false
 	////1 1 -> true
-
+	
 	// Updating key downs with general equation
 	for (auto& keyDownInfo : keyDownArray)
 		keyDownInfo.bDownPrevFrame = keyDownInfo.bDownCurFrame | (keyDownInfo.bDownPrevFrame & keyDownInfo.bDownCurFrame);
@@ -201,7 +200,7 @@ void InputCore::ClearFrameData()
 	bMouseRightDownPrevFrame = bMouseRightDownCurFrame | (bMouseRightDownPrevFrame & bMouseRightDownCurFrame);
 	bMouseLeftDownPrevFrame = bMouseLeftDownCurFrame | (bMouseLeftDownPrevFrame & bMouseLeftDownCurFrame);
 	bMouseMidDownPrevFrame = bMouseMidDownCurFrame | (bMouseMidDownPrevFrame & bMouseMidDownCurFrame);
-
+	
 	mouseDelta.x = 0;
 	mouseDelta.y = 0;
 }
@@ -213,21 +212,21 @@ void InputCore::Update()
 		// Leave keys not down
 		if(!keyDownArray[i].bDownCurFrame)
 			continue;
-
+	
 		// Search if that key have callbacks binded, dispatch them
 		for(auto& info : onKeyDownCallbacks)
 			if(info.first == (eKey)i)
 				info.second();
 	}
-
+	
 	if(bMouseLeftDownCurFrame)
 		for (auto& callb : onMouseLeftDownCallbacks)
 			callb(clientMousePos);
-
+	
 	if (bMouseRightDownCurFrame)
 		for (auto& callb : onMouseRightDownCallbacks)
 			callb(clientMousePos);
-
+	
 	if (bMouseMidDownCurFrame)
 		for (auto& callb : onMouseMidDownCallbacks)
 			callb(clientMousePos);
@@ -248,47 +247,47 @@ bool InputCore::IsKeyReleased(eKey key)
 	return keyDownArray[(size_t)key].bDownPrevFrame && !keyDownArray[(size_t)key].bDownCurFrame;
 }
 
-bool InputCore::IsMouseRightPressed()
+bool InputCore::IsRightMouseBtnPressed()
 {
 	return bMouseRightDownCurFrame && !bMouseRightDownPrevFrame;
 }
 
-bool InputCore::IsMouseRightReleased()
+bool InputCore::IsRightMouseBtnReleased()
 {
 	return bMouseRightDownPrevFrame && !bMouseRightDownCurFrame;
 }
 
-bool InputCore::IsMouseRightDown()
+bool InputCore::IsRightMouseBtnDown()
 {
 	return bMouseRightDownCurFrame;
 }
 
-bool InputCore::IsMouseLeftPressed()
+bool InputCore::IsLeftMouseBtnPressed()
 {
 	return bMouseLeftDownCurFrame && !bMouseLeftDownPrevFrame;
 }
 
-bool InputCore::IsMouseLeftReleased()
+bool InputCore::IsLeftMouseBtnReleased()
 {
 	return bMouseLeftDownPrevFrame && !bMouseLeftDownCurFrame;
 }
 
-bool InputCore::IsMouseLeftDown()
+bool InputCore::IsLeftMouseBtnDown()
 {
 	return bMouseLeftDownCurFrame;
 }
 
-bool InputCore::IsMouseMidPressed()
+bool InputCore::IsMidMouseBtnPressed()
 {
 	return bMouseMidDownCurFrame && !bMouseMidDownPrevFrame;
 }
 
-bool InputCore::IsMouseMidReleased()
+bool InputCore::IsMidMouseBtnReleased()
 {
 	return bMouseMidDownPrevFrame && !bMouseMidDownCurFrame;
 }
 
-bool InputCore::IsMouseMidDown()
+bool InputCore::IsMidMouseBtnDown()
 {
 	return bMouseMidDownCurFrame;
 }

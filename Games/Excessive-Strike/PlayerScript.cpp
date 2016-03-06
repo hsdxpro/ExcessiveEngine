@@ -6,7 +6,7 @@ PlayerScript::PlayerScript()
 {
 	bSquatting = false;
 
-	rateOfFire = 0.1f; // ak 0.1
+	rateOfFire = 0.1f; // ak 0.1 sec per bullett
 	shootTimer = rateOfFire;
 
 	nButtonsDown = 0;
@@ -21,22 +21,15 @@ PlayerScript::PlayerScript()
 	pixelsToRot360 = 1000;
 
 	// Weapon model
-	//auto& ak47ModelPath = "ak47/ak.obj";
 	auto& ak47ModelPath = "ak47/ak47.dae";
-
-	// Camera
-	camComp = World.SpawnComp_Camera();
-	Graphics.SetCam(camComp);
 	
-	// Player components
-	playerCapsule = World.SpawnActor_RigidBodyCapsule(2, 0.2f, 70);
+	// Physics capsule for player
+	playerCapsule = World.AddActor_RigidBodyCapsule(2, 0.2f, 70);
+	playerCapsule->SetAngularFactor(0);
+	playerCapsule->SetKinematic(true);
 	playerCapsule->SetCollisionGroup(eES_CollisionGroup::PLAYER);
-	playerCapsule->SetOnCollision([&](const rCollision& col)
-	{
-		playerCollisionData = col;
-	});
 
-	playerCapsule->SetOnCollisionEnter([&](const rCollision& col)
+	playerCapsule->SetOnCollisionEnter([&](const Collision& col)
 	{
 		if (col.actorB && col.actorB->GetName() == "ground")
 		{
@@ -56,36 +49,28 @@ PlayerScript::PlayerScript()
 		}
 	});
 
-	playerCapsule->SetAngularFactor(0);
-	playerCapsule->SetKinematic(true);
-
-	// Attach camera to player physics
-	camComp->Move({ 0, 0, 1 });
-	playerCapsule->Attach(camComp);
-	playerCapsule->SetPos({ 0, 0, -0.2f });
+	// Camera
+	camComp = World.AddComponent_Camera();
+	camComp->Move(mm::vec3( 0,0,1));
 	
-	ak47Graphics = World.SpawnComp_MeshFromFile(ak47ModelPath);
+	// Attach to rigid body capsule
+	playerCapsule->GetRootComponent(0)->Attach(camComp);
 
-	ak47Graphics->SetScaleLocal({ 1.f / 3, 1.f / 3, 1.f / 3 });
-	ak47Graphics->SetPos(camComp->GetPos() + mm::vec3(0.7f, 1.5f, -0.6f));
-	ak47Graphics->Rot(mm::quat(-90.f / 180.f * 3.1415f, { 0, 0, 1 }));
-	ak47Graphics->Rot(mm::quat(-90.f / 180.f * 3.1415f, { 0, 1, 0 }));
-
-	// Old trans
-	//ak47Graphics->SetScaleLocal({ 1.f / 1800, 1.f / 1800, 1.f / 1800 });
-	//ak47Graphics->SetRot(mm::quat(-0.05f, { 1, 0, 0 }) * mm::quat(3.1415f - 0.08f, { 0, 0, 1 }) * mm::quat(3.1415f / 2, { 1, 0, 0 })); // Need quaternion rework, multiply swapped, mm::quat(angle) rots with -angle, why?
-	//ak47Graphics->SetPos(camComp->GetPos() + mm::vec3(0.7f, 1.05f - 0.15f, -0.6f));
-	//ak47Graphics->Rot(mm::quat(7.f / 180.f * 3.1415f, { 0, 0, 1 }) * mm::quat(-3.f / 180.f * 3.1415f, { 1, 0, 0 }));
-	camComp->Attach(ak47Graphics); // Attach weapon to player physics
+	ak47Graphics = camComp->AddComponent_Mesh(ak47ModelPath);
+	ak47Graphics->SetScale(1.0 / 3);
+	ak47Graphics->Move(mm::vec3(0.7f, 1.5f, -0.6f));
+	ak47Graphics->RotZ(-90);
+	ak47Graphics->RotY(-90);
 	
-	// Ha ez a sor bevan tolva akkor debug - ban lezuhanunk, olyan mintha scale = 0 lenne
-	playerCapsule->ScaleLocal({ 1.f / 3.5f, 1.f / 3.5f, 1.f / 3.5f });
+	playerCapsule->Scale(1.0 / 3);
 
-	walkSound = Sound.CreateSoundMono("walk_sound.ogg", 1, true);
-	gunSound = Sound.CreateSoundMono("GUN_FIRE-stereo.ogg", 0.5);
-	shellSound = Sound.CreateSoundMono("shell_fall.ogg", 0.5);
+	walkSound = Sound.CreateMonoSound("walk_sound.ogg", 1, true);
+	gunSound = Sound.CreateMonoSound("GUN_FIRE-stereo.ogg", 0.5);
+	shellSound = Sound.CreateMonoSound("shell_fall.ogg", 0.5);
 
-	playerCapsule->SetPos(mm::vec3(0, 0, 20));
+	playerCapsule->SetPos(mm::vec3(0, 0, 5));
+
+	Core.SetCam(camComp);
 }
 
 void PlayerScript::Update(float deltaSeconds)
@@ -93,29 +78,30 @@ void PlayerScript::Update(float deltaSeconds)
 	// W,S,A,D Moving
 	nButtonsDown = 0;
 	mm::vec3 move(0, 0, 0);
-	if (Input.IsKeyDown(eKey::W))
+
+	if (Input.IsKeyDown(W))
 	{
-		move += camComp->GetFrontDirNormed();
+		move += camComp->GetFrontDir();
 		nButtonsDown++;
 	}
-	if (Input.IsKeyDown(eKey::S))
+	if (Input.IsKeyDown(S))
 	{
-		move += camComp->GetBackDirNormed();
+		move += camComp->GetBackDir();
 		nButtonsDown++;
 	}
-	if (Input.IsKeyDown(eKey::A))
+	if (Input.IsKeyDown(A))
 	{
-		move += camComp->GetLeftDirNormed();
+		move += camComp->GetLeftDir();
 		nButtonsDown++;
 	}
-	if (Input.IsKeyDown(eKey::D))
+	if (Input.IsKeyDown(D))
 	{
-		move += camComp->GetRightDirNormed();
+		move += camComp->GetRightDir();
 		nButtonsDown++;
 	}
 
 	// Decline newVel components facing to player self contact normals
-	for (auto& contact : playerCollisionData.contacts)
+	for (ContactPoint& contact : playerCapsule->GetContactPoints())
 	{
 		mm::vec3 playerToOtherContactNormal = contact.normalA;
 
@@ -131,14 +117,14 @@ void PlayerScript::Update(float deltaSeconds)
 
 	playerCapsule->SetVelocity(mm::vec3(move.x, move.y, playerCapsule->GetVelocity().z));
 
-	if (nButtonsDown == 1 && Input.IsKeyPressed(eKey::W) | Input.IsKeyPressed(eKey::S) | Input.IsKeyPressed(eKey::A) | Input.IsKeyPressed(eKey::D))
+	if (nButtonsDown == 1 && Input.IsKeyPressed(W) | Input.IsKeyPressed(S) | Input.IsKeyPressed(A) | Input.IsKeyPressed(D))
 		walkSound->Start();
 
-	if (nButtonsDown == 0 && Input.IsKeyReleased(eKey::W) | Input.IsKeyReleased(eKey::S) | Input.IsKeyReleased(eKey::A) | Input.IsKeyReleased(eKey::D))
+	if (nButtonsDown == 0 && Input.IsKeyReleased(W) | Input.IsKeyReleased(S) | Input.IsKeyReleased(A) | Input.IsKeyReleased(D))
 		walkSound->Stop();
 
 	// Jump
-	if (bCanJump && Input.IsKeyPressed(eKey::SPACE))
+	if (bCanJump && Input.IsKeyPressed(SPACE))
 	{
 		bCanJump = false;
 		playerCapsule->AddForce({ 0, 0, 15000 });
@@ -146,13 +132,13 @@ void PlayerScript::Update(float deltaSeconds)
 	}
 
 	// Squat
-	if (!bSquatting && Input.IsKeyPressed(eKey::LCTRL))
+	if (!bSquatting && Input.IsKeyPressed(LCTRL))
 	{
 		camComp->MoveRel(mm::vec3(0, 0, -0.8f));
 		bSquatting = true;
 		playerMoveSpeed /= 2;
 	}
-	else if (bSquatting && Input.IsKeyReleased(eKey::LCTRL))
+	else if (bSquatting && Input.IsKeyReleased(LCTRL))
 	{
 		camComp->MoveRel(mm::vec3(0, 0, 0.8f));
 		bSquatting = false;
@@ -162,65 +148,62 @@ void PlayerScript::Update(float deltaSeconds)
 	if (shootTimer > 0)
 		shootTimer -= deltaSeconds;
 
-	if (Input.IsMouseLeftDown() && shootTimer <= 0)
+	if (Input.IsLeftMouseBtnDown() && shootTimer <= 0)
 	{
 		shootTimer =+ rateOfFire;
 
 		gunSound->Start();
 
 		// Falling bullet shell, and it's sound
-		Actor* bulletShell = World.SpawnActor_RigidBodyCapsule(0.09f, 0.04f, 0.02f);
-		bulletShell->SetTrigger(true);
-		bulletShell->SetCollisionGroup(eES_CollisionGroup::SHELL);
-		bulletShell->SetPos(ak47Graphics->GetPos());
-		bulletShell->SetOnCollisionEnter([=](const rCollision& info)
-		{
-			shellSound->Start();
-			World.Destroy(bulletShell);
-		});
+		//Actor* bulletShell = World.AddActor_RigidBodyCapsule(0.09f, 0.04f, 0.02f);
+		//bulletShell->SetTrigger(true);
+		//bulletShell->SetCollisionGroup(eES_CollisionGroup::SHELL);
+		//bulletShell->SetPos(ak47Graphics->GetPos());
+		//bulletShell->SetOnCollisionEnter([=](const Collision& info)
+		//{
+		//	shellSound->Start();
+		//	World.Remove(bulletShell);
+		//});
 		
 		
-		rPhysicsTraceResult result;
-		rPhysicsTraceParams params;
+		PhysicsTraceResult result;
+		PhysicsTraceParams params;
 		params.AddIgnoreCollisionLayer(eES_CollisionGroup::SHELL);
 
 		//params. Trace pls ignoráld már a shelleket
-		//if (Physics.TraceClosestPoint(camComp->GetPos(), camComp->GetPos() + camComp->GetFrontDirNormed() * 999999, result, params))
+		//if (Physics.TraceClosestPoint(camComp->GetPos(), camComp->GetPos() + camComp->GetFrontDir() * 999999, result, params))
 		//{
-		//	//MeshComponent* boxComp = World.SpawnComp_MeshFromFile("box.DAE");
-		//	MeshComponent* boxComp = World.SpawnComp_MeshFromFile("csaje.DAE");
-		//	//MeshComponent* boxComp = World.SpawnComp_MeshFromFile("sziv.DAE");
-		//	//boxComp->SetScaleLocal({ 1.f / 2, 1.f / 2, 1.f / 2});
+		//	Actor* boxComp = World.AddMesh("box.DAE");
+		//	//Actor* boxComp = World.AddMesh("sziv.DAE");
 		//	boxComp->SetPos(result.pos);//cuki <3 <3 <3 I <3 U Rici
 		//	//boxComp->SetRot(camComp->GetRot());
 		//}
 
-		Actor* bullet = Core.SpawnActor_RigidBodyFromFile("box.DAE", 1);
-		bullet->Attach(Core.SpawnComp_MeshFromFile("box.DAE"));
-		bullet->SetScaleLocal({ 1.f / 3, 1.f / 3, 1.f / 3 });
-		
+		// TODO Ha kell egy sorból tudjak rigidBody Mesh és Sound
+		Actor* bullet = World.AddActor("box.DAE", 1);
+		bullet->SetScale(1.0 / 3);
+
 		bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);
 		
-		mm::vec3 bulletDirNormed = camComp->GetFrontDirNormed();
-		bullet->SetPos(ak47Graphics->GetPos());
-		bullet->SetVelocity(bulletDirNormed * 7);
+		mm::vec3 bulletDirNormed = camComp->GetFrontDir();
+		bullet->SetPos(ak47Graphics->GetPos() + bulletDirNormed);
+		bullet->SetVelocity(bulletDirNormed * 2);
 		//bullet->Scale(bulletDirNormed * 3);
 	}
 
-
-	if (Input.IsMouseRightPressed())
+	if (Input.IsRightMouseBtnPressed())
 	{
 		mousePosWhenPress = Sys::GetCursorPos();
 		Sys::SetCursorVisible(false);
 	}
 
-	if (Input.IsMouseRightReleased())
+	if (Input.IsRightMouseBtnReleased())
 	{
 		Sys::SetCursorPos(mm::ivec2(mousePosWhenPress.x, mousePosWhenPress.y));
 		Sys::SetCursorVisible(true);
 	}
 
-	if (Input.IsMouseRightDown())
+	if (Input.IsRightMouseBtnDown())
 	{
 		// Roting camera
 		mm::ivec2 mouseDelta;

@@ -4,7 +4,7 @@
 #include <string>
 #include "mymath/mymath.h"
 
-enum class eKey
+enum eKey
 {
 	A,				///< The A key
 	B,				///< The B key
@@ -77,8 +77,8 @@ enum class eKey
 	SUB,			///< The - key
 	MUL,			///< The * key
 	DIV,			///< The / key
-	LEFT,			///< Left arrow
-	RIGHT,			///< Right arrow
+	LEFT_ARROW,		///< Left arrow
+	RIGHT_ARROW,	///< Right arrow
 	UP,				///< Up arrow
 	DOWN,			///< Down arrow
 	NUMPAD0,		///< The numpad 0 key
@@ -116,19 +116,19 @@ enum class eKey
 	F23,			///< The F23 key
 	F24,			///< The F24 key
 	PAUSE,			///< The Pause key
-	COUNT,			///< Keep last -- the total number of keyboard keys
-	INVALID = -1,	///< Unhandled key
+	COUNT_eKey,			///< Keep last -- the total number of keyboard keys
+	INVALID_eKey = -1,	///< Unhandled key
 };
 
-enum class eMouseBtn 
+enum eMouseBtn 
 {
 	LEFT,		///< The left mouse button
 	RIGHT,		///< The right mouse button
 	MID,		///< The middle (wheel) mouse button
 	EXTRA1,		///< The first extra mouse button
 	EXTRA2,		///< The second extra mouse button
-	COUNT,
-	INVALID = -1
+	COUNT_eMouseBtn,
+	INVALID_eMouseBtn = -1
 };
 
 class Sys

@@ -7,15 +7,25 @@ namespace graphics { class IEntity; }
 class MeshComponent : public WorldComponent
 {
 public:
-	MeshComponent(graphics::IEntity* e);
+	static const eWorldComponentType TYPE = MESH;
 
-	__inline graphics::IEntity* GetEntity() { return entity; }
+public:
+	inline MeshComponent(graphics::IEntity* e);
 
-protected:
-	void _InnerReflectPos() override;
-	void _InnerReflectRot() override;
-	void _InnerReflectSkew() override;
+	inline graphics::IEntity* GetEntity();
 
 protected:
 	graphics::IEntity* entity;
 };
+
+
+MeshComponent::MeshComponent(graphics::IEntity* e)
+:WorldComponent(TYPE), entity(e)
+{
+
+}
+
+graphics::IEntity* MeshComponent::GetEntity()
+{
+	return entity;
+}

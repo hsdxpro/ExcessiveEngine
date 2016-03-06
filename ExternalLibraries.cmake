@@ -119,7 +119,7 @@ set(EXC_LINK_LIBRARY_BULLET
 	debug Bullet3OpenCL_clew-d
 	debug BulletCollision-d
 	debug BulletDynamics-d
-	debug BulletSoftBody-d	
+	debug BulletSoftBody-d
 	
 	optimized Bullet2FileLoader
 	optimized Bullet3Collision
@@ -131,7 +131,7 @@ set(EXC_LINK_LIBRARY_BULLET
 	optimized BulletDynamics
 	optimized BulletSoftBody
 	
-	debug LinearMath-d 
+	debug LinearMath-d
 	optimized LinearMath
 )
 

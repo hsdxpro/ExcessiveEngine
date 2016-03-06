@@ -4,9 +4,9 @@
 class SoundCore
 {
 public:
-	__inline sound::IEmitter* CreateSoundMono(const std::string& filePath, float volumeNormedPercent = 1, bool bLoop = false)
+	inline sound::IEmitter* CreateMonoSound(const std::string& filePath, float volumeNormedPercent = 1, bool bLoop = false)
 	{
-		return Core.CreateSoundMono(filePath, volumeNormedPercent, bLoop);
+		return Core.CreateMonoSound(filePath, volumeNormedPercent, bLoop);
 	}
 };
 

@@ -1,12 +1,13 @@
 #pragma once
 
 #include "InputCore.h"
-#include "EngineWorld.h"
+#include "GameWorld.h"
 
 #include "GraphicsCore.h"
 #include "PhysicsCore.h"
 #include "SoundCore.h"
 #include "NetworkCore.h"
+#include "CoreCommon.h"
 
 class Script
 {

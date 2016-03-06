@@ -30,9 +30,9 @@ PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d)
 										new btSequentialImpulseConstraintSolver,
 										new btDefaultCollisionConfiguration);
 
-	world->getSolverInfo().m_numIterations = 4;
-	world->getSolverInfo().m_solverMode = SOLVER_SIMD;
-	world->getDispatchInfo().m_enableSPU = true;
+	//world->getSolverInfo().m_numIterations = 4;
+	//world->getSolverInfo().m_solverMode = SOLVER_SIMD;
+	//world->getDispatchInfo().m_enableSPU = true;
 
 	world->setGravity(btVector3(d.gravity.x, d.gravity.y, d.gravity.z));
 
@@ -42,9 +42,9 @@ PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d)
 	//world->setDebugDrawer(debugDrawer);
 
 	// Populate collisionMatrix with true values, everything can collide with everything by default
-	nLayerCollisionMatrixRows = 16; // Start with 16x16 matrix
-	layerCollisionMatrix.resize(nLayerCollisionMatrixRows * nLayerCollisionMatrixRows);
-	memset(layerCollisionMatrix.data(), 1, nLayerCollisionMatrixRows * nLayerCollisionMatrixRows);
+	nLayeCollisionMatrixRows = 16; // Start with 16x16 matrix
+	layeCollisionMatrix.resize(nLayeCollisionMatrixRows * nLayeCollisionMatrixRows);
+	memset(layeCollisionMatrix.data(), 1, nLayeCollisionMatrixRows * nLayeCollisionMatrixRows);
 }
 
 PhysicsEngineBullet::~PhysicsEngineBullet()
@@ -94,8 +94,7 @@ void PhysicsEngineBullet::Update(float deltaTime)
 {
 	{
 		PROFILE_SCOPE("Simulate");
-		//world->stepSimulation(deltaTime, 0);
-		world->stepSimulation(deltaTime, 20, 1.0f / 60);
+		world->stepSimulation(deltaTime, 0);
 	}
 	
 	{
@@ -114,7 +113,7 @@ void PhysicsEngineBullet::Update(float deltaTime)
 				const btCollisionObject* colB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
 
 				// Fill up our structure with contact informations
-				physics::rCollision colInfo;
+				physics::Collision colInfo;
 				
 				if (!colA->getCollisionShape()->isSoftBody())
 				{
@@ -145,7 +144,7 @@ void PhysicsEngineBullet::Update(float deltaTime)
 					if (pt.getDistance() <= 0.f)
 					{
 						//Fill contact data
-						physics::rContactPoint c;
+						physics::ContactPoint c;
 						c.normalA = -mm::vec3(pt.m_normalWorldOnB.x(), pt.m_normalWorldOnB.y(), pt.m_normalWorldOnB.z());
 						c.normalB = mm::vec3(pt.m_normalWorldOnB.x(), pt.m_normalWorldOnB.y(), pt.m_normalWorldOnB.z());
 						c.posA = mm::vec3(pt.m_positionWorldOnA.x(), pt.m_positionWorldOnA.y(), pt.m_positionWorldOnA.z());
@@ -171,7 +170,7 @@ void PhysicsEngineBullet::Update(float deltaTime)
 	}
 }
 
-bool PhysicsEngineBullet::TraceClosestPoint(const mm::vec3& from, const mm::vec3& to, physics::rTraceResult& traceInfo_out, const physics::rTraceParams& params /*= physics::rTraceParams()*/)
+bool PhysicsEngineBullet::TraceClosestPoint(const mm::vec3& from, const mm::vec3& to, physics::TraceResult& traceInfo_out, const physics::TraceParams& params /*= physics::TraceParams()*/)
 {
 	ExcessiveClosestRayCallb callb(this, { from.x, from.y, from.z }, { to.x, to.y, to.z }, params.ignoredCollisionLayers);
 
@@ -197,7 +196,7 @@ physics::IRigidBodyEntity* PhysicsEngineBullet::AddEntityRigidDynamic(mm::vec3* 
 
 	// Create collision shape for rigid body, based on it's vertices and mass
 	btConvexHullShape* colShape = new btConvexHullShape((btScalar*)vertices, nVertices, sizeof(mm::vec3));
-	colShape->setSafeMargin(0, 0); // Thanks convex hull for your imprecision...
+	//colShape->setSafeMargin(0, 0); // Thanks convex hull for your imprecision...
 
 	btVector3 localInertia(0, 0, 0);
 	if (mass != 0)
@@ -205,7 +204,14 @@ physics::IRigidBodyEntity* PhysicsEngineBullet::AddEntityRigidDynamic(mm::vec3* 
 
 	// Create rigid body
 	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), colShape, localInertia);
-		body->setFriction(1);
+	body->setFriction(0.5);
+
+	if (mass != 0)
+	{
+		body->setCcdMotionThreshold(1);
+		body->setCcdSweptSphereRadius(0.2f);
+	}
+
 	world->addRigidBody(body);
 
 	RigidBodyEntity* e = new RigidBodyEntity(body);
@@ -281,21 +287,21 @@ bool PhysicsEngineBullet::RemoveEntity(physics::IRigidBodyEntity* e)
 	return false;
 }
 
-void PhysicsEngineBullet::SetLayerCollision(size_t ID0, size_t ID1, bool bEnableCollision)
+void PhysicsEngineBullet::SetLayeCollision(size_t ID0, size_t ID1, bool bEnableCollision)
 {
-	if (ID0 > nLayerCollisionMatrixRows - 1 || ID1 > nLayerCollisionMatrixRows - 1)
+	if (ID0 > nLayeCollisionMatrixRows - 1 || ID1 > nLayeCollisionMatrixRows - 1)
 	{
 		// Reallocate larger matrix
 		size_t nRows = std::max(ID0, ID1) + 1;
-		layerCollisionMatrix.resize(nRows * nRows);
+		layeCollisionMatrix.resize(nRows * nRows);
 
 		// Move old datas to correct places
 		// i = 0 will not run, cuz 0th will remain good in memory
-		for (size_t i = nLayerCollisionMatrixRows - 1; i > 0; i--)
+		for (size_t i = nLayeCollisionMatrixRows - 1; i > 0; i--)
 		{
-			u8* src = i * nLayerCollisionMatrixRows + (u8*)layerCollisionMatrix.data();
-			u8* dst = src + i * (nRows - nLayerCollisionMatrixRows);
-			memmove(dst, src, nLayerCollisionMatrixRows);
+			u8* src = i * nLayeCollisionMatrixRows + (u8*)layeCollisionMatrix.data();
+			u8* dst = src + i * (nRows - nLayeCollisionMatrixRows);
+			memmove(dst, src, nLayeCollisionMatrixRows);
 
 			// Set newly allocated bytes to 1 (part0)
 			// [src, dst[ set 1 these byte are the newly allocated ones, ID0 can collide with everything, and ID1 also
@@ -303,14 +309,14 @@ void PhysicsEngineBullet::SetLayerCollision(size_t ID0, size_t ID1, bool bEnable
 		}
 
 		// Set newly allocated bytes to 1 (part1)
-		size_t asd = nRows + (nRows - nLayerCollisionMatrixRows);
-		memset((u8*)layerCollisionMatrix.data() + (nRows *  nRows) - asd, 1, asd);
+		size_t asd = nRows + (nRows - nLayeCollisionMatrixRows);
+		memset((u8*)layeCollisionMatrix.data() + (nRows *  nRows) - asd, 1, asd);
 
-		nLayerCollisionMatrixRows = nRows;
+		nLayeCollisionMatrixRows = nRows;
 	}
 
-	layerCollisionMatrix[ID0 + nLayerCollisionMatrixRows * ID1] = bEnableCollision;
-	layerCollisionMatrix[ID1 + nLayerCollisionMatrixRows * ID0] = bEnableCollision;
+	layeCollisionMatrix[ID0 + nLayeCollisionMatrixRows * ID1] = bEnableCollision;
+	layeCollisionMatrix[ID1 + nLayeCollisionMatrixRows * ID0] = bEnableCollision;
 }
 
 bool PhysicsEngineBullet::GetDebugData(mm::vec3*& linesFromNonUniqPoints_out, size_t& nLines_out) const

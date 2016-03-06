@@ -89,10 +89,10 @@ float4 PS_MAIN(VS_OUT In) : COLOR0 {
 	float glossiness, specLevel;
 	SampleGBuffer(In.tex0, diffuseColor, normal, glossiness, specLevel);
 
-	return float4(diffuseColor, 1.0f);
+	//return float4(normal, 1.0f);
 
 	depth = tex2D(depthBuffer, In.tex0);
-	worldPos = GetWorldPosition(camPos, In.viewRay, depth) / 10.f;
+	worldPos = GetWorldPosition(camPos, In.viewRay, depth);
 
 	// calculate lighting terms
 	float3 negViewNorm = normalize(camPos - worldPos);
@@ -110,13 +110,13 @@ float4 PS_MAIN(VS_OUT In) : COLOR0 {
 	float NoL = saturate(dot(N, -lightDir) + bias);
 	float NoH = saturate(dot(N,H) + bias);
 	
-	float roughness = 0.1f;
-	float3 specularColor = float3(0.04, 0.04, 0.04);
+	float roughness = 0.25f;
+	float3 specularColor = float3(0.02, 0.02, 0.02);
 
 	float3 diffuse = lightColor * NoL * diffuseColor * DisneyDiffuse_Extended(NoV, NoL, VoH, roughness, specularColor);
-	float3 specular = float3(0,0,0);//lightColor * NoL * SpecularBRDF(NoL, NoV, VoH, NoH, specularColor, roughness);
+	float3 specular = lightColor * NoL * SpecularBRDF(NoL, NoV, VoH, NoH, specularColor, roughness);
 
-	return float4(diffuse + specular, 1.0f);
+	return float4(specular + diffuse, 1.0f);
 
 	//// shadow map
 	//float3 shadowPos;

@@ -51,5 +51,5 @@ protected:
 	float rateOfFire;
 
 	bool bSquatting;
-	rCollision playerCollisionData;
+	Collision playeCollisionData;
 };

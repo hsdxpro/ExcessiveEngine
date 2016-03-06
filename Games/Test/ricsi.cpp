@@ -1,7 +1,7 @@
 ﻿//#include "Core/EngineCore.h"
 //#include "Core/InputCore.h"
 //#include "Core/GraphicsCore.h"
-//#include "Core/EngineWorld.h"
+//#include "Core/GameWorld.h"
 //#include "Core/CameraComponent.h"
 //
 //#include "PlatformLibrary\Window.h"
@@ -47,7 +47,7 @@
 //	static const char ak47ModelPath[] = "ak47/ak.obj"; // Assets/teapot.dae
 //
 //	World.SpawnComp_RigidBodyFromFile(assetName, 0)->Attach(World.SpawnComp_MeshFromFile(assetName));
-//	World.SpawnComp_MeshFromFile("skybox.dae")->SetScaleLocal({ 1000, 1000, 1000 });
+//	World.SpawnComp_MeshFromFile("skybox.dae")->SetScale({ 1000, 1000, 1000 });
 //
 //	// Run the main loop
 //	rWindowEvent ev;
@@ -101,8 +101,8 @@
 //					auto box = World.SpawnComp_RigidBodyFromFile(teapotModelPath, 10);
 //					box->Attach(World.SpawnComp_MeshFromFile(teapotModelPath));
 //
-//					box->SetPos(cam->GetPos() + cam->GetCam()->GetFrontDirNormed() * 3); // 3 méterrel elénk
-//					box->SetScaleLocal(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
+//					box->SetPos(cam->GetPos() + cam->GetCam()->GetFrontDir() * 3); // 3 méterrel elénk
+//					box->SetScale(mm::vec3(1.f / 20, 1.f / 20, 1.f / 20));
 //				}
 //				break;
 //			case eWindowMsg::MOUSE_RELEASE:
@@ -179,13 +179,13 @@
 //
 //		// Camera move
 //		if (bWDown) // W
-//			cam->SetPos(cam->GetPos() + cam->GetCam()->GetFrontDirNormed() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+//			cam->SetPos(cam->GetPos() + cam->GetCam()->GetFrontDir() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 //		if (bSDown) // S									 
-//			cam->SetPos(cam->GetPos() + cam->GetCam()->GetBackDirNormed()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+//			cam->SetPos(cam->GetPos() + cam->GetCam()->GetBackDir()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 //		if (bADown) // A									 
-//			cam->SetPos(cam->GetPos() + cam->GetCam()->GetLeftDirNormed()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+//			cam->SetPos(cam->GetPos() + cam->GetCam()->GetLeftDir()  * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 //		if (bDDown) // D									 
-//			cam->SetPos(cam->GetPos() + cam->GetCam()->GetRightDirNormed() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
+//			cam->SetPos(cam->GetPos() + cam->GetCam()->GetRightDir() * CAM_MOVE_SPEED * elapsed * gCamSpeedMultiplier);
 //
 //		// Update core
 //		Core.Update(elapsed/*, scene*/);

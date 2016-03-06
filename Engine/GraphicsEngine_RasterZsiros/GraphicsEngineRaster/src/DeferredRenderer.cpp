@@ -819,7 +819,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 
 		// load shader constants
 		shaderConstants.lightColor = light.color;
-		shaderConstants.lightDir = mm::vec3(light.direction.x, light.direction.z, -light.direction.y);
+		shaderConstants.lightDir = mm::vec3(light.direction.x, light.direction.z, light.direction.y);
 		gApi->SetVSConstantBuffer(&shaderConstants, sizeof(shaderConstants), 0);
 		gApi->SetPSConstantBuffer(&shaderConstants, sizeof(shaderConstants), 0);
 

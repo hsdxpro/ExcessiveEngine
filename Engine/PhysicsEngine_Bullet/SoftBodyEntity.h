@@ -13,14 +13,14 @@ class SoftBodyEntity : public physics::ISoftBodyEntity
 public:
 	SoftBodyEntity(btSoftBody* body);
 
-	__inline i64 GetCollisionGroup() const override  { return collisionGroupID; }
+	inline u64 GetCollisionGroup() const override  { return collisionGroupID; }
 
-	__inline btSoftBody* GetBody() const { return body; }
+	inline btSoftBody* GetBody() const { return body; }
 
 protected:
 	btSoftBody* body;
 
-	i64 collisionGroupID;
+	u64 collisionGroupID;
 	void* userPointer;
 };
 

@@ -6,15 +6,23 @@ namespace physics { class ISoftBodyEntity; }
 class SoftBodyComponent : public WorldComponent
 {
 public:
-	SoftBodyComponent(physics::ISoftBodyEntity* e) :entity(e){}
+	static const eWorldComponentType TYPE = SOFT_BODY;
 
-	_inline physics::ISoftBodyEntity* GetEntity() { return entity; }
+public:
+	inline SoftBodyComponent(physics::ISoftBodyEntity* e);
 
-protected:
-	void _InnerReflectPos() override;
-	void _InnerReflectRot() override;
-	void _InnerReflectSkew() override;
+	inline physics::ISoftBodyEntity* GetEntity();
 
 protected:
 	physics::ISoftBodyEntity* entity;
 };
+
+SoftBodyComponent::SoftBodyComponent(physics::ISoftBodyEntity* e)
+:WorldComponent(TYPE), entity(e)
+{
+}
+
+physics::ISoftBodyEntity* SoftBodyComponent::GetEntity()
+{ 
+	return entity; 
+}

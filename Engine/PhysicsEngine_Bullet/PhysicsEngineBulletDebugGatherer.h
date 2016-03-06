@@ -14,42 +14,42 @@ public:
 
 	~PhysicsEngineBulletDebugGatherer(){}
 
-	__inline void ClearFrameData()
+	inline void ClearFrameData()
 	{
 		nLines = 0;
 	}
 
-	__inline void GetDebugData(mm::vec3*& linesFromNonUniqPoints_out, size_t& nLines_out)
+	inline void GetDebugData(mm::vec3*& linesFromNonUniqPoints_out, size_t& nLines_out)
 	{
 		linesFromNonUniqPoints_out = (mm::vec3*)linesFromNonUniqPoints.data();
 		nLines_out = nLines;
 	}
 
 protected:
-	__inline void drawLine(const btVector3& from, const btVector3& to, const btVector3& color) override
+	inline void drawLine(const btVector3& from, const btVector3& to, const btVector3& color) override
 	{
 		linesFromNonUniqPoints[nLines * 2] = mm::vec3(from.x(), from.y(), from.z());
 		linesFromNonUniqPoints[nLines * 2 + 1] = mm::vec3(to.x(), to.y(), to.z());
 		nLines++;
 	}
 
-	__inline void drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color) override
+	inline void drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color) override
 	{
 		
 	}
 
-	__inline void reportErrorWarning(const char* warningString) override
+	inline void reportErrorWarning(const char* warningString) override
 	{}
 
-	__inline void draw3dText(const btVector3& location, const char* textString) override
+	inline void draw3dText(const btVector3& location, const char* textString) override
 	{}
 
-	__inline void setDebugMode(int debugMode) override
+	inline void setDebugMode(int debugMode) override
 	{
 		this->debugMode = debugMode;
 	}
 	
-	__inline int getDebugMode() const override
+	inline int getDebugMode() const override
 	{
 		return debugMode;
 	}

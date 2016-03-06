@@ -37,7 +37,7 @@ Window::Window(const rWindow& d)
 {
 	bClosed = false;
 	bGenerateSysKeyAltDown = false;
-
+	bGenerateSysKeyAltUp = false;
 	//lastMousePos.x = std::numeric_limits<int>::min();
 	//lastMousePos.y = std::numeric_limits<int>::min();
 
@@ -128,7 +128,8 @@ Window::~Window()
 bool Window::PopEvent(rWindowEvent& evt_out)
 {
 	MSG msg;
-	bool b = PeekMessage(&msg, 0, 0, 0, PM_REMOVE);
+	bool b = (bool)PeekMessage(&msg, 0, 0, 0, PM_REMOVE);
+
 	if(b)
 	{
 		TranslateMessage(&msg);
@@ -136,7 +137,7 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 
 		if (msg.message == WM_LBUTTONDOWN)
 		{
-			evt_out.msg = eWindowMsg::MOUSE_PRESS;
+			evt_out.msg = MOUSE_PRESS;
 			evt_out.mouseBtn = eMouseBtn::LEFT;
 
 			evt_out.x = GET_X_LPARAM(msg.lParam);
@@ -144,7 +145,7 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 		}
 		else if (msg.message == WM_RBUTTONDOWN)
 		{
-			evt_out.msg = eWindowMsg::MOUSE_PRESS;
+			evt_out.msg = MOUSE_PRESS;
 			evt_out.mouseBtn = eMouseBtn::RIGHT;
 
 			evt_out.x = GET_X_LPARAM(msg.lParam);
@@ -152,7 +153,7 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 		}
 		else if (msg.message == WM_LBUTTONUP)
 		{
-			evt_out.msg = eWindowMsg::MOUSE_RELEASE;
+			evt_out.msg = MOUSE_RELEASE;
 			evt_out.mouseBtn = eMouseBtn::LEFT;
 
 			evt_out.x = GET_X_LPARAM(msg.lParam);
@@ -160,7 +161,7 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 		}
 		else if (msg.message == WM_RBUTTONUP)
 		{
-			evt_out.msg = eWindowMsg::MOUSE_RELEASE;
+			evt_out.msg = MOUSE_RELEASE;
 			evt_out.mouseBtn = eMouseBtn::RIGHT;
 
 			evt_out.x = GET_X_LPARAM(msg.lParam);
@@ -169,21 +170,71 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 		else if (msg.message == WM_KEYDOWN)
 		{
 			evt_out.key = ConvertFromWindowsKey(msg.wParam);
-			evt_out.msg = eWindowMsg::KEY_PRESS;
+			evt_out.msg = KEY_PRESS;
+
+			
+			if (evt_out.key == eKey::ENTER)
+			{
+				OutputDebugStringW(L"WM_KEYDOWN\n");
+			}
 		}
 		else if (msg.message == WM_SYSKEYDOWN)
 		{
-			if (HIWORD(msg.lParam) & KF_ALTDOWN)
-			{
-				bGenerateSysKeyAltDown = true;
-			}
+			//DWORD dwFlags = (DWORD)msg.lParam;
+			//if (0x20000000 & dwFlags)
+			//{
+			//	bGenerateSysKeyAltDown = true;
+			//}
+			//else
+			//{
+			//	bGenerateSysKeyAltUp = true;
+			//}
+
 			evt_out.key = ConvertFromWindowsKey(msg.wParam);
-			evt_out.msg = eWindowMsg::KEY_PRESS;
+			evt_out.msg = KEY_PRESS;
+
+			if (evt_out.key == eKey::ENTER)
+			{
+				OutputDebugStringW(L"WM_SYSKEYDOWN\n");
+			}
 		}
 		else if (msg.message == WM_KEYUP)
 		{
 			evt_out.key = ConvertFromWindowsKey(msg.wParam);
-			evt_out.msg = eWindowMsg::KEY_RELEASE;
+			evt_out.msg = KEY_RELEASE;
+
+			//OutputDebugStringW(L"WM_KEYUP\n");
+			if (evt_out.key == eKey::ENTER)
+			{
+				OutputDebugStringW(L"WM_KEYUP\n");
+			}
+		}
+		else if (msg.message == WM_SYSKEYUP)
+		{
+			//DWORD dwFlags = (DWORD)msg.lParam;
+			//if (0x20000000 & dwFlags)
+			//{
+			//	bGenerateSysKeyAltDown = true;
+			//}
+			//else
+			//{
+			//	bGenerateSysKeyAltUp = true;
+			//}
+
+			evt_out.key = ConvertFromWindowsKey(msg.wParam);
+			evt_out.msg = KEY_RELEASE;
+
+			if (evt_out.key == eKey::ENTER)
+			{
+				OutputDebugStringW(L"WM_SYSKEYUP\n");
+			}
+
+			//OutputDebugStringW(L"WM_SYSKEYUP\n");
+
+			//if (bGenerateSysKeyAltUp)
+			//{
+			//	OutputDebugStringW(L"LALT WM_SYSKEYUP\n");
+			//}
 		}
 		else if(msg.message == WM_INPUT)
 		{
@@ -202,31 +253,44 @@ bool Window::PopEvent(rWindowEvent& evt_out)
 				evt_out.deltaX = raw->data.mouse.lLastX;
 				evt_out.deltaY = raw->data.mouse.lLastY;
 
-				evt_out.msg = eWindowMsg::MOUSE_MOVE;
+				evt_out.msg = MOUSE_MOVE;
 			}
 		}
 		else if (msg.message == WM_CLOSE)
 		{
-			evt_out.msg = eWindowMsg::CLOSE;
+			evt_out.msg = CLOSE;
 			Close();
 		}
 		else if (msg.message == WM_QUIT)
 		{
-			evt_out.msg = eWindowMsg::CLOSE;
+			evt_out.msg = CLOSE;
 			Close();
+		}
+		else
+		{
+			evt_out.msg = INVALID_WINDOWMSG;
 		}
 	}
 	else // !b
 	{
-		if (bGenerateSysKeyAltDown)
-		{
-			evt_out.msg = eWindowMsg::KEY_PRESS;
-			evt_out.key = eKey::LALT;
-			bGenerateSysKeyAltDown = false;
-			return true;
-		}
+		//if (bGenerateSysKeyAltDown)
+		//{
+		//	evt_out.msg = KEY_PRESS;
+		//	evt_out.key = eKey::LALT;
+		//	bGenerateSysKeyAltDown = false;
+		//	return true;
+		//}
+		//
+		//if (bGenerateSysKeyAltUp)
+		//{
+		//	evt_out.msg = KEY_RELEASE;
+		//	evt_out.key = eKey::LALT;
+		//	bGenerateSysKeyAltUp = false;
+		//	return true;
+		//}
+		evt_out.msg = INVALID_WINDOWMSG;
 	}
-	
+
 	return b;
 }
 
@@ -343,28 +407,28 @@ mm::vec2 Window::GetCenterPos() const
 //{
 //	switch (windowMsg)
 //	{
-//	case sf::Event::EventType::Closed:					return eWindowMsg::CLOSE;
-//	case sf::Event::EventType::Resized:					return eWindowMsg::RESIZE;
-//	case sf::Event::EventType::LostFocus:				return eWindowMsg::DEFOCUS;
-//	case sf::Event::EventType::GainedFocus:				return eWindowMsg::FOCUS;
-//	case sf::Event::EventType::TextEntered:				return eWindowMsg::TEXT_ENTERED;
-//	case sf::Event::EventType::KeyPressed:				return eWindowMsg::KEY_PRESS;
-//	case sf::Event::EventType::KeyReleased:				return eWindowMsg::KEY_RELEASE;
+//	case sf::Event::EventType::Closed:					return CLOSE;
+//	case sf::Event::EventType::Resized:					return RESIZE;
+//	case sf::Event::EventType::LostFocus:				return DEFOCUS;
+//	case sf::Event::EventType::GainedFocus:				return FOCUS;
+//	case sf::Event::EventType::TextEntered:				return TEXT_ENTERED;
+//	case sf::Event::EventType::KeyPressed:				return KEY_PRESS;
+//	case sf::Event::EventType::KeyReleased:				return KEY_RELEASE;
 //	case sf::Event::EventType::MouseWheelScrolled:
-//	case sf::Event::EventType::MouseWheelMoved:			return eWindowMsg::MOUSE_SCROLL;
-//	case sf::Event::EventType::MouseButtonPressed:		return eWindowMsg::MOUSE_PRESS;
-//	case sf::Event::EventType::MouseButtonReleased:		return eWindowMsg::MOUSE_RELEASE;
-//	case sf::Event::EventType::MouseMoved:				return eWindowMsg::MOUSE_MOVE;
-//	case sf::Event::EventType::MouseEntered:			return eWindowMsg::MOUSE_ENTER;
-//	case sf::Event::EventType::MouseLeft:				return eWindowMsg::MOUSE_LEAVE;
-//	case sf::Event::EventType::JoystickButtonPressed:	return eWindowMsg::JOYSTICK_BUTTON_PRESS;
-//	case sf::Event::EventType::JoystickButtonReleased:	return eWindowMsg::JOYSTICK_BUTTON_RELEASE;
-//	case sf::Event::EventType::JoystickMoved:			return eWindowMsg::JOYSTICK_MOVE;
-//	case sf::Event::EventType::JoystickConnected:		return eWindowMsg::JOYSTICK_CONNECT;
-//	case sf::Event::EventType::JoystickDisconnected:	return eWindowMsg::JOYSTICK_DISCONNECT;
+//	case sf::Event::EventType::MouseWheelMoved:			return MOUSE_SCROLL;
+//	case sf::Event::EventType::MouseButtonPressed:		return MOUSE_PRESS;
+//	case sf::Event::EventType::MouseButtonReleased:		return MOUSE_RELEASE;
+//	case sf::Event::EventType::MouseMoved:				return MOUSE_MOVE;
+//	case sf::Event::EventType::MouseEntered:			return MOUSE_ENTER;
+//	case sf::Event::EventType::MouseLeft:				return MOUSE_LEAVE;
+//	case sf::Event::EventType::JoystickButtonPressed:	return JOYSTICK_BUTTON_PRESS;
+//	case sf::Event::EventType::JoystickButtonReleased:	return JOYSTICK_BUTTON_RELEASE;
+//	case sf::Event::EventType::JoystickMoved:			return JOYSTICK_MOVE;
+//	case sf::Event::EventType::JoystickConnected:		return JOYSTICK_CONNECT;
+//	case sf::Event::EventType::JoystickDisconnected:	return JOYSTICK_DISCONNECT;
 //	}
 //
-//	return eWindowMsg::INVALID;
+//	return INVALID;
 //}
 //
 //eMouseBtn Window::ConvertFromSFMLMouseBtn(sf::Mouse::Button btn)
@@ -457,8 +521,8 @@ eKey Window::ConvertFromWindowsKey(WPARAM key)
 	case VK_SUBTRACT:				return eKey::SUB;
 	case VK_MULTIPLY:				return eKey::MUL;
 	case VK_DIVIDE:					return eKey::DIV;
-	case VK_LEFT:					return eKey::LEFT;
-	case VK_RIGHT:					return eKey::RIGHT;
+	case VK_LEFT:					return eKey::LEFT_ARROW;
+	case VK_RIGHT:					return eKey::RIGHT_ARROW;
 	case VK_UP:						return eKey::UP;
 	case VK_DOWN:					return eKey::DOWN;
 	case VK_F1:						return eKey::F1;
@@ -488,7 +552,7 @@ eKey Window::ConvertFromWindowsKey(WPARAM key)
 	case VK_PAUSE:					return eKey::PAUSE;
 	}
 
-	return eKey::INVALID;
+	return INVALID_eKey;
 }
 
 //eKey Window::ConvertFromSFMLKey(sf::Keyboard::Key key)

@@ -6,37 +6,130 @@
 class RigidBodyComponent : public WorldComponent
 {
 public:
-	RigidBodyComponent(physics::IRigidBodyEntity* a);
-
-	void UpdateAfterPhysicsSimulate(); // After physics simulation done, we transforms all WorldComponent child also
-
-	__inline void AddForce(const mm::vec3& force, const mm::vec3& relPos = { 0, 0, 0 }) { entity->AddForce(force, relPos); }
-
-	__inline void SetUserPointer(void* p)			{ entity->SetUserPointer(p); }
-
-	__inline void SetGravityScale(float s)			{ entity->SetGravityScale(s); }
-	__inline void SetTrigger(bool bTrigger)			{ entity->SetTrigger(bTrigger); }
-	__inline void SetCollisionGroup(i64 ID)			{ entity->SetCollisionGroup(ID); }
-
-	__inline void SetAngularFactor(float factor)	{ entity->SetAngularFactor(factor); }
-	__inline void SetKinematic(bool bKinematic)		{ entity->SetKinematic(bKinematic); }
-	__inline void SetVelocity(const mm::vec3& v)  { entity->SetVelocity(v); }
-
-	__inline i64 GetCollisionGroup() const { return entity->GetCollisionGroup(); }
-	__inline mm::vec3 GetVelocity() const { return entity->GetVelocity(); }
-	__inline void* GetUserPointer() { return entity->GetUserPointer(); }
-
-	__inline bool IsTrigger() const { return entity->IsTrigger(); }
-	__inline bool IsStatic() const { return entity->IsStatic(); }
-	__inline bool IsDynamic() const { return entity->IsDynamic(); }
-
-	__inline physics::IRigidBodyEntity* GetEntity() { return entity; }
+	static const eWorldComponentType TYPE = RIGID_BODY;
 
 public:
-	void _InnerReflectPos() override;
-	void _InnerReflectRot() override;
-	void _InnerReflectSkew() override;
+	inline RigidBodyComponent(physics::IRigidBodyEntity* a);
+
+	inline void AddForce(const mm::vec3& force, const mm::vec3& relPos = { 0, 0, 0 });
+
+	inline void SetUserPointer(void* p);
+
+	inline void SetGravityScale(float s);
+	inline void SetTrigger(bool bTrigger);
+	inline void SetCollisionGroup(u64 ID);
+
+	inline void SetAngularFactor(float factor);
+	inline void SetKinematic(bool bKinematic);
+	inline void SetVelocity(const mm::vec3& v);
+
+	inline u64 GetCollisionGroup() const;
+	inline mm::vec3 GetVelocity() const;
+	inline void* GetUserPointer();
+
+	inline bool IsTrigger() const;
+	inline bool IsStatic() const;
+	inline bool IsDynamic() const;
+	inline bool IsKinematic() const;
+
+	inline physics::IRigidBodyEntity* GetEntity();
+
+	inline std::vector<physics::ContactPoint> GetContactPoints() const;
 
 protected:
 	physics::IRigidBodyEntity* entity;
 };
+
+
+
+
+RigidBodyComponent::RigidBodyComponent(physics::IRigidBodyEntity* a)
+:WorldComponent(TYPE), entity(a)
+{
+
+}
+
+void RigidBodyComponent::AddForce(const mm::vec3& force, const mm::vec3& relPos /*= { 0, 0, 0 }*/)
+{
+	entity->AddForce(force, relPos);
+}
+
+void RigidBodyComponent::SetUserPointer(void* p)
+{
+	entity->SetUserPointer(p);
+}
+
+void RigidBodyComponent::SetGravityScale(float s)
+{
+	entity->SetGravityScale(s);
+}
+
+void RigidBodyComponent::SetTrigger(bool bTrigger)
+{
+	entity->SetTrigger(bTrigger);
+}
+
+void RigidBodyComponent::SetCollisionGroup(u64 ID)
+{
+	entity->SetCollisionGroup(ID);
+}
+
+void RigidBodyComponent::SetAngularFactor(float factor)
+{
+	entity->SetAngularFactor(factor);
+}
+
+void RigidBodyComponent::SetKinematic(bool bKinematic)
+{
+	entity->SetKinematic(bKinematic);
+}
+
+void RigidBodyComponent::SetVelocity(const mm::vec3& v)
+{
+	entity->SetVelocity(v);
+}
+
+u64 RigidBodyComponent::GetCollisionGroup() const
+{
+	return entity->GetCollisionGroup();
+}
+
+mm::vec3 RigidBodyComponent::GetVelocity() const
+{
+	return entity->GetVelocity();
+}
+
+void* RigidBodyComponent::GetUserPointer()
+{
+	return entity->GetUserPointer();
+}
+
+bool RigidBodyComponent::IsTrigger() const
+{
+	return entity->IsTrigger();
+}
+
+bool RigidBodyComponent::IsStatic() const
+{
+	return entity->IsStatic();
+}
+
+bool RigidBodyComponent::IsDynamic() const
+{
+	return entity->IsDynamic();
+}
+
+bool RigidBodyComponent::IsKinematic() const
+{
+	return entity->IsKinematic();
+}
+
+physics::IRigidBodyEntity* RigidBodyComponent::GetEntity()
+{
+	return entity;
+}
+
+std::vector<physics::ContactPoint> RigidBodyComponent::GetContactPoints() const
+{
+	return entity->GetContactPoints();
+}
