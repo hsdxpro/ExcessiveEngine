@@ -50,25 +50,26 @@ PlayerScript::PlayerScript()
 	});
 
 	// Camera
-	camComp = World.AddComponent_Camera();
-	camComp->Move(mm::vec3( 0,0,1));
+	//camComp = World.AddComponent_Camera();
+	
 	
 	// Attach to rigid body capsule
-	playerCapsule->GetRootComponent(0)->Attach(camComp);
+	camComp = playerCapsule->GetRootComponent(0)->AddComponent_Camera();
+	camComp->Move(mm::vec3(0, 0, 1));
 
-	ak47Graphics = camComp->AddComponent_Mesh(ak47ModelPath);
-	ak47Graphics->SetScale(1.0 / 3);
-	ak47Graphics->Move(mm::vec3(0.7f, 1.5f, -0.6f));
-	ak47Graphics->RotZ(-90);
-	ak47Graphics->RotY(-90);
+	//ak47Graphics = camComp->AddComponent_Mesh(ak47ModelPath);
+	////ak47Graphics->SetScale(1.0 / 5);
+	//ak47Graphics->Move(mm::vec3(0.7f, 1.5f, -0.6f));
+	//ak47Graphics->RotZ(-90);
+	//ak47Graphics->RotY(-90);
 	
-	playerCapsule->Scale(1.0 / 3);
+	//playerCapsule->Scale(1.0 / 3);
 
 	walkSound = Sound.CreateMonoSound("walk_sound.ogg", 1, true);
 	gunSound = Sound.CreateMonoSound("GUN_FIRE-stereo.ogg", 0.5);
 	shellSound = Sound.CreateMonoSound("shell_fall.ogg", 0.5);
 
-	playerCapsule->SetPos(mm::vec3(0, 0, 5));
+	playerCapsule->SetPos(mm::vec3(0, 0, 8));
 
 	Core.SetCam(camComp);
 }
@@ -181,12 +182,12 @@ void PlayerScript::Update(float deltaSeconds)
 
 		// TODO Ha kell egy sorból tudjak rigidBody Mesh és Sound
 		Actor* bullet = World.AddActor("box.DAE", 1);
-		bullet->SetScale(1.0 / 3);
+		//bullet->SetScale(10.0f);
 
 		bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);
 		
 		mm::vec3 bulletDirNormed = camComp->GetFrontDir();
-		bullet->SetPos(ak47Graphics->GetPos() + bulletDirNormed);
+		bullet->SetPos(camComp->GetPos() + bulletDirNormed);
 		bullet->SetVelocity(bulletDirNormed * 2);
 		//bullet->Scale(bulletDirNormed * 3);
 	}

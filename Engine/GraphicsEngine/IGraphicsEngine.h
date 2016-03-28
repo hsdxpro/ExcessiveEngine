@@ -69,6 +69,9 @@ public:
 
 	virtual void Update(float deltaTime) = 0;
 
+	/// Resize Render Target textures
+	virtual bool ResizeRenderTargets(unsigned width, unsigned height) = 0;
+
 // scene & layer system
 
 	virtual void AddLayer(const Layer& layer) = 0;

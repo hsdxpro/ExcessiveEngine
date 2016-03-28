@@ -82,7 +82,7 @@ static const char pixelShaderCode[] =
 ;
 
 
-GraphicsEngineRaster::GraphicsEngineRaster(const rGraphicsEngineRaster& d) 
+GraphicsEngineRaster::GraphicsEngineRaster(const GraphicsEngineRasterDesc& d) 
 {
 	//switch (d.gapiType)
 	//{

@@ -157,7 +157,7 @@ activeShaderProg(nullptr),
 activeVertexBuffer(nullptr)
 {
 	// Create d3ddevice, d3dcontext
-	auto r = CreateDevice();
+	eGapiResult r = CreateDevice();
 	if (r != eGapiResult::OK) {
 		throw std::runtime_error("failed to create direct3d device");
 	}
@@ -357,9 +357,17 @@ eGapiResult cGraphicsApiD3D11::CreateMostAcceptableSwapChain(size_t width, size_
 	sdesc.SampleDesc.Quality = 0;
 	sdesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	sdesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-	sdesc.Windowed = true;
+	sdesc.Windowed = true;// Sys::GetScreenSize().x != width || Sys::GetScreenSize().y != height;
 
 	HRESULT hr = fact->CreateSwapChain(d3ddev, &sdesc, &d3dsc);
+
+	// Go full screen if backbuffer size is equals to the screen size
+	if (Sys::GetScreenSize().x == width && Sys::GetScreenSize().y == height)
+	{
+		d3dsc->SetFullscreenState(true, NULL);
+	}
+
+	//hr = fact->MakeWindowAssociation(windowHandle, DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER);
 
 	// free up everything
 	SAFE_RELEASE(mainOutput);

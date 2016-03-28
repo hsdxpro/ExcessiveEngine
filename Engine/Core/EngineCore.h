@@ -35,16 +35,16 @@ public:
 	~EngineCore();
 
 	// Init raster graphics engine, if one already exists will be destroyed, then instantiate it
-	IGraphicsEngine* InitGraphicsEngineRaster(const rGraphicsEngineRaster& d = rGraphicsEngineRaster());
+	IGraphicsEngine* InitGraphicsEngineRaster(const GraphicsEngineRasterDesc& d = GraphicsEngineRasterDesc());
 
 	// Init raster graphics engine, if one already exists will be destroyed, then instantiate it
-	IGraphicsEngine* InitGraphicsEngineRasterZsiros(const rGraphicsEngineRaster& d = rGraphicsEngineRaster());
+	IGraphicsEngine* InitGraphicsEngineRasterZsiros(const GraphicsEngineRasterDesc& d = GraphicsEngineRasterDesc());
 
 	// Init raytracer graphics engine, if one already exists will be destroyed, then instantiate it
 	IGraphicsEngine* InitGraphicsEngineRT(const rGraphicsEngineRT& d = rGraphicsEngineRT());
 	
 	// Init physics engine, if one already exists will be destroyed, then instantiate it
-	IPhysicsEngine* InitPhysicsEngineBullet(const rPhysicsEngineBullet& d = rPhysicsEngineBullet());
+	IPhysicsEngine* InitPhysicsEngineBullet(const PhysicsEngineBulletDesc& d = PhysicsEngineBulletDesc());
 	
 	// Init network engine, if one already exists will be destroyed, then instantiate it
 	INetworkEngine* InitNetworkEngineRakNet(const rNetworkEngine& d = rNetworkEngine());
@@ -134,8 +134,8 @@ protected:
 	std::vector<Actor*> actorsToDestroy;
 
 	// Prev and cur frame actors associated collision data
-	//std::unordered_map<Actor*, Collision> curFrameActorCollideList;
-	//std::unordered_map<Actor*, Collision> prevFrameActorCollideList;
+	std::unordered_map<Actor*, Collision> curFrameActorCollideList;
+	std::unordered_map<Actor*, Collision> prevFrameActorCollideList;
 
 	// Entity scripts
 	std::vector<ActorScript*> entityScripts;

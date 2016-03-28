@@ -7,7 +7,6 @@
 #include <fstream>
 #include <sstream>
 
-#pragma message("PETI, Nem akarja includeolni ezt a retket, nagyon fontos lenne")
 //#include <boost/mpl/numeric_cast.hpp>
 
 class cStrUtil {

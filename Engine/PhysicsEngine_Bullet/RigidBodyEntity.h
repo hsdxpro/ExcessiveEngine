@@ -10,6 +10,7 @@
 #include "BulletCollision/CollisionShapes/btConvexHullShape.h"
 #include "BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h"
 #include "BulletCollision/CollisionShapes/btCapsuleShape.h"
+#include "Bullet/BulletCollision/CollisionDispatch/btCollisionWorld.h"
 
 
 namespace physics { namespace bullet {
@@ -17,7 +18,7 @@ namespace physics { namespace bullet {
 class RigidBodyEntity : public physics::IRigidBodyEntity
 {
 public:
-	inline RigidBodyEntity(btRigidBody* body);
+	inline RigidBodyEntity(btRigidBody* body, btCollisionWorld* world);
 
 	inline void AddForce(const mm::vec3& force, const mm::vec3& relPos = { 0, 0, 0 }) override;
 
@@ -56,6 +57,9 @@ public:
 protected:
 	btRigidBody* body;
 
+	// Thank you Bullet physics, your design fucked up ours, warning ugly code !
+	btCollisionWorld* world;
+
 	i64 collisionGroupID;
 	void* userPointer;
 };
@@ -70,8 +74,8 @@ protected:
 
 
 
-RigidBodyEntity::RigidBodyEntity(btRigidBody* body)
-:body(body), userPointer(0), collisionGroupID(std::numeric_limits<u64>::max()) // default ID means can collide with everything
+RigidBodyEntity::RigidBodyEntity(btRigidBody* body, btCollisionWorld* world)
+:body(body), world(world), userPointer(0), collisionGroupID(std::numeric_limits<u64>::max()) // default ID means can collide with everything
 {
 	body->setUserPointer(this);
 	//btConvexHullShape asd;
@@ -157,21 +161,24 @@ void RigidBodyEntity::SetRot(const mm::quat& q)
 void RigidBodyEntity::SetScale(const mm::vec3& v)
 {
 	btCollisionShape* colShape = body->getCollisionShape();
+	assert(colShape);
 
-	if (colShape)
+	if (v.x == 1)
+		return;
+
+	colShape->setLocalScaling(btVector3(v.x, v.y, v.z));
+
+	// I think it's needed
+	btVector3 localInertia(0, 0, 0);
+	float invMass = body->getInvMass();
+	if (invMass != 0)
 	{
-		colShape->setLocalScaling(btVector3(v.x, v.y, v.z));
-
-		// I think it's needed
-		btVector3 localInertia(0, 0, 0);
-		float invMass = body->getInvMass();
-		if (invMass != 0)
-		{
-			float mass = 1.f / invMass;
-			colShape->calculateLocalInertia(mass, localInertia);
-			body->setMassProps(mass, localInertia);
-		}
+		float mass = 1.f / invMass;
+		colShape->calculateLocalInertia(mass, localInertia);
+		body->setMassProps(mass, localInertia);
 	}
+
+	world->updateSingleAabb(body);
 	body->activate();
 }
 

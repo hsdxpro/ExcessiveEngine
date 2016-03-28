@@ -3,7 +3,6 @@
 #include "PlatformLibrary/WindowCommon.h"
 #include <vector>
 #include "SupportLibrary/Common.h"
-//#include "Core/GameWorld.h"
 #include "PlatformLibrary/Windows/Timer_win.h"
 #include <conio.h>
 #include "Core/EngineCore.h"
@@ -41,7 +40,7 @@
 class IGuiTexture
 {
 public:
-	virtual mm::uvec2 GetSize() const = 0;
+	virtual mm::uvec2 GetDimension() const = 0;
 
 	virtual u32 GetWidth() const = 0;
 	virtual u32 GetHeight() const = 0;
@@ -60,7 +59,7 @@ class GuiImage
 public:
 	GuiImage(IGuiTexture* texture) : texture(texture)
 	{
-		//surfaceSize = texture->GetSurfaceSize();
+
 	}
 
 	~GuiImage()
@@ -70,7 +69,7 @@ public:
 
 	u32 GetWidth() const { return texture->GetWidth(); }
 	u32 GetHeight() const { return texture->GetHeight(); }
-	const mm::uvec2 GetSurfaceSize() const { return texture->GetSize(); }
+	const mm::uvec2 GetDimension() const { return texture->GetDimension(); }
 
 	const Color* GetPixels() const { return texture->GetPixels(); }
 
@@ -87,7 +86,7 @@ public:
 		assert(b);
 	}
 
-	mm::uvec2 GetSize() const
+	mm::uvec2 GetDimension() const
 	{
 		return mm::uvec2(img.getSize().x, img.getSize().y);
 	}
@@ -135,7 +134,7 @@ public:
 		delete guiGraphicsEngine;
 	}
 
-	inline GuiImage* CreateImage(const std::string& filePath)
+	inline GuiImage* AddImage(const std::string& filePath)
 	{
 		IGuiTexture* texture = guiGraphicsEngine->CreateTexture(filePath);
 		GuiImage* img = new GuiImage(texture);
@@ -159,24 +158,23 @@ class GuiGraphicsEngineOpenGL
 
 int main()
 {
-	GuiImage* editorStartupImg = EditorGui.CreateImage(GetAssetsPath() + "editor_startup.jpg");
+	GuiImage* editorStartupImg = EditorGui.AddImage(GetAssetsPath() + "editor_startup.jpg");
 
-	//uint64_t val = eWindowStyle::TITLE_CLOSEABLE | eWindowStyle::TITLE_FIXBORDER;
-	rWindow windowDesc;
-		//windowDesc.clientSize = mm::uvec2(editorStartupImg->GetWidth(), editorStartupImg->GetHeight());// Sys::GetScreenSize();
-		windowDesc.clientSize = mm::uvec2(800, 600);
+	WindowDesc windowDesc;
+		windowDesc.clientSize = editorStartupImg->GetDimension();
 		windowDesc.style = eWindowStyle::DEFAULT;
 	Window* window = new Window(windowDesc);
 
 
 	rGraphicsEngineRT graphicsDesc;
 		graphicsDesc.targetWindow = window;
-	Core.InitGraphicsEngineRT(graphicsDesc);
+	//Core.InitGraphicsEngineRasterZsiros(graphicsDesc); // ...
 	Core.InitPhysicsEngineBullet();
 	
-	auto groundModelPath = "Terminal/terminal_blender.dae";
-	auto groundRigidActor = World.SpawnActor_RigidBodyFromFile(groundModelPath, 0);
-	Core.Destroy(groundRigidActor);
+	Actor* ground = World.AddActor("box.DAE", 0);
+	ground->SetKinematic(true);
+	ground->SetScale(mm::vec3(100, 100, 1));
+	ground->SetName("ground");
 
 	// TMP !!
 	//World.AddScript<TestLevelScript>();
@@ -185,7 +183,7 @@ int main()
 
 	while (window->IsOpen())
 	{
-		rWindowEvent evt;
+		WindowEvent evt;
 		while (window->PopEvent(evt));
 
 		float deltaTime = timer->GetSecondsPassed();

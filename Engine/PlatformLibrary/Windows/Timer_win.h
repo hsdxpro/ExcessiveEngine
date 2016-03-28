@@ -15,6 +15,6 @@ public:
 	double GetMicroSecondsPassed();
 
 private:
-	// std::chrono::system_clock::time_point startTime;
-	unsigned long long startTime;
+	std::chrono::steady_clock::time_point startTime;
+	//unsigned long long startTime;
 };

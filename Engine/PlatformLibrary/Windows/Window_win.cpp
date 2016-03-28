@@ -5,51 +5,69 @@
 #include <assert.h>
 #include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/RenderTexture.hpp"
-#include <windows.h>
 #include <windowsx.h>
+#include <winuser.h>
+#include <fstream>
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	//Window* pWin = (Window*)GetWindowLongPtr(hWnd, 0);
-	PAINTSTRUCT ps;
-	switch (Msg)
+	Window* window;
+	if (msg == WM_NCCREATE)
 	{
-	case WM_CREATE:
-		break;
-	case WM_SHOWWINDOW:
-		break;
-	case WM_ACTIVATE:
+		window = static_cast<Window*>(reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams);
+	
+		SetLastError(0);
+		SetWindowLongPtr(hwnd, -21, reinterpret_cast<LONG_PTR>(window));
+	}
+	else
+	{
+		window = reinterpret_cast<Window*>(GetWindowLongPtr(hwnd, -21));
+	}
+
+	MSG s;
+	s.hwnd = hwnd;
+	s.message = msg;
+	s.lParam = lParam;
+	s.wParam = wParam;
+
+	switch (msg)
+	{
+	case WM_SIZE:
+	case WM_SIZING:
+	case WM_DISPLAYCHANGE:
+		window->PostEvent(s);
 		break;
 	case WM_PAINT:
-		BeginPaint(hWnd, &ps);
-		EndPaint(hWnd, &ps);
+		//PAINTSTRUCT ps;
+		//BeginPaint(hwnd, &ps);
+		//EndPaint(hwnd, &ps);
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(WM_QUIT);
 		break;
-	default:
-		return DefWindowProc(hWnd, Msg, wParam, lParam);
 	}
-	return 0;
+
+	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-Window::Window(const rWindow& d)
+Window::Window(const WindowDesc& d)
 {
 	bClosed = false;
-	bGenerateSysKeyAltDown = false;
-	bGenerateSysKeyAltUp = false;
-	//lastMousePos.x = std::numeric_limits<int>::min();
-	//lastMousePos.y = std::numeric_limits<int>::min();
 
-	//sf::Uint32 windowStyle;
-	// Client size == Screen size, we must use FullScreen style
-	//if (d.clientSize == Sys::GetScreenSize()) waiting for mymath improvement
-	//if (d.clientSize.x == Sys::GetScreenSize().x && d.clientSize.y == Sys::GetScreenSize().y)
-	//	windowStyle = ConvertToSFMLWindowStyle(eWindowStyle::BORDERLESS);
-	//else
-	//	windowStyle = ConvertToSFMLWindowStyle(d.style);
+	int interpretedStyle;
+	if (d.style == eWindowStyle::BORDERLESS)
+	{
+		interpretedStyle = WS_POPUP;
+	}
+	else if(d.style == eWindowStyle::DEFAULT)
+	{
+		interpretedStyle = WS_OVERLAPPEDWINDOW;
+	}
+	else
+	{
+		interpretedStyle = WS_OVERLAPPEDWINDOW;
+	}
 
-	int interpretedStyle = WS_OVERLAPPEDWINDOW;
 	int interpretedBrush = BLACK_BRUSH;
 
 	// Application ID for window class registration, and window creation
@@ -87,7 +105,7 @@ Window::Window(const rWindow& d)
 
 	std::wstring captionText(d.capText.begin(), d.capText.end());
 
-	hwnd = CreateWindowW(
+	hwnd = CreateWindowExW(0,
 		L"windowclass",
 		captionText.c_str(),
 		(int)interpretedStyle,
@@ -98,14 +116,12 @@ Window::Window(const rWindow& d)
 		GetDesktopWindow(),
 		0,
 		appID,
-		0);
+		this);
 
 	ShowWindow(hwnd, SW_SHOW);
 	UpdateWindow(hwnd);
 
-	//w.create(hwnd);
-
-	//SetWindowLongPtr(hwnd, 0, (LONG_PTR)this);
+	//SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG_PTR)this);
 
 	// Register raw mouse
 	const unsigned HID_USAGE_PAGE_GENERIC = 0x01;
@@ -125,173 +141,150 @@ Window::~Window()
 	Close();
 }
 
-bool Window::PopEvent(rWindowEvent& evt_out)
+void Window::PostEvent(const MSG& msg)
 {
-	MSG msg;
-	bool b = (bool)PeekMessage(&msg, 0, 0, 0, PM_REMOVE);
+	wndProcMessages.push(msg);
+}
 
-	if(b)
+bool Window::PopEvent(WindowEvent& evt_out)
+{
+	evt_out.deltaX = 0;
+	evt_out.deltaY = 0;
+	evt_out.key = INVALID_eKey;
+	evt_out.mouseBtn = INVALID_eMouseBtn;
+	evt_out.msg = INVALID_eWindowsMsg;
+	evt_out.x = 0;
+	evt_out.y = 0;
+
+
+	MSG msg;
+	if (PeekMessage(&msg, hwnd, 0, 0, PM_REMOVE))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
-
-		if (msg.message == WM_LBUTTONDOWN)
+	}
+	else // No posted message
+	{
+		// Still have forwarded messages from wndProc YES !
+		if (wndProcMessages.size() > 0)
 		{
-			evt_out.msg = MOUSE_PRESS;
-			evt_out.mouseBtn = eMouseBtn::LEFT;
+			msg = wndProcMessages.front();
+			wndProcMessages.pop();
 
-			evt_out.x = GET_X_LPARAM(msg.lParam);
-			evt_out.y = GET_Y_LPARAM(msg.lParam);
-		}
-		else if (msg.message == WM_RBUTTONDOWN)
-		{
-			evt_out.msg = MOUSE_PRESS;
-			evt_out.mouseBtn = eMouseBtn::RIGHT;
-
-			evt_out.x = GET_X_LPARAM(msg.lParam);
-			evt_out.y = GET_Y_LPARAM(msg.lParam);
-		}
-		else if (msg.message == WM_LBUTTONUP)
-		{
-			evt_out.msg = MOUSE_RELEASE;
-			evt_out.mouseBtn = eMouseBtn::LEFT;
-
-			evt_out.x = GET_X_LPARAM(msg.lParam);
-			evt_out.y = GET_Y_LPARAM(msg.lParam);
-		}
-		else if (msg.message == WM_RBUTTONUP)
-		{
-			evt_out.msg = MOUSE_RELEASE;
-			evt_out.mouseBtn = eMouseBtn::RIGHT;
-
-			evt_out.x = GET_X_LPARAM(msg.lParam);
-			evt_out.y = GET_Y_LPARAM(msg.lParam);
-		}
-		else if (msg.message == WM_KEYDOWN)
-		{
-			evt_out.key = ConvertFromWindowsKey(msg.wParam);
-			evt_out.msg = KEY_PRESS;
-
-			
-			if (evt_out.key == eKey::ENTER)
-			{
-				OutputDebugStringW(L"WM_KEYDOWN\n");
-			}
-		}
-		else if (msg.message == WM_SYSKEYDOWN)
-		{
-			//DWORD dwFlags = (DWORD)msg.lParam;
-			//if (0x20000000 & dwFlags)
-			//{
-			//	bGenerateSysKeyAltDown = true;
-			//}
-			//else
-			//{
-			//	bGenerateSysKeyAltUp = true;
-			//}
-
-			evt_out.key = ConvertFromWindowsKey(msg.wParam);
-			evt_out.msg = KEY_PRESS;
-
-			if (evt_out.key == eKey::ENTER)
-			{
-				OutputDebugStringW(L"WM_SYSKEYDOWN\n");
-			}
-		}
-		else if (msg.message == WM_KEYUP)
-		{
-			evt_out.key = ConvertFromWindowsKey(msg.wParam);
-			evt_out.msg = KEY_RELEASE;
-
-			//OutputDebugStringW(L"WM_KEYUP\n");
-			if (evt_out.key == eKey::ENTER)
-			{
-				OutputDebugStringW(L"WM_KEYUP\n");
-			}
-		}
-		else if (msg.message == WM_SYSKEYUP)
-		{
-			//DWORD dwFlags = (DWORD)msg.lParam;
-			//if (0x20000000 & dwFlags)
-			//{
-			//	bGenerateSysKeyAltDown = true;
-			//}
-			//else
-			//{
-			//	bGenerateSysKeyAltUp = true;
-			//}
-
-			evt_out.key = ConvertFromWindowsKey(msg.wParam);
-			evt_out.msg = KEY_RELEASE;
-
-			if (evt_out.key == eKey::ENTER)
-			{
-				OutputDebugStringW(L"WM_SYSKEYUP\n");
-			}
-
-			//OutputDebugStringW(L"WM_SYSKEYUP\n");
-
-			//if (bGenerateSysKeyAltUp)
-			//{
-			//	OutputDebugStringW(L"LALT WM_SYSKEYUP\n");
-			//}
-		}
-		else if(msg.message == WM_INPUT)
-		{
-			UINT dwSize;
-			GetRawInputData((HRAWINPUT)msg.lParam, RID_INPUT, NULL, &dwSize, sizeof(RAWINPUTHEADER));
-
-			BYTE* data = (BYTE*)alloca(dwSize);
-
-			GetRawInputData((HRAWINPUT)msg.lParam, RID_INPUT, data, &dwSize, sizeof(RAWINPUTHEADER));
-			
-
-			RAWINPUT* raw = (RAWINPUT*)data;
-
-			if (raw->header.dwType == RIM_TYPEMOUSE)
-			{
-				evt_out.deltaX = raw->data.mouse.lLastX;
-				evt_out.deltaY = raw->data.mouse.lLastY;
-
-				evt_out.msg = MOUSE_MOVE;
-			}
-		}
-		else if (msg.message == WM_CLOSE)
-		{
-			evt_out.msg = CLOSE;
-			Close();
-		}
-		else if (msg.message == WM_QUIT)
-		{
-			evt_out.msg = CLOSE;
-			Close();
+			TranslateMessage(&msg);
 		}
 		else
 		{
-			evt_out.msg = INVALID_WINDOWMSG;
+			return false;
 		}
 	}
-	else // !b
+
+	if (msg.message == WM_LBUTTONDOWN)
 	{
-		//if (bGenerateSysKeyAltDown)
-		//{
-		//	evt_out.msg = KEY_PRESS;
-		//	evt_out.key = eKey::LALT;
-		//	bGenerateSysKeyAltDown = false;
-		//	return true;
-		//}
-		//
-		//if (bGenerateSysKeyAltUp)
-		//{
-		//	evt_out.msg = KEY_RELEASE;
-		//	evt_out.key = eKey::LALT;
-		//	bGenerateSysKeyAltUp = false;
-		//	return true;
-		//}
-		evt_out.msg = INVALID_WINDOWMSG;
+		evt_out.msg = MOUSE_PRESS;
+		evt_out.mouseBtn = eMouseBtn::LEFT;
+
+		evt_out.x = GET_X_LPARAM(msg.lParam);
+		evt_out.y = GET_Y_LPARAM(msg.lParam);
+	}
+	else if (msg.message == WM_RBUTTONDOWN)
+	{
+		evt_out.msg = MOUSE_PRESS;
+		evt_out.mouseBtn = eMouseBtn::RIGHT;
+
+		evt_out.x = GET_X_LPARAM(msg.lParam);
+		evt_out.y = GET_Y_LPARAM(msg.lParam);
+	}
+	else if (msg.message == WM_LBUTTONUP)
+	{
+		evt_out.msg = MOUSE_RELEASE;
+		evt_out.mouseBtn = eMouseBtn::LEFT;
+
+		evt_out.x = GET_X_LPARAM(msg.lParam);
+		evt_out.y = GET_Y_LPARAM(msg.lParam);
+	}
+	else if (msg.message == WM_RBUTTONUP)
+	{
+		evt_out.msg = MOUSE_RELEASE;
+		evt_out.mouseBtn = eMouseBtn::RIGHT;
+
+		evt_out.x = GET_X_LPARAM(msg.lParam);
+		evt_out.y = GET_Y_LPARAM(msg.lParam);
+	}
+	else if (msg.message == WM_KEYDOWN)
+	{
+		evt_out.key = ConvertFromWindowsKey(msg.wParam);
+		evt_out.msg = KEY_PRESS;
+	}
+	else if (msg.message == WM_SYSKEYDOWN)
+	{
+		//evt_out.key = ConvertFromWindowsKey(msg.wParam);
+		//evt_out.msg = KEY_PRESS;
+	}
+	else if (msg.message == WM_KEYUP)
+	{
+		evt_out.key = ConvertFromWindowsKey(msg.wParam);
+		evt_out.msg = KEY_RELEASE;
+	}
+	else if (msg.message == WM_SYSKEYUP)
+	{
+		evt_out.key = ConvertFromWindowsKey(msg.wParam);
+		evt_out.msg = KEY_RELEASE;
+	}
+	else if(msg.message == WM_INPUT)
+	{
+		UINT dwSize;
+		GetRawInputData((HRAWINPUT)msg.lParam, RID_INPUT, NULL, &dwSize, sizeof(RAWINPUTHEADER));
+
+		BYTE* data = (BYTE*)alloca(dwSize);
+
+		GetRawInputData((HRAWINPUT)msg.lParam, RID_INPUT, data, &dwSize, sizeof(RAWINPUTHEADER));
+		
+
+		RAWINPUT* raw = (RAWINPUT*)data;
+
+		if (raw->header.dwType == RIM_TYPEMOUSE)
+		{
+			evt_out.deltaX = raw->data.mouse.lLastX;
+			evt_out.deltaY = raw->data.mouse.lLastY;
+
+			evt_out.msg = MOUSE_MOVE;
+		}
+	}
+	else if (msg.message == WM_CLOSE)
+	{
+		evt_out.msg = CLOSE;
+		Close();
+	}
+	else if (msg.message == WM_QUIT)
+	{
+		evt_out.msg = CLOSE;
+		Close();
+	}
+	else if (msg.message == WM_DISPLAYCHANGE)
+	{
+		// TODO
+	}
+	else if (msg.message == WM_SIZE)
+	{
+		// TODO
+		/*std::ofstream os("WM_SIZE.txt", std::ios::app);
+		os << GET_X_LPARAM(msg.lParam);
+		os << '\n';
+		os << GET_Y_LPARAM(msg.lParam);
+		os << '\n';
+		os.close();*/
+	}
+	else if (msg.message == WM_SIZING)
+	{
+
+	}
+	else
+	{
+		evt_out.msg = INVALID_eWindowsMsg;
 	}
 
-	return b;
+	return true;
 }
 
 void Window::Close() 

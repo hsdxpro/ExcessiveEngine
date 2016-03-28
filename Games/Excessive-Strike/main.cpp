@@ -1,8 +1,7 @@
 // GuiSystem
 // Canvas
-// - GuiPages (DEPRECATED)
-//		- GuiLayers
-//			- GuiControls
+//	- GuiLayers
+//		- GuiControls
 
 // Gui library használata:
 
@@ -14,13 +13,16 @@
 // Typical Usage
 // GuiSystemRichard guiSys;
 // GuiSystemRobert guiSys;
-// guiSys.CreateLayer(...) CreateButton(...) // MyButtonImpl* button = CreateButton(...)
-// OffScreenBuffer* buf = GuiRendererCpu.Render(GuiSystemRichard);
-// buf->bitBltToScreen(...);
+// guiSys.Addayer(...) AddButton(...) // MyButtonImpl* button = AddButton(...)
+
+// Render
+// GuiRendererCpu.Render(GuiSystemRichard, );
+//NOPE // buf->bitBltToScreen(...);
+
 
 // GuiRendererDx11	 : IGuiRenderer // Dx11 resource - ba belerenderel mindent
 // GuiRendererOpenGL : IGuiRenderer // OpenGL resource - ba belerenderel mindent
-// GuiRendererCpu	 : IGuiRenderer // byte* ptr - be belerenderel mindent
+//NOPE // GuiRendererCpu	 : IGuiRenderer // byte* ptr - be belerenderel mindent
 
 
 #include "Core\EngineCore.h"
@@ -40,19 +42,21 @@ void InitScript();
 
 int main()
 {
-	// Full screen popup window for our game
-	rWindow d;
+	WindowDesc d;
+		//d.clientSize = mm::uvec2(Sys::GetScreenSize().x, Sys::GetScreenSize().y);
 		d.clientSize = mm::uvec2(800, 600);
-		//d.bVSync = true;
+		d.style = eWindowStyle::BORDERLESS;
 	Window* window = new Window(d);
 
 	// Init Engine core
 	Core.InitSoundEngineSFML();
-	rGraphicsEngineRaster graphicsDesc;
+	GraphicsEngineRasterDesc graphicsDesc;
 		graphicsDesc.gapiType = eGapiType::DX11;
 		graphicsDesc.targetWindow = window;
-	Core.InitGraphicsEngineRasterZsiros(graphicsDesc);
-	rPhysicsEngineBullet physicsDesc;
+
+	IGraphicsEngine* graphicsEngine = Core.InitGraphicsEngineRasterZsiros(graphicsDesc);
+
+	PhysicsEngineBulletDesc physicsDesc;
 		physicsDesc.gravity = mm::vec3(0, 0, -9.81);
 	Core.InitPhysicsEngineBullet(physicsDesc);
 
@@ -67,7 +71,7 @@ int main()
 		Input.ClearFrameData();
 
 		// Process input events coming from O.S.-> Window
-		rWindowEvent evt;
+		WindowEvent evt;
 		while(window->PopEvent(evt))
 		{
 			switch(evt.msg)
@@ -76,10 +80,6 @@ int main()
 			{
 				if (evt.key != INVALID_eKey)
 					Input.KeyPress(evt.key);
-
-				if (evt.key == ENTER)
-					OutputDebugStringW(L"ENTER_PRESS\n");
-
 				break;
 			}
 
@@ -87,10 +87,6 @@ int main()
 			{
 				if (evt.key != INVALID_eKey)
 					Input.KeyRelease(evt.key);
-
-				if (evt.key == ENTER)
-					OutputDebugStringW(L"ENTER_RELEASE\n");
-
 				break;
 			}
 
@@ -125,21 +121,10 @@ int main()
 		// IsKeyPressed Enterre sose lesz igaz, mert asszem hogy a window message - ben kétszer szerepel az enter megnyomása, mert system message is jön, meg egy nem system message is
 		if(Input.IsKeyPressed(ENTER))
 		{
-			OutputDebugStringW(L"ALT + ENTER\n");
-			//window->Close();
-			//break;
-		}
+			u16 width = window->GetClientWidth();
+			u16 height = window->GetClientHeight();
 
-		if (Input.IsKeyReleased(ENTER))
-		{
-			OutputDebugStringW(L"e r\n");
-			//window->Close();
-			//break;
-		}
-
-		if (Input.IsKeyDown(ENTER))
-		{
-			//OutputDebugStringW(L"Enter pressed\n");
+			graphicsEngine->ResizeRenderTargets(width, height);
 		}
 
 		float deltaSeconds = timer->GetSecondsPassed();

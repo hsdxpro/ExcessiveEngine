@@ -45,7 +45,7 @@ const tBlendDesc cGraphicsEngine::blendDefault = [](){
 
 ////////////////////////////////////////////////////////////////////////////////
 //	Constructor of the graphics engine
-cGraphicsEngine::cGraphicsEngine(const rGraphicsEngineRaster& d)
+cGraphicsEngine::cGraphicsEngine(const GraphicsEngineRasterDesc& d)
 {
 	luminanceAdaptation = 0.0f;
 
@@ -68,7 +68,6 @@ cGraphicsEngine::cGraphicsEngine(const rGraphicsEngineRaster& d)
 	gApi = new cGraphicsApiD3D11();
 	gApi->SetWindow(d.targetWindow);
 	gApi->SetBackBufferSize(screenWidth, screenHeight);
-
 	// Create resource manager
 	//resourceManager = new cResourceManager(gApi);
 
@@ -179,22 +178,23 @@ eGraphicsResult cGraphicsEngine::ReloadShaders() {
 }
 
 // resize screen
-eGraphicsResult cGraphicsEngine::Resize(unsigned width, unsigned height) {
-	eGraphicsResult result = eGraphicsResult::OK;
-
+bool cGraphicsEngine::ResizeRenderTargets(unsigned width, unsigned height)
+{
 	screenWidth = width;
 	screenHeight = height;
 
 	gApi->SetBackBufferSize(screenWidth, screenHeight);
-	result = deferredRenderer->Resize(screenWidth, screenHeight);
-	try {
+	deferredRenderer->Resize(screenWidth, screenHeight);
+	try
+	{
 		ReloadBuffers();
 	}
-	catch (...) {
-		return eGraphicsResult::ERROR_OUT_OF_MEMORY;
+	catch (...) 
+	{
+		return false;
 	}
 	
-	return result;
+	return true;
 }
 
 // create/delete scenes
@@ -305,8 +305,8 @@ void cGraphicsEngine::Update(float elapsed) {
 
 
 // Render a graphics scene
-void cGraphicsEngine::RenderScene(Scene& scene, ITexture2D* target, float elapsed) {
-
+void cGraphicsEngine::RenderScene(Scene& scene, ITexture2D* target, float elapsed)
+{
 	float aspectRatio = (float)screenWidth / screenHeight;
 
 	// load settings from scene

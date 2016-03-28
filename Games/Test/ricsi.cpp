@@ -19,7 +19,7 @@
 //int Ricsi() 
 //{
 //	// Init window
-//	rWindow d;
+//	WindowDesc d;
 //		d.clientW = 800;
 //		d.clientH = 600;
 //		d.capText = "Excessive-Engine -> Ricsi teszt";
@@ -29,7 +29,7 @@
 //	Core.InitSoundEngineSFML();
 //	Core.InitNetworkEngine();
 //	Core.InitPhysicsEngineBullet();
-//		rGraphicsEngineRaster gDesc;
+//		GraphicsEngineRasterDesc gDesc;
 //		gDesc.gapiType = eGapiType::GL_4_5;
 //		gDesc.targetWindow = &window;
 //	IGraphicsEngine* gEngine = Core.InitGraphicsEngineRaster(gDesc);
@@ -50,7 +50,7 @@
 //	World.SpawnComp_MeshFromFile("skybox.dae")->SetScale({ 1000, 1000, 1000 });
 //
 //	// Run the main loop
-//	rWindowEvent ev;
+//	WindowEvent ev;
 //	double elapsed;
 //	double last_frame;
 //

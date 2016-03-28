@@ -23,7 +23,7 @@
 using namespace physics::bullet;
 
 
-PhysicsEngineBullet::PhysicsEngineBullet(const rPhysicsEngineBullet& d) 
+PhysicsEngineBullet::PhysicsEngineBullet(const PhysicsEngineBulletDesc& d) 
 {
 	world = new btDiscreteDynamicsWorld(new	BulletCollisionDispatcher(new btDefaultCollisionConfiguration, this),
 										new btDbvtBroadphase,
@@ -52,8 +52,8 @@ PhysicsEngineBullet::~PhysicsEngineBullet()
 	/* Clean up	*/
 	for (int i = world->getNumCollisionObjects() - 1; i >= 0; i--)
 	{
-		btCollisionObject*	obj = world->getCollisionObjectArray()[i];
-		btRigidBody*		body = btRigidBody::upcast(obj);
+		btCollisionObject* obj = world->getCollisionObjectArray()[i];
+		btRigidBody* body = btRigidBody::upcast(obj);
 
 		if (body && body->getMotionState())
 		{
@@ -196,7 +196,7 @@ physics::IRigidBodyEntity* PhysicsEngineBullet::AddEntityRigidDynamic(mm::vec3* 
 
 	// Create collision shape for rigid body, based on it's vertices and mass
 	btConvexHullShape* colShape = new btConvexHullShape((btScalar*)vertices, nVertices, sizeof(mm::vec3));
-	//colShape->setSafeMargin(0, 0); // Thanks convex hull for your imprecision...
+	colShape->setSafeMargin(0.01, 1); // Thanks convex hull for your imprecision...
 
 	btVector3 localInertia(0, 0, 0);
 	if (mass != 0)
@@ -204,18 +204,20 @@ physics::IRigidBodyEntity* PhysicsEngineBullet::AddEntityRigidDynamic(mm::vec3* 
 
 	// Create rigid body
 	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), colShape, localInertia);
-	body->setFriction(0.5);
 
-	if (mass != 0)
+	if (mass > 0) 
 	{
 		body->setCcdMotionThreshold(1);
 		body->setCcdSweptSphereRadius(0.2f);
 	}
+	body->setFriction(0.9f);
+	body->setRestitution(0.0f);
 
 	world->addRigidBody(body);
 
-	RigidBodyEntity* e = new RigidBodyEntity(body);
-		entities.push_back(e);
+	RigidBodyEntity* e = new RigidBodyEntity(body, world);
+	entities.push_back(e);
+
 	return e;
 }
 
@@ -247,15 +249,18 @@ physics::IRigidBodyEntity* PhysicsEngineBullet::AddEntityRigidStatic(mm::vec3* v
 	btRigidBody* body = new btRigidBody(0, new btDefaultMotionState(), new btBvhTriangleMeshShape(VBIB, true), btVector3(0, 0, 0));
 	world->addRigidBody(body);
 
-	RigidBodyEntity* e = new RigidBodyEntity(body);
-		entities.push_back(e);
+	RigidBodyEntity* e = new RigidBodyEntity(body, world);
+	entities.push_back(e);
+
 	return e;
 }
 
 physics::IRigidBodyEntity* PhysicsEngineBullet::AddEntityRigidCapsule(float height, float radius, float mass)
 {
 	btCapsuleShapeZ* capsuleShape = new btCapsuleShapeZ(radius, height);
-	capsuleShape->setSafeMargin(0, 0); // Thanks convex hull for your imprecision...
+	capsuleShape->setSafeMargin(0.01, 1); // Thanks convex hull for your imprecision...
+	// 0.04 a default
+	//btScalar ad = capsuleShape->getMargin();
 
 	btVector3 localInertia(0, 0, 0);
 	if (mass != 0)
@@ -265,8 +270,9 @@ physics::IRigidBodyEntity* PhysicsEngineBullet::AddEntityRigidCapsule(float heig
 	btRigidBody* body = new btRigidBody(mass, new btDefaultMotionState(), capsuleShape, localInertia);
 	world->addRigidBody(body);
 
-	RigidBodyEntity* e = new RigidBodyEntity(body);
-		entities.push_back(e);
+	RigidBodyEntity* e = new RigidBodyEntity(body, world);
+	entities.push_back(e);
+
 	return e;
 }
 

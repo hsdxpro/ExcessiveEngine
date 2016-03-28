@@ -28,6 +28,8 @@ public:
 	graphics::ITexture*  CreateTexture() override;
 	Camera* CreateCam() override;
 
+	bool ResizeRenderTargets(unsigned width, unsigned height) override { return false; }
+
 	void AddLayer(const Layer& layer) override;
 	void RemoveLayer(size_t index) override;
 	size_t GetNumLayers() const override;

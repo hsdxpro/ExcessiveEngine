@@ -19,15 +19,17 @@ using namespace physics::bullet;
 class btSoftRigidDynamicsWorld;
 class btDiscreteDynamicsWorld;
 
-struct rPhysicsEngineBullet 
+struct PhysicsEngineBulletDesc 
 {
+	PhysicsEngineBulletDesc(): gravity(0,0,0){}
+
 	mm::vec3 gravity;
 };
 
 class PhysicsEngineBullet : public IPhysicsEngine
 {
 public:
-	PhysicsEngineBullet(const rPhysicsEngineBullet& d);
+	PhysicsEngineBullet(const PhysicsEngineBulletDesc& d);
 	~PhysicsEngineBullet();
 	void Release() override;
 
@@ -94,7 +96,7 @@ public:
 		{
 			if (!bodyA->getCollisionShape()->isSoftBody())
 				colGroupA = ((RigidBodyEntity*)bodyA->getUserPointer())->GetCollisionGroup();
-			else 
+			else
 				colGroupA = ((SoftBodyEntity*)bodyA->getUserPointer())->GetCollisionGroup();
 
 			if (!bodyB->getCollisionShape()->isSoftBody())
@@ -123,7 +125,7 @@ struct ExcessiveClosestRayCallb : public btCollisionWorld::ClosestRayResultCallb
 	virtual bool needsCollision(btBroadphaseProxy* proxy0) const override
 	{
 		btCollisionObject* col = (btCollisionObject*)proxy0->m_clientObject;
-
+	
 		size_t colGroup;
 		if (!col->getCollisionShape()->isSoftBody())
 			colGroup = ((RigidBodyEntity*)col->getUserPointer())->GetCollisionGroup();
@@ -134,7 +136,7 @@ struct ExcessiveClosestRayCallb : public btCollisionWorld::ClosestRayResultCallb
 		for (; i < ignoredCollisionLayers.size(); i++)
 			if (ignoredCollisionLayers[i] == colGroup)
 				break;
-
+	
 		return i == ignoredCollisionLayers.size();
 	}
 

@@ -434,7 +434,6 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 			mm::mat4 skewMat = mm::mat4(entity->GetSkew());
 
 			mm::mat4 worldMat = posMat * (rotMat * skewMat);
-			//mm::mat4 worldMat = posMat * rotMat * skewMat;
 
 			// cbuffer
 			struct {
@@ -770,7 +769,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 
 	skyConstants.invViewProj = shaderConstants.invViewProj;
 	skyConstants.camPos = cam->GetPos();
-	skyConstants.sunDir = mm::normalize(mm::vec3(0.0, -1.0, -0.5));
+	skyConstants.sunDir = mm::normalize(mm::vec3(0.0, -0.8, -0.2));
 
 	IntensitySpectrum spectrum;
 	spectrum.BlackBody(6400);
@@ -819,7 +818,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 
 		// load shader constants
 		shaderConstants.lightColor = light.color;
-		shaderConstants.lightDir = mm::vec3(light.direction.x, light.direction.z, light.direction.y);
+		shaderConstants.lightDir = mm::vec3(light.direction.x, light.direction.y, light.direction.z);
 		gApi->SetVSConstantBuffer(&shaderConstants, sizeof(shaderConstants), 0);
 		gApi->SetPSConstantBuffer(&shaderConstants, sizeof(shaderConstants), 0);
 
@@ -975,7 +974,8 @@ ITexture2D* cGraphicsEngine::cDeferredRenderer::GetGBuffer(uint8_t idx) {
 
 ////////////////////////////////////////////////////////////////////////////////
 //	Public usage
-eGraphicsResult cGraphicsEngine::cDeferredRenderer::Resize(unsigned width, unsigned height) {
+eGraphicsResult cGraphicsEngine::cDeferredRenderer::Resize(unsigned width, unsigned height)
+{
 	auto bufferWidth_ = bufferWidth;
 	auto bufferHeight_ = bufferHeight;
 

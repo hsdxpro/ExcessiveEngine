@@ -71,6 +71,7 @@ float3 DisneyDiffuse_Extended(float NdotV , float NdotL , float LdotH ,float lin
 
 float3 SpecularBRDF(float NoL, float NoV, float VoH, float NoH, float3 specularColor, float roughness)
 {
+	//return specularColor + (1 - specularColor) * pow((1 - VoH), 5);
 	float mappedRoughness = roughness;
-	return Fresnel(specularColor, VoH) * V_SmithGGXCorrelated(NoV, NoL, mappedRoughness) * D_GGX(NoH, mappedRoughness);
+	return Fresnel(specularColor, NoL) * V_SmithGGXCorrelated(NoV, NoL, mappedRoughness) * D_GGX(NoH, mappedRoughness);
 }

@@ -219,7 +219,7 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 				// Gather position
 				if (bHasPos & cfg.isContain(eImporter3DFlag::VERT_ATTR_POS))
 				{
-					const aiVector3D& pos = meshTransformations[i] * mesh->mVertices[localVertIdx];
+					const aiVector3D& pos = /*meshTransformations[i] */ mesh->mVertices[localVertIdx];
 
 					// Determine vertex index
 					u32 vertexIdx = localVertIdx + globalVertexIdx;

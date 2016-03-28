@@ -4,11 +4,11 @@ InputCore Input;
 
 InputCore::InputCore()
 {
-	for(auto& keyDownInfo : keyDownArray)
-	{
-		keyDownInfo.bDownCurFrame = false;
-		keyDownInfo.bDownPrevFrame = false;
-	}
+	//for(auto& keyDownInfo : keyDownArray)
+	//{
+	//	keyDownInfo.bDownCurFrame = false;
+	//	keyDownInfo.bDownPrevFrame = false;
+	//}
 	
 	bMouseRightDownCurFrame = false;
 	bMouseRightDownPrevFrame = false;
@@ -25,7 +25,19 @@ InputCore::InputCore()
 
 void InputCore::KeyPress(eKey key)
 {
-	keyDownArray[(size_t)key].bDownCurFrame = true;
+	std::queue<bool>& ref = keyDownArray[(size_t)key].keyDownQueue;
+
+	// There are already some queued key presses for that key
+	if (ref.size() > 0)
+	{
+		// Don't push that key press to the queue again
+		if (ref.front())
+		{
+			return;
+		}
+	}
+
+	keyDownArray[(size_t)key].keyDownQueue.push(true);
 	
 	// Dispatch registered callbacks binded to that key
 	for (auto& info : onKeyPressedCallbacks)
@@ -35,9 +47,20 @@ void InputCore::KeyPress(eKey key)
 
 void InputCore::KeyRelease(eKey key)
 {
-	keyDownArray[(size_t)key].bDownCurFrame = false;
-	keyDownArray[(size_t)key].bDownPrevFrame = true;
-	
+	std::queue<bool>& ref = keyDownArray[(size_t)key].keyDownQueue;
+
+	// There are already some queued key presses for that key
+	if (ref.size() > 0)
+	{
+		// Don't push that key release to the queue again
+		if (! ref.front())
+		{
+			return;
+		}
+	}
+
+	keyDownArray[(size_t)key].keyDownQueue.push(false);
+
 	// Dispatch registered callbacks binded to that key
 	for (auto& info : onKeyReleasedCallbacks)
 		if (info.first == key)
@@ -193,14 +216,22 @@ void InputCore::ClearFrameData()
 	////1 1 -> true
 	
 	// Updating key downs with general equation
-	for (auto& keyDownInfo : keyDownArray)
-		keyDownInfo.bDownPrevFrame = keyDownInfo.bDownCurFrame | (keyDownInfo.bDownPrevFrame & keyDownInfo.bDownCurFrame);
-	
-	// Updating mouse downs with general equation
+	//for (auto& keyDownInfo : keyDownArray)
+	//	keyDownInfo.bDownPrevFrame = keyDownInfo.bDownCurFrame | (keyDownInfo.bDownPrevFrame & keyDownInfo.bDownCurFrame);
+	//
+	//// Updating mouse downs with general equation
 	bMouseRightDownPrevFrame = bMouseRightDownCurFrame | (bMouseRightDownPrevFrame & bMouseRightDownCurFrame);
 	bMouseLeftDownPrevFrame = bMouseLeftDownCurFrame | (bMouseLeftDownPrevFrame & bMouseLeftDownCurFrame);
 	bMouseMidDownPrevFrame = bMouseMidDownCurFrame | (bMouseMidDownPrevFrame & bMouseMidDownCurFrame);
 	
+	// Consume keyboard key queue
+	for (auto& keyDownInfo : keyDownArray)
+	{
+		// Consume
+		if(keyDownInfo.keyDownQueue.size() > 0)
+			keyDownInfo.keyDownQueue.pop();
+	}
+
 	mouseDelta.x = 0;
 	mouseDelta.y = 0;
 }
@@ -209,14 +240,20 @@ void InputCore::Update()
 {
 	for(size_t i = 0; i < keyDownArray.size(); i++)
 	{
-		// Leave keys not down
-		if(!keyDownArray[i].bDownCurFrame)
-			continue;
-	
-		// Search if that key have callbacks binded, dispatch them
-		for(auto& info : onKeyDownCallbacks)
-			if(info.first == (eKey)i)
-				info.second();
+		const std::queue<bool>& keyDownQueue = keyDownArray[i].keyDownQueue;
+
+		if (keyDownQueue.size() > 0)
+		{
+			keyDownArray[i].bStateDown = keyDownQueue.front();
+		}
+
+		if (keyDownArray[i].bStateDown)
+		{
+			// Search if that key have callbacks binded, dispatch them
+			for (auto& info : onKeyDownCallbacks)
+				if (info.first == (eKey)i)
+					info.second();
+		}
 	}
 	
 	if(bMouseLeftDownCurFrame)
@@ -234,17 +271,27 @@ void InputCore::Update()
 
 bool InputCore::IsKeyDown(eKey key)
 {
-	return keyDownArray[(size_t)key].bDownCurFrame;
+	return keyDownArray[(size_t)key].bStateDown;
 }
 
 bool InputCore::IsKeyPressed(eKey key)
-{
-	return keyDownArray[(size_t)key].bDownCurFrame && !keyDownArray[(size_t)key].bDownPrevFrame;
+{	
+	const std::queue<bool>& keyQueue = keyDownArray[(size_t)key].keyDownQueue;
+
+	if (keyQueue.size() == 0)
+		return false;
+	
+	return keyQueue.front();
 }
 
 bool InputCore::IsKeyReleased(eKey key)
 {
-	return keyDownArray[(size_t)key].bDownPrevFrame && !keyDownArray[(size_t)key].bDownCurFrame;
+	const std::queue<bool>& keyQueue = keyDownArray[(size_t)key].keyDownQueue;
+
+	if (keyQueue.size() == 0)
+		return false;
+
+	return ! keyQueue.front();
 }
 
 bool InputCore::IsRightMouseBtnPressed()

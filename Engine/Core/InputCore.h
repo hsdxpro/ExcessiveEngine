@@ -2,7 +2,7 @@
 #include "..\PlatformLibrary\Sys.h"
 #include <array>
 #include <functional>
-#include <vector>
+#include <queue>
 
 class InputCore
 {
@@ -57,14 +57,14 @@ public:
 	bool IsMouseMove(mm::ivec2& mouseDelta_out);
 
 protected:
-	struct rKeyDownInfo
+	struct KeyInfo
 	{
-		bool bDownCurFrame;
-		bool bDownPrevFrame;
+		std::queue<bool> keyDownQueue;
+		bool bStateDown;
 	};
 
 	// Storing key downs (current, previous) frame
-	std::array<rKeyDownInfo, (size_t)COUNT_eKey> keyDownArray;
+	std::array<KeyInfo, (size_t)COUNT_eKey> keyDownArray;
 
 	// Mouse inputs
 	bool bMouseRightDownCurFrame;

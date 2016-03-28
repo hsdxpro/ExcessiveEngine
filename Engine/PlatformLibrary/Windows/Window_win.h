@@ -6,6 +6,7 @@
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <queue>
 
 //#include "SFML/Graphics/RenderWindow.hpp"
 //#include "SFML/Window/Event.hpp"
@@ -14,10 +15,10 @@
 class Window
 {
 public:
-	Window(const rWindow& d);
+	Window(const WindowDesc& d);
 	~Window();
 
-	bool PopEvent(rWindowEvent& evt_out);
+	bool PopEvent(WindowEvent& evt_out);
 
 	void Close();
 
@@ -44,8 +45,7 @@ public:
 	float GetClientAspectRatio() const;
 
 	mm::vec2 GetCenterPos() const;
-
-private:
+protected:
 	//typedef UINT_PTR WPARAM;
 
 	//eWindowMsg	ConvertFromSFMLWindowMsg(sf::Event::EventType windowMsg);
@@ -55,11 +55,14 @@ private:
 	//sf::Uint32	ConvertToSFMLWindowStyle(eWindowStyle style);
 
 protected:
+	friend LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	void PostEvent(const MSG& msg);
+
+protected:
 	HWND hwnd;
 	bool bClosed;
 
-	bool bGenerateSysKeyAltDown;
-	bool bGenerateSysKeyAltUp;
+	std::queue<MSG> wndProcMessages;
 	//sf::RenderWindow w;
 	//mm::ivec2 lastMousePos;
 };

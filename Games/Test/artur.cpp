@@ -23,7 +23,7 @@
 //		mm::vec3 musicPosition(0, 10, 0);
 //
 //		// Init window
-//		rWindow d;
+//		WindowDesc d;
 //		d.clientW = 800;
 //		d.clientH = 600;
 //		d.capText = "Excessive-Engine -> artur test";
@@ -33,7 +33,7 @@
 //		ISoundEngine* sEngine = Core.InitSoundEngineSFML();
 //		Core.InitNetworkEngine();
 //		Core.InitPhysicsEngineBullet();
-//		rGraphicsEngineRaster gDesc;
+//		GraphicsEngineRasterDesc gDesc;
 //		gDesc.gapiType = eGapiType::GL_4_5;
 //		gDesc.targetWindow = &window;
 //		IGraphicsEngine* gEngine = Core.InitGraphicsEngineRaster(gDesc);
@@ -96,7 +96,7 @@
 //		//NOTE: FIRE SOUND IS STEREO, SFML IMPLEMENTATION CAN ONLY SPATIALIZE MONO SOUND. SO SETTING ITS POSITION IS MEANINGLESS.
 //
 //		// Run the main loop
-//		rWindowEvent ev;
+//		WindowEvent ev;
 //		double elapsed;
 //		std::chrono::time_point<std::chrono::high_resolution_clock> last_frame;
 //

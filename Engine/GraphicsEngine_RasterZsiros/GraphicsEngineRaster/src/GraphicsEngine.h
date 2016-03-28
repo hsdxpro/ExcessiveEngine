@@ -140,7 +140,7 @@ class cGraphicsEngine : public IGraphicsEngine {
 public:
 	// lifecycle (creation, destruction)
 	//cGraphicsEngine(IWindow* targetWindow, unsigned screenWidth, unsigned screenHeight, tGraphicsConfig config);
-	cGraphicsEngine(const rGraphicsEngineRaster& d);
+	cGraphicsEngine(const GraphicsEngineRasterDesc& d);
 	cGraphicsEngine(const cGraphicsEngine&) = delete;
 	~cGraphicsEngine();
 	cGraphicsEngine& operator=(const cGraphicsEngine&) = delete;
@@ -149,7 +149,7 @@ public:
 	// rendering pipeline
 	void Update(float elapsed = 0.0f) override;
 
-	eGraphicsResult Resize(unsigned width, unsigned height);
+	bool ResizeRenderTargets(unsigned width, unsigned height) override;
 	eGraphicsResult ReloadShaders();
 	
 	// scene & geom management

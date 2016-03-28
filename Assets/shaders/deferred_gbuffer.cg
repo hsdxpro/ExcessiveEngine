@@ -181,8 +181,6 @@ PS_OUT PS_MAIN(VS_OUT In) {
 		Out.gb2 = gb.misc;
 	}
 
-	//Out.gb0 = float4(0,0,0,0);
-	Out.gb0 = pow(Out.gb0, 2.2f);
 	Out.depth = In.linearDepth;	
 
 	return Out;

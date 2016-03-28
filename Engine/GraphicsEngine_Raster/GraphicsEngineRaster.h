@@ -16,7 +16,7 @@
 
 class IShaderProgram;
 
-struct rGraphicsEngineRaster
+struct GraphicsEngineRasterDesc
 {
 	Window*		targetWindow;
 	eGapiType	gapiType;
@@ -26,7 +26,7 @@ struct rGraphicsEngineRaster
 class GraphicsEngineRaster : public IGraphicsEngine
 {
 public:
-	GraphicsEngineRaster(const rGraphicsEngineRaster& d);
+	GraphicsEngineRaster(const GraphicsEngineRasterDesc& d);
 	~GraphicsEngineRaster();
 	bool isConstructionSucceeded() const { return isValid; }
 
@@ -39,6 +39,8 @@ public:
 	Texture* CreateTexture() override;
 	Camera* CreateCam() override;
 	
+	bool ResizeRenderTargets(unsigned width, unsigned height) override { return false; }
+
 	// scene & layer system
 	// DEPRECATED
 	void AddLayer(const Layer& layer) override;
