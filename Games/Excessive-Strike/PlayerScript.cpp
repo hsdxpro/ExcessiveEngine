@@ -181,14 +181,14 @@ void PlayerScript::Update(float deltaSeconds)
 		//}
 
 		// TODO Ha kell egy sorból tudjak rigidBody Mesh és Sound
-		Actor* bullet = World.AddActor("box.DAE", 1);
+		Actor* bullet = World.AddActor("box.DAE", 0);
+		//bullet->SetKinematic(true);
 		//bullet->SetScale(10.0f);
 
 		bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);
-		
 		mm::vec3 bulletDirNormed = camComp->GetFrontDir();
 		bullet->SetPos(camComp->GetPos() + bulletDirNormed);
-		bullet->SetVelocity(bulletDirNormed * 2);
+		//bullet->SetVelocity(bulletDirNormed * 2);
 		//bullet->Scale(bulletDirNormed * 3);
 	}
 

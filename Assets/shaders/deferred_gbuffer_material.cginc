@@ -26,7 +26,7 @@ struct {
 
 GBUFFER PixelShader_Simple (float3 normal, float2 texCoord0) {
 	// fill basic from shader const
-	float3 diffuse = mtlProperties.diffuseColor;
+	float3 diffuse = float3(1, 1, 1);// mtlProperties.diffuseColor;
 	float gloss = mtlProperties.glossiness;
 	float specLvl = mtlProperties.specularLevel;
 

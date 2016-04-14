@@ -7,19 +7,19 @@
 Actor* test;
 TestLevelScript::TestLevelScript()
 {
-	Actor* ground = World.AddActor("box.DAE", 0);
-	test = World.AddActor("box.DAE", 0);
-	//plane->SetKinematic(true);
-	ground->SetScale(mm::vec3(100, 100, 1));
-	ground->SetCollisionGroup(eES_CollisionGroup::GROUND);
-	ground->SetName("ground");
+	//Actor* ground = World.AddActor("box.DAE", 0);
+	//test = World.AddActor("box.DAE", 0);
+	////plane->SetKinematic(true);
+	//ground->SetScale(mm::vec3(100, 100, 5));
+	//ground->SetCollisionGroup(eES_CollisionGroup::GROUND);
+	//ground->SetName("ground");
 
 
 	//Add ground to
-	//Actor* ground = World.AddActor("Terminal/terminal_blender.dae", 0);
-	//ground->RotX(90);
-	//ground->SetCollisionGroup(eES_CollisionGroup::GROUND);
-	//ground->SetName("ground");
+	Actor* ground = World.AddActor("Terminal/terminal_blender.dae", 0);
+	ground->RotX(90);
+	ground->SetCollisionGroup(eES_CollisionGroup::GROUND);
+	ground->SetName("ground");
 
 	//Add sky to game
 	//Actor* sky = World.AddActor_Mesh("skybox.dae");
@@ -38,5 +38,5 @@ void TestLevelScript::Update(float deltaSeconds)
 {
 	playerScript.Update(deltaSeconds);
 
-	test->SetPos(test->GetPos() + mm::vec3(1, 0, 0) * deltaSeconds);
+	//test->SetPos(test->GetPos() + mm::vec3(1, 0, 0) * deltaSeconds);
 }

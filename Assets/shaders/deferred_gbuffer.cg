@@ -47,6 +47,7 @@ struct {
 	float4x4 rot;
 	float3	 camPos;
 	float	 far;
+	float4x4 viewProj;
 } transform : register(c0);
 
 
@@ -77,11 +78,13 @@ struct VS_OUT {
 VS_OUT VS_MAIN(VS_IN In) {
 	VS_OUT Out;
 
-	Out.posH = 
-		In.posL.x * transform.worldViewProj[0] + (
-		In.posL.y * transform.worldViewProj[1] + (
-		In.posL.z * transform.worldViewProj[2] + 
-		transform.worldViewProj[3]));
+	//Out.posH = mul(float4(In.posL, 1.0f), transform.worldViewProj);
+	//Out.posH = mul(Out.posH, transform.viewProj);
+
+	Out.posH =	In.posL.x * transform.worldViewProj[0] + (
+				In.posL.y * transform.worldViewProj[1] + (
+				In.posL.z * transform.worldViewProj[2] + 
+				transform.worldViewProj[3]));
 
 	Out.normalW = normalize(mul(In.normalL, (float3x3)transform.rot));
 	Out.tangentW = normalize(mul(In.tangentL, (float3x3)transform.rot));
@@ -156,7 +159,7 @@ float3 ParallaxOcclusionMapping(float3 viewDirW,float3 normalW,float3 tangentW,f
 
 struct PS_OUT {
 	float4 gb0 : COLOR0;
-	float2 gb1 : COLOR1;
+	float4 gb1 : COLOR1;
 	float4 gb2 : COLOR2;
 	float depth : DEPTH;
 };
@@ -168,18 +171,19 @@ PS_OUT PS_MAIN(VS_OUT In) {
 	//In.tex0 = ParallaxOcclusionMapping(In.posW - transform.camPos, In.normalW, In.tangentW, In.tex0).xy;
 
 
-	if (mtlProperties.hasNormalMap) {
-		gb = PixelShader_NormalMap(In.TBN, In.tex0);
-		Out.gb0 = gb.diffuse;
-		Out.gb1 = gb.normal;
-		Out.gb2 = gb.misc;
-	}
-	else {
+	//if (mtlProperties.hasNormalMap) {
+	//	gb = PixelShader_NormalMap(In.TBN, In.tex0);
+	//	Out.gb0 = gb.diffuse;
+	//	Out.gb1 = gb.normal;
+	//	Out.gb2 = gb.misc;
+	//}
+	//else float2 gb1
+
 		gb = PixelShader_Simple(In.normalW, In.tex0);
 		Out.gb0 = gb.diffuse;
 		Out.gb1 = gb.normal;
 		Out.gb2 = gb.misc;
-	}
+	//}
 
 	Out.depth = In.linearDepth;	
 

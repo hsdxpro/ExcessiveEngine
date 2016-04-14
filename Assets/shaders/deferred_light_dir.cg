@@ -59,19 +59,17 @@ struct VS_OUT {
 
 VS_OUT VS_MAIN(VS_IN In, uint VertexID : VERTEXID) {
 	VS_OUT vout;
+
 	// texture coordinates
 	vout.tex0 = float2( (VertexID << 1) & 2, VertexID & 2 );
+
 	// output position (unused in pixel shader)
-	vout.posH = float4(  vout.tex0 * float2( 2.0f, -2.0f ) + float2( -1.0f, 1.0f), 0.0f, 1.0f );
+	vout.posH = float4(  vout.tex0 * float2( 2.0f, -2.0f ) + float2( -1.0f, 1.0f), 1.0f, 1.0f );
 
-	// view ray
-	float4 viewRay = vout.posH.x * invViewProj[0] + (
-					 vout.posH.y * invViewProj[1] + (
-					 invViewProj[2] +
-					 invViewProj[3]));
+	float4 posWS = mul(vout.posH, invViewProj);
+	posWS.xyz /= posWS.w;
 
-	vout.viewRay = viewRay.xyz * (1.0f / viewRay.w);
-	vout.viewRay -= camPos;
+	vout.viewRay = posWS.xyz - camPos;
 
 	return vout;
 }
@@ -90,6 +88,7 @@ float4 PS_MAIN(VS_OUT In) : COLOR0 {
 	SampleGBuffer(In.tex0, diffuseColor, normal, glossiness, specLevel);
 
 	depth = tex2D(depthBuffer, In.tex0);
+
 	worldPos = GetWorldPosition(camPos, In.viewRay, depth);
 
 	// calculate lighting terms
@@ -100,20 +99,23 @@ float4 PS_MAIN(VS_OUT In) : COLOR0 {
 	float3 H = normalize(halfVec);
 	float3 N = normalize(normal);
 
-	float bias = 1e-5f;
+	//float bias = 1e-5f;
 
-	float VoH = saturate(dot(V,H) + bias);
-	float NoV = saturate(dot(N,V) + bias);
-	float NoL = saturate(dot(N, -lightDir) + bias);
-	float NoH = saturate(dot(N,H) + bias);
+	float VoH = saturate(dot(V,H));
+	float NoV = saturate(dot(N,V));
+	float NoL = saturate(dot(N, -lightDir));
+	float NoH = saturate(dot(N,H));
 	
-	float roughness = 0.6f;
-	float3 specularColor = float3(0.02, 0.02, 0.02);
+	float roughness = 0.5f;
+	float3 specularColor = float3(0.03, 0.03, 0.03);
 
 	float3 diffuse = lightColor * NoL * diffuseColor * DisneyDiffuse_Extended(NoV, NoL, VoH, roughness, specularColor);
 	float3 specular = lightColor * NoL * SpecularBRDF(NoL, NoV, VoH, NoH, specularColor, roughness);
-
-	return float4(diffuse + specular / 4, 1.0f) * 2.0f;
+	// Problémás
+	// NoH
+	// VoH
+	// NoV
+	return float4(diffuse + specular, 1.0f) * 10;
 
 	//// shadow map
 	//float3 shadowPos;
@@ -216,7 +218,7 @@ technique t
 {
 	pass p
 	{
-		VertexProgram = compile vs_4_0 VS_MAIN();
-		FragmentProgram = compile ps_4_0 PS_MAIN();
+		VertexProgram = compile vs_5_0 VS_MAIN();
+		FragmentProgram = compile ps_5_0 PS_MAIN();
 	}
 }

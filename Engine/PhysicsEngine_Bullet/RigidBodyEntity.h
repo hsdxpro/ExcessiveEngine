@@ -129,7 +129,8 @@ void RigidBodyEntity::SetKinematic(bool b)
 
 void RigidBodyEntity::SetVelocity(const mm::vec3& v)
 {
-	body->setLinearVelocity({ v.x, v.y, v.z });
+	if( body->getInvMass() != 0 )
+		body->setLinearVelocity({ v.x, v.y, v.z });
 }
 
 void RigidBodyEntity::SetPos(const mm::vec3& v)

@@ -49,26 +49,29 @@ float3 UnpackNormal(float2 packedNormal) {
 //------------------------------------------------------------------------------
 struct GBUFFER {
 	float4 diffuse : COLOR0;
-	float2 normal : COLOR1;
+	float4 normal : COLOR1;
 	float4 misc : COLOR2;
 };
 
 GBUFFER EncodeGBuffer(float3 diffuse, float3 normal, float glossiness, float specLevel) {
 	GBUFFER o;
 	o.diffuse.rgb = diffuse; o.diffuse.a = 1.0f;
-	o.normal = PackNormal(normalize(normal));
+	o.normal.rgb = (normal + 1.f) * 0.5f;
 	o.misc.r = glossiness;
 	o.misc.g = specLevel;
 	o.misc.b = o.misc.a = 0.0f;
 	return o;
 }
 
+float3 DecodeGBufferNormal(in float3 packedNormal)
+{
+	return normalize((packedNormal.xyz - 0.5f) * 2.0f);
+}
+
 void DecodeGBuffer(GBUFFER gb, out float3 diffuse, out float3 normal, out float glossiness, out float specLevel) {
 	diffuse = gb.diffuse.rgb;
-	normal = normalize(UnpackNormal(gb.normal.rg));
+	normal = DecodeGBufferNormal(gb.normal.xyz);
 	glossiness = gb.misc.r;
 	specLevel = gb.misc.g;
 }
-
-
 #endif

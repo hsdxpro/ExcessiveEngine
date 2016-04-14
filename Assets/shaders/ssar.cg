@@ -67,9 +67,7 @@ VS_OUT VS_MAIN(VS_IN In, uint VertexID : VERTEXID) {
 float4 PS_MAIN(VS_OUT In) : COLOR0 {
 	float4 color =  tex2D(colorTexture, In.tex0).xyzw;
 
-	//return color;
-
-	float3 normalW = UnpackNormal(tex2D(normalTexture, In.tex0).xy).xyz;
+	float3 normalW = DecodeGBufferNormal(tex2D(normalTexture, In.tex0).xyz).xyz;
 
 	//return float4(normalW, 1.0f);
 
@@ -123,7 +121,7 @@ float4 PS_MAIN(VS_OUT In) : COLOR0 {
 	}
 
 	//return collectedReflectionColor;
-	return color + collectedReflectionColor * reflectFadeFactor * 0.25f; // TODO, glossiness
+	return color + collectedReflectionColor * reflectFadeFactor * 0.1f; // TODO, glossiness
 }
 
 technique t

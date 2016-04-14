@@ -885,7 +885,7 @@ ITextureGapi* cGraphicsApiD3D11::CreateTexture(const rTextureGapi& data)
 HRESULT cGraphicsApiD3D11::CompileShaderFromFile(const zsString& fileName, const zsString& entry, const zsString& profile, zsString* compilerMessage, ID3DBlob** ppBlobOut) {
 	HRESULT hr = S_OK;
 
-	DWORD dwShaderFlags = D3D10_SHADER_OPTIMIZATION_LEVEL3 | D3D10_SHADER_PACK_MATRIX_ROW_MAJOR;
+	DWORD dwShaderFlags = D3D10_SHADER_OPTIMIZATION_LEVEL3;// | D3D10_SHADER_PACK_MATRIX_ROW_MAJOR;
 
 	ID3DBlob* pErrorBlob;
 	char ansiEntry[256];
@@ -1032,11 +1032,11 @@ eGapiResult cGraphicsApiD3D11::CreateShaderProgram(IShaderProgram** resource, co
 			zsString dxProfile;
 			cCgShaderHelper::eProfileCG cgProfile;
 			switch (i) {
-			case cCgShaderHelper::VS : cgProfile = cCgShaderHelper::eProfileCG::VS_5_0; dxProfile = "vs_5_0"; break;
-			case cCgShaderHelper::HS : cgProfile = cCgShaderHelper::eProfileCG::HS_5_0; dxProfile = "hs_5_0"; break;
-			case cCgShaderHelper::DS : cgProfile = cCgShaderHelper::eProfileCG::DS_5_0; dxProfile = "ds_5_0"; break;
-			case cCgShaderHelper::GS : cgProfile = cCgShaderHelper::eProfileCG::GS_5_0; dxProfile = "gs_5_0"; break;
-			case cCgShaderHelper::PS : cgProfile = cCgShaderHelper::eProfileCG::PS_5_0; dxProfile = "ps_5_0"; break;
+			case cCgShaderHelper::VS: cgProfile = cCgShaderHelper::eProfileCG::VS_5_0; dxProfile = "vs_5_0"; break;
+			case cCgShaderHelper::HS: cgProfile = cCgShaderHelper::eProfileCG::HS_5_0; dxProfile = "hs_5_0"; break;
+			case cCgShaderHelper::DS: cgProfile = cCgShaderHelper::eProfileCG::DS_5_0; dxProfile = "ds_5_0"; break;
+			case cCgShaderHelper::GS: cgProfile = cCgShaderHelper::eProfileCG::GS_5_0; dxProfile = "gs_5_0"; break;
+			case cCgShaderHelper::PS: cgProfile = cCgShaderHelper::eProfileCG::PS_5_0; dxProfile = "ps_5_0"; break;
 			default: assert(0);
 			}
 
@@ -1509,7 +1509,7 @@ void cGraphicsApiD3D11::ClearTexture(ITexture2D* t, eClearFlag clearFlag /*= eCl
 
 // Present
 void cGraphicsApiD3D11::Present() {
-	d3dsc->Present(0, 0);
+	d3dsc->Present(1, 0);
 }
 
 void cGraphicsApiD3D11::Draw(u32 nVertices, u32 offset /*= 0*/)

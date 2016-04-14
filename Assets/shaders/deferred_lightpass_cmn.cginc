@@ -19,7 +19,9 @@ float3 lightAtten	 : register(c13);
 float2 lightAngle	 : register(c14);
 float nearPlane		 : register(c15);
 float farPlane		 : register(c16);
-
+float3 frustumTopLeftCornerVS		: register(c17);
+float3 frustumBottomRightCornerVS	: register(c18);
+float4x4 invCamView					: register(c19);
 
 //------------------------------------------------------------------------------
 //	Processing G-Buffer
@@ -51,7 +53,7 @@ sampler2D depthBuffer = {
 void SampleGBuffer(in float2 texCoord, out float3 diffuse, out float3 normal, out float glossiness, out float specLevel) {
 	GBUFFER gb;
 	gb.diffuse = tex2D(gBuffer0, texCoord);		// diffuse.rgb & alpha(unused)
-	gb.normal = tex2D(gBuffer1, texCoord).xy;	// packed normal
+	gb.normal.xyz = tex2D(gBuffer1, texCoord).xyz;	// packed normal
 	gb.misc = tex2D(gBuffer2, texCoord);		// specular(2) / unused(2)
 	
 	DecodeGBuffer(gb, diffuse, normal, glossiness, specLevel);

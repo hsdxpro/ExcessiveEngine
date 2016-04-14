@@ -47,7 +47,7 @@ mm::mat4 Matrix44ViewLH(const mm::vec3& eye, const mm::vec3& target, const mm::v
 }
 
 Camera::Camera()
-:nearPlane(0.01f), farPlane(4000), pos(0, 0, 0), projType(eProjType::PERSP)
+:nearPlane(0.2f), farPlane(2500), pos(0, 0, 0), projType(eProjType::PERSP)
 {
 	SetDirNormed({ 0, 1, 0 });
 }
@@ -124,8 +124,6 @@ float Camera::GetFarPlane() const
 mm::mat4 Camera::GetViewMatrix() const
 {
 	const Vec3 up(0.0f, 0.0f, 1.0f);
-
-	mm::mat4 result;
 
 	mm::vec3 frontDirNormed = mm::rotate_vector(rot, mm::vec3(0, 1, 0));
 	mm::vec3 upDirNormed = mm::rotate_vector(rot, mm::vec3(0, 0, 1));

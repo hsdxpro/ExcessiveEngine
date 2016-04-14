@@ -151,7 +151,7 @@ eGapiResult cGraphicsEngine::cDeferredRenderer::ReallocBuffers() {
 
 	// g-buffers
 	desc.format = eFormat::R8G8B8A8_UNORM;		results[++idxResult] = gApi->CreateTexture(&gBuffer[0], desc);
-	desc.format = eFormat::R16G16_SNORM;		results[++idxResult] = gApi->CreateTexture(&gBuffer[1], desc);
+	desc.format = eFormat::R8G8B8A8_UNORM;		results[++idxResult] = gApi->CreateTexture(&gBuffer[1], desc);
 	desc.format = eFormat::R8G8B8A8_UNORM;		results[++idxResult] = gApi->CreateTexture(&gBuffer[2], desc);
 	// light accumulation buffer
 	desc.format = eFormat::R16G16B16A16_FLOAT;	results[++idxResult] = gApi->CreateTexture(&compositionBuffer, desc);
@@ -343,6 +343,8 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	mm::mat4 projMat = cam->GetProjMatrix(aspectRatio);
 	mm::mat4 viewMat = cam->GetViewMatrix();
 	mm::mat4 viewProjMat = projMat * viewMat;
+	mm::mat4 invViewProjMat = mm::inverse(viewProjMat);
+	mm::mat4 invProjMat = mm::inverse(projMat);
 	
 	// Foreach: Instance group
 	for (auto& entity : scene.GetEntities())
@@ -443,6 +445,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 				mm::mat4 rot;
 				mm::vec3 camPos;
 				float	 farPlane;
+				mm::mat4 viewProj;
 			} shaderTransform;
 			shaderTransform.worldViewProj = viewProjMat * worldMat;
 			shaderTransform.worldView = viewMat * worldMat;
@@ -450,6 +453,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 			shaderTransform.rot = rotMat;
 			shaderTransform.farPlane = cam->GetFarPlane();
 			shaderTransform.camPos = cam->GetPos();
+			shaderTransform.viewProj = viewProjMat;
 
 			gApi->SetVSConstantBuffer(&shaderTransform, sizeof(shaderTransform), 0);
 			gApi->SetPSConstantBuffer(&shaderTransform, sizeof(shaderTransform), 0);
@@ -461,7 +465,6 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 
 	// copy depth to shader resource
 	gApi->CopyResource(depthBuffer, depthBufferCopy);
-
 
 	//--------------------------------------------------------------------------//
 	// --- --- --- --- --- --- --- COMPOSITION PASS --- --- --- --- --- --- --- //
@@ -742,16 +745,13 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 		float nearPlane; float _pad8[3];
 		float farPlane; float _pad9[3];
 	} shaderConstants;
-	//float f = 2.0f;
-	//memset(&shaderConstants, *((int*)&f), sizeof(shaderConstants));
 
 	//* viewProjMat;*/
 	shaderConstants.viewProj = viewProjMat;
-	shaderConstants.invViewProj = mm::inverse(viewProjMat);
+	shaderConstants.invViewProj = invViewProjMat;
 	shaderConstants.camPos = cam->GetPos();
 	shaderConstants.nearPlane = cam->GetNearPlane();
 	shaderConstants.farPlane = cam->GetFarPlane();
-	//mm::mat4 test = shaderConstants.viewProj * shaderConstants.invViewProj;
 
 
 	//------------------------------------------------------------------------//
@@ -769,7 +769,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 
 	skyConstants.invViewProj = shaderConstants.invViewProj;
 	skyConstants.camPos = cam->GetPos();
-	skyConstants.sunDir = mm::normalize(mm::vec3(0.0, -0.8, -0.2));
+	skyConstants.sunDir = mm::normalize(mm::vec3(0.0, -0.8, -0.3));
 
 	IntensitySpectrum spectrum;
 	spectrum.BlackBody(6400);

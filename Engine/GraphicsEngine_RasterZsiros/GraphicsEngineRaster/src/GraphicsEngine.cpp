@@ -311,12 +311,11 @@ void cGraphicsEngine::RenderScene(Scene& scene, ITexture2D* target, float elapse
 
 	// load settings from scene
 	camera = (Camera*)scene.GetCamera();
-	//camera->SetAspectRatio(float((double)screenWidth / (double)screenHeight));
-	//sceneManager = &scene.sceneManager;
+
 	this->elapsed = elapsed;
 
 	// --- --- render shadow map --- --- //
-	shadowRenderer->RenderShadowMaps(scene);
+	//shadowRenderer->RenderShadowMaps(scene);
 
 	// --- --- composition w/ deferred --- --- //
 	ASSERT(deferredRenderer);
@@ -344,10 +343,12 @@ void cGraphicsEngine::RenderScene(Scene& scene, ITexture2D* target, float elapse
 	postProcessor->SetInputDOF(hdrTextures[0], deferredRenderer->GetDepthBuffer());
 	postProcessor->SetOutputDOF(deferredComposition);
 	postProcessor->ProcessDOF(elapsed, *(Camera*)scene.GetCamera(), aspectRatio);
-	//
+	
 	//// Lol using GBuffer0
 	ITexture2D* gBuffer0 = deferredRenderer->GetGBuffer(0);
 	
+	//gApi->SaveTextureToFile(deferredRenderer->GetGBuffer(1), ITexture2D::BMP, "ooo.bmp");
+
 	bool bHdrOn = true;
 
 	//// Need write luminance value to alpha channel for FXAA
@@ -355,7 +356,7 @@ void cGraphicsEngine::RenderScene(Scene& scene, ITexture2D* target, float elapse
 	if (bHdrOn)
 	{
 		hdrProcessor->SetSource(deferredComposition);
-		hdrProcessor->SetDestination(gBuffer0);						// set destination
+		hdrProcessor->SetDestination(hdrTextures[0]);						// set destination
 		hdrProcessor->adaptedLuminance = luminanceAdaptation; // copy luminance value
 		hdrProcessor->Update(elapsed);								// update hdr
 		luminanceAdaptation = hdrProcessor->adaptedLuminance; // copy luminance value
@@ -384,9 +385,8 @@ void cGraphicsEngine::RenderScene(Scene& scene, ITexture2D* target, float elapse
 	//auto target = gApi->GetDefaultRenderTarget();
 	gApi->SetRenderTargets(1, &target);
 	gApi->SetShaderProgram(shaderScreenCopy);
-	gApi->SetTexture(0, gBuffer0);
+	gApi->SetTexture(0, hdrTextures[0]);
 	gApi->Draw(3);
-	gApi->Present();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
