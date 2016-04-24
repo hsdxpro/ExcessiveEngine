@@ -1,5 +1,6 @@
 #pragma once
 #include "WorldComponent.h"
+#include "GraphicsEngine\IMaterial.h"
 
 
 namespace graphics { class IEntity; }
@@ -12,6 +13,10 @@ public:
 public:
 	inline MeshComponent(graphics::IEntity* e);
 
+	void SetTextureNormal(const std::string& contentPath);
+	void SetTextureBaseColor(const std::string& contentPath);
+	void SetTextureAO(const std::string& contentPath);
+
 	inline graphics::IEntity* GetEntity();
 
 protected:
@@ -22,7 +27,6 @@ protected:
 MeshComponent::MeshComponent(graphics::IEntity* e)
 :WorldComponent(TYPE), entity(e)
 {
-
 }
 
 graphics::IEntity* MeshComponent::GetEntity()

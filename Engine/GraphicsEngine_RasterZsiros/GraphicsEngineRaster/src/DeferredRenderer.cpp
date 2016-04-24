@@ -31,6 +31,7 @@
 #include "GraphicsEngine/ITexture.h"
 #include "ShadowMap.h"
 #include "../../GraphicsApiD3D11/src/IndexBufferD3D11.h"
+#include <utility>
 
 ////////////////////////////////////////////////////////////////////////////////
 //	Constructor & Destructor
@@ -340,6 +341,12 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 
 	auto win = parent.GetTargetWindow();
 	float aspectRatio = (float)win->GetClientWidth() / win->GetClientHeight();
+
+	if ( win->GetClientWidth() > 800 )
+	{
+		exit(0);
+	}
+
 	mm::mat4 projMat = cam->GetProjMatrix(aspectRatio);
 	mm::mat4 viewMat = cam->GetViewMatrix();
 	mm::mat4 viewProjMat = projMat * viewMat;
@@ -389,8 +396,8 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 				auto submtl = mtl[matGroup.id % mtl.GetNumSubMaterials()];
 
 				// deal with textures
-				ITextureGapi* diffuse = ((Texture*)submtl.t_diffuse)->GetTexture();
-				ITextureGapi* normal = nullptr;// submtl.textureNormal.get();
+				ITextureGapi* diffuse = submtl.t_diffuse ? ((Texture*)submtl.t_diffuse)->GetTexture() : nullptr;
+				ITextureGapi* normal = submtl.t_normal ? ((Texture*)submtl.t_normal)->GetTexture() : nullptr;
 				ITextureGapi* specular = nullptr;// submtl.textureSpecular.get();
 
 				mtlConstants.hasDiffuseMap = (diffuse != nullptr);
@@ -407,7 +414,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 				}
 				// unused
 				mtlConstants.hasGlossinessMap = false;
-				mtlConstants.useCutout = true;				
+				mtlConstants.useCutout = true;		
 
 				// deal with basic params
 				mtlConstants.diffuseColor = Vec3(submtl.base.x, submtl.base.y, submtl.base.z);
@@ -434,7 +441,6 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 			mm::mat4 posMat = mm::create_translation(entity->GetPos());
 			mm::mat4 rotMat = mm::mat4(entity->GetRot());
 			mm::mat4 skewMat = mm::mat4(entity->GetSkew());
-
 			mm::mat4 worldMat = posMat * (rotMat * skewMat);
 
 			// cbuffer
@@ -629,6 +635,8 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	gApi->SetTexture(L"inputTexture", aoBlurHelperBuffer);
 	gApi->Draw(3);
 
+	//gApi->ClearTexture(aoBuffer);
+
 	//--------------------------------------------------------------------------//
 	// --- --- --- --- --- --- --- --- -- SSAO --- --- --- --- --- --- --- ---- //
 	//--------------------------------------------------------------------------//
@@ -686,37 +694,37 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	gApi->SetRenderTargets(1, &compositionBuffer, depthBuffer);
 
 	// Sort scene lights by type, apply validation of light params
-	std::vector<std::pair<cGraphicsLight, cShadowMap>*> directionalLights;
-	std::vector<std::pair<cGraphicsLight, cShadowMap>*> spotLights;
-	std::vector<std::pair<cGraphicsLight, cShadowMap>*> pointLights;
+	std::vector<graphics::ILight*> directionalLights;
+	std::vector<graphics::ILight*> spotLights;
+	std::vector<graphics::ILight*> pointLights;
 	mm::vec3 ambientLight(0.15f, 0.15f, 0.15f);
 
-	cShadowMap asd;
-	directionalLights.push_back(&std::make_pair(cGraphicsLight(), asd));
+	//cShadowMap asd;
+	//directionalLights.push_back(&std::make_pair(cGraphicsLight(), asd));
 
-	//auto& lightList = parent.sceneManager->GetLights();
-	//for (auto light : lightList) 
-	//{
-	//	auto& light_ = light->first;
-	//	if (!light_.enabled)
-	//		continue;
-	//	switch (light_.type) {
-	//		case cGraphicsLight::AMBIENT:
-	//			ambientLight += light_.color;
-	//			break;
-	//		case cGraphicsLight::DIRECTIONAL:
-	//			directionalLights.push_back(light);
-	//			break;
-	//		case cGraphicsLight::POINT:
-	//			pointLights.push_back(light);
-	//			break;
-	//		case cGraphicsLight::SPOT:
-	//			spotLights.push_back(light);
-	//			break;
-	//		default:
-	//			break;
-	//	}
-	//}
+	auto& lightList = scene.GetLights();
+	for (auto light : lightList) 
+	{
+		auto& light_ = *light;
+		//if (!light_.enabled)
+		//	continue;
+		//switch (light_.type) {
+		//	case cGraphicsLight::AMBIENT:
+		//		ambientLight += light_.color;
+		//		break;
+		//	case cGraphicsLight::DIRECTIONAL:
+		directionalLights.push_back(light);
+		//break;
+		//	case cGraphicsLight::POINT:
+		//		pointLights.push_back(light);
+		//		break;
+		//	case cGraphicsLight::SPOT:
+		//		spotLights.push_back(light);
+		//		break;
+		//	default:
+		//		break;
+		//}
+	}
 
 	// Struct for shader constants
 	/*
@@ -769,7 +777,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 
 	skyConstants.invViewProj = shaderConstants.invViewProj;
 	skyConstants.camPos = cam->GetPos();
-	skyConstants.sunDir = mm::normalize(mm::vec3(0.0, -0.8, -0.3));
+	skyConstants.sunDir = mm::normalize(mm::vec3(0.0, -1.0f, -1.0f));
 
 	IntensitySpectrum spectrum;
 	spectrum.BlackBody(6400);
@@ -796,10 +804,9 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	skyConstants.rayleighFactor = 1.0f;	
 
 	if (directionalLights.size() > 0) {
-		directionalLights[0]->first.color = sunColor;
-		directionalLights[0]->first.direction = skyConstants.sunDir;
+		directionalLights[0]->SetColor(sunColor);
+		directionalLights[0]->SetDirection(skyConstants.sunDir);
 	}
-
 
 	//-------------------------------------------------------------------------//
 	// --- --- --- --- --- --- --- DIRECTIONAL LIGHTS  --- --- --- --- --- --- //
@@ -812,42 +819,44 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	gApi->SetTexture(L"depthBuffer", depthBufferCopy);
 	
 
-	for (auto light_ : directionalLights) {
-		auto& light = light_->first;
-		//auto& shadowMap = (cShadowMapDir&)light_->second;
+	for (auto light_ : directionalLights)
+	{
+		auto& light = *light_;
+		auto shadowMap = light.GetShadowMap();// cShadowMapDir&)light_->second;
 
 		// load shader constants
-		shaderConstants.lightColor = light.color;
-		shaderConstants.lightDir = mm::vec3(light.direction.x, light.direction.y, light.direction.z);
+		shaderConstants.lightColor = light.GetColor();
+		shaderConstants.lightDir = light.GetDirection();// mm::vec3(light.direction.x, light.direction.y, light.direction.z);
 		gApi->SetVSConstantBuffer(&shaderConstants, sizeof(shaderConstants), 0);
 		gApi->SetPSConstantBuffer(&shaderConstants, sizeof(shaderConstants), 0);
 
 		// shadowmap constants
 		struct {
-			Matrix44 lightViewProj[12];
+			mm::mat4 lightViewProj[12];
 			int32_t nCascades;
 			uint32_t castShadows;
 			float baseBias;
 		} shadowConst;
 		shadowConst.baseBias = 1e-5f;
 
-		// compute shadow map constants, if any
-		//if (shadowMap) {
-		//	// get maps
-		//	auto& transforms = shadowMap.GetTransforms();
-		//	shadowConst.nCascades = shadowMap.GetNumCascades();
-		//	shadowConst.castShadows = true;
-		//
-		//	// for each cascade set shader values
-		//	for (int i = 0; i < shadowConst.nCascades; i++) {
-		//		shadowConst.lightViewProj[i] = transforms[i].viewMat * transforms[i].projMat;
-		//	}
-		//	// set shadow maps in shader
-		//	gApi->SetTexture(L"shadowMap_Array", shadowMap.GetTexture());
-		//}
-		//else {
+		//compute shadow map constants, if any
+		if (shadowMap) {
+			// get maps
+			auto& transforms = shadowMap->GetTransforms();
+			shadowConst.nCascades = shadowMap->GetNumCascades();
+			shadowConst.castShadows = true;
+		
+			// for each cascade set shader values
+			for (int i = 0; i < shadowConst.nCascades; i++) {
+				shadowConst.lightViewProj[i] = transforms[i].projMat * transforms[i].viewMat;
+			}
+			// set shadow maps in shader
+			gApi->SetTexture(L"shadowMap_Array", shadowMap->GetTexture());
+		}
+		else 
+		{
 			shadowConst.castShadows = false;
-		//}
+		}
 
 		gApi->SetPSConstantBuffer(&shadowConst, sizeof(shadowConst), 100);
 
@@ -868,72 +877,72 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	gApi->SetTexture(L"ambientOcclusionTexture", aoBuffer);
 
 	// load shader constants
-	shaderConstants.lightColor = ambientLight;
+	shaderConstants.lightColor = ambientLight * 3.0f;
 	gApi->SetPSConstantBuffer(&shaderConstants, sizeof(shaderConstants), 0);
 	gApi->Draw(3); //FSQ
 
 
-	//-------------------------------------------------------------------------//
-	// --- --- --- --- --- --- --- -- POINT LIGHTS --- --- --- --- --- --- --- //
-	//-------------------------------------------------------------------------//
-	gApi->SetShaderProgram(shaderPoint);
+	////-------------------------------------------------------------------------//
+	//// --- --- --- --- --- --- --- -- POINT LIGHTS --- --- --- --- --- --- --- //
+	////-------------------------------------------------------------------------//
+	//gApi->SetShaderProgram(shaderPoint);
+	//
+	//gApi->SetTexture(L"gBuffer0", gBuffer[0]);
+	//gApi->SetTexture(L"gBuffer1", gBuffer[1]);
+	//gApi->SetTexture(L"gBuffer2", gBuffer[2]);
+	//gApi->SetTexture(L"depthBuffer", depthBufferCopy);
+	//
+	//gApi->SetVertexBuffer(vbPoint);
+	//gApi->SetIndexBuffer(ibPoint);
+	//
+	//for (auto light_ : pointLights) {
+	//	auto& light = light_->first;
+	//
+	//	// set shader constants
+	//	shaderConstants.lightAtten = mm::vec3(light.atten0, light.atten1, light.atten2);
+	//	shaderConstants.lightColor = light.color;
+	//	shaderConstants.lightPos = light.position;
+	//	shaderConstants.lightRange = light.range;
+	//	gApi->SetVSConstantBuffer(&shaderConstants, sizeof(shaderConstants), 0);
+	//	gApi->SetPSConstantBuffer(&shaderConstants, sizeof(shaderConstants), 0);
+	//
+	//	// draw that bullshit
+	//	size_t nIndices = ((cIndexBufferD3D11*)ibPoint)->GetByteSize() / sizeof(unsigned);
+	//	gApi->DrawIndexed(nIndices);
+	//}
 
-	gApi->SetTexture(L"gBuffer0", gBuffer[0]);
-	gApi->SetTexture(L"gBuffer1", gBuffer[1]);
-	gApi->SetTexture(L"gBuffer2", gBuffer[2]);
-	gApi->SetTexture(L"depthBuffer", depthBufferCopy);
-
-	gApi->SetVertexBuffer(vbPoint);
-	gApi->SetIndexBuffer(ibPoint);
-
-	for (auto light_ : pointLights) {
-		auto& light = light_->first;
-
-		// set shader constants
-		shaderConstants.lightAtten = mm::vec3(light.atten0, light.atten1, light.atten2);
-		shaderConstants.lightColor = light.color;
-		shaderConstants.lightPos = light.position;
-		shaderConstants.lightRange = light.range;
-		gApi->SetVSConstantBuffer(&shaderConstants, sizeof(shaderConstants), 0);
-		gApi->SetPSConstantBuffer(&shaderConstants, sizeof(shaderConstants), 0);
-
-		// draw that bullshit
-		size_t nIndices = ((cIndexBufferD3D11*)ibPoint)->GetByteSize() / sizeof(unsigned);
-		gApi->DrawIndexed(nIndices);
-	}
-
-	//-------------------------------------------------------------------------//
-	// --- --- --- --- --- --- --- --- SPOT LIGHTS --- --- --- --- --- --- --- //
-	//-------------------------------------------------------------------------//
-	gApi->SetShaderProgram(shaderSpot);
-
-	gApi->SetTexture(L"gBuffer0", gBuffer[0]);
-	gApi->SetTexture(L"gBuffer1", gBuffer[1]);
-	gApi->SetTexture(L"gBuffer2", gBuffer[2]);
-	gApi->SetTexture(L"depthBuffer", depthBufferCopy);
-
-	gApi->SetVertexBuffer(vbSpot);
-	gApi->SetIndexBuffer(ibSpot);
-
-	for (auto light_ : spotLights) {
-		auto& light = light_->first;
-
-		// set shader constants
-		shaderConstants.lightAtten = mm::vec3(light.atten0, light.atten1, light.atten2);
-		shaderConstants.lightColor = light.color;
-		shaderConstants.lightPos = light.position;
-		shaderConstants.lightRange = light.range;
-		shaderConstants.lightAngleInner = light.smallAngle;
-		shaderConstants.lightAngleOuter = light.bigAngle;
-		shaderConstants.lightDir = light.direction;
-
-		gApi->SetVSConstantBuffer(&shaderConstants, sizeof(shaderConstants), 0);
-		gApi->SetPSConstantBuffer(&shaderConstants, sizeof(shaderConstants), 0);
-
-		// draw that bullshit
-		size_t nIndices = ((cIndexBufferD3D11*)ibSpot)->GetByteSize() / sizeof(unsigned);
-		gApi->DrawIndexed(nIndices);
-	}
+	////-------------------------------------------------------------------------//
+	//// --- --- --- --- --- --- --- --- SPOT LIGHTS --- --- --- --- --- --- --- //
+	////-------------------------------------------------------------------------//
+	//gApi->SetShaderProgram(shaderSpot);
+	//
+	//gApi->SetTexture(L"gBuffer0", gBuffer[0]);
+	//gApi->SetTexture(L"gBuffer1", gBuffer[1]);
+	//gApi->SetTexture(L"gBuffer2", gBuffer[2]);
+	//gApi->SetTexture(L"depthBuffer", depthBufferCopy);
+	//
+	//gApi->SetVertexBuffer(vbSpot);
+	//gApi->SetIndexBuffer(ibSpot);
+	//
+	//for (auto light_ : spotLights) {
+	//	auto& light = light_->first;
+	//
+	//	// set shader constants
+	//	shaderConstants.lightAtten = mm::vec3(light.atten0, light.atten1, light.atten2);
+	//	shaderConstants.lightColor = light.color;
+	//	shaderConstants.lightPos = light.position;
+	//	shaderConstants.lightRange = light.range;
+	//	shaderConstants.lightAngleInner = light.smallAngle;
+	//	shaderConstants.lightAngleOuter = light.bigAngle;
+	//	shaderConstants.lightDir = light.direction;
+	//
+	//	gApi->SetVSConstantBuffer(&shaderConstants, sizeof(shaderConstants), 0);
+	//	gApi->SetPSConstantBuffer(&shaderConstants, sizeof(shaderConstants), 0);
+	//
+	//	// draw that bullshit
+	//	size_t nIndices = ((cIndexBufferD3D11*)ibSpot)->GetByteSize() / sizeof(unsigned);
+	//	gApi->DrawIndexed(nIndices);
+	//}
 
 	//-------------------------------------------------------------------------//
 	// --- --- --- --- --- --- --- --- --- SKY --- --- --- --- --- --- --- --- //

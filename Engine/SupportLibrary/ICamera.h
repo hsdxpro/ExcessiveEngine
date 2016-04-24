@@ -26,7 +26,7 @@ struct rProjOrtho
 
 struct rProjPersp
 {
-	rProjPersp():fovRad(3.14159265358979f /2){}
+	rProjPersp():fovRad(3.14159265358979f * 0.5f){}
 	rProjPersp(float fovRad) :fovRad(fovRad){}
 
 	float fovRad;

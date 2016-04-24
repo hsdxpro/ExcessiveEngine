@@ -11,6 +11,7 @@
 #include "../../Core/src/GAPI.h"
 #include <stdexcept>
 #include "GraphicsEngine_Raster/Scene.h"
+#include "GraphicsEngine/ILight.h"
 
 #undef near
 #undef far
@@ -50,112 +51,143 @@ void cGraphicsEngine::cShadowRenderer::Cleanup() {
 // Render them shadowmapz
 void cGraphicsEngine::cShadowRenderer::RenderShadowMaps(Scene& sceneManager) {
 	//// set states
-	//tBlendDesc blend = blendDefault;
-	//blend[0].writeMask = 0;
-	//gApi->SetBlendState(blend);
+	tBlendDesc blend = blendDefault;
+	blend[0].writeMask = 0;
+	gApi->SetBlendState(blend);
 
-	//tDepthStencilDesc dsState = depthStencilDefault;
-	//dsState.depthCompare = eComparisonFunc::LESS;
-	//gApi->SetDepthStencilState(dsState, 0x00);
+	tDepthStencilDesc dsState = depthStencilDefault;
+	dsState.depthCompare = eComparisonFunc::LESS;
+	gApi->SetDepthStencilState(dsState, 0x00);
 
-	//// render lights
-	//auto& lights = sceneManager.GetLights();
-	//for (auto& v : lights) {
-	//	// get light components
-	//	auto& light = v->first;
-	//	auto& shadowMap = v->second;
-	//	// check shadow map parameters
-	//	if (!light.enabled && light.shadowQuality!=cGraphicsLight::eShadowQuality::DISABLED) {
-	//		continue;
-	//	}
-	//	//continue;
-	//	if (light.shadowResolution < 256) {
-	//		light.shadowResolution = 256;
-	//	}
-	//	
-	//	switch (light.type) {
-	//		case cGraphicsLight::DIRECTIONAL : {
-	//			// set sh map type
-	//			shadowMap.SetType(light.type);
-	//			shadowMap.ClearUnneeded();
-	//			// get map for type
-	//			auto& shadowMapDir = *(cShadowMapDir*)&shadowMap;
-	//			// init map if not compatible with currently inited
-	//			auto resolution = light.shadowResolution;
-	//			auto nCascadeQuality = light.shadowQuality;
-	//			try {
-	//				if (!shadowMapDir.IsValid(gApi, resolution, eFormat::R24_UNORM_X8_TYPELESS, eFormat::D24_UNORM_S8_UINT, nCascadeQuality)) {
-	//					shadowMapDir.Init(gApi, resolution, eFormat::R24_UNORM_X8_TYPELESS, eFormat::D24_UNORM_S8_UINT, nCascadeQuality);
-	//				}
-	//			}
-	//			catch (std::exception& e) {
-	//				std::cerr << e.what() << std::endl;
-	//				break; // breaks switch case label
-	//			}
+	// render lights
+	auto& lights = sceneManager.GetLights();
+	for (auto& v : lights) {
+		// get light components
+		auto& light = *v;
+		
+		auto* shadowMap = light.GetShadowMap();
 
-	//			// generate cascade splits
-	//			size_t nCascades = shadowMapDir.GetNumCascades();
-	//			std::vector<float> cascadeSplits(nCascades + 1, 0.0f);
+		// check shadow map parameters
+		//if (!light.enabled && light.shadowQuality != cGraphicsLight::eShadowQuality::DISABLED) {
+		//	continue;
+		//}
+		//continue;
+		//if (light.shadowResolution < 256) {
+		//	light.shadowResolution = 256;
+		//}
+		
+		// light type
+		//switch (light.type) {
+		//	case cGraphicsLight::DIRECTIONAL : {
+				// set sh map type
+				//shadowMap->SetType(light.type);
+				//shadowMap->ClearUnneeded();
+				// get map for type
+				auto& shadowMapDir = *(cShadowMapDir*)shadowMap;
+				// init map if not compatible with currently inited
+				//auto resolution = 2048;//== light.shadowResolution;
+				//auto nCascadeQuality = light.shadowQuality;
+				//try {
+				//	if (!shadowMapDir.IsValid(gApi, resolution, eFormat::R24_UNORM_X8_TYPELESS, eFormat::D24_UNORM_S8_UINT, nCascadeQuality)) {
+				//		shadowMapDir.Init(gApi, resolution, eFormat::R24_UNORM_X8_TYPELESS, eFormat::D24_UNORM_S8_UINT, nCascadeQuality);
+				//	}
+				//}
+				//catch (std::exception& e) {
+				//	std::cerr << e.what() << std::endl;
+				//	break; // breaks switch case label
+				//}
 
-	//			float near = parent.camera->GetNearPlane();
-	//			float far = parent.camera->GetFarPlane();
+				// generate cascade splits
+				size_t nCascades = shadowMapDir.GetNumCascades();
+				std::vector<float> cascadeSplits(nCascades + 1, 0.0f);
 
-	//			for (size_t i = 0; i <= nCascades; i++) {
-	//				cascadeSplits[i] = near*pow((far / near), float(i) / float(nCascades));
-	//			}
-	//			for (float& v : cascadeSplits) {
-	//				v -= near;
-	//				v /= (far - near);
-	//			}
+				float near = parent.camera->GetNearPlane();
+				float far = parent.camera->GetFarPlane();
 
-	//			// foreach cascade
-	//			for (size_t i = 0; i < nCascades; i++) {
-	//				// compute transforms
-	//				auto& transform = shadowMapDir.GetTransforms()[i];
-	//				bool isGoodTransform = shadowMapDir.Transform(
-	//						transform.projMat,
-	//						transform.viewMat,
-	//						light.direction, 
-	//						parent.camera->GetViewMatrix(), parent.camera->GetProjMatrix(), 
-	//						cascadeSplits[i], cascadeSplits[i+1]);
-	//				if (!isGoodTransform)
-	//					continue;
+				for (size_t i = 0; i <= nCascades; i++) {
+					cascadeSplits[i] = near*pow((far / near), float(i) / float(nCascades));
+				}
+				for (float& v : cascadeSplits) {
+					v -= near;
+					v /= (far - near);
+				}
 
-	//				// setup render
-	//				gApi->SetShaderProgram(shaderDirectional);
-	//				ITexture2D* textureSlice = shadowMapDir.GetTexture()->GetArraySlice(i);
-	//				gApi->SetRenderTargets(0, nullptr, textureSlice);
-	//				gApi->ClearTexture(textureSlice);
+				auto win = parent.GetTargetWindow();
+				float aspectRatio = (float)win->GetClientWidth() / win->GetClientHeight();
 
-	//				// foreach inst grp
-	//				for (auto& instgrp : sceneManager.GetInstanceGroups()) {
-	//					// set geom params
-	//					gApi->SetVertexBuffer(instgrp->geom->GetVertexBuffer());
-	//					gApi->SetIndexBuffer(instgrp->geom->GetIndexBuffer());
+				// foreach cascade
+				for (size_t i = 0; i < nCascades; i++) {
+					// compute transforms
+					auto& transform = shadowMapDir.GetTransforms()[i];
+					bool isGoodTransform = shadowMapDir.Transform(
+							transform.projMat,
+							transform.viewMat,
+							light.GetDirection(), 
+							sceneManager.GetCamera()->GetViewMatrix(), sceneManager.GetCamera()->GetProjMatrix(aspectRatio),
+							cascadeSplits[i], cascadeSplits[i+1]);
+					if (!isGoodTransform)
+						continue;
 
-	//					// render objects
-	//					for (auto& entity : instgrp->entities) {
-	//						Matrix44 matWorld = entity->GetWorldMatrix();
-	//						Matrix44 worldViewProj = matWorld * transform.viewMat * transform.projMat;
-	//						gApi->SetVSConstantBuffer(&worldViewProj, sizeof(worldViewProj), 0);
-	//						gApi->DrawIndexed(instgrp->geom->GetIndexBuffer()->GetByteSize() / 4);
-	//					}
-	//				}
+					// setup render
+					gApi->SetShaderProgram(shaderDirectional);
+					ITexture2D* textureSlice = shadowMapDir.GetTexture()->GetArraySlice(i);
+					gApi->SetRenderTargets(0, nullptr, textureSlice);
+					gApi->ClearTexture(textureSlice);
 
-	//				textureSlice->Release();
-	//			}
-	//			break;
-	//		}
-	//		case cGraphicsLight::SPOT:{
+					
+					// foreach inst grp
+					for (auto& entity : sceneManager.GetEntities())
+					{
+						Mesh* mesh = (Mesh*)entity->GetMesh();
+						Material& mtl = *(Material*)entity->GetMaterial();
 
-	//			break;
-	//		}
-	//		case cGraphicsLight::POINT:{
+						// set geom params
+						for (int j = 0; j < mesh->GetNumVertexBuffers(); j++)
+						{
+							auto stream = mesh->GetVertexBuffers()[j];
+							gApi->SetVertexBuffers(&stream.vb, &stream.stride, &stream.offset, j, 1);
+						}
 
-	//			break;
-	//		}
-	//	}
-	//}
+						gApi->SetIndexBuffer(mesh->GetIndexBuffer());
+
+						mm::mat4 posMat = mm::create_translation(entity->GetPos());
+						mm::mat4 rotMat = mm::mat4(entity->GetRot());
+						mm::mat4 skewMat = mm::mat4(entity->GetSkew());
+
+						mm::mat4 worldMat = posMat * (rotMat * skewMat);
+
+						//auto win = parent.GetTargetWindow();
+						//float aspectRatio = (float)win->GetClientWidth() / win->GetClientHeight();
+						//mm::mat4 projMat = sceneManager.GetCamera()->GetProjMatrix(aspectRatio);
+						//mm::mat4 viewMat = sceneManager.GetCamera()->GetViewMatrix();
+						mm::mat4 viewProjMat = transform.projMat * transform.viewMat;// projMat * viewMat;
+						//mm::mat4 invViewProjMat = mm::inverse(viewProjMat);
+						//mm::mat4 invProjMat = mm::inverse(projMat);
+						mm::mat4 worldViewProj = viewProjMat * worldMat;
+						gApi->SetVSConstantBuffer(&worldViewProj, sizeof(worldViewProj), 0);
+
+						for (auto& matGroup : mesh->GetMaterialIds())
+						{
+							gApi->DrawIndexed((matGroup.endFace - matGroup.beginFace) * 3, matGroup.beginFace * 3);
+						}
+						
+					}
+
+					//gGapi->SaveTextureToFile(textureSlice, ITexture2D::BMP, "teszt.bmp");
+					textureSlice->Release();
+				}
+				//break;
+			//}
+			//case cGraphicsLight::SPOT:{
+			//
+			//	break;
+			//}
+			//case cGraphicsLight::POINT:{
+			//
+			//	break;
+			//}
+		//}
+	}
 }
 
 

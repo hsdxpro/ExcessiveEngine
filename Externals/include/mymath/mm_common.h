@@ -111,8 +111,8 @@
 
 namespace mymath
 {
-  static const float epsilon = 0.0001f; //should be 0.00001f
-  static const double depsilon = 0.00000001;
+	static const float epsilon = 0;// .0001f; //should be 0.00001f
+	static const double depsilon = 0;// .00000001;
 
   namespace impl
   {

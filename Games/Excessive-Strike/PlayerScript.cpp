@@ -2,8 +2,11 @@
 #include "PlatformLibrary\Sys.h"
 #include "ExcessiveStrikeCommon.h"
 
+Actor* pTmpCam;
 PlayerScript::PlayerScript()
 {
+	pTmpCam = World.AddActor_Camera();
+
 	bSquatting = false;
 
 	rateOfFire = 0.1f; // ak 0.1 sec per bullett
@@ -16,7 +19,7 @@ PlayerScript::PlayerScript()
 	bMovingLeft = false;
 	bMovingRight = false;
 	bCanJump = true;
-	playerMaxMoveSpeed = 2.6f;
+	playerMaxMoveSpeed = 0.6f;// 2.6f;
 	playerMoveSpeed = playerMaxMoveSpeed;
 	pixelsToRot360 = 1000;
 
@@ -72,10 +75,13 @@ PlayerScript::PlayerScript()
 	playerCapsule->SetPos(mm::vec3(0, 0, 8));
 
 	Core.SetCam(camComp);
+	World.SetCam(pTmpCam->GetComponents<CameraComponent>()[0]);
 }
 
 void PlayerScript::Update(float deltaSeconds)
 {
+	camComp = pTmpCam->GetRootComponent(0)->AsCamera();
+
 	// W,S,A,D Moving
 	nButtonsDown = 0;
 	mm::vec3 move(0, 0, 0);
@@ -110,13 +116,14 @@ void PlayerScript::Update(float deltaSeconds)
 		// plane(playerToOtherContactNormal, contact.posA)
 	}
 
-	move.z = 0;
-	if (move.x != 0 || move.y != 0)
-		move = mm::normalize(move);
+	//move.z = 0;
+	//if (move.x != 0 || move.y != 0)
+	//	move = mm::normalize(move);
 
 	move *= playerMoveSpeed;
 
-	playerCapsule->SetVelocity(mm::vec3(move.x, move.y, playerCapsule->GetVelocity().z));
+	//playerCapsule->SetVelocity(mm::vec3(move.x, move.y, playerCapsule->GetVelocity().z));
+	pTmpCam->Move(move * deltaSeconds);
 
 	if (nButtonsDown == 1 && Input.IsKeyPressed(W) | Input.IsKeyPressed(S) | Input.IsKeyPressed(A) | Input.IsKeyPressed(D))
 		walkSound->Start();
@@ -181,11 +188,24 @@ void PlayerScript::Update(float deltaSeconds)
 		//}
 
 		// TODO Ha kell egy sorból tudjak rigidBody Mesh és Sound
-		Actor* bullet = World.AddActor("box.DAE", 0);
+		//Actor* bullet = World.AddActor("box.DAE", 0);
+		//Actor* bullet = World.AddActor_Mesh("Human/t_pose.dae");
+		MeshComponent* bullet = World.AddComponent_Mesh("Human/t_pose.dae");
+		//bullet->Scale({ 0.1f, 0.1f, 0.1f });
+		//bullet->RotX(180);
+		bullet->RotZ(180);
+
+		bullet->SetTextureBaseColor("Human/diffuse.tga");
+		bullet->SetTextureNormal("Human/normal.bmp");
+		//bullet->SetTextureAO("Human/images/ao.png");
+
+		//MeshComponent* p;
+		//p->
+
 		//bullet->SetKinematic(true);
 		//bullet->SetScale(10.0f);
 
-		bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);
+		//bullet->SetCollisionGroup(eES_CollisionGroup::BULLET);
 		mm::vec3 bulletDirNormed = camComp->GetFrontDir();
 		bullet->SetPos(camComp->GetPos() + bulletDirNormed);
 		//bullet->SetVelocity(bulletDirNormed * 2);

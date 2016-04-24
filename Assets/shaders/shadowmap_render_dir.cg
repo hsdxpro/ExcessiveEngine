@@ -39,10 +39,12 @@ VS_OUT VS_MAIN(VS_IN In) {
 
 // omg such pixel shader
 float PS_MAIN(float3 posL : COLOR0) : DEPTH {
+	//return posL.z;
+
 	float3 x = ddx(posL);
 	float3 y = ddy(posL);
 	float bias = length(x+y);
-	return posL.z + bias * 0.01f;
+	return posL.z + bias * 0.06f;
 }
 
 

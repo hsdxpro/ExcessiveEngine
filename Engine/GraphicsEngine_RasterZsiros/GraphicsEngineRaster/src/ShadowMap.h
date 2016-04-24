@@ -49,8 +49,8 @@ public:
 
 	// Map type
 	struct tLightspace {
-		mutable Matrix44 viewMat;
-		mutable Matrix44 projMat;
+		mutable mm::mat4 viewMat;
+		mutable mm::mat4 projMat;
 	};
 
 	// Get
@@ -64,11 +64,11 @@ public:
 
 	// Transform
 	static bool Transform(
-		Matrix44& projOut,
-		Matrix44& viewOut,
-		const Vec3& lightDir,
-		const Matrix44& cameraView,
-		const Matrix44& cameraProj,
+		mm::mat4& projOut,
+		mm::mat4& viewOut,
+		const mm::vec3& lightDir,
+		const mm::mat4& cameraView,
+		const mm::mat4& cameraProj,
 		float nearClip = 0.0f,
 		float farClip = 1.0f);
 private:

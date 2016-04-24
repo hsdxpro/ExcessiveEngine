@@ -11,8 +11,10 @@
 #include <map>
 #include <unordered_map>
 #include <functional>
+#include "../../ExcessiveTeam_Build_msvc14_64bit/Engine/SupportLibrary/Triangle.h"
 
-bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg& cfg, rImporter3DData& data_out) {
+bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg& cfg, rImporter3DData& data_out)
+{
 	Assimp::Importer importer;
 
 	std::ifstream is(path, std::ios::ate);
@@ -29,7 +31,7 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 	is.close();
 
 	// Assimp will parse memory
-	const aiScene* scene = importer.ReadFileFromMemory(mem, fileSize, aiProcess_MakeLeftHanded);
+	const aiScene* scene = importer.ReadFileFromMemory(mem, fileSize, aiProcess_FlipWindingOrder | aiProcess_MakeLeftHanded);
 
 	// Free memory
 	free(mem);
@@ -37,10 +39,11 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 	if (!scene)
 		return false;
 
+	size_t nMeshes = scene->mNumMeshes;
+	aiMesh** meshes = scene->mMeshes;
 
 	// Gather absolute transformation matrices for each mesh, we will transform vertices with that, to get final positions
 	std::vector<aiMatrix4x4> meshTransformations(scene->mNumMeshes);
-
 
 	//Node000RelTrans * Node00RelTrans * Node0RelTrans * rootRelTrans
 	// Root
@@ -73,13 +76,194 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 	aiMatrix4x4 identityMat;
 	CalcWorldMatrixRecursively(scene->mRootNode, identityMat);
 
-	// Parsed "scene" have meshes
-	size_t nMeshes = scene->mNumMeshes;
-	aiMesh** meshes = scene->mMeshes;
+
+	// Calc bounding box of each mesh, to make grid partition for their vertices, to speed up adjacency vertex search, used for smooth (tangent and normal)
+	struct AABB
+	{
+		AABB():min(0,0,0), max(0,0,0){}
+
+		mm::vec3 min;
+		mm::vec3 max;
+	};
+	
+	struct Face
+	{
+		float area;
+	};
+
+	struct Vertex
+	{
+		mm::vec3 pos;
+		mm::vec3 normal;
+		mm::vec3 tangent;
+		Face face;
+	};
+
+	struct Cell
+	{
+		std::vector<Vertex> vertices;
+	};
+
+	struct Grid3D
+	{
+		void CalculateAveragedVertexAttribs(const mm::vec3& vertexPos, mm::vec3* averagedNormal_out, mm::vec3* averagedTangent_out)
+		{
+			Cell cell = GetCellByPos(vertexPos);
+
+			const mm::vec3& vertexPosCur = vertexPos;
+
+			mm::vec3 averagedNormal(0, 0, 0);
+			mm::vec3 averagedTangent(0, 0, 0);
+			for (auto& v : cell.vertices)
+			{
+				mm::vec3 d = v.pos - vertexPosCur;
+				if (memcmp(&vertexPosCur, &v.pos, sizeof(mm::vec3)) == 0)
+				{
+					averagedNormal += v.normal * v.face.area;
+					averagedTangent += v.tangent * v.face.area;
+				}
+			}
+
+			if (averagedNormal_out)
+				*averagedNormal_out = mm::normalize(averagedNormal);
+
+			if (averagedTangent_out)
+				*averagedTangent_out = mm::normalize(averagedTangent);
+		}
+
+		Cell& GetCellByPos(const mm::vec3& pos)
+		{
+			const float indexBias = 0.9999f; // If xIdx should be 0 - 9, we must multiply with that value to avoid value 10, bad indexing
+			int xIdx = (int)((pos.x - aabb.min.x) / cellSize.x * indexBias);
+			int yIdx = (int)((pos.y - aabb.min.y) / cellSize.y * indexBias);
+			int zIdx = (int)((pos.z - aabb.min.z) / cellSize.z * indexBias);
+
+			int cellIdx = xIdx + yIdx * nCellsOnAxis + zIdx * nCellsOnAxis * nCellsOnAxis;
+
+			assert(cellIdx < nCellsOnAxis * nCellsOnAxis * nCellsOnAxis);
+			return cells[cellIdx];
+		}
+
+		std::vector<Cell> cells;
+		mm::vec3 cellSize;
+		float nCellsOnAxis;
+		AABB aabb;
+	};
+
+	struct Mesh
+	{
+		AABB aabb;
+		Grid3D grid;
+	};
+
+	std::vector<Mesh> processedMeshes(nMeshes);
+	for (size_t i = 0; i < nMeshes; i++)
+	{
+		aiMesh* mesh = meshes[i];
+
+		Mesh& processedMesh = processedMeshes[i];
+
+		mm::vec3& min = processedMesh.aabb.min;
+		mm::vec3& max = processedMesh.aabb.max;
+
+
+		// 1 iteration on that mesh faces, to calculate AABB for space partition bounds
+		for (size_t j = 0; j < mesh->mNumFaces; j++)
+		{
+			aiFace& face = mesh->mFaces[j];
+
+			aiVector3D& v0Pos = mesh->mVertices[face.mIndices[0]];
+			aiVector3D& v1Pos = mesh->mVertices[face.mIndices[1]];
+			aiVector3D& v2Pos = mesh->mVertices[face.mIndices[2]];
+
+			v0Pos = meshTransformations[i] * v0Pos;
+			v1Pos = meshTransformations[i] * v1Pos;
+			v2Pos = meshTransformations[i] * v2Pos;
+
+			std::swap(v0Pos.y, v0Pos.z);
+			std::swap(v1Pos.y, v1Pos.z);
+			std::swap(v2Pos.y, v2Pos.z);
+
+			aiVector3D vert0Pos = mesh->mVertices[face.mIndices[0]];
+			aiVector3D vert1Pos = mesh->mVertices[face.mIndices[1]];
+			aiVector3D vert2Pos = mesh->mVertices[face.mIndices[2]];
+
+			float minX = mm::min(mm::min(vert0Pos.x, vert1Pos.x), vert2Pos.x);
+			float minY = mm::min(mm::min(vert0Pos.y, vert1Pos.y), vert2Pos.y);
+			float minZ = mm::min(mm::min(vert0Pos.z, vert1Pos.z), vert2Pos.z);
+
+			float maxX = mm::max(mm::max(vert0Pos.x, vert1Pos.x), vert2Pos.x);
+			float maxY = mm::max(mm::max(vert0Pos.y, vert1Pos.y), vert2Pos.y);
+			float maxZ = mm::max(mm::max(vert0Pos.z, vert1Pos.z), vert2Pos.z);
+
+			if (minX < min.x)
+				min.x = minX;
+
+			if (minY < min.y)
+				min.y = minY;
+
+			if (minZ < min.z)
+				min.z = minZ;
+
+			if (maxX > max.x)
+				max.x = maxX;
+
+			if (maxY > max.y)
+				max.y = maxY;
+
+			if (maxZ > max.z)
+				max.z = maxZ;
+		}
+
+		// We have the bounding box for that mesh, initialize our 3D grid
+		float width = max.x - min.x;
+		float height = max.y - min.y;
+		float depth = max.z - min.z;
+
+		float maxDiameter = mm::max(mm::max(width, height), depth);
+
+		processedMesh.grid.aabb.min = min;
+		processedMesh.grid.aabb.max = max;
+		processedMesh.grid.nCellsOnAxis = ceil(1 + powf(mesh->mNumVertices, 1.0f / 3.0f));
+		processedMesh.grid.cellSize = mm::vec3(width, height, depth) / processedMesh.grid.nCellsOnAxis;
+		processedMesh.grid.cells.resize(processedMesh.grid.nCellsOnAxis * processedMesh.grid.nCellsOnAxis * processedMesh.grid.nCellsOnAxis);
+
+		// 2. iteration on mesh faces.. to fill the grid
+		for (size_t j = 0; j < mesh->mNumFaces; j++)
+		{
+			aiFace& face = mesh->mFaces[j];
+
+			mm::vec3 v0Pos = (mm::vec3&)mesh->mVertices[face.mIndices[0]];
+			mm::vec3 v1Pos = (mm::vec3&)mesh->mVertices[face.mIndices[1]];
+			mm::vec3 v2Pos = (mm::vec3&)mesh->mVertices[face.mIndices[2]];
+
+			mm::vec2 v0Tex0 = (mm::vec2&)(mesh->mTextureCoords[0][face.mIndices[0]]);
+			mm::vec2 v1Tex0 = (mm::vec2&)(mesh->mTextureCoords[0][face.mIndices[1]]);
+			mm::vec2 v2Tex0 = (mm::vec2&)(mesh->mTextureCoords[0][face.mIndices[2]]);
+
+			mm::vec3 normal = Triangle::CalcNormal(v0Pos, v1Pos, v2Pos);
+			mm::vec3 tangent = Triangle::CalcTangent(v0Pos, v1Pos, v2Pos, v0Tex0, v1Tex0, v2Tex0);
+
+			float faceArea = Triangle::CalcArea(v0Pos, v1Pos, v2Pos);
+
+			for (int k = 0; k < 3; ++k)
+			{
+				int vertexIdx = face.mIndices[k];
+
+				Vertex v;
+				v.pos = (mm::vec3&)mesh->mVertices[vertexIdx];
+				v.normal = normal;
+				v.tangent = tangent;
+				v.face.area = faceArea;
+
+				Cell& cell = processedMesh.grid.GetCellByPos(v.pos);
+				cell.vertices.push_back(v);
+			}
+		}
+	}
+
 
 	u32 nIndices = 0;
-	//nMatGroups = nMeshes; // Assimp breaks material groups into N meshes
-
 	size_t nVertices = 0;
 
 	// Get indexCount, vertexCount, Gather matGroups from meshes
@@ -137,9 +321,9 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 	for (size_t i = 0; i < nMeshes; i++)
 	{
 		aiMesh* mesh = meshes[i];
+		Mesh& processedMesh = processedMeshes[i];
 
 		// Get mesh material infos
-		//rImporter3DMesh::rMaterial material;
 		mesh_out->materials[i].faceStartIdx = globalIndicesIdx / 3;
 		mesh_out->materials[i].faceEndIdx = globalIndicesIdx / 3 + mesh->mNumFaces;
 
@@ -196,74 +380,81 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 		}
 
 		bool bHasPos = mesh->HasPositions();
-		bool bHasNormals = mesh->HasNormals();
 
 		// Gather Each face
 		for (size_t j = 0; j < mesh->mNumFaces; globalIndicesIdx += 3, j++)
 		{
 			aiFace& face = mesh->mFaces[j];
 
-			// Each vertex on face
-			for (size_t k = 0; k < 3; k++)
+			int faceIndices[3];
+			faceIndices[0] = face.mIndices[0];
+			faceIndices[1] = face.mIndices[1];
+			faceIndices[2] = face.mIndices[2];
+
+			const aiVector3D& vert0Pos = mesh->mVertices[faceIndices[0]];
+			const aiVector3D& vert1Pos = mesh->mVertices[faceIndices[1]];
+			const aiVector3D& vert2Pos = mesh->mVertices[faceIndices[2]];
+
+			const aiVector3D& vert0UV = mesh->mTextureCoords[0][faceIndices[0]];
+			const aiVector3D& vert1UV = mesh->mTextureCoords[0][faceIndices[1]];
+			const aiVector3D& vert2UV = mesh->mTextureCoords[0][faceIndices[2]];
+
+			//mm::vec3 tangent = Triangle::CalcTangent((mm::vec3&)vert0Pos, (mm::vec3&)vert1Pos, (mm::vec3&)vert2Pos, (mm::vec2&)vert0UV, (mm::vec2&)vert1UV, (mm::vec2&)vert2UV);
+
+			// Calculate normal...
+			mm::vec3 faceVertexPositions[3];
+			faceVertexPositions[0] = mm::vec3(vert0Pos.x, vert0Pos.y, vert0Pos.z);
+			faceVertexPositions[1] = mm::vec3(vert1Pos.x, vert1Pos.y, vert1Pos.z);
+			faceVertexPositions[2] = mm::vec3(vert2Pos.x, vert2Pos.y, vert2Pos.z);
+
+			for (int k = 0; k < 3; ++k)
 			{
 				u32 localVertIdx = face.mIndices[k];
+				u32 vertexIdx = localVertIdx + globalVertexIdx;
+
+				u8* vertex = ((u8*)vertices) + vertexSize * vertexIdx;
 
 				// Gather Index data
-				indices[globalIndicesIdx + k] = localVertIdx + globalVertexIdx;
+				indices[globalIndicesIdx + k] = vertexIdx;
 
-				if (localVertIdx + globalVertexIdx >= nVertices)
-				{
-					assert(0);
-				}
+				mm::vec3 averagedNormal(0, 0, 0);
+				mm::vec3 averagedTangent(0, 0, 0);
+				processedMesh.grid.CalculateAveragedVertexAttribs(faceVertexPositions[k], &averagedNormal, &averagedTangent);
 
 				// Gather position
 				if (bHasPos & cfg.isContain(eImporter3DFlag::VERT_ATTR_POS))
-				{
-					const aiVector3D& pos = /*meshTransformations[i] */ mesh->mVertices[localVertIdx];
-
-					// Determine vertex index
-					u32 vertexIdx = localVertIdx + globalVertexIdx;
-
-					// Then copy the data to the appropriate attrib offset in that vertex
-					memcpy(((u8*)vertices) + vertexSize * vertexIdx + pos_attribOffset, &mm::vec3(pos.x, pos.y, pos.z), sizeof(mm::vec3));
-				}
+					memcpy(vertex + pos_attribOffset, &faceVertexPositions[k], sizeof(mm::vec3));
 
 				// Gather normal
-				if (bHasNormals & cfg.isContain(eImporter3DFlag::VERT_ATTR_NORM))
+				if (cfg.isContain(eImporter3DFlag::VERT_ATTR_NORM))
 				{
-					const aiVector3D& normal = mesh->mNormals[localVertIdx];
-
-					// Determine vertex index
-					u32 vertexIdx = localVertIdx + globalVertexIdx;
-
-					// Then copy the data to the appropriate attrib offset in that vertex
-					memcpy(((u8*)vertices) + vertexSize * vertexIdx + norm_attribOffset, &mm::vec3(normal.x, normal.y, normal.z), sizeof(mm::vec3));
+					memcpy(vertex + norm_attribOffset, &averagedNormal, sizeof(mm::vec3));
 				}
 
+				// Gather tangents
+				if (cfg.isContain(eImporter3DFlag::VERT_ATTR_TAN))
+				{
+					memcpy(vertex + tan_attribOffset, &averagedTangent, sizeof(mm::vec3));
+				}
+				/*// Gather Tangents and Bitangents
 				if (mesh->HasTangentsAndBitangents())
 				{
-					if(cfg.isContain(eImporter3DFlag::VERT_ATTR_TAN))
+					if (cfg.isContain(eImporter3DFlag::VERT_ATTR_TAN))
 					{
 						const aiVector3D& tangent = mesh->mTangents[localVertIdx];
 
-						// Determine vertex index
-						u32 vertexIdx = localVertIdx + globalVertexIdx;
-
 						// Then copy the data to the appropriate attrib offset in that vertex
-						memcpy(((u8*)vertices) + vertexSize * vertexIdx + tan_attribOffset, &mm::vec3(tangent.x, tangent.y, tangent.z), sizeof(mm::vec3));
+						memcpy(vertex + tan_attribOffset, &mm::vec3(tangent.x, tangent.y, tangent.z), sizeof(mm::vec3));
 					}
 
 					if (cfg.isContain(eImporter3DFlag::VERT_ATTR_BITAN))
 					{
 						const aiVector3D& bitangent = mesh->mBitangents[localVertIdx];
 
-						// Determine vertex index
-						u32 vertexIdx = localVertIdx + globalVertexIdx;
-
 						// Then copy the data to the appropriate attrib offset in that vertex
-						memcpy(((u8*)vertices) + vertexSize * vertexIdx + bitan_attribOffset, &mm::vec3(bitangent.x, bitangent.y, bitangent.z), sizeof(mm::vec3));
+						memcpy(vertex + bitan_attribOffset, &mm::vec3(bitangent.x, bitangent.y, bitangent.z), sizeof(mm::vec3));
 					}
-				}
+				}*/
 
 				// @TODO not general algorithm, wee need to handle more UV channels
 				aiVector3D* vecPtr = mesh->mTextureCoords[0];
@@ -275,7 +466,7 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 					u32 vertexIdx = localVertIdx + globalVertexIdx;
 
 					// Then copy the data to the appropriate attrib offset in that vertex
-					memcpy(((u8*)vertices) + vertexSize * vertexIdx + tex0_attribOffset, &mm::vec2(tex0.x, tex0.y), sizeof(mm::vec2));
+					memcpy(((u8*)vertices) + vertexSize * vertexIdx + tex0_attribOffset, &mm::vec2(tex0.x, 1 - tex0.y), sizeof(mm::vec2));
 				}
 			}
 		}
@@ -285,8 +476,10 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 		{
 
 		}
+
 		globalVertexIdx += mesh->mNumVertices;
 	}
+
 
 	// If requested, recenter pivot
 	if (cfg.isContain(eImporter3DFlag::PIVOT_RECENTER))

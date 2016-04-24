@@ -275,3 +275,5 @@ protected:
 	//typedef std::map<std::pair<cVertexFormat, cVertexFormat>, ID3D11InputLayout*> InputLayoutMapT;
 	InputLayoutMapT inputLayoutStore;
 };
+
+extern cGraphicsApiD3D11* gGapi;

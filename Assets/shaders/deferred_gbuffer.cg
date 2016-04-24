@@ -57,18 +57,19 @@ struct {
 struct VS_IN {
 	float3 posL 	: POSITION;
 	float3 normalL 	: NORMAL;
-	float3 tangentL : COLOR0;
-	float2 tex0 	: TEXCOORD0;
+	float3 tangentL : TEXCOORD0;
+	float2 tex0 	: TEXCOORD1;
 };
 
 struct VS_OUT {
 	float4 posH 		: POSITION;
 	float3 normalW 		: TEXCOORD0;
 	float3 tangentW		: TEXCOORD1;
-	float2 tex0 		: TEXCOORD2;
-	float3x3 TBN		: TEXCOORD4;
-	float3 posW			: TEXCOORD7;
-	float linearDepth	: COLOR0;
+	float3x3 TBN		: TEXCOORD2;
+	float3 posW			: TEXCOORD5;
+	float2 tex0 		: TEXCOORD6;
+	float linearDepth	: TEXCOORD7;
+	float3 camToVertexWS: COLOR0;
 };
 
 
@@ -106,6 +107,7 @@ VS_OUT VS_MAIN(VS_IN In) {
 	float3 T = normalize(Out.tangentW - dot(Out.tangentW,N) * N);
 	float3 B = normalize(cross(N,T));
 	Out.TBN = float3x3(T,B,N);
+	Out.camToVertexWS = Out.posW - transform.camPos;
 	return Out;
 }
 
@@ -157,35 +159,45 @@ float3 ParallaxOcclusionMapping(float3 viewDirW,float3 normalW,float3 tangentW,f
 }
 
 
-struct PS_OUT {
+struct PS_OUT
+{
 	float4 gb0 : COLOR0;
 	float4 gb1 : COLOR1;
 	float4 gb2 : COLOR2;
 	float depth : DEPTH;
 };
-PS_OUT PS_MAIN(VS_OUT In) {
+
+PS_OUT PS_MAIN(VS_OUT In)
+{
 	PS_OUT Out;
 	GBUFFER gb;
 
 	//POM IT
 	//In.tex0 = ParallaxOcclusionMapping(In.posW - transform.camPos, In.normalW, In.tangentW, In.tex0).xy;
 
+	// Calc normal, TBN with ddx, ddy
 
-	//if (mtlProperties.hasNormalMap) {
-	//	gb = PixelShader_NormalMap(In.TBN, In.tex0);
-	//	Out.gb0 = gb.diffuse;
-	//	Out.gb1 = gb.normal;
-	//	Out.gb2 = gb.misc;
-	//}
-	//else float2 gb1
+	//float3 normalW = normalize(cross(ddx(In.camToVertexWS), ddy(In.camToVertexWS)));
+	//float3 normalW = normalize(cross(ddy(In.camToVertexWS), ddx(In.camToVertexWS)));
 
+	if (mtlProperties.hasNormalMap)
+	{
+		gb = PixelShader_NormalMap(In.TBN, In.tex0);
+		Out.gb0 = gb.diffuse;
+		Out.gb1.xyz = gb.normal;
+		//Out.gb1.xyz = EncodeGBufferNormal(In.tangentW);
+		Out.gb2 = gb.misc;
+	}
+	else
+	{
 		gb = PixelShader_Simple(In.normalW, In.tex0);
 		Out.gb0 = gb.diffuse;
-		Out.gb1 = gb.normal;
+		Out.gb1.xyz = gb.normal;
+		//Out.gb1.xyz = EncodeGBufferNormal(In.tangentW);
 		Out.gb2 = gb.misc;
-	//}
+	}
 
-	Out.depth = In.linearDepth;	
+	Out.depth = In.linearDepth;
 
 	return Out;
 };

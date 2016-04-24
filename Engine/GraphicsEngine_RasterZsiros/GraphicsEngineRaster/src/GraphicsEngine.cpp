@@ -315,7 +315,7 @@ void cGraphicsEngine::RenderScene(Scene& scene, ITexture2D* target, float elapse
 	this->elapsed = elapsed;
 
 	// --- --- render shadow map --- --- //
-	//shadowRenderer->RenderShadowMaps(scene);
+	shadowRenderer->RenderShadowMaps(scene);
 
 	// --- --- composition w/ deferred --- --- //
 	ASSERT(deferredRenderer);
@@ -335,17 +335,17 @@ void cGraphicsEngine::RenderScene(Scene& scene, ITexture2D* target, float elapse
 	//postProcessor->ProcessSSVR(*(Camera*)scene.GetCamera(), aspectRatio);
 	
 	//// Motion blur
-	postProcessor->SetInputMB(deferredComposition, deferredRenderer->GetDepthBuffer());
-	postProcessor->SetOutputMB(hdrTextures[0], hdrTextures[1], deferredRenderer->GetDepthStencilBuffer()); // Color, velocityBuffer, depth
-	postProcessor->ProcessMB(elapsed, *(Camera*)scene.GetCamera(), scene, aspectRatio);
+	//postProcessor->SetInputMB(deferredComposition, deferredRenderer->GetDepthBuffer());
+	//postProcessor->SetOutputMB(hdrTextures[0], hdrTextures[1], deferredRenderer->GetDepthStencilBuffer()); // Color, velocityBuffer, depth
+	//postProcessor->ProcessMB(elapsed, *(Camera*)scene.GetCamera(), scene, aspectRatio);
 	
 	// Depth of field
-	postProcessor->SetInputDOF(hdrTextures[0], deferredRenderer->GetDepthBuffer());
-	postProcessor->SetOutputDOF(deferredComposition);
-	postProcessor->ProcessDOF(elapsed, *(Camera*)scene.GetCamera(), aspectRatio);
+	//postProcessor->SetInputDOF(hdrTextures[0], deferredRenderer->GetDepthBuffer());
+	//postProcessor->SetOutputDOF(deferredComposition);
+	//postProcessor->ProcessDOF(elapsed, *(Camera*)scene.GetCamera(), aspectRatio);
 	
 	//// Lol using GBuffer0
-	ITexture2D* gBuffer0 = deferredRenderer->GetGBuffer(0);
+	//ITexture2D* gBuffer0 = deferredRenderer->GetGBuffer(0);
 	
 	//gApi->SaveTextureToFile(deferredRenderer->GetGBuffer(1), ITexture2D::BMP, "ooo.bmp");
 
@@ -353,6 +353,7 @@ void cGraphicsEngine::RenderScene(Scene& scene, ITexture2D* target, float elapse
 
 	//// Need write luminance value to alpha channel for FXAA
 	//// HDR
+	ITexture2D* nextStageSource;
 	if (bHdrOn)
 	{
 		hdrProcessor->SetSource(deferredComposition);
@@ -360,10 +361,12 @@ void cGraphicsEngine::RenderScene(Scene& scene, ITexture2D* target, float elapse
 		hdrProcessor->adaptedLuminance = luminanceAdaptation; // copy luminance value
 		hdrProcessor->Update(elapsed);								// update hdr
 		luminanceAdaptation = hdrProcessor->adaptedLuminance; // copy luminance value
+
+		nextStageSource = hdrTextures[0];
 	}
 	else
 	{
-		gBuffer0 = deferredComposition;
+		nextStageSource = deferredComposition;
 	}
 	///*else*/ {
 	//auto target = gApi->GetDefaultRenderTarget();
@@ -385,7 +388,7 @@ void cGraphicsEngine::RenderScene(Scene& scene, ITexture2D* target, float elapse
 	//auto target = gApi->GetDefaultRenderTarget();
 	gApi->SetRenderTargets(1, &target);
 	gApi->SetShaderProgram(shaderScreenCopy);
-	gApi->SetTexture(0, hdrTextures[0]);
+	gApi->SetTexture(0, nextStageSource);
 	gApi->Draw(3);
 }
 

@@ -53,13 +53,19 @@ struct GBUFFER {
 	float4 misc : COLOR2;
 };
 
+float3 EncodeGBufferNormal(in float3 normal)
+{
+	return (normal + 1.0f) * 0.5f;
+}
+
 GBUFFER EncodeGBuffer(float3 diffuse, float3 normal, float glossiness, float specLevel) {
 	GBUFFER o;
 	o.diffuse.rgb = diffuse; o.diffuse.a = 1.0f;
-	o.normal.rgb = (normal + 1.f) * 0.5f;
+	o.normal.rgb = EncodeGBufferNormal(normal);
 	o.misc.r = glossiness;
 	o.misc.g = specLevel;
-	o.misc.b = o.misc.a = 0.0f;
+	o.misc.b = 0.0f;
+	o.misc.a = 0.0f;
 	return o;
 }
 

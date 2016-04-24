@@ -5,10 +5,12 @@ using namespace graphics;
 ////////////////////////////////////////////////////////////////////////////////
 // ctor, dtor, release
 
-Scene::Scene() 
+Scene::Scene()
 :cam(nullptr)
 {
-	return;
+	Light* pLight = AddLight();
+	pLight->SetColor({ 255, 0, 0 });
+	pLight->SetDirection({ 0, -1, -1 });
 }
 
 Scene::~Scene()

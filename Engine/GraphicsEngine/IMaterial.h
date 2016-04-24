@@ -21,10 +21,10 @@ public:
 	{
 		SubMaterial() : // default ctor won't hurt, but don't rely on it!
 			base(0, 0, 0, 1), emissive(0, 0, 0, 1), roughness(1), metallic(0), specular(0.5),
-			t_diffuse(nullptr), t_specular(nullptr), t_normal(nullptr), t_displace(nullptr) {}
+			t_diffuse(nullptr), t_specular(nullptr), t_normal(nullptr), t_displace(nullptr), t_ao(nullptr) {}
 		mm::vec4 base, emissive;
 		float roughness, metallic/*a*/, specular;
-		ITexture *t_diffuse, *t_specular, *t_normal, *t_displace;
+		ITexture *t_diffuse, *t_specular, *t_normal, *t_displace, *t_ao;
 	};
 
 	// release

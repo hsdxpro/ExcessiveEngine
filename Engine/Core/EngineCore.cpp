@@ -306,7 +306,7 @@ MeshComponent* EngineCore::AddComponent_Mesh(const std::string& modelFilePath)
 				eImporter3DFlag::VERT_ATTR_NORM,
 				eImporter3DFlag::VERT_ATTR_TAN,
 				eImporter3DFlag::VERT_ATTR_TEX0,
-				eImporter3DFlag::PIVOT_RECENTER });
+				eImporter3DFlag::PIVOT_RECENTER});
 
 			modelDesc = new rImporter3DData();
 			Importer3D::LoadModelFromFile(GetAssetsPath() + modelFilePath, cfg, *modelDesc);

@@ -112,7 +112,7 @@ public:
 
 	//std::pair<graphics::ILight, cShadowMap>* AddLight();
 
-	//const std::unordered_set<std::pair<graphics::ILight, cShadowMap>*>& GetLights() const { return lights; }
+	const std::unordered_set<std::pair<graphics::ILight*, cShadowMap>*>& GetLights() const { return lights; }
 
 private:
 	// information for rendering pipeline
@@ -125,7 +125,7 @@ private:
 	float luminanceAdaptation;
 	Matrix44 lastCameraMatrix;
 
-	//std::unordered_set<std::pair<graphics::ILight, cShadowMap>*> lights;
+	std::unordered_set<std::pair<graphics::ILight*, cShadowMap>*> lights;
 };
 
 

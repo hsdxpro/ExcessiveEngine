@@ -29,6 +29,10 @@ public:
 
 	inline void SetName(const std::string& s);
 
+	inline void SetTextureNormal(const std::string& contentPath);
+	inline void SetTextureBaseColor(const std::string& contentPath);
+	inline void SetTextureAO(const std::string& contentPath);
+
 	// TODO call Core::Destroy
 	inline void Kill();
 
@@ -225,6 +229,30 @@ void Actor::AddForce(const mm::vec3& force, const mm::vec3& relPos /*= { 0, 0, 0
 void Actor::SetName(const std::string& s)
 {
 	name = s;
+}
+
+void Actor::SetTextureNormal(const std::string& contentPath)
+{
+	const std::vector<MeshComponent*>& comps = GetComponents<MeshComponent>();
+
+	for (auto& c : comps)
+		c->SetTextureNormal(contentPath);
+}
+
+void Actor::SetTextureBaseColor(const std::string& contentPath)
+{
+	const std::vector<MeshComponent*>& comps = GetComponents<MeshComponent>();
+
+	for (auto& c : comps)
+		c->SetTextureBaseColor(contentPath);
+}
+
+void Actor::SetTextureAO(const std::string& contentPath)
+{
+	const std::vector<MeshComponent*>& comps = GetComponents<MeshComponent>();
+
+	for (auto& c : comps)
+		c->SetTextureAO(contentPath);
 }
 
 void Actor::Kill() 

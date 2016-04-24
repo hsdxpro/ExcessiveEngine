@@ -34,7 +34,7 @@ public:
 	void SetMesh(Mesh* mesh);
 	void SetMaterial(Material* material);
 	Mesh* GetMesh() const override;
-	Material* GetMaterial() const override;
+	Material* GetMaterial() override;
 
 private:
 	// mtl

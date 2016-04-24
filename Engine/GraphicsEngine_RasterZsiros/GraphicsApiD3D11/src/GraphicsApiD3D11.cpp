@@ -20,7 +20,7 @@
 #include <memory>
 #include <memory>
 
-
+cGraphicsApiD3D11* gGapi = nullptr;
 
 
 uint16_t eFormatBitSize(eFormat f) {
@@ -156,6 +156,9 @@ defaultRenderTarget(nullptr),
 activeShaderProg(nullptr),
 activeVertexBuffer(nullptr)
 {
+
+	gGapi = this;
+
 	// Create d3ddevice, d3dcontext
 	eGapiResult r = CreateDevice();
 	if (r != eGapiResult::OK) {
@@ -508,7 +511,7 @@ eGapiResult cGraphicsApiD3D11::CreateDefaultStates() {
 	ID3D11RasterizerState* pRasterState;
 	D3D11_RASTERIZER_DESC rasterDesc;
 		rasterDesc.AntialiasedLineEnable = true;
-		rasterDesc.CullMode = D3D11_CULL_NONE;
+		rasterDesc.CullMode = D3D11_CULL_BACK;
 		rasterDesc.DepthBias = 0;
 		rasterDesc.DepthBiasClamp = 0;
 		rasterDesc.DepthClipEnable = true;
@@ -765,6 +768,10 @@ eGapiResult cGraphicsApiD3D11::CreateTexture(ITexture2D** resource, const ITextu
 	// view descriptors
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+
+	//memset(&dsvDesc, 0, sizeof(dsvDesc));
+	//memset(&srvDesc, 0, sizeof(srvDesc));
+
 	D3D11_SHADER_RESOURCE_VIEW_DESC* pSrvDesc = nullptr;
 	// create views as needed
 	if (hasDepthStencil) {
@@ -830,6 +837,10 @@ eGapiResult cGraphicsApiD3D11::CreateTexture(ITexture2D** resource, const ITextu
 		dsvDesc.Texture2DArray.MipSlice = 0;
 		dsvDesc.Texture2DArray.ArraySize = 1;
 		
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+		//srvDesc.Texture2DArray.MipSlice = 0;
+		srvDesc.Texture2DArray.ArraySize = 1;
+
 		eGapiResult errorCode = eGapiResult::OK;
 
 		for (size_t i = 0; i < desc.arraySize; i++) {
@@ -849,7 +860,16 @@ eGapiResult cGraphicsApiD3D11::CreateTexture(ITexture2D** resource, const ITextu
 
 			}
 			if (isShaderBindable) {
-
+				srvDesc.Texture2DArray.FirstArraySlice = i;
+				hr = d3ddev->CreateShaderResourceView(tex, &srvDesc, &srv);
+				if (FAILED(hr)) {
+					if (hr == E_OUTOFMEMORY)
+						errorCode = eGapiResult::ERROR_OUT_OF_MEMORY;
+					else
+						errorCode = eGapiResult::ERROR_UNKNOWN;
+					break;
+				}
+				subsrv.push_back(srv);
 			}
 		}
 		if (errorCode != eGapiResult::OK) {
@@ -858,7 +878,7 @@ eGapiResult cGraphicsApiD3D11::CreateTexture(ITexture2D** resource, const ITextu
 		}
 	}
 	
-	*resource = new cTexture2DD3D11(this, desc.width, desc.height, tex, srv, rtv, dsv, nullptr, nullptr, subdsv.data(), subdsv.size());
+	*resource = new cTexture2DD3D11(this, desc.width, desc.height, tex, srv, rtv, dsv, subsrv.data(), nullptr, subdsv.data(), subdsv.size());
 	return eGapiResult::OK;
 }
 

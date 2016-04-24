@@ -76,6 +76,6 @@ Mesh* Entity::GetMesh() const {
 	return mesh.get();
 }
 
-Material* Entity::GetMaterial() const {
+Material* Entity::GetMaterial() {
 	return mtl.get();
 }
