@@ -115,10 +115,10 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}/Engine)
 
 # Engine
 add_subdirectory( Engine )
-# Editor
-add_subdirectory( Editor )
 # Game
 add_subdirectory( Games )
+# Editor
+#add_subdirectory( Editor )
 
 
 #---------------------------------------

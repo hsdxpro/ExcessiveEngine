@@ -1,17 +1,8 @@
-#-------------------------------------------------------------------------------
-# EDITOR
-#
-# Ricsi's super awesome level editor program
-#-------------------------------------------------------------------------------
+INCLUDE_EXTERNAL_MSPROJECT( Editor Editor.vcxproj )
 
-message( "-Editor" )
-
-FILE( GLOB_RECURSE sources *.c* )
-FILE( GLOB_RECURSE headers *.h* )
-
-add_executable( Editor ${sources} ${headers} )
-
-target_link_libraries( Editor Core)
-
-#target_link_libraries( Editor debug Awesomium_1_7_5/awesomium)
-#target_link_libraries( Editor optimized Awesomium_1_7_5/awesomium) 
+target_include_directories( Editor "./GeneratedFiles")
+target_include_directories( Editor "$(QTDIR)/include")
+target_include_directories( Editor "./GeneratedFiles/${CMAKE_BUILD_TYPE}")
+target_include_directories( Editor "$(QTDIR)/include/QtCore")
+target_include_directories( Editor "$(QTDIR)/include/QtGui")
+target_include_directories( Editor "$(QTDIR)/include/QtWidgets")
