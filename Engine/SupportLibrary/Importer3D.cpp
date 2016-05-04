@@ -11,10 +11,12 @@
 #include <map>
 #include <unordered_map>
 #include <functional>
-#include "../../ExcessiveTeam_Build_msvc14_64bit/Engine/SupportLibrary/Triangle.h"
+#include "Triangle.h"
 
 bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg& cfg, rImporter3DData& data_out)
 {
+	const bool bRecalculateNormalAndTangent = false;
+
 	Assimp::Importer importer;
 
 	std::ifstream is(path, std::ios::ate);
@@ -31,7 +33,7 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 	is.close();
 
 	// Assimp will parse memory
-	const aiScene* scene = importer.ReadFileFromMemory(mem, fileSize, aiProcess_FlipWindingOrder | aiProcess_MakeLeftHanded);
+	const aiScene* scene = importer.ReadFileFromMemory( mem, fileSize, aiProcess_FlipWindingOrder );
 
 	// Free memory
 	free(mem);
@@ -157,107 +159,111 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 	};
 
 	std::vector<Mesh> processedMeshes(nMeshes);
-	for (size_t i = 0; i < nMeshes; i++)
+
+	if (bRecalculateNormalAndTangent)
 	{
-		aiMesh* mesh = meshes[i];
-
-		Mesh& processedMesh = processedMeshes[i];
-
-		mm::vec3& min = processedMesh.aabb.min;
-		mm::vec3& max = processedMesh.aabb.max;
-
-
-		// 1 iteration on that mesh faces, to calculate AABB for space partition bounds
-		for (size_t j = 0; j < mesh->mNumFaces; j++)
+		for (size_t i = 0; i < nMeshes; i++)
 		{
-			aiFace& face = mesh->mFaces[j];
+			aiMesh* mesh = meshes[i];
 
-			aiVector3D& v0Pos = mesh->mVertices[face.mIndices[0]];
-			aiVector3D& v1Pos = mesh->mVertices[face.mIndices[1]];
-			aiVector3D& v2Pos = mesh->mVertices[face.mIndices[2]];
+			Mesh& processedMesh = processedMeshes[i];
 
-			v0Pos = meshTransformations[i] * v0Pos;
-			v1Pos = meshTransformations[i] * v1Pos;
-			v2Pos = meshTransformations[i] * v2Pos;
+			mm::vec3& min = processedMesh.aabb.min;
+			mm::vec3& max = processedMesh.aabb.max;
 
-			std::swap(v0Pos.y, v0Pos.z);
-			std::swap(v1Pos.y, v1Pos.z);
-			std::swap(v2Pos.y, v2Pos.z);
 
-			aiVector3D vert0Pos = mesh->mVertices[face.mIndices[0]];
-			aiVector3D vert1Pos = mesh->mVertices[face.mIndices[1]];
-			aiVector3D vert2Pos = mesh->mVertices[face.mIndices[2]];
-
-			float minX = mm::min(mm::min(vert0Pos.x, vert1Pos.x), vert2Pos.x);
-			float minY = mm::min(mm::min(vert0Pos.y, vert1Pos.y), vert2Pos.y);
-			float minZ = mm::min(mm::min(vert0Pos.z, vert1Pos.z), vert2Pos.z);
-
-			float maxX = mm::max(mm::max(vert0Pos.x, vert1Pos.x), vert2Pos.x);
-			float maxY = mm::max(mm::max(vert0Pos.y, vert1Pos.y), vert2Pos.y);
-			float maxZ = mm::max(mm::max(vert0Pos.z, vert1Pos.z), vert2Pos.z);
-
-			if (minX < min.x)
-				min.x = minX;
-
-			if (minY < min.y)
-				min.y = minY;
-
-			if (minZ < min.z)
-				min.z = minZ;
-
-			if (maxX > max.x)
-				max.x = maxX;
-
-			if (maxY > max.y)
-				max.y = maxY;
-
-			if (maxZ > max.z)
-				max.z = maxZ;
-		}
-
-		// We have the bounding box for that mesh, initialize our 3D grid
-		float width = max.x - min.x;
-		float height = max.y - min.y;
-		float depth = max.z - min.z;
-
-		float maxDiameter = mm::max(mm::max(width, height), depth);
-
-		processedMesh.grid.aabb.min = min;
-		processedMesh.grid.aabb.max = max;
-		processedMesh.grid.nCellsOnAxis = ceil(1 + powf(mesh->mNumVertices, 1.0f / 3.0f));
-		processedMesh.grid.cellSize = mm::vec3(width, height, depth) / processedMesh.grid.nCellsOnAxis;
-		processedMesh.grid.cells.resize(processedMesh.grid.nCellsOnAxis * processedMesh.grid.nCellsOnAxis * processedMesh.grid.nCellsOnAxis);
-
-		// 2. iteration on mesh faces.. to fill the grid
-		for (size_t j = 0; j < mesh->mNumFaces; j++)
-		{
-			aiFace& face = mesh->mFaces[j];
-
-			mm::vec3 v0Pos = (mm::vec3&)mesh->mVertices[face.mIndices[0]];
-			mm::vec3 v1Pos = (mm::vec3&)mesh->mVertices[face.mIndices[1]];
-			mm::vec3 v2Pos = (mm::vec3&)mesh->mVertices[face.mIndices[2]];
-
-			mm::vec2 v0Tex0 = (mm::vec2&)(mesh->mTextureCoords[0][face.mIndices[0]]);
-			mm::vec2 v1Tex0 = (mm::vec2&)(mesh->mTextureCoords[0][face.mIndices[1]]);
-			mm::vec2 v2Tex0 = (mm::vec2&)(mesh->mTextureCoords[0][face.mIndices[2]]);
-
-			mm::vec3 normal = Triangle::CalcNormal(v0Pos, v1Pos, v2Pos);
-			mm::vec3 tangent = Triangle::CalcTangent(v0Pos, v1Pos, v2Pos, v0Tex0, v1Tex0, v2Tex0);
-
-			float faceArea = Triangle::CalcArea(v0Pos, v1Pos, v2Pos);
-
-			for (int k = 0; k < 3; ++k)
+			// 1 iteration on that mesh faces, to calculate AABB for space partition bounds
+			for (size_t j = 0; j < mesh->mNumFaces; j++)
 			{
-				int vertexIdx = face.mIndices[k];
+				aiFace& face = mesh->mFaces[j];
 
-				Vertex v;
-				v.pos = (mm::vec3&)mesh->mVertices[vertexIdx];
-				v.normal = normal;
-				v.tangent = tangent;
-				v.face.area = faceArea;
+				aiVector3D& v0Pos = mesh->mVertices[face.mIndices[0]];
+				aiVector3D& v1Pos = mesh->mVertices[face.mIndices[1]];
+				aiVector3D& v2Pos = mesh->mVertices[face.mIndices[2]];
 
-				Cell& cell = processedMesh.grid.GetCellByPos(v.pos);
-				cell.vertices.push_back(v);
+				v0Pos = meshTransformations[i] * v0Pos;
+				v1Pos = meshTransformations[i] * v1Pos;
+				v2Pos = meshTransformations[i] * v2Pos;
+
+				std::swap(v0Pos.y, v0Pos.z);
+				std::swap(v1Pos.y, v1Pos.z);
+				std::swap(v2Pos.y, v2Pos.z);
+
+				aiVector3D vert0Pos = mesh->mVertices[face.mIndices[0]];
+				aiVector3D vert1Pos = mesh->mVertices[face.mIndices[1]];
+				aiVector3D vert2Pos = mesh->mVertices[face.mIndices[2]];
+
+				float minX = mm::min(mm::min(vert0Pos.x, vert1Pos.x), vert2Pos.x);
+				float minY = mm::min(mm::min(vert0Pos.y, vert1Pos.y), vert2Pos.y);
+				float minZ = mm::min(mm::min(vert0Pos.z, vert1Pos.z), vert2Pos.z);
+
+				float maxX = mm::max(mm::max(vert0Pos.x, vert1Pos.x), vert2Pos.x);
+				float maxY = mm::max(mm::max(vert0Pos.y, vert1Pos.y), vert2Pos.y);
+				float maxZ = mm::max(mm::max(vert0Pos.z, vert1Pos.z), vert2Pos.z);
+
+				if (minX < min.x)
+					min.x = minX;
+
+				if (minY < min.y)
+					min.y = minY;
+
+				if (minZ < min.z)
+					min.z = minZ;
+
+				if (maxX > max.x)
+					max.x = maxX;
+
+				if (maxY > max.y)
+					max.y = maxY;
+
+				if (maxZ > max.z)
+					max.z = maxZ;
+			}
+
+			// We have the bounding box for that mesh, initialize our 3D grid
+			float width = max.x - min.x;
+			float height = max.y - min.y;
+			float depth = max.z - min.z;
+
+			float maxDiameter = mm::max(mm::max(width, height), depth);
+
+			processedMesh.grid.aabb.min = min;
+			processedMesh.grid.aabb.max = max;
+			processedMesh.grid.nCellsOnAxis = ceil(1 + powf(mesh->mNumVertices, 1.0f / 3.0f));
+			processedMesh.grid.cellSize = mm::vec3(width, height, depth) / processedMesh.grid.nCellsOnAxis;
+			processedMesh.grid.cells.resize(processedMesh.grid.nCellsOnAxis * processedMesh.grid.nCellsOnAxis * processedMesh.grid.nCellsOnAxis);
+
+			// 2. iteration on mesh faces.. to fill the grid
+			for (size_t j = 0; j < mesh->mNumFaces; j++)
+			{
+				aiFace& face = mesh->mFaces[j];
+
+				mm::vec3 v0Pos = (mm::vec3&)mesh->mVertices[face.mIndices[0]];
+				mm::vec3 v1Pos = (mm::vec3&)mesh->mVertices[face.mIndices[1]];
+				mm::vec3 v2Pos = (mm::vec3&)mesh->mVertices[face.mIndices[2]];
+
+				mm::vec2 v0Tex0 = (mm::vec2&)(mesh->mTextureCoords[0][face.mIndices[0]]);
+				mm::vec2 v1Tex0 = (mm::vec2&)(mesh->mTextureCoords[0][face.mIndices[1]]);
+				mm::vec2 v2Tex0 = (mm::vec2&)(mesh->mTextureCoords[0][face.mIndices[2]]);
+
+				mm::vec3 normal = Triangle::CalcNormal(v0Pos, v1Pos, v2Pos);
+				mm::vec3 tangent = Triangle::CalcTangent(v0Pos, v1Pos, v2Pos, v0Tex0, v1Tex0, v2Tex0);
+
+				float faceArea = Triangle::CalcArea(v0Pos, v1Pos, v2Pos);
+
+				for (int k = 0; k < 3; ++k)
+				{
+					int vertexIdx = face.mIndices[k];
+
+					Vertex v;
+					v.pos = (mm::vec3&)mesh->mVertices[vertexIdx];
+					v.normal = normal;
+					v.tangent = tangent;
+					v.face.area = faceArea;
+
+					Cell& cell = processedMesh.grid.GetCellByPos(v.pos);
+					cell.vertices.push_back(v);
+				}
 			}
 		}
 	}
@@ -380,6 +386,8 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 		}
 
 		bool bHasPos = mesh->HasPositions();
+		bool bHasNormal = mesh->HasNormals();
+		bool bHasTangent = mesh->HasTangentsAndBitangents();
 
 		// Gather Each face
 		for (size_t j = 0; j < mesh->mNumFaces; globalIndicesIdx += 3, j++)
@@ -417,24 +425,41 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 				// Gather Index data
 				indices[globalIndicesIdx + k] = vertexIdx;
 
-				mm::vec3 averagedNormal(0, 0, 0);
-				mm::vec3 averagedTangent(0, 0, 0);
-				processedMesh.grid.CalculateAveragedVertexAttribs(faceVertexPositions[k], &averagedNormal, &averagedTangent);
-
 				// Gather position
 				if (bHasPos & cfg.isContain(eImporter3DFlag::VERT_ATTR_POS))
-					memcpy(vertex + pos_attribOffset, &faceVertexPositions[k], sizeof(mm::vec3));
+				{
+					mm::vec3 pos = faceVertexPositions[k];
+
+					//if (!bRecalculateNormalAndTangent)
+					//{
+					//	std::swap(pos.y, pos.z);
+					//}
+
+					memcpy(vertex + pos_attribOffset, &pos, sizeof(mm::vec3));
+				}
+
+				mm::vec3 normal(0, 0, 0);
+				mm::vec3 tangent(0, 0, 0);
+				if (bRecalculateNormalAndTangent)
+				{
+					processedMesh.grid.CalculateAveragedVertexAttribs(faceVertexPositions[k], &normal, &tangent);
+				}
+				else if (bHasNormal && bHasTangent)
+				{
+					normal = (mm::vec3&)mesh->mNormals[localVertIdx];
+					tangent = (mm::vec3&)mesh->mTangents[localVertIdx];
+				}
 
 				// Gather normal
 				if (cfg.isContain(eImporter3DFlag::VERT_ATTR_NORM))
 				{
-					memcpy(vertex + norm_attribOffset, &averagedNormal, sizeof(mm::vec3));
+					memcpy(vertex + norm_attribOffset, &normal, sizeof(mm::vec3));
 				}
 
 				// Gather tangents
 				if (cfg.isContain(eImporter3DFlag::VERT_ATTR_TAN))
 				{
-					memcpy(vertex + tan_attribOffset, &averagedTangent, sizeof(mm::vec3));
+					memcpy(vertex + tan_attribOffset, &tangent, sizeof(mm::vec3));
 				}
 				/*// Gather Tangents and Bitangents
 				if (mesh->HasTangentsAndBitangents())

@@ -19,7 +19,7 @@ PlayerScript::PlayerScript()
 	bMovingLeft = false;
 	bMovingRight = false;
 	bCanJump = true;
-	playerMaxMoveSpeed = 0.6f;// 2.6f;
+	playerMaxMoveSpeed = 3.f;// 0.6f;// 2.6f;
 	playerMoveSpeed = playerMaxMoveSpeed;
 	pixelsToRot360 = 1000;
 
@@ -190,13 +190,14 @@ void PlayerScript::Update(float deltaSeconds)
 		// TODO Ha kell egy sorból tudjak rigidBody Mesh és Sound
 		//Actor* bullet = World.AddActor("box.DAE", 0);
 		//Actor* bullet = World.AddActor_Mesh("Human/t_pose.dae");
-		MeshComponent* bullet = World.AddComponent_Mesh("Human/t_pose.dae");
+		//MeshComponent* bullet = World.AddComponent_Mesh("Human/t_pose.dae");
+		Actor* bullet = World.AddActor("box.dae", 100);
 		//bullet->Scale({ 0.1f, 0.1f, 0.1f });
 		//bullet->RotX(180);
-		bullet->RotZ(180);
+		//bullet->RotZ(180);
 
-		bullet->SetTextureBaseColor("Human/diffuse.tga");
-		bullet->SetTextureNormal("Human/normal.bmp");
+		//bullet->SetTextureBaseColor("Human/diffuse.tga");
+		//bullet->SetTextureNormal("Human/normal.bmp");
 		//bullet->SetTextureAO("Human/images/ao.png");
 
 		//MeshComponent* p;

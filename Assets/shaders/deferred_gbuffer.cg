@@ -178,7 +178,7 @@ PS_OUT PS_MAIN(VS_OUT In)
 	// Calc normal, TBN with ddx, ddy
 
 	//float3 normalW = normalize(cross(ddx(In.camToVertexWS), ddy(In.camToVertexWS)));
-	//float3 normalW = normalize(cross(ddy(In.camToVertexWS), ddx(In.camToVertexWS)));
+	float3 normalW = normalize(cross(ddy(In.camToVertexWS), ddx(In.camToVertexWS)));
 
 	if (mtlProperties.hasNormalMap)
 	{
@@ -193,7 +193,7 @@ PS_OUT PS_MAIN(VS_OUT In)
 		gb = PixelShader_Simple(In.normalW, In.tex0);
 		Out.gb0 = gb.diffuse;
 		Out.gb1.xyz = gb.normal;
-		//Out.gb1.xyz = EncodeGBufferNormal(In.tangentW);
+		Out.gb1.xyz = EncodeGBufferNormal(normalW);
 		Out.gb2 = gb.misc;
 	}
 

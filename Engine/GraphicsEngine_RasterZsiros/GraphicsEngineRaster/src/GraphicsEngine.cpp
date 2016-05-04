@@ -349,7 +349,7 @@ void cGraphicsEngine::RenderScene(Scene& scene, ITexture2D* target, float elapse
 	
 	//gApi->SaveTextureToFile(deferredRenderer->GetGBuffer(1), ITexture2D::BMP, "ooo.bmp");
 
-	bool bHdrOn = true;
+	bool bHdrOn = false;
 
 	//// Need write luminance value to alpha channel for FXAA
 	//// HDR

@@ -94,7 +94,7 @@ void PhysicsEngineBullet::Update(float deltaTime)
 {
 	{
 		PROFILE_SCOPE("Simulate");
-		world->stepSimulation(deltaTime, 0);
+		world->stepSimulation(deltaTime);
 	}
 	
 	{
@@ -207,8 +207,8 @@ physics::IRigidBodyEntity* PhysicsEngineBullet::AddEntityRigidDynamic(mm::vec3* 
 
 	if (mass > 0) 
 	{
-		body->setCcdMotionThreshold(1);
-		body->setCcdSweptSphereRadius(0.2f);
+		body->setCcdMotionThreshold(0.001);
+		body->setCcdSweptSphereRadius(0.001);
 	}
 	body->setFriction(0.9f);
 	body->setRestitution(0.0f);

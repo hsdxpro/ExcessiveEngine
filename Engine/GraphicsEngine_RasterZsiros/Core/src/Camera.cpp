@@ -71,7 +71,7 @@ void cCamera::CalcProjMatrix() {
 		proj = Matrix44ProjOrtographic(nearPlane, farPlane, projOrtho.left, projOrtho.right, projOrtho.bottom, projOrtho.top);
 		break;
 	case PERSP:
-		proj = Matrix44ProjPerspective(nearPlane, farPlane, projPersp.fovRad, projPersp.aspectRatio);
+		proj = Matrix44ProjPerspectiveRH(nearPlane, farPlane, projPersp.fovRad, projPersp.aspectRatio);
 		break;
 	default:
 		ASSERT_MSG(false, L"OMG wtf camera not ORTHO and not PERSP");

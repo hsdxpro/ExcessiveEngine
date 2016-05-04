@@ -88,7 +88,7 @@ float4 PS_MAIN(VS_OUT In) : COLOR0 {
 	SampleGBuffer(In.tex0, diffuseColor, normal, glossiness, specLevel);
 
 	// Debugging normal
-	//return float4(diffuseColor.xyz, 1.0f);
+	return float4(normal.xyz, 1.0f);
 
 	depth = tex2D(depthBuffer, In.tex0);
 
@@ -118,7 +118,7 @@ float4 PS_MAIN(VS_OUT In) : COLOR0 {
 	// NoH
 	// VoH
 	// NoV
-	float4 color = float4(diffuse + specular, 1.0f) * 5.f;
+	float4 color = float4(/*diffuse +*/ specular, 1.0f) * 5.f;
 	return color;
 
 	//// shadow map

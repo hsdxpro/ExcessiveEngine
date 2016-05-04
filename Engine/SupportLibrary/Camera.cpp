@@ -32,22 +32,20 @@
 //	return orientation * translation;
 //}
 
-mm::mat4 Matrix44ViewLH(const mm::vec3& eye, const mm::vec3& target, const mm::vec3& up)
+mm::mat4 Matrix44ViewRH(const mm::vec3& eye, const mm::vec3& target, const mm::vec3& up)
 {
-	mm::vec3 baseFront = mymath::normalize(target - eye);
-	mm::vec3 baseRight = mymath::normalize(mymath::cross(baseFront, up));
-	mm::vec3 baseUp = mymath::cross(baseRight, baseFront);
+	mm::vec3 zaxis = mm::normalize(eye - target);
+	mm::vec3 xaxis = mm::normalize(mm::cross(up, zaxis));
+	mm::vec3 yaxis = mm::cross(zaxis, xaxis);
 
-	// Create a 4x4 orientation matrix from the right, up, and at vectors
-	// TRANPOSE of ROT
-	return mm::mat4(	baseRight.x, baseUp.x, baseFront.x, 0,
-						baseRight.y, baseUp.y, baseFront.y, 0,
-						baseRight.z, baseUp.z, baseFront.z, 0,
-						-mm::dot(baseRight, eye), -mm::dot(baseUp, eye), -mm::dot(baseFront, eye), 1);
+	return mm::mat4(	xaxis.x, yaxis.x, zaxis.x, 0,
+						xaxis.y, yaxis.y, zaxis.y, 0,
+						xaxis.z, yaxis.z, zaxis.z, 0,
+						mm::dot(xaxis, eye), mm::dot(yaxis, eye), mm::dot(zaxis, eye), 1);
 }
 
 Camera::Camera()
-:nearPlane(0.005f), farPlane(100), pos(0, 0, 0), projType(eProjType::PERSP)
+:nearPlane(0.2f), farPlane(100), pos(0, 0, 0), projType(eProjType::PERSP)
 {
 	SetDirNormed({ 0, 1, 0 });
 }
@@ -96,7 +94,7 @@ void Camera::SetDirNormed(const mm::vec3& p)
 	// Important, roll is 0
 	const mm::vec3 up(0.0f, 0.0f, 1.0f);
 
-	auto mat = Matrix44ViewLH(pos, pos + p, up);
+	auto mat = Matrix44ViewRH(pos, pos + p, up);
 	// TODO FIX THAT MATRIX -> QUAT NOT WORKING
 	rot = (mm::quat)mat;
 }
@@ -126,9 +124,9 @@ mm::mat4 Camera::GetViewMatrix() const
 	const Vec3 up(0.0f, 0.0f, 1.0f);
 
 	mm::vec3 frontDirNormed = mm::rotate_vector(rot, mm::vec3(0, 1, 0));
-	mm::vec3 upDirNormed = mm::rotate_vector(rot, mm::vec3(0, 0, 1));
+	mm::vec3 upDirNormed = mm::vec3(0, 0, 1);// mm::rotate_vector(rot, mm::vec3(0, 0, 1));
 
-	return Matrix44ViewLH(pos, pos + frontDirNormed, upDirNormed);
+	return Matrix44ViewRH(pos, pos + frontDirNormed, upDirNormed);
 }
 
 mm::mat4 Camera::GetProjMatrix(float aspectRatio) const
@@ -141,10 +139,12 @@ mm::mat4 Camera::GetProjMatrix(float aspectRatio) const
 	}
 	case eProjType::PERSP:
 	{
-		Matrix44 ad = Matrix44ProjPerspective(nearPlane, farPlane, projPersp.fovRad, aspectRatio);
+		Matrix44 ad = Matrix44ProjPerspectiveRH(nearPlane, farPlane, projPersp.fovRad, aspectRatio);
 
 		memcpy((float*)&proj[0], (float*)&ad[0], sizeof(float) * 16);
-		return proj;
+		mm::mat4 res = proj;
+
+		return res;
 
 		//auto& proj = mymath::perspective(projPersp.fovRad, aspectRatio, nearPlane, farPlane);
 

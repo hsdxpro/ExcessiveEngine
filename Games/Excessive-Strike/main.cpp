@@ -42,6 +42,35 @@ void InitScript();
 
 int main()
 {
+	{
+		Camera cam;
+/*
+
+		mm::vec3 baseFront = mm::vec3(0, 1, 0);
+		mm::vec3 baseRight = mm::vec3(1, 0, 0);
+		mm::vec3 baseUp = mm::vec3(0, 0, 1);
+		mm::vec3 eye = mm::vec3(0, 0, 0);
+
+		// Create a 4x4 orientation matrix from the right, up, and at vectors
+		// TRANPOSE of ROT
+		mm::mat4 viewMat = mm::mat4(baseRight.x, baseUp.x, baseFront.x, 0,
+			baseRight.y, baseUp.y, baseFront.y, 0,
+			baseRight.z, baseUp.z, baseFront.z, 0,
+			-mm::dot(baseRight, eye), -mm::dot(baseUp, eye), -mm::dot(baseFront, eye), 1);*/
+
+		mm::vec4 tmp(1, 1, 1, 1);
+
+		mm::vec4 viewSpaceVec = cam.GetViewMatrix() * tmp;
+		mm::vec4 projSpaceVec = viewSpaceVec * cam.GetProjMatrix(1.0f);
+		projSpaceVec.x = (projSpaceVec.x + 1) * 0.5f;
+		projSpaceVec.y = (projSpaceVec.x + 1) * 0.5f;
+		projSpaceVec.y = abs(projSpaceVec.y - 1);
+		projSpaceVec.xyzw /= projSpaceVec.w;
+		std::cout << "asd";
+		int asd = 5;
+		asd++;
+	}
+
 	WindowDesc d;
 		//d.clientSize = mm::uvec2(Sys::GetScreenSize().x, Sys::GetScreenSize().y);
 		d.clientSize = mm::uvec2(800, 600);
