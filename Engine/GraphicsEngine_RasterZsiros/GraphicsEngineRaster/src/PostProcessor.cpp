@@ -321,17 +321,17 @@ void cGraphicsEngine::cPostProcessor::ProcessDOF(float frameDeltaTime, const Cam
 // FXAA
 void cGraphicsEngine::cPostProcessor::ProcessFXAA() 
 {
-	//gApi->SetRenderTargets(1, &outputTexColor, nullptr);
-	//gApi->SetShaderProgram(shaderFXAA);
+	gApi->SetRenderTargets(1, &outputTexColor, nullptr);
+	gApi->SetShaderProgram(shaderFXAA);
 
-	//Vec4 invResolution(	1.0f / outputTexColor->GetWidth(),
-	//					1.0f / outputTexColor->GetHeight(),
-	//					0, // pad
-	//					0);// pad
-	//
-	//gApi->SetPSConstantBuffer(&invResolution, sizeof(Vec4), 0);
-	//gApi->SetTexture(L"inputTexture", inputTexColor);
-	//gApi->Draw(3);
+	Vec4 invResolution(	1.0f / outputTexColor->GetWidth(),
+						1.0f / outputTexColor->GetHeight(),
+						0, // pad
+						0);// pad
+	
+	gApi->SetPSConstantBuffer(&invResolution, sizeof(Vec4), 0);
+	gApi->SetTexture(L"inputTexture", inputTexColor);
+	gApi->Draw(3);
 }
 
 void cGraphicsEngine::cPostProcessor::ProcessSSAR(const Camera& cam, float aspectRatio)

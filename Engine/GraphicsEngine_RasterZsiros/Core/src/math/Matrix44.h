@@ -67,6 +67,7 @@ public:
 
 	Matrix44& ViewRH(const Vec3& eye, const Vec3& target, const Vec3& up);
 	Matrix44& ProjPerspectiveRH(float nearPlane, float farPlane, float fovRad, float aspectRatio);
+	Matrix44& ProjPerspectiveLH(float nearPlane, float farPlane, float fovRad, float aspectRatio);
 	Matrix44& ProjOrtographic(float nearPlane, float farPlane, float left, float right, float bottom, float top);
 
 	// pre
@@ -141,6 +142,7 @@ Matrix44 Matrix44Scaling(const Vec3& v);
 
 Matrix44 Matrix44ViewRH(const Vec3& eye, const Vec3& target, const Vec3& up);
 Matrix44 Matrix44ProjPerspectiveRH(float nearPlane, float farPlane, float fovRad, float aspectRatio);
+Matrix44 Matrix44ProjPerspectiveLH(float nearPlane, float farPlane, float fovRad, float aspectRatio);
 Matrix44 Matrix44ProjOrtographic(float nearPlane, float farPlane, float left, float right, float bottom, float top);
 
 

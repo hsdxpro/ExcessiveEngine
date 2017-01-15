@@ -33,7 +33,7 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 	is.close();
 
 	// Assimp will parse memory
-	const aiScene* scene = importer.ReadFileFromMemory( mem, fileSize, aiProcess_FlipWindingOrder );
+	const aiScene* scene = importer.ReadFileFromMemory( mem, fileSize, aiProcess_MakeLeftHanded );
 
 	// Free memory
 	free(mem);
@@ -444,10 +444,13 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 				{
 					processedMesh.grid.CalculateAveragedVertexAttribs(faceVertexPositions[k], &normal, &tangent);
 				}
-				else if (bHasNormal && bHasTangent)
+				else
 				{
-					normal = (mm::vec3&)mesh->mNormals[localVertIdx];
-					tangent = (mm::vec3&)mesh->mTangents[localVertIdx];
+					if (bHasNormal)
+						normal = (mm::vec3&)mesh->mNormals[localVertIdx];
+
+					if (bHasTangent)
+						tangent = (mm::vec3&)mesh->mTangents[localVertIdx];
 				}
 
 				// Gather normal
@@ -483,7 +486,7 @@ bool Importer3D::LoadModelFromFile(const std::string& path, const rImporter3DCfg
 
 				// @TODO not general algorithm, wee need to handle more UV channels
 				aiVector3D* vecPtr = mesh->mTextureCoords[0];
-				if ((bool)vecPtr & cfg.isContain(eImporter3DFlag::VERT_ATTR_TEX0))
+				if (vecPtr != nullptr && cfg.isContain(eImporter3DFlag::VERT_ATTR_TEX0))
 				{
 					const aiVector3D& tex0 = vecPtr[localVertIdx];
 

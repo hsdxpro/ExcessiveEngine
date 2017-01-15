@@ -73,7 +73,7 @@ int main()
 
 	WindowDesc d;
 		//d.clientSize = mm::uvec2(Sys::GetScreenSize().x, Sys::GetScreenSize().y);
-		d.clientSize = mm::uvec2(800, 600);
+		d.clientSize = mm::uvec2(1366, 768);
 		d.style = eWindowStyle::BORDERLESS;
 	Window* window = new Window(d);
 
@@ -86,7 +86,7 @@ int main()
 	IGraphicsEngine* graphicsEngine = Core.InitGraphicsEngineRasterZsiros(graphicsDesc);
 
 	PhysicsEngineBulletDesc physicsDesc;
-		physicsDesc.gravity = mm::vec3(0, 0, -9.81);
+		physicsDesc.gravity = mm::vec3(0, -9.81, 0);
 	Core.InitPhysicsEngineBullet(physicsDesc);
 
 	InitScript(); // Manual bullshit, TODO !!!
