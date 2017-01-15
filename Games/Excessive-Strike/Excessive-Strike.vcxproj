@@ -1,0 +1,245 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="PerfDebug|x64">
+      <Configuration>PerfDebug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGUID>{99AC5050-AC21-35C9-9E0A-1C4B0AFCDA9D}</ProjectGUID>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>Excessive-Strike</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\ExcessiveTeam-master\Build\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Excessive-Strike.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Excessive-Strike</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">F:\ExcessiveTeam-master\Build\PerfDebug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">Excessive-Strike.dir\PerfDebug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">Excessive-Strike</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\ExcessiveTeam-master\Build\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Excessive-Strike.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Excessive-Strike</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Debug/</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;EXCESSIVE_DEBUG;EXCESSIVE_ASSET_DIR="F:/ExcessiveTeam-master/Assets/";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;EXCESSIVE_DEBUG;EXCESSIVE_ASSET_DIR=\"F:/ExcessiveTeam-master/Assets/\";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalOptions> /machine:x64 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;..\..\Build\Debug\Core.lib;..\..\Build\Debug\GraphicsEngine_RasterZsiros.lib;..\..\Build\Debug\GraphicsEngine_RT.lib;..\..\Build\Debug\Core.lib;..\..\Build\Debug\GraphicsEngine_RT.lib;..\..\Build\Debug\GraphicsApi_OpenGL.lib;glew-d.lib;..\..\Build\Debug\GraphicsEngine_Raster.lib;..\..\Build\Debug\NetworkEngine_Raknet.lib;..\..\Build\Debug\PhysicsEngine_Bullet.lib;Bullet2FileLoader-d.lib;Bullet3Collision-d.lib;Bullet3Common-d.lib;Bullet3Dynamics-d.lib;Bullet3Geometry-d.lib;Bullet3OpenCL_clew-d.lib;BulletCollision-d.lib;BulletDynamics-d.lib;BulletSoftBody-d.lib;LinearMath-d.lib;..\..\Build\Debug\SoundEngine_SFML.lib;..\..\Build\Debug\SupportLibrary.lib;assimp-d.lib;..\..\Build\Debug\PlatformLibrary.lib;winmm.lib;gdi32.lib;opengl32.lib;freetype.lib;openal32.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;ogg-d.lib;flac-d.lib;jpeg-d.lib;sfml-audio-s-d.lib;sfml-graphics-s-d.lib;sfml-system-s-d.lib;sfml-window-s-d.lib;sfml-network-s-d.lib;Cg/cg.lib;Cg/cgD3D11.lib;Cg/cgGL.lib;DX11/d3d11.lib;DX11/d3dx11.lib;DX11/dxgi.lib;DX11/dxerr.lib;DX11/d3dcompiler.lib;DX11/dxguid.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>F:/ExcessiveTeam-master/Externals/lib/win_msvc14_64;F:/ExcessiveTeam-master/Externals/lib/win_msvc14_64/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>Debug</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>F:/ExcessiveTeam-master/Build/Debug/Excessive-Strike.lib</ImportLibrary>
+      <ProgramDataBaseFile>F:/ExcessiveTeam-master/Build/Debug/Excessive-Strike.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version>
+      </Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>PerfDebug/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EXCESSIVE_PERFDEBUG;EXCESSIVE_ASSET_DIR="F:/ExcessiveTeam-master/Assets/";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR="PerfDebug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EXCESSIVE_PERFDEBUG;EXCESSIVE_ASSET_DIR=\"F:/ExcessiveTeam-master/Assets/\";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR=\"PerfDebug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalOptions> /machine:x64 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;..\..\Build\PerfDebug\Core.lib;..\..\Build\PerfDebug\GraphicsEngine_RasterZsiros.lib;..\..\Build\PerfDebug\GraphicsEngine_RT.lib;..\..\Build\PerfDebug\Core.lib;..\..\Build\PerfDebug\GraphicsEngine_RT.lib;..\..\Build\PerfDebug\GraphicsApi_OpenGL.lib;glew.lib;..\..\Build\PerfDebug\GraphicsEngine_Raster.lib;..\..\Build\PerfDebug\NetworkEngine_Raknet.lib;..\..\Build\PerfDebug\PhysicsEngine_Bullet.lib;Bullet2FileLoader.lib;Bullet3Collision.lib;Bullet3Common.lib;Bullet3Dynamics.lib;Bullet3Geometry.lib;Bullet3OpenCL_clew.lib;BulletCollision.lib;BulletDynamics.lib;BulletSoftBody.lib;LinearMath.lib;..\..\Build\PerfDebug\SoundEngine_SFML.lib;..\..\Build\PerfDebug\SupportLibrary.lib;assimp.lib;..\..\Build\PerfDebug\PlatformLibrary.lib;winmm.lib;gdi32.lib;opengl32.lib;freetype.lib;openal32.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;ogg.lib;flac.lib;jpeg.lib;sfml-audio-s.lib;sfml-graphics-s.lib;sfml-system-s.lib;sfml-window-s.lib;sfml-network-s.lib;Cg/cg.lib;Cg/cgD3D11.lib;Cg/cgGL.lib;DX11/d3d11.lib;DX11/d3dx11.lib;DX11/dxgi.lib;DX11/dxerr.lib;DX11/d3dcompiler.lib;DX11/dxguid.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>F:/ExcessiveTeam-master/Externals/lib/win_msvc14_64;F:/ExcessiveTeam-master/Externals/lib/win_msvc14_64/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>Debug</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>F:/ExcessiveTeam-master/Build/PerfDebug/Excessive-Strike.lib</ImportLibrary>
+      <ProgramDataBaseFile>F:/ExcessiveTeam-master/Build/PerfDebug/Excessive-Strike.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version>
+      </Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Release/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EXCESSIVE_RELEASE;EXCESSIVE_ASSET_DIR="F:/ExcessiveTeam-master/Assets/";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR="Release";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EXCESSIVE_RELEASE;EXCESSIVE_ASSET_DIR=\"F:/ExcessiveTeam-master/Assets/\";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalOptions> /machine:x64 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;..\..\Build\Release\Core.lib;..\..\Build\Release\GraphicsEngine_RasterZsiros.lib;..\..\Build\Release\GraphicsEngine_RT.lib;..\..\Build\Release\Core.lib;..\..\Build\Release\GraphicsEngine_RT.lib;..\..\Build\Release\GraphicsApi_OpenGL.lib;glew.lib;..\..\Build\Release\GraphicsEngine_Raster.lib;..\..\Build\Release\NetworkEngine_Raknet.lib;..\..\Build\Release\PhysicsEngine_Bullet.lib;Bullet2FileLoader.lib;Bullet3Collision.lib;Bullet3Common.lib;Bullet3Dynamics.lib;Bullet3Geometry.lib;Bullet3OpenCL_clew.lib;BulletCollision.lib;BulletDynamics.lib;BulletSoftBody.lib;LinearMath.lib;..\..\Build\Release\SoundEngine_SFML.lib;..\..\Build\Release\SupportLibrary.lib;assimp.lib;..\..\Build\Release\PlatformLibrary.lib;winmm.lib;gdi32.lib;opengl32.lib;freetype.lib;openal32.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;ogg.lib;flac.lib;jpeg.lib;sfml-audio-s.lib;sfml-graphics-s.lib;sfml-system-s.lib;sfml-window-s.lib;sfml-network-s.lib;Cg/cg.lib;Cg/cgD3D11.lib;Cg/cgGL.lib;DX11/d3d11.lib;DX11/d3dx11.lib;DX11/dxgi.lib;DX11/dxerr.lib;DX11/d3dcompiler.lib;DX11/dxguid.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>F:/ExcessiveTeam-master/Externals/lib/win_msvc14_64;F:/ExcessiveTeam-master/Externals/lib/win_msvc14_64/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>No</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>F:/ExcessiveTeam-master/Build/Release/Excessive-Strike.lib</ImportLibrary>
+      <ProgramDataBaseFile>F:/ExcessiveTeam-master/Build/Release/Excessive-Strike.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version>
+      </Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="F:\ExcessiveTeam-master\Games\Excessive-Strike\ExcessiveStrikeCommon.h" />
+    <ClInclude Include="F:\ExcessiveTeam-master\Games\Excessive-Strike\PlayerScript.h" />
+    <ClInclude Include="F:\ExcessiveTeam-master\Games\Excessive-Strike\TestLevelScript.h" />
+    <ClCompile Include="F:\ExcessiveTeam-master\Games\Excessive-Strike\PlayerScript.cpp" />
+    <ClCompile Include="F:\ExcessiveTeam-master\Games\Excessive-Strike\TestLevelScript.cpp" />
+    <ClCompile Include="F:\ExcessiveTeam-master\Games\Excessive-Strike\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/Core/Core.vcxproj">
+      <Project>2BD4E687-702F-31A8-8E8F-1609BCA2EC1F</Project>
+    </ProjectReference>
+    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/GraphicsApi_OpenGL/GraphicsApi_OpenGL.vcxproj">
+      <Project>425520D7-9632-3882-A9A7-22A6B59E13D4</Project>
+    </ProjectReference>
+    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/GraphicsEngine_Raster/GraphicsEngine_Raster.vcxproj">
+      <Project>9F8CA66F-AA4E-3FEB-9B74-3D7C834FB358</Project>
+    </ProjectReference>
+    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/GraphicsEngine_RasterZsiros/GraphicsEngine_RasterZsiros.vcxproj">
+      <Project>D1C82501-38B6-35EE-BC11-828AC5BDD53C</Project>
+    </ProjectReference>
+    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/NetworkEngine_Raknet/NetworkEngine_Raknet.vcxproj">
+      <Project>C057FC38-24F5-375E-B91F-BDAE09BEE944</Project>
+    </ProjectReference>
+    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/PhysicsEngine_Bullet/PhysicsEngine_Bullet.vcxproj">
+      <Project>4EA610D7-1297-3992-9F74-13FC439340D6</Project>
+    </ProjectReference>
+    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/PlatformLibrary/PlatformLibrary.vcxproj">
+      <Project>B3A6A864-E1B2-3EF0-B702-EC5579C01F91</Project>
+    </ProjectReference>
+    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/SoundEngine_SFML/SoundEngine_SFML.vcxproj">
+      <Project>9EAF3D34-B87A-3FB0-B55E-95596D335D85</Project>
+    </ProjectReference>
+    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/SupportLibrary/SupportLibrary.vcxproj">
+      <Project>09E1EC87-FE83-327F-B5BF-31BBC14DACBB</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

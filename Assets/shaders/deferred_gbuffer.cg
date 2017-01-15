@@ -178,7 +178,8 @@ PS_OUT PS_MAIN(VS_OUT In)
 	// Calc normal, TBN with ddx, ddy
 
 	//float3 normalW = normalize(cross(ddx(In.camToVertexWS), ddy(In.camToVertexWS)));
-	float3 normalW = normalize(cross(ddy(In.camToVertexWS), ddx(In.camToVertexWS)));
+	//float3 normalW = normalize(In.normalW);
+	float3 normalW = In.normalW;//normalize(cross(ddx(In.camToVertexWS), ddy(In.camToVertexWS)));
 
 	if (mtlProperties.hasNormalMap)
 	{

@@ -342,10 +342,10 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	auto win = parent.GetTargetWindow();
 	float aspectRatio = (float)win->GetClientWidth() / win->GetClientHeight();
 
-	if ( win->GetClientWidth() > 800 )
-	{
-		exit(0);
-	}
+	//if ( win->GetClientWidth() > 800 )
+	//{
+	//	exit(0);
+	//}
 
 	mm::mat4 projMat = cam->GetProjMatrix(aspectRatio);
 	mm::mat4 viewMat = cam->GetViewMatrix();
@@ -423,7 +423,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 			}
 			else {
 				// basic parameters
-				mtlConstants.diffuseColor = Vec3(1.0f, 0.0f, 1.0f);
+				mtlConstants.diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
 				mtlConstants.glossiness = 0.0f;
 				mtlConstants.specularLevel = 0.0f;
 
@@ -442,6 +442,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 			mm::mat4 rotMat = mm::mat4(entity->GetRot());
 			mm::mat4 skewMat = mm::mat4(entity->GetSkew());
 			mm::mat4 worldMat = posMat * (rotMat * skewMat);
+			worldMat = mm::mat4::identity;
 
 			// cbuffer
 			struct {
@@ -782,7 +783,7 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 	IntensitySpectrum spectrum;
 	spectrum.BlackBody(6400);
 	spectrum.Scale(1.0f / spectrum[spectrum.Peak()]);
-	float sunZenithAngle = acos(mm::dot(-skyConstants.sunDir, mm::vec3(0, 0, 1)));
+	float sunZenithAngle = acos(mm::dot(-skyConstants.sunDir, mm::vec3(0, 1, 0)));
 	float airMass = RelativeAirMass((float)ZS_PI / 2.0f - sunZenithAngle) / RelativeAirMass(0);
 	Rayleigh(spectrum, airMass*2.0f);
 	mm::vec3 sunColor = mm::vec3(spectrum.ToRGB().x, spectrum.ToRGB().y, spectrum.ToRGB().z);

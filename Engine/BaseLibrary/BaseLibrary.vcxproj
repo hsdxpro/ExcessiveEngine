@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="PerfDebug|x64">
+      <Configuration>PerfDebug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGUID>{DBD9DD58-E72E-32AE-9CF4-FE060311B0C9}</ProjectGUID>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>BaseLibrary</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\ExcessiveTeam-master\Build\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">BaseLibrary.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">BaseLibrary</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">F:\ExcessiveTeam-master\Build\PerfDebug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">BaseLibrary.dir\PerfDebug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">BaseLibrary</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\ExcessiveTeam-master\Build\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">BaseLibrary.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">BaseLibrary</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Debug/</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;EXCESSIVE_DEBUG;EXCESSIVE_ASSET_DIR="F:/ExcessiveTeam-master/Assets/";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;EXCESSIVE_DEBUG;EXCESSIVE_ASSET_DIR=\"F:/ExcessiveTeam-master/Assets/\";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions> /machine:x64 %(AdditionalOptions)</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>PerfDebug/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EXCESSIVE_PERFDEBUG;EXCESSIVE_ASSET_DIR="F:/ExcessiveTeam-master/Assets/";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR="PerfDebug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EXCESSIVE_PERFDEBUG;EXCESSIVE_ASSET_DIR=\"F:/ExcessiveTeam-master/Assets/\";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR=\"PerfDebug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions> /machine:x64 %(AdditionalOptions)</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Release/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EXCESSIVE_RELEASE;EXCESSIVE_ASSET_DIR="F:/ExcessiveTeam-master/Assets/";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR="Release";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EXCESSIVE_RELEASE;EXCESSIVE_ASSET_DIR=\"F:/ExcessiveTeam-master/Assets/\";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions> /machine:x64 %(AdditionalOptions)</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\TypeSystem_\BasicTypes..h" />
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Serialization_\BinarySerializer.hpp" />
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Serialization_\BinarySerializerExtensions.hpp" />
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Utility_\Singleton.hpp" />
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Utility_\Spinlock.hpp" />
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\Event.hpp" />
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\EventEntry.hpp" />
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogCentre.hpp" />
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogNode.hpp" />
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogPipe.hpp" />
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogStream.hpp" />
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\Logger.hpp" />
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Serialization_\BinarySerializer.cpp" />
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Serialization_\BinarySerializerExtensions.cpp" />
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Utility_\Spinlock.cpp" />
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\Event.cpp" />
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogNode.cpp" />
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogPipe.cpp" />
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogStream.cpp" />
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\Logger.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

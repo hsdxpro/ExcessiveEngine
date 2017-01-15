@@ -45,7 +45,7 @@ float3x3 calcWsCotangentFrame(float3 wsNormal, float3 VertexToCamWS, float2 tsCo
 
 GBUFFER PixelShader_Simple (float3 normal, float2 texCoord0) {
 	// fill basic from shader const
-	float3 diffuse = float3(1, 1, 1);// mtlProperties.diffuseColor;
+	float3 diffuse = float3(1.0, 1.0, 1.0);//mtlProperties.diffuseColor;
 	float gloss = mtlProperties.glossiness;
 	float specLvl = mtlProperties.specularLevel;
 
@@ -54,7 +54,7 @@ GBUFFER PixelShader_Simple (float3 normal, float2 texCoord0) {
 
 	// diffuse & cutout
 	if (mtlProperties.hasDiffuseMap) {
-		mapSample = tex2D(diffuseMap, texCoord0);
+		mapSample = pow(tex2D(diffuseMap, texCoord0), 2.2f);
 		if (mtlProperties.useCutout && mapSample.a < 0.5f)
 			discard;
 		diffuse *= mapSample.rgb;

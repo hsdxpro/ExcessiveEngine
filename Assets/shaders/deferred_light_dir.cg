@@ -88,7 +88,7 @@ float4 PS_MAIN(VS_OUT In) : COLOR0 {
 	SampleGBuffer(In.tex0, diffuseColor, normal, glossiness, specLevel);
 
 	// Debugging normal
-	return float4(normal.xyz, 1.0f);
+	//return float4(normal.xyz, 1.0f);
 
 	depth = tex2D(depthBuffer, In.tex0);
 
@@ -109,7 +109,7 @@ float4 PS_MAIN(VS_OUT In) : COLOR0 {
 	float NoL = saturate(dot(N, -lightDir));
 	float NoH = saturate(dot(N,H));
 	
-	float roughness = 0.5f;
+	float roughness = 0.4f;
 	float3 specularColor = float3(0.03, 0.03, 0.03);
 
 	float3 diffuse = lightColor * NoL * diffuseColor * DisneyDiffuse_Extended(NoV, NoL, VoH, roughness, specularColor);
@@ -118,7 +118,7 @@ float4 PS_MAIN(VS_OUT In) : COLOR0 {
 	// NoH
 	// VoH
 	// NoV
-	float4 color = float4(/*diffuse +*/ specular, 1.0f) * 5.f;
+	float4 color = float4(diffuse + specular, 1.0f);
 	return color;
 
 	//// shadow map

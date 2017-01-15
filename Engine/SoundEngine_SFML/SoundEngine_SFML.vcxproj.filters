@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\Emitter.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\Listener.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SFMLCommonSoundData.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SFMLCommonSoundEmitter.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SFMLMusicData.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SFMLMusicWrapper.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SFMLSoundData.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SFMLSoundWrapper.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SoundData.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SoundEngineSFML.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SoundScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\Emitter.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\Listener.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SFMLCommonSoundData.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SFMLCommonSoundEmitter.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SFMLMusicData.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SFMLMusicWrapper.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SFMLSoundData.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SFMLSoundWrapper.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SoundData.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SoundEngineSFML.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\SoundEngine_SFML\SoundScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\SoundEngine\IEmitter.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\SoundEngine\IListener.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\SoundEngine\IScene.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\SoundEngine\ISoundData.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\ExcessiveTeam-master\Engine\SoundEngine\ISoundEngine.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{D0C561FD-7E6E-32FB-A029-391A46163E72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interfaces">
+      <UniqueIdentifier>{3CB996A5-4D21-3DEC-B834-077E120727C8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{BADB0C4E-55C2-34DE-BCEC-6B48079A20B3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{EADB709C-0715-3627-9D11-EFE5D77420E1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

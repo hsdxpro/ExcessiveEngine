@@ -148,22 +148,22 @@ const mm::vec3 Transform3D::GetScale() const
 
 mm::vec3 Transform3D::GetFrontDir() const
 {
-	return mm::normalize(mm::rotate_vector(GetRot(), mm::vec3(0, 1, 0) * GetSkew()));
+	return mm::normalize(mm::rotate_vector(GetRot(), mm::vec3(0, 0, 1) * GetSkew()));
 }
 
 mm::vec3 Transform3D::GetBackDir() const
 {
-	return mm::normalize(mm::rotate_vector(GetRot(), mm::vec3(0, -1, 0) * GetSkew()));
+	return mm::normalize(mm::rotate_vector(GetRot(), mm::vec3(0, 0, -1) * GetSkew()));
 }
 
 mm::vec3 Transform3D::GetUpDir() const
 {
-	return mm::normalize(mm::rotate_vector(GetRot(), mm::vec3(0, 0, 1) * GetSkew()));
+	return mm::normalize(mm::rotate_vector(GetRot(), mm::vec3(0, 1, 0) * GetSkew()));
 }
 
 mm::vec3 Transform3D::GetDownDir() const
 {
-	return mm::normalize(mm::rotate_vector(GetRot(), mm::vec3(0, 0, -1) * GetSkew()));
+	return mm::normalize(mm::rotate_vector(GetRot(), mm::vec3(0, -1, 0) * GetSkew()));
 }
 
 mm::vec3 Transform3D::GetRightDir() const

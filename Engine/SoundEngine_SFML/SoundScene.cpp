@@ -1,6 +1,6 @@
 #include "SoundScene.h"
 
-const mm::vec3 SoundScene::SFMLforwards = mm::vec3(0, 0, -1);
+const mm::vec3 SoundScene::SFMLforwards = mm::vec3(0, 0, 1);
 const mm::vec3 SoundScene::SFMLupwards = mm::vec3(0, 1, 0);
 
 SoundScene::SoundScene() :activeListener(nullptr) {
