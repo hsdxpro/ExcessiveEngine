@@ -8,11 +8,11 @@ Actor* test;
 TestLevelScript::TestLevelScript()
 {
 	//Actor* ground = World.AddActor("box.DAE", 0);
-	//Actor* ground = World.AddActor("box.DAE", 0);
-	Actor* ground = World.AddActor("Terminal/terminal_blender.dae", 0);
+	Actor* ground = World.AddActor("box.DAE", 0);
+	
 	//ground->SetTextureNormal("Human/images/normal.png");
 
-	ground->SetScale(mm::vec3(1, 1, 1));
+	ground->SetScale(mm::vec3(100, 100, 5));
 	ground->SetCollisionGroup(eES_CollisionGroup::GROUND);
 	ground->SetName("ground");
 

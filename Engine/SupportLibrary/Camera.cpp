@@ -44,34 +44,22 @@ mm::mat4 Matrix44ViewRH(const mm::vec3& eye, const mm::vec3& target, const mm::v
 						mm::dot(xaxis, eye), mm::dot(yaxis, eye), mm::dot(zaxis, eye), 1);
 }
 
-mm::mat4 Matrix44ViewLH(const mm::vec3& eye, const mm::vec3& target, const mm::vec3& up)
-{
-	mm::vec3 zaxis = mm::normalize(target - eye);
-	mm::vec3 xaxis = mm::normalize(mm::cross(up, zaxis));
-	mm::vec3 yaxis = mm::cross(zaxis, xaxis);
-
-	return mm::mat4(	xaxis.x,           yaxis.x,           zaxis.x,          0,
-						xaxis.y,           yaxis.y,           zaxis.y,          0,
-						xaxis.z,           yaxis.z,           zaxis.z,          0,
-						-mm::dot(xaxis, eye), -mm::dot(yaxis, eye), -mm::dot(zaxis, eye), 1.0);
-}
-
 Camera::Camera()
-:nearPlane(0.2f), farPlane(8000), pos(0, 0, 0), projType(eProjType::PERSP)
+:nearPlane(0.2f), farPlane(100), pos(0, 0, 0), projType(eProjType::PERSP)
 {
-	SetDirNormed({ 0, 0, 1 });
+	SetDirNormed({ 0, 1, 0 });
 }
 
 Camera::Camera(rProjOrtho proj, float nearPlane, float farPlane)
 :nearPlane(nearPlane), farPlane(farPlane), pos(0, 0, 0), projOrtho(proj), projType(eProjType::ORTHO)
 {
-	SetDirNormed({ 0, 0, 1 });
+	SetDirNormed({ 0, 1, 0 });
 }
 
 Camera::Camera(rProjPersp proj, float nearPlane, float farPlane)
 :nearPlane(nearPlane), farPlane(farPlane), pos(0, 0, 0), projPersp(proj), projType(eProjType::PERSP)
 {
-	SetDirNormed({ 0, 0, 1 });
+	SetDirNormed({ 0, 1, 0 });
 }
 
 void Camera::SetFOV(float rad)
@@ -104,14 +92,11 @@ void Camera::SetTarget(const mm::vec3& p)
 void Camera::SetDirNormed(const mm::vec3& p)
 {
 	// Important, roll is 0
-	const mm::vec3 up(0.0f, 1.0f, 0.0f);
+	const mm::vec3 up(0.0f, 0.0f, 1.0f);
 
-	auto mat = mm::inverse(Matrix44ViewLH(pos, pos + p, up));
+	auto mat = Matrix44ViewRH(pos, pos + p, up);
 	// TODO FIX THAT MATRIX -> QUAT NOT WORKING
 	rot = (mm::quat)mat;
-
-	//mm::vec3 asd = mm::rotate_vector(rot, mm::vec3(1, 0, 0));
-	//asd = asd;
 }
 
 void Camera::SetRot(const mm::quat& q)
@@ -138,15 +123,10 @@ mm::mat4 Camera::GetViewMatrix() const
 {
 	const Vec3 up(0.0f, 0.0f, 1.0f);
 
-	mm::vec3 frontDirNormed = mm::rotate_vector(rot, mm::vec3(0, 0, 1));
-	mm::vec3 upDirNormed = mm::vec3(0, 1, 0);// mm::rotate_vector(rot, mm::vec3(0, 0, 1));
+	mm::vec3 frontDirNormed = mm::rotate_vector(rot, mm::vec3(0, 1, 0));
+	mm::vec3 upDirNormed = mm::vec3(0, 0, 1);// mm::rotate_vector(rot, mm::vec3(0, 0, 1));
 
-	mm::mat4 mat =  Matrix44ViewLH(pos, pos + frontDirNormed, upDirNormed);
-
-	mm::vec4 vec = mat * mm::vec4(0.0, 0.0, 1.0, 1.0);
-	vec = vec;
-
-	return mat;
+	return Matrix44ViewRH(pos, pos + frontDirNormed, upDirNormed);
 }
 
 mm::mat4 Camera::GetProjMatrix(float aspectRatio) const
@@ -159,7 +139,7 @@ mm::mat4 Camera::GetProjMatrix(float aspectRatio) const
 	}
 	case eProjType::PERSP:
 	{
-		Matrix44 ad = Matrix44ProjPerspectiveLH(nearPlane, farPlane, projPersp.fovRad, aspectRatio);
+		Matrix44 ad = Matrix44ProjPerspectiveRH(nearPlane, farPlane, projPersp.fovRad, aspectRatio);
 
 		memcpy((float*)&proj[0], (float*)&ad[0], sizeof(float) * 16);
 		mm::mat4 res = proj;
@@ -186,22 +166,22 @@ mm::mat4 Camera::GetProjMatrix(float aspectRatio) const
 
 mm::vec3 Camera::GetFrontDir() const
 {
-	return mm::rotate_vector(rot, mm::vec3(0, 0, 1));
+	return mm::rotate_vector(rot, mm::vec3(0, 1, 0));
 }
 
 mm::vec3 Camera::GetBackDir() const
 {
-	return mm::rotate_vector(rot, mm::vec3(0, 0, -1));
+	return mm::rotate_vector(rot, mm::vec3(0, -1, 0));
 }
 
 mm::vec3 Camera::GetUpDir() const
 {
-	return mm::rotate_vector(rot, mm::vec3(0, 1, 0));
+	return mm::rotate_vector(rot, mm::vec3(0, 0, 1));
 }
 
 mm::vec3 Camera::GetDownDir() const
 {
-	return mm::rotate_vector(rot, mm::vec3(0, -1, 0));
+	return mm::rotate_vector(rot, mm::vec3(0, 0, -1));
 }
 
 mm::vec3 Camera::GetRightDir() const
@@ -226,5 +206,5 @@ const mm::quat& Camera::GetRot() const
 
 const mm::vec3 Camera::GetTargetPos() const
 {
-	return pos + mm::rotate_vector(rot, mm::vec3(0, 0, 1));
+	return pos + mm::rotate_vector(rot, mm::vec3(0, 1, 0));
 }

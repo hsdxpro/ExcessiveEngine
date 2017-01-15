@@ -92,16 +92,16 @@ float4 PS_MAIN(float4 posH : POSITION, float2 clipPos : TEXTURE0) : COLOR0 {
 	float4 viewTarget = mul(float4(clipPos, 0.2f, 1.0f), invViewProj);
 	viewTarget /= viewTarget.w;
 	float3 lookDir = normalize(viewTarget.xyz - camPos);
-	//lookDir = normalize(lookDir);
+	lookDir = normalize(lookDir);
 
 	// compute latitude & longitude (relative to sun) of view
-	//float viewLatitude = asin(clamp(normalize(float2(length(lookDir.xz), lookDir.y)).y, -1, -1));	
-	//float sunLatitude = asin(clamp(normalize(float2(length(-sunDir.xz), -sunDir.y)).y, -1, -1));
+	float viewLatitude = asin(clamp(normalize(float2(length(lookDir.xy), lookDir.z)).y, -1, 1));	
+	//float sunLatitude = asin(clamp(normalize(float2(length(-sunDir.xy), -sunDir.z)).y, -1, 1));
 	//float viewLongitude = 
 	//	acos(clamp(dot(normalize(float3(lookDir.xy, 0.f)), normalize(float3(sunDir.xy, 0.f))), -1, 1));
 
 	// no sky below horizon
-	if (lookDir.y < 0.0f) {
+	if (viewLatitude < 0.0f) {
 		return float4(0.6f, 0.6f, 0.6, 0.0f);
 	}
 
@@ -112,7 +112,7 @@ float4 PS_MAIN(float4 posH : POSITION, float2 clipPos : TEXTURE0) : COLOR0 {
 		d = -3.0,
 		e = 0.45; // hardcoded bullshit
 
-	float cosZenithAngle = clamp(dot(lookDir, float3(0.0f,1.0f,0.0f)), -1.0f, 1.0f);
+	float cosZenithAngle = clamp(dot(lookDir, float3(0.0f,0.0f,1.0f)), -1.0f, 1.0f);
 	float cosElementAngle = clamp(dot(-sunDir, lookDir), -1.0f, 1.0f);
 	
 	// phi: luminance graduation, f: scattering indicatrix

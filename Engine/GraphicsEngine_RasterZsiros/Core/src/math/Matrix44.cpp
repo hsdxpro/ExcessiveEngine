@@ -301,24 +301,6 @@ Matrix44& Matrix44::ProjPerspectiveRH(float nearPlane, float farPlane, float fov
 
 	return *this;
 }
-
-Matrix44& Matrix44::ProjPerspectiveLH(float nearPlane, float farPlane, float fovRad, float aspectRatio) 
-{
-	_12 = _13 = _14 = 0;
-	_21 = _23 = _24 = 0;
-	_31 = _32 = 0;
-	_41 = _42 = 0;
-
-	_11 = _22 = 1.0f / tanf(fovRad * 0.5f);
-	_11 /= aspectRatio;
-	_33 = farPlane / (farPlane - nearPlane);
-	_43 = (farPlane * nearPlane) / (nearPlane - farPlane);
-	_34 = 1;
-	_44 = 0;
-
-	return *this;
-}
-
 Matrix44& Matrix44::ProjOrtographic(float nearPlane, float farPlane, float left, float right, float bottom, float top) {
 	Vec3 center = {left + right, top + bottom, nearPlane + farPlane};
 	Vec3 dim = {right - left, top - bottom, farPlane - nearPlane};
@@ -566,12 +548,6 @@ Matrix44 Matrix44ViewRH(const Vec3& eye, const Vec3& target, const Vec3& up) {
 Matrix44 Matrix44ProjPerspectiveRH(float nearPlane, float farPlane, float fovRad, float aspectRatio) {
 	Matrix44 m;
 	m.ProjPerspectiveRH(nearPlane, farPlane, fovRad, aspectRatio);
-	return m;
-}
-
-Matrix44 Matrix44ProjPerspectiveLH(float nearPlane, float farPlane, float fovRad, float aspectRatio) {
-	Matrix44 m;
-	m.ProjPerspectiveLH(nearPlane, farPlane, fovRad, aspectRatio);
 	return m;
 }
 

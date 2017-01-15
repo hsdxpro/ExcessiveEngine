@@ -224,8 +224,7 @@ void cGraphicsEngine::cHDRProcessor::Update(float elapsedSec) {
 	adaptedLuminance = adaptedLuminance + (logAvgLum - adaptedLuminance)*(1 - exp(-elapsed / speed));
 
 	if (isnan(adaptedLuminance)) {
-		adaptedLuminance = 1.0;
-		//__debugbreak();
+		__debugbreak();
 	}
 
 	// shader constants

@@ -19,7 +19,7 @@ PlayerScript::PlayerScript()
 	bMovingLeft = false;
 	bMovingRight = false;
 	bCanJump = true;
-	playerMaxMoveSpeed = 300.f;// 0.6f;// 2.6f;
+	playerMaxMoveSpeed = 3.f;// 0.6f;// 2.6f;
 	playerMoveSpeed = playerMaxMoveSpeed;
 	pixelsToRot360 = 1000;
 
@@ -58,15 +58,15 @@ PlayerScript::PlayerScript()
 	
 	// Attach to rigid body capsule
 	camComp = playerCapsule->GetRootComponent(0)->AddComponent_Camera();
-	camComp->Move(mm::vec3(0, 1, 0));
+	camComp->Move(mm::vec3(0, 0, 1));
 
 	//ak47Graphics = camComp->AddComponent_Mesh(ak47ModelPath);
-	//ak47Graphics->SetScale(1.0 / 5);
+	////ak47Graphics->SetScale(1.0 / 5);
 	//ak47Graphics->Move(mm::vec3(0.7f, 1.5f, -0.6f));
 	//ak47Graphics->RotZ(-90);
 	//ak47Graphics->RotY(-90);
 	
-	playerCapsule->Scale(1.0 / 3);
+	//playerCapsule->Scale(1.0 / 3);
 
 	walkSound = Sound.CreateMonoSound("walk_sound.ogg", 1, true);
 	gunSound = Sound.CreateMonoSound("GUN_FIRE-stereo.ogg", 0.5);
@@ -74,7 +74,8 @@ PlayerScript::PlayerScript()
 
 	playerCapsule->SetPos(mm::vec3(0, 0, 8));
 
-	Core.SetCam(pTmpCam->GetRootComponent(0)->AsCamera());
+	Core.SetCam(camComp);
+	World.SetCam(pTmpCam->GetComponents<CameraComponent>()[0]);
 }
 
 void PlayerScript::Update(float deltaSeconds)
@@ -121,7 +122,7 @@ void PlayerScript::Update(float deltaSeconds)
 
 	move *= playerMoveSpeed;
 
-	//playerCapsule->SetVelocity(mm::vec3(move.x,playerCapsule->GetVelocity().y, move.z));
+	//playerCapsule->SetVelocity(mm::vec3(move.x, move.y, playerCapsule->GetVelocity().z));
 	pTmpCam->Move(move * deltaSeconds);
 
 	if (nButtonsDown == 1 && Input.IsKeyPressed(W) | Input.IsKeyPressed(S) | Input.IsKeyPressed(A) | Input.IsKeyPressed(D))
@@ -141,13 +142,13 @@ void PlayerScript::Update(float deltaSeconds)
 	// Squat
 	if (!bSquatting && Input.IsKeyPressed(LCTRL))
 	{
-		camComp->MoveRel(mm::vec3(0, -0.8f, 0));
+		camComp->MoveRel(mm::vec3(0, 0, -0.8f));
 		bSquatting = true;
 		playerMoveSpeed /= 2;
 	}
 	else if (bSquatting && Input.IsKeyReleased(LCTRL))
 	{
-		camComp->MoveRel(mm::vec3(0, 0.8f, 0));
+		camComp->MoveRel(mm::vec3(0, 0, 0.8f));
 		bSquatting = false;
 		playerMoveSpeed = playerMaxMoveSpeed;
 	}
@@ -230,7 +231,7 @@ void PlayerScript::Update(float deltaSeconds)
 		mm::ivec2 mouseDelta;
 		if (Input.IsMouseMove(mouseDelta))
 		{
-			static float angleY = 0;
+			static float angleZ = 0;
 			static float angleX = 0;
 
 			// Input read up finished, now we can recenter cursor for our fps game
@@ -239,18 +240,18 @@ void PlayerScript::Update(float deltaSeconds)
 			float mouseDx = mouseDelta.x;
 			float mouseDy = mouseDelta.y;
 
-			angleY += (float)mouseDx / pixelsToRot360 * 6.28;
-			angleX += (float)mouseDy / pixelsToRot360 * 6.28;
+			angleZ += -(float)mouseDx / pixelsToRot360 * 6.28;
+			angleX += -(float)mouseDy / pixelsToRot360 * 6.28;
 
 			// Clamp angleX
 			float angleSign = angleX >= 0 ? 1 : -1;
 			if (angleX * angleSign >= 3.14159265 / 2 * 0.95)
 				angleX = 3.14159265 / 2 * 0.95 * angleSign;
 
-			mm::quat rotAroundY(angleY, { 0, 1, 0 });
+			mm::quat rotAroundZ(angleZ, { 0, 0, 1 });
 			mm::quat rotAroundX(angleX, { 1, 0, 0 });
 
-			camComp->SetRot(rotAroundY * rotAroundX);
+			camComp->SetRot(rotAroundZ * rotAroundX);
 			Sys::SetCursorPos(mm::ivec2(mousePosWhenPress.x, mousePosWhenPress.y));
 		}
 	}

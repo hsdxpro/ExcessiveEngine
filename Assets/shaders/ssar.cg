@@ -120,7 +120,8 @@ float4 PS_MAIN(VS_OUT In) : COLOR0 {
 		}
 	}
 
-	return color + collectedReflectionColor * reflectFadeFactor;// TODO, glossiness
+	//return collectedReflectionColor;
+	return color + collectedReflectionColor * reflectFadeFactor * 0.1f; // TODO, glossiness
 }
 
 technique t

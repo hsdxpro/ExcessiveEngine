@@ -20,7 +20,7 @@ public:
 	struct SubMaterial
 	{
 		SubMaterial() : // default ctor won't hurt, but don't rely on it!
-			base(1, 1, 1, 1), emissive(0, 0, 0, 1), roughness(1), metallic(0), specular(0.5),
+			base(0, 0, 0, 1), emissive(0, 0, 0, 1), roughness(1), metallic(0), specular(0.5),
 			t_diffuse(nullptr), t_specular(nullptr), t_normal(nullptr), t_displace(nullptr), t_ao(nullptr) {}
 		mm::vec4 base, emissive;
 		float roughness, metallic/*a*/, specular;
