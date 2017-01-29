@@ -49,8 +49,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\ExcessiveTeam-master\Build\Debug\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Excessive-Strike.dir\Debug\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)/Build/Debug/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Excessive-Strike.dir/Debug/</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Excessive-Strike</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
@@ -70,7 +70,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Externals\include;$(SolutionDir)\Externals\source;$(SolutionDir)\Externals\source\Bullet;$(SolutionDir)\Engine\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Debug/</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -214,26 +214,8 @@
     <ProjectReference Include="F:/ExcessiveTeam-master/Engine/Core/Core.vcxproj">
       <Project>2BD4E687-702F-31A8-8E8F-1609BCA2EC1F</Project>
     </ProjectReference>
-    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/GraphicsApi_OpenGL/GraphicsApi_OpenGL.vcxproj">
-      <Project>425520D7-9632-3882-A9A7-22A6B59E13D4</Project>
-    </ProjectReference>
-    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/GraphicsEngine_Raster/GraphicsEngine_Raster.vcxproj">
-      <Project>9F8CA66F-AA4E-3FEB-9B74-3D7C834FB358</Project>
-    </ProjectReference>
-    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/GraphicsEngine_RasterZsiros/GraphicsEngine_RasterZsiros.vcxproj">
-      <Project>D1C82501-38B6-35EE-BC11-828AC5BDD53C</Project>
-    </ProjectReference>
-    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/NetworkEngine_Raknet/NetworkEngine_Raknet.vcxproj">
-      <Project>C057FC38-24F5-375E-B91F-BDAE09BEE944</Project>
-    </ProjectReference>
-    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/PhysicsEngine_Bullet/PhysicsEngine_Bullet.vcxproj">
-      <Project>4EA610D7-1297-3992-9F74-13FC439340D6</Project>
-    </ProjectReference>
     <ProjectReference Include="F:/ExcessiveTeam-master/Engine/PlatformLibrary/PlatformLibrary.vcxproj">
       <Project>B3A6A864-E1B2-3EF0-B702-EC5579C01F91</Project>
-    </ProjectReference>
-    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/SoundEngine_SFML/SoundEngine_SFML.vcxproj">
-      <Project>9EAF3D34-B87A-3FB0-B55E-95596D335D85</Project>
     </ProjectReference>
     <ProjectReference Include="F:/ExcessiveTeam-master/Engine/SupportLibrary/SupportLibrary.vcxproj">
       <Project>09E1EC87-FE83-327F-B5BF-31BBC14DACBB</Project>

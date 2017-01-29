@@ -1,5 +1,5 @@
 #pragma once
-#include "GraphicsEngine_RasterZsiros\GraphicsEngineRaster\src\ShadowMap.h"
+#include "GraphicsEngine/RasterZsiros\GraphicsEngineRaster\src\ShadowMap.h"
 
 // namespace
 namespace graphics {

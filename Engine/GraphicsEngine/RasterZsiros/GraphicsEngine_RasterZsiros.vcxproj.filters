@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{ECD885FA-5A12-3EA4-B971-22F22BB32701}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{56F76F62-91D4-3B67-B23B-D1160F9FD745}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interfaces">
+      <UniqueIdentifier>{3CB996A5-4D21-3DEC-B834-077E120727C8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CommonOS\src\Log.cpp" />
+    <ClCompile Include="Core\src\lighting\lighting.cpp" />
+    <ClCompile Include="Core\src\math\color.cpp" />
+    <ClCompile Include="Core\src\math\Matrix44.cpp" />
+    <ClCompile Include="Core\src\math\Point.cpp" />
+    <ClCompile Include="Core\src\math\quat.cpp" />
+    <ClCompile Include="Core\src\math\Vec2.cpp" />
+    <ClCompile Include="Core\src\math\vec3.cpp" />
+    <ClCompile Include="Core\src\math\Vec4.cpp" />
+    <ClCompile Include="Core\src\multithreading\spinlock.cpp" />
+    <ClCompile Include="Core\src\multithreading\ThreadPool.cpp" />
+    <ClCompile Include="Core\src\multithreading\WorkerThread.cpp" />
+    <ClCompile Include="Core\src\Camera.cpp" />
+    <ClCompile Include="Core\src\CgShaderHelper.cpp" />
+    <ClCompile Include="Core\src\common.cpp" />
+    <ClCompile Include="Core\src\CreateGAPI.cpp" />
+    <ClCompile Include="Core\src\Entity.cpp" />
+    <ClCompile Include="Core\src\Exception.cpp" />
+    <ClCompile Include="Core\src\FileUtil.cpp" />
+    <ClCompile Include="Core\src\Game.cpp" />
+    <ClCompile Include="Core\src\ILog.cpp" />
+    <ClCompile Include="Core\src\ITransformable3D.cpp" />
+    <ClCompile Include="Core\src\Level.cpp" />
+    <ClCompile Include="Core\src\LogicEngine.cpp" />
+    <ClCompile Include="Core\src\StrUtil.cpp" />
+    <ClCompile Include="Core\src\TagParser.cpp" />
+    <ClCompile Include="Core\src\Timer.cpp" />
+    <ClCompile Include="Core\src\tipsify.cpp" />
+    <ClCompile Include="Core\src\Transform3D.cpp" />
+    <ClCompile Include="Core\src\zsString.cpp" />
+    <ClCompile Include="GraphicsApiD3D11\src\DllMain.cpp" />
+    <ClCompile Include="GraphicsApiD3D11\src\GraphicsApiD3D11.cpp" />
+    <ClCompile Include="GraphicsApiD3D11\src\IndexBufferD3D11.cpp" />
+    <ClCompile Include="GraphicsApiD3D11\src\ShaderProgramD3D11.cpp" />
+    <ClCompile Include="GraphicsApiD3D11\src\Texture2DD3D11.cpp" />
+    <ClCompile Include="GraphicsApiD3D11\src\VertexBufferD3D11.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\DeferredRenderer.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\DllMain.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\GraphicsEngine.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\GraphicsEntity.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\GraphicsLight.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\GraphicsScene.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\HDRProcessor.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\PostProcessor.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\ShadowMap.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\ShadowRenderer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CommonOS\src\Log.h" />
+    <ClInclude Include="Core\src\algorithms\sort.h" />
+    <ClInclude Include="Core\src\algorithms\statistics.h" />
+    <ClInclude Include="Core\src\lighting\lighting.h" />
+    <ClInclude Include="Core\src\math\color.h" />
+    <ClInclude Include="Core\src\math\math_all.h" />
+    <ClInclude Include="Core\src\math\Matrix44.h" />
+    <ClInclude Include="Core\src\math\Point.h" />
+    <ClInclude Include="Core\src\math\quat.h" />
+    <ClInclude Include="Core\src\math\Vec2.h" />
+    <ClInclude Include="Core\src\math\vec3.h" />
+    <ClInclude Include="Core\src\math\Vec4.h" />
+    <ClInclude Include="Core\src\multithreading\spinlock.h" />
+    <ClInclude Include="Core\src\multithreading\ThreadPool.h" />
+    <ClInclude Include="Core\src\multithreading\WorkerThread.h" />
+    <ClInclude Include="Core\src\storage\tree.h" />
+    <ClInclude Include="Core\src\Camera.h" />
+    <ClInclude Include="Core\src\CgShaderHelper.h" />
+    <ClInclude Include="Core\src\common.h" />
+    <ClInclude Include="Core\src\CreateGAPI.h" />
+    <ClInclude Include="Core\src\DynamicLibrary.h" />
+    <ClInclude Include="Core\src\Entity.h" />
+    <ClInclude Include="Core\src\Exception.h" />
+    <ClInclude Include="Core\src\FileUtil.h" />
+    <ClInclude Include="Core\src\Game.h" />
+    <ClInclude Include="Core\src\GAPI.h" />
+    <ClInclude Include="Core\src\GapiResult.h" />
+    <ClInclude Include="Core\src\IGeometryBuilder.h" />
+    <ClInclude Include="Core\src\IGraphicsEntity.h" />
+    <ClInclude Include="Core\src\IGraphicsLight.h" />
+    <ClInclude Include="Core\src\ILog.h" />
+    <ClInclude Include="Core\src\INetworkEngine.h" />
+    <ClInclude Include="Core\src\IPhysicsEngine.h" />
+    <ClInclude Include="Core\src\IPhysicsEntity.h" />
+    <ClInclude Include="Core\src\ISoundEngine.h" />
+    <ClInclude Include="Core\src\ITexture2D.h" />
+    <ClInclude Include="Core\src\ITransformable3D.h" />
+    <ClInclude Include="Core\src\Level.h" />
+    <ClInclude Include="Core\src\LogicEngine.h" />
+    <ClInclude Include="Core\src\PipelineState.h" />
+    <ClInclude Include="Core\src\ResourceProperty.h" />
+    <ClInclude Include="Core\src\shared_ptr.h" />
+    <ClInclude Include="Core\src\StrUtil.h" />
+    <ClInclude Include="Core\src\TagParser.h" />
+    <ClInclude Include="Core\src\Timer.h" />
+    <ClInclude Include="Core\src\tipsify.h" />
+    <ClInclude Include="Core\src\Transform3D.h" />
+    <ClInclude Include="Core\src\Transformable.h" />
+    <ClInclude Include="Core\src\VertexFormat.h" />
+    <ClInclude Include="Core\src\zsString.h" />
+    <ClInclude Include="GraphicsApiD3D11\src\GraphicsApiD3D11.h" />
+    <ClInclude Include="GraphicsApiD3D11\src\IndexBufferD3D11.h" />
+    <ClInclude Include="GraphicsApiD3D11\src\ShaderProgramD3D11.h" />
+    <ClInclude Include="GraphicsApiD3D11\src\Texture2DD3D11.h" />
+    <ClInclude Include="GraphicsApiD3D11\src\VertexBufferD3D11.h" />
+    <ClInclude Include="GraphicsEngineRaster\src\DeferredLightVolume.h" />
+    <ClInclude Include="GraphicsEngineRaster\src\GraphicsEngine.h" />
+    <ClInclude Include="GraphicsEngineRaster\src\GraphicsEntity.h" />
+    <ClInclude Include="GraphicsEngineRaster\src\GraphicsLight.h" />
+    <ClInclude Include="GraphicsEngineRaster\src\ShadowMap.h" />
+  </ItemGroup>
+</Project>

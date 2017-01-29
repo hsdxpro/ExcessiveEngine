@@ -49,8 +49,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\ExcessiveTeam-master\Build\Debug\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Core.dir\Debug\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)/Build/Debug/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Core.dir/Debug/</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Core</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">F:\ExcessiveTeam-master\Build\PerfDebug\</OutDir>
@@ -64,7 +64,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Externals\include;$(SolutionDir)\Externals\source;$(SolutionDir)\Externals\source\Bullet;$(SolutionDir)\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Debug/</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -197,8 +197,11 @@
     <ClCompile Include="F:\ExcessiveTeam-master\Engine\Core\WorldComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/GraphicsEngine_RT/GraphicsEngine_RT.vcxproj">
-      <Project>3E6587D7-F1FA-371D-B982-0799A4A50807</Project>
+    <ProjectReference Include="..\PlatformLibrary\PlatformLibrary.vcxproj">
+      <Project>{b3a6a864-e1b2-3ef0-b702-ec5579c01f91}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\SupportLibrary\SupportLibrary.vcxproj">
+      <Project>{09e1ec87-fe83-327f-b5bf-31bbc14dacbb}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -66,7 +66,7 @@ PlayerScript::PlayerScript()
 	//ak47Graphics->RotZ(-90);
 	//ak47Graphics->RotY(-90);
 	
-	playerCapsule->Scale(1.0 / 3);
+	playerCapsule->Scale(1.0f / 3);
 
 	walkSound = Sound.CreateMonoSound("walk_sound.ogg", 1, true);
 	gunSound = Sound.CreateMonoSound("GUN_FIRE-stereo.ogg", 0.5);

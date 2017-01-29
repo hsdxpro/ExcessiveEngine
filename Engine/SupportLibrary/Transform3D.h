@@ -15,25 +15,25 @@ public:
 	inline void SetScale(const mm::vec3& scale, const mm::vec3& rootPos, const mm::quat& rootRot);
 	inline void SetSkew(const mm::mat3& m);
 
-	inline void Move(const mm::vec3& v);
-	inline void Rot(const mm::quat& q);
-	inline void Rot(const mm::quat& q, const mm::vec3& rotOrigin);
-	inline void Scale(const mm::vec3& scale, const mm::vec3& rootPos, const mm::quat& rootRot);
-	inline void Scale(const mm::vec3& scale);
+	inline  void Move(const mm::vec3& v);
+	inline  void Rot(const mm::quat& q);
+	inline  void Rot(const mm::quat& q, const mm::vec3& rotOrigin);
+	inline  void Scale(const mm::vec3& scale, const mm::vec3& rootPos, const mm::quat& rootRot);
+	inline  void Scale(const mm::vec3& scale);
 
-	inline const mm::vec3& GetPos() const;
-	inline const mm::quat& GetRot() const;
-	inline const mm::mat3& GetSkew() const;
-	inline const mm::vec3  GetScale() const;
+	inline  const mm::vec3& GetPos() const;
+	inline  const mm::quat& GetRot() const;
+	inline  const mm::mat3& GetSkew() const;
+	inline  const mm::vec3  GetScale() const;
 
-	inline mm::vec3 GetFrontDir()	const;
-	inline mm::vec3 GetBackDir()	const;
-	inline mm::vec3 GetUpDir()		const;
-	inline mm::vec3 GetDownDir()	const;
-	inline mm::vec3 GetRightDir()	const;
-	inline mm::vec3 GetLeftDir()	const;
+	inline  mm::vec3 GetFrontDir()	const;
+	inline  mm::vec3 GetBackDir()	const;
+	inline  mm::vec3 GetUpDir()		const;
+	inline  mm::vec3 GetDownDir()	const;
+	inline  mm::vec3 GetRightDir()	const;
+	inline  mm::vec3 GetLeftDir()	const;
 
-	inline Transform3D operator * (const Transform3D& b);
+	inline  Transform3D operator * (const Transform3D& b);
 
 protected:
 	mm::vec3 pos;

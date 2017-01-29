@@ -1,13 +1,12 @@
 #pragma once
 #include "Behavior.h"
-#include "CoreCommon.h"
+#include "Common.h"
 #include "WorldComponent.h"
 #include "RigidBodyComponent.h"
 
 #include <functional>
 #include "CameraComponent.h"
 #include "GameWorld.h"
-#include "PhysicsEngine\PhysicsCommon.h"
 
 class Actor
 {
@@ -74,7 +73,7 @@ public:
 	inline void RotRel(const mm::quat& q);
 	inline void ScaleRel(const mm::vec3& v);
 	
-	//inline Entity* GetParent() const { return worldEntity->GetParent(); }
+	// Entity* GetParent() const { return worldEntity->GetParent(); }
 	
 	inline const mm::vec3  GetScale() const;
 	inline const mm::mat3& GetSkew() const;
@@ -94,14 +93,14 @@ public:
 	inline mm::vec3 GetDownDir()	const;
 	inline mm::vec3 GetLeftDir()	const;
 	inline mm::vec3 GetBackDir()	const;
-	inline mm::vec3 GetUpDir()	const;
+	inline mm::vec3 GetUpDir()		const;
 	
 	// TODO
 	inline mm::vec3 GetVelocity() const;
 
 	inline const std::vector<WorldComponent*> GetComponents() const;
 
-	//inline void GetComponents(std::vector<WorldComponent*>& allComp);
+	// void GetComponents(std::vector<WorldComponent*>& allComp);
 
 	template<class T>
 	inline std::vector<T*> GetComponents() const;
@@ -467,7 +466,7 @@ void Actor::ScaleRel(const mm::vec3& v)
 	//rootComp->ScaleRel(v);
 }
 
-//inline Entity* GetParent() const { return worldEntity->GetParent(); }
+// Entity* GetParent() const { return worldEntity->GetParent(); }
 
 const mm::vec3  Actor::GetScale() const
 {
@@ -589,7 +588,7 @@ const std::vector<WorldComponent*> Actor::GetComponents() const
 	return comps;
 }
 
-//inline void GetComponents(std::vector<WorldComponent*>& allComp) 
+// void GetComponents(std::vector<WorldComponent*>& allComp) 
 //{ 
 //	static std::function<void(WorldComponent*)> collectCompsRecursively  = [&](WorldComponent* c)
 //	{

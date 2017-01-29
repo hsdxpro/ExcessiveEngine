@@ -2,29 +2,25 @@
 // The purpose of this class is to take the most minimal input from the user to (startup, use) the engine
 
 // Modules
-#include "GraphicsEngine\IGraphicsEngine.h"
-#include "PhysicsEngine\IPhysicsEngine.h"
-#include "NetworkEngine\INetworkEngine.h"
-#include "SoundEngine\ISoundEngine.h"
-#include "GraphicsEngine_Raster\GraphicsEngineRaster.h"
-#include "PhysicsEngine_Bullet\PhysicsEngineBullet.h"
-#include "NetworkEngine_RakNet\NetworkEngineRakNet.h"
-#include "SoundEngine_SFML\SoundEngineSFML.h"
+#include "GraphicsEngine/Raster/GraphicsEngineRaster.h"
+#include "GraphicsEngine/RT/GraphicsEngineRT.h"
+#include "PhysicsEngine/Bullet/PhysicsEngineBullet.h"
+#include "NetworkEngine/RakNet/NetworkEngineRakNet.h"
+#include "SoundEngine/SFML/SoundEngineSFML.h"
+#include "GuiEngine/IGuiEngine.h"
 
-//#include "Actor.h"
+#include "SupportLibrary/Importer3D.h"
+
 #include "ActorScript.h"
 #include "MeshComponent.h"
 #include "RigidBodyComponent.h"
 #include "CameraComponent.h"
 #include "Transform3DComponent.h"
-
-#include "SupportLibrary\Importer3D.h"
-#include "GraphicsEngine_RT\GraphicsEngineRT.h"
+#include "Common.h"
 
 #include <unordered_map>
 #include <vector>
 #include <functional>
-#include "CoreCommon.h"
 
 class Script;
 
@@ -34,24 +30,15 @@ public:
 	EngineCore();
 	~EngineCore();
 
-	// Init raster graphics engine, if one already exists will be destroyed, then instantiate it
+	// Init engines, old will be destroyed
 	IGraphicsEngine* InitGraphicsEngineRaster(const GraphicsEngineRasterDesc& d = GraphicsEngineRasterDesc());
-
-	// Init raster graphics engine, if one already exists will be destroyed, then instantiate it
 	IGraphicsEngine* InitGraphicsEngineRasterZsiros(const GraphicsEngineRasterDesc& d = GraphicsEngineRasterDesc());
-
-	// Init raytracer graphics engine, if one already exists will be destroyed, then instantiate it
 	IGraphicsEngine* InitGraphicsEngineRT(const rGraphicsEngineRT& d = rGraphicsEngineRT());
-	
-	// Init physics engine, if one already exists will be destroyed, then instantiate it
 	IPhysicsEngine* InitPhysicsEngineBullet(const PhysicsEngineBulletDesc& d = PhysicsEngineBulletDesc());
-	
-	// Init network engine, if one already exists will be destroyed, then instantiate it
 	INetworkEngine* InitNetworkEngineRakNet(const rNetworkEngine& d = rNetworkEngine());
-	
-	// Init network engine, if one already exists will be destroyed, then instantiate it
-	ISoundEngine* InitSoundEngineSFML(const rSoundEngine& d = rSoundEngine());
-	
+	ISoundEngine* InitSoundEngineSFML(const rSoundEngine& d = rSoundEngine());	
+	IGuiEngine* InitGuiEngine();
+
 	bool TraceClosestPoint_Physics(const mm::vec3& from, const mm::vec3& to, PhysicsTraceResult& traceResult_out, const PhysicsTraceParams& params = PhysicsTraceParams());
 
 	// Todo
@@ -98,7 +85,7 @@ public:
 	
 	void SetLayeCollision(size_t ID0, size_t ID1, bool bEnableCollision);
 	
-	inline void SetCam(CameraComponent* c)
+	void SetCam(CameraComponent* c)
 	{ 
 		assert(defaultGraphicsScene); 
 		defaultGraphicsScene->SetCamera(c->GetCam()); 
@@ -106,16 +93,16 @@ public:
 	
 	void Update(float deltaTime);
 	
-	inline Window* GetTargetWindow() 
+	Window* GetTargetWindow() 
 	{
 		assert(graphicsEngine);
 		return graphicsEngine->GetTargetWindow();
 	}
 	
-	inline IGraphicsEngine*	GetGraphicsEngine() const { return graphicsEngine; }
-	inline IPhysicsEngine*	GetPhysicsEngine() const { return physicsEngine; }
-	inline INetworkEngine*	GetNetworkEngine() const { return networkEngine; }
-	inline ISoundEngine*	GetSoundEngine() const { return soundEngine; }
+	inline IGraphicsEngine*	 GetGraphicsEngine() const { return graphicsEngine; }
+	inline IPhysicsEngine*	 GetPhysicsEngine() const { return physicsEngine; }
+	inline INetworkEngine*	 GetNetworkEngine() const { return networkEngine; }
+	inline ISoundEngine*	 GetSoundEngine() const { return soundEngine; }
 
 	inline std::vector<WorldComponent*> GetWorldComponents(eWorldComponentType type);
 	inline std::vector<WorldComponent*> GetWorldComponents();

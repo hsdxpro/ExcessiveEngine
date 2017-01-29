@@ -1,0 +1,285 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="PerfDebug|x64">
+      <Configuration>PerfDebug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGUID>{D1C82501-38B6-35EE-BC11-828AC5BDD53C}</ProjectGUID>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>GraphicsEngine_RasterZsiros</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\ExcessiveTeam-master\Build\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">GraphicsEngine_RasterZsiros.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">GraphicsEngine_RasterZsiros</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">F:\ExcessiveTeam-master\Build\PerfDebug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">GraphicsEngine_RasterZsiros.dir\PerfDebug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">GraphicsEngine_RasterZsiros</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\ExcessiveTeam-master\Build\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">GraphicsEngine_RasterZsiros.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">GraphicsEngine_RasterZsiros</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Externals\include;$(SolutionDir)\Externals\source;$(SolutionDir)\Externals\source\Bullet;$(SolutionDir)\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Debug/</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;EXCESSIVE_DEBUG;EXCESSIVE_ASSET_DIR="F:/ExcessiveTeam-master/Assets/";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;EXCESSIVE_DEBUG;EXCESSIVE_ASSET_DIR=\"F:/ExcessiveTeam-master/Assets/\";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions> /machine:x64 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>$(SolutionDir)/Externals/lib/win_msvc14_64/DX11/d3d11.lib;$(SolutionDir)/Externals/lib/win_msvc14_64/DX11/d3dcompiler.lib;$(SolutionDir)/Externals/lib/win_msvc14_64/DX11/d3dx11.lib;$(SolutionDir)/Externals/lib/win_msvc14_64/DX11/DxErr.lib;$(SolutionDir)/Externals/lib/win_msvc14_64/DX11/dxgi.lib;$(SolutionDir)/Externals/lib/win_msvc14_64/DX11/dxguid.lib;$(SolutionDir)/Externals/lib/win_msvc14_64/Cg/cg.lib;$(SolutionDir)/Externals/lib/win_msvc14_64/Cg/cgD3D11.lib;$(SolutionDir)/Externals/lib/win_msvc14_64/Cg/cgGL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>PerfDebug/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EXCESSIVE_PERFDEBUG;EXCESSIVE_ASSET_DIR="F:/ExcessiveTeam-master/Assets/";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR="PerfDebug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EXCESSIVE_PERFDEBUG;EXCESSIVE_ASSET_DIR=\"F:/ExcessiveTeam-master/Assets/\";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR=\"PerfDebug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions> /machine:x64 %(AdditionalOptions)</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Release/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EXCESSIVE_RELEASE;EXCESSIVE_ASSET_DIR="F:/ExcessiveTeam-master/Assets/";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR="Release";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EXCESSIVE_RELEASE;EXCESSIVE_ASSET_DIR=\"F:/ExcessiveTeam-master/Assets/\";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions> /machine:x64 %(AdditionalOptions)</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/PlatformLibrary/PlatformLibrary.vcxproj">
+      <Project>B3A6A864-E1B2-3EF0-B702-EC5579C01F91</Project>
+    </ProjectReference>
+    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/SupportLibrary/SupportLibrary.vcxproj">
+      <Project>09E1EC87-FE83-327F-B5BF-31BBC14DACBB</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CommonOS\src\Log.cpp" />
+    <ClCompile Include="Core\src\Camera.cpp" />
+    <ClCompile Include="Core\src\CgShaderHelper.cpp" />
+    <ClCompile Include="Core\src\common.cpp" />
+    <ClCompile Include="Core\src\CreateGAPI.cpp" />
+    <ClCompile Include="Core\src\Entity.cpp" />
+    <ClCompile Include="Core\src\Exception.cpp" />
+    <ClCompile Include="Core\src\FileUtil.cpp" />
+    <ClCompile Include="Core\src\Game.cpp" />
+    <ClCompile Include="Core\src\ILog.cpp" />
+    <ClCompile Include="Core\src\ITransformable3D.cpp" />
+    <ClCompile Include="Core\src\Level.cpp" />
+    <ClCompile Include="Core\src\lighting\lighting.cpp" />
+    <ClCompile Include="Core\src\LogicEngine.cpp" />
+    <ClCompile Include="Core\src\math\color.cpp" />
+    <ClCompile Include="Core\src\math\Matrix44.cpp" />
+    <ClCompile Include="Core\src\math\Point.cpp" />
+    <ClCompile Include="Core\src\math\quat.cpp" />
+    <ClCompile Include="Core\src\math\Vec2.cpp" />
+    <ClCompile Include="Core\src\math\vec3.cpp" />
+    <ClCompile Include="Core\src\math\Vec4.cpp" />
+    <ClCompile Include="Core\src\multithreading\spinlock.cpp" />
+    <ClCompile Include="Core\src\multithreading\ThreadPool.cpp" />
+    <ClCompile Include="Core\src\multithreading\WorkerThread.cpp" />
+    <ClCompile Include="Core\src\StrUtil.cpp" />
+    <ClCompile Include="Core\src\TagParser.cpp" />
+    <ClCompile Include="Core\src\Timer.cpp" />
+    <ClCompile Include="Core\src\tipsify.cpp" />
+    <ClCompile Include="Core\src\Transform3D.cpp" />
+    <ClCompile Include="Core\src\zsString.cpp" />
+    <ClCompile Include="GraphicsApiD3D11\src\DllMain.cpp" />
+    <ClCompile Include="GraphicsApiD3D11\src\GraphicsApiD3D11.cpp" />
+    <ClCompile Include="GraphicsApiD3D11\src\IndexBufferD3D11.cpp" />
+    <ClCompile Include="GraphicsApiD3D11\src\ShaderProgramD3D11.cpp" />
+    <ClCompile Include="GraphicsApiD3D11\src\Texture2DD3D11.cpp" />
+    <ClCompile Include="GraphicsApiD3D11\src\VertexBufferD3D11.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\DeferredRenderer.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\DllMain.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\GraphicsEngine.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\GraphicsEntity.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\GraphicsLight.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\GraphicsScene.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\HDRProcessor.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\PostProcessor.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\ShadowMap.cpp" />
+    <ClCompile Include="GraphicsEngineRaster\src\ShadowRenderer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CommonOS\src\Log.h" />
+    <ClInclude Include="Core\src\algorithms\sort.h" />
+    <ClInclude Include="Core\src\algorithms\statistics.h" />
+    <ClInclude Include="Core\src\Camera.h" />
+    <ClInclude Include="Core\src\CgShaderHelper.h" />
+    <ClInclude Include="Core\src\common.h" />
+    <ClInclude Include="Core\src\CreateGAPI.h" />
+    <ClInclude Include="Core\src\DynamicLibrary.h" />
+    <ClInclude Include="Core\src\Entity.h" />
+    <ClInclude Include="Core\src\Exception.h" />
+    <ClInclude Include="Core\src\FileUtil.h" />
+    <ClInclude Include="Core\src\Game.h" />
+    <ClInclude Include="Core\src\GAPI.h" />
+    <ClInclude Include="Core\src\GapiResult.h" />
+    <ClInclude Include="Core\src\IGeometryBuilder.h" />
+    <ClInclude Include="Core\src\IGraphicsEntity.h" />
+    <ClInclude Include="Core\src\IGraphicsLight.h" />
+    <ClInclude Include="Core\src\ILog.h" />
+    <ClInclude Include="Core\src\INetworkEngine.h" />
+    <ClInclude Include="Core\src\IPhysicsEngine.h" />
+    <ClInclude Include="Core\src\IPhysicsEntity.h" />
+    <ClInclude Include="Core\src\ISoundEngine.h" />
+    <ClInclude Include="Core\src\ITexture2D.h" />
+    <ClInclude Include="Core\src\ITransformable3D.h" />
+    <ClInclude Include="Core\src\Level.h" />
+    <ClInclude Include="Core\src\lighting\lighting.h" />
+    <ClInclude Include="Core\src\LogicEngine.h" />
+    <ClInclude Include="Core\src\math\color.h" />
+    <ClInclude Include="Core\src\math\math_all.h" />
+    <ClInclude Include="Core\src\math\Matrix44.h" />
+    <ClInclude Include="Core\src\math\Point.h" />
+    <ClInclude Include="Core\src\math\quat.h" />
+    <ClInclude Include="Core\src\math\Vec2.h" />
+    <ClInclude Include="Core\src\math\vec3.h" />
+    <ClInclude Include="Core\src\math\Vec4.h" />
+    <ClInclude Include="Core\src\multithreading\spinlock.h" />
+    <ClInclude Include="Core\src\multithreading\ThreadPool.h" />
+    <ClInclude Include="Core\src\multithreading\WorkerThread.h" />
+    <ClInclude Include="Core\src\PipelineState.h" />
+    <ClInclude Include="Core\src\ResourceProperty.h" />
+    <ClInclude Include="Core\src\shared_ptr.h" />
+    <ClInclude Include="Core\src\storage\tree.h" />
+    <ClInclude Include="Core\src\StrUtil.h" />
+    <ClInclude Include="Core\src\TagParser.h" />
+    <ClInclude Include="Core\src\Timer.h" />
+    <ClInclude Include="Core\src\tipsify.h" />
+    <ClInclude Include="Core\src\Transform3D.h" />
+    <ClInclude Include="Core\src\Transformable.h" />
+    <ClInclude Include="Core\src\VertexFormat.h" />
+    <ClInclude Include="Core\src\zsString.h" />
+    <ClInclude Include="GraphicsApiD3D11\src\GraphicsApiD3D11.h" />
+    <ClInclude Include="GraphicsApiD3D11\src\IndexBufferD3D11.h" />
+    <ClInclude Include="GraphicsApiD3D11\src\ShaderProgramD3D11.h" />
+    <ClInclude Include="GraphicsApiD3D11\src\Texture2DD3D11.h" />
+    <ClInclude Include="GraphicsApiD3D11\src\VertexBufferD3D11.h" />
+    <ClInclude Include="GraphicsEngineRaster\src\DeferredLightVolume.h" />
+    <ClInclude Include="GraphicsEngineRaster\src\GraphicsEngine.h" />
+    <ClInclude Include="GraphicsEngineRaster\src\GraphicsEntity.h" />
+    <ClInclude Include="GraphicsEngineRaster\src\GraphicsLight.h" />
+    <ClInclude Include="GraphicsEngineRaster\src\ShadowMap.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

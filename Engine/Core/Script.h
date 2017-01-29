@@ -7,7 +7,7 @@
 #include "PhysicsCore.h"
 #include "SoundCore.h"
 #include "NetworkCore.h"
-#include "CoreCommon.h"
+#include "Common.h"
 
 class Script
 {

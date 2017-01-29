@@ -284,7 +284,7 @@ void BinarySerializer::PushBack(Iter first, Iter last) {
 
 
 template <class T>
-inline BinarySerializer::iterator_base<T> operator+(
+ BinarySerializer::iterator_base<T> operator+(
 	typename BinarySerializer::iterator_base<T>::difference_type n,
 	const BinarySerializer::iterator_base<T>& it)
 {

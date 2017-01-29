@@ -16,7 +16,7 @@ public:
 	inline Script* AddScript();
 
 	inline Actor* AddActor();
-	//inline Actor* AddActor(WorldComponent* rootComp);
+	// Actor* AddActor(WorldComponent* rootComp);
 	inline Actor* AddActor(const std::string& modelFilePath, float mass = 0);
 	inline Actor* AddActor_Mesh(const std::string& modelFilePath);
 	inline Actor* AddActor_RigidBody(const std::string& modelFilePath, float mass = 0);
@@ -115,5 +115,5 @@ void GameWorld::SetCam(CameraComponent* c)
 
 bool GameWorld::TraceClosestPoint_Physics(const mm::vec3& from, const mm::vec3& to, PhysicsTraceResult& traceInfo_out)
 {
-	Core.TraceClosestPoint_Physics(from, to, traceInfo_out);
+	return Core.TraceClosestPoint_Physics(from, to, traceInfo_out);
 }

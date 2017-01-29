@@ -1,5 +1,4 @@
-#ifndef BasicTypes_h
-#define BasicTypes_h
+#pragma once
 
 #include <cstdint>
 
@@ -91,6 +90,3 @@ inline f64 swapF64(f64 val)
   conv.as_u64 = swapU64(conv.as_u64);
   return conv.as_f64;
 }
-
-
-#endif

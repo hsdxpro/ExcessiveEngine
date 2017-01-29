@@ -1,12 +1,12 @@
 #include "EngineCore.h"
-#include "PhysicsEngine\PhysicsCommon.h"
-#include "PlatformLibrary\Sys.h"
-#include "PlatformLibrary\File.h"
-#include "SupportLibrary\VisualCpuProfiler.h"
+#include "PhysicsEngine/Common.h"
+#include "PlatformLibrary/Sys.h"
+#include "PlatformLibrary/File.h"
+#include "SupportLibrary/VisualCpuProfiler.h"
 #include "Script.h"
 #include "Actor.h"
-#include "GraphicsApi_OpenGL/GapiGL.h"
-#include "GraphicsEngine_RasterZsiros\GraphicsEngineRaster\src\GraphicsEngine.h"
+#include "GraphicsApi/OpenGL/GapiGL.h"
+#include "GraphicsEngine/RasterZsiros/GraphicsEngineRaster\src\GraphicsEngine.h"
 
 #include <array>
 
@@ -132,6 +132,18 @@ ISoundEngine* EngineCore::InitSoundEngineSFML(const rSoundEngine& d /*= rSoundEn
 	defaultSoundScene = soundEngine->CreateScene();
 
 	return soundEngine;
+}
+
+IGuiEngine* EngineCore::InitGuiEngine()
+{
+	//if(guiEngine)
+	//	guiEngine->Release();
+	//
+	//guiEngine = new GuiEngineDx11();
+	//
+	//return guiEngine;
+
+	return nullptr;
 }
 
 bool EngineCore::TraceClosestPoint_Physics(const mm::vec3& from, const mm::vec3& to, PhysicsTraceResult& traceResult_out, const PhysicsTraceParams& params /*= PhysicsTraceParams()*/)

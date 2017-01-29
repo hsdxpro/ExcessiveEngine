@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="DllMain">
+      <UniqueIdentifier>{259eba4a-2a90-4c6b-8289-3f36545ff374}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buffers">
+      <UniqueIdentifier>{4a857bbd-8309-4376-ac19-917d8f35db81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Textures">
+      <UniqueIdentifier>{9986b3f9-4628-4480-8b96-5928958c3fef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShaderProgram">
+      <UniqueIdentifier>{f8d0ed1b-b5b4-467e-a7ce-ba703d3fb56a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\DllMain.cpp">
+      <Filter>DllMain</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GraphicsApiD3D11.cpp" />
+    <ClCompile Include="src\IndexBufferD3D11.cpp">
+      <Filter>Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VertexBufferD3D11.cpp">
+      <Filter>Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShaderProgramD3D11.cpp">
+      <Filter>ShaderProgram</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture2DD3D11.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\GraphicsApiD3D11.h" />
+    <ClInclude Include="src\IndexBufferD3D11.h">
+      <Filter>Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VertexBufferD3D11.h">
+      <Filter>Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ShaderProgramD3D11.h">
+      <Filter>ShaderProgram</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture2DD3D11.h">
+      <Filter>Textures</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

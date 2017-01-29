@@ -93,6 +93,7 @@
     </Midl>
     <Lib>
       <AdditionalOptions> /machine:x64 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>$(SolutionDir)/Externals/lib/win_msvc14_64/assimp.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">

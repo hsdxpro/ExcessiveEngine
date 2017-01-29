@@ -36,14 +36,14 @@ namespace my
   };
 
   template<>
-  inline Logger& Logger::operator<<( impl::locker message )
+   Logger& Logger::operator<<( impl::locker message )
   {
     impl::mtx.lock();
     return *this;
   }
 
   template<>
-  inline Logger& Logger::operator<<( impl::unlocker message )
+   Logger& Logger::operator<<( impl::unlocker message )
   {
     impl::mtx.unlock();
     return *this;
@@ -63,14 +63,14 @@ namespace my
   };
 
   template<>
-  inline WLogger& WLogger::operator<<( impl::locker message )
+   WLogger& WLogger::operator<<( impl::locker message )
   {
     impl::mtx.lock();
     return *this;
   }
 
   template<>
-  inline WLogger& WLogger::operator<<( impl::unlocker message )
+   WLogger& WLogger::operator<<( impl::unlocker message )
   {
     impl::mtx.unlock();
     return *this;

@@ -1,6 +1,6 @@
 #pragma once
-#include "GraphicsEngine_Raster\Entity.h"
-#include "SupportLibrary\ICamera.h"
+#include "GraphicsEngine/Raster/Entity.h"
+#include "SupportLibrary/ICamera.h"
 
 #include <unordered_set>
 #include "ILight.h"

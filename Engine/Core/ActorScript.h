@@ -9,9 +9,9 @@ public:
 public:
 	virtual void Update(float deltaTime){}
 
-	inline void SetActor(Actor* a) { actor = a; }
+	 void SetActor(Actor* a) { actor = a; }
 
-	inline Actor* GetActor() {return actor;}
+	 Actor* GetActor() {return actor;}
 
 protected:
 	Actor* actor;

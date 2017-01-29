@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="..\Common.h" />
+    <ClInclude Include="..\IPhysicsEngine.h" />
+    <ClInclude Include="..\IRigidBodyEntity.h" />
+    <ClInclude Include="..\ISoftBodyEntity.h" />
+    <ClInclude Include="PhysicsEngineBullet.h">
+      <Filter>Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsEngineBulletDebugGatherer.h">
+      <Filter>Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBodyEntity.h">
+      <Filter>Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftBodyEntity.h">
+      <Filter>Bullet</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Bullet">
+      <UniqueIdentifier>{49939576-ED7C-35A9-9609-86A67411B9AB}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="PhysicsEngineBullet.cpp">
+      <Filter>Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBodyEntity.cpp">
+      <Filter>Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="SoftBodyEntity.cpp">
+      <Filter>Bullet</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

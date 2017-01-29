@@ -5,8 +5,8 @@
 class Color
 {
 public:
-	inline Color() {}
-	inline Color(u8 r, u8 g, u8 b, u8 a) : r(r), g(g), b(b), a(a) {}
+	 Color() {}
+	 Color(u8 r, u8 g, u8 b, u8 a) : r(r), g(g), b(b), a(a) {}
 
 	u8 r;
 	u8 g;
@@ -21,9 +21,9 @@ public:
 	static Color BLUE;
 };
 
-struct rRectNormed
+struct RectNormed
 {
-	rRectNormed() :bottomLeftPercentNormed(0, 0), topRightPercentNormed(1, 1) {}
+	RectNormed() :bottomLeftPercentNormed(0, 0), topRightPercentNormed(1, 1) {}
 
 	mm::vec2 bottomLeftPercentNormed;
 	mm::vec2 topRightPercentNormed;

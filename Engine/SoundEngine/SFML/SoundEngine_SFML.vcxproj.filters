@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="SFML">
+      <UniqueIdentifier>{9de0eb24-e520-4869-97ee-f1a80c7b13ec}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SFMLSoundWrapper.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundData.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundEngineSFML.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundScene.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="Emitter.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="Listener.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="SFMLCommonSoundData.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="SFMLCommonSoundEmitter.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="SFMLMusicData.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="SFMLMusicWrapper.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="SFMLSoundData.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SFMLSoundWrapper.h">
+      <Filter>SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundData.h">
+      <Filter>SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEngineSFML.h">
+      <Filter>SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundScene.h">
+      <Filter>SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="Emitter.h">
+      <Filter>SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="Listener.h">
+      <Filter>SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="SFMLCommonSoundData.h">
+      <Filter>SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="SFMLCommonSoundEmitter.h">
+      <Filter>SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="SFMLMusicData.h">
+      <Filter>SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="SFMLMusicWrapper.h">
+      <Filter>SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="SFMLSoundData.h">
+      <Filter>SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ISoundEngine.h" />
+    <ClInclude Include="..\IEmitter.h" />
+    <ClInclude Include="..\IListener.h" />
+    <ClInclude Include="..\IScene.h" />
+    <ClInclude Include="..\ISoundData.h" />
+  </ItemGroup>
+</Project>

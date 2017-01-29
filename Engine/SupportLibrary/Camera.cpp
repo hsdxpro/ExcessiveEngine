@@ -3,8 +3,8 @@
 
 #include <cassert>
 #include "mymath/mm_quat_func.h"
-#include "GraphicsEngine_RasterZsiros/Core/src/math/Matrix44.h"
-#include "GraphicsEngine_RasterZsiros/Core/src/math/vec3.h"
+#include "GraphicsEngine/RasterZsiros/Core/src/math/vec3.h"
+#include "GraphicsEngine/RasterZsiros/Core/src/math/Matrix44.h"
 
 // TODO REMOVE IT OR I KILL MYSELF
 //mm::mat4 Matrix44ViewRHGL(const mm::vec3& eye, const mm::vec3& target, const mm::vec3& up)

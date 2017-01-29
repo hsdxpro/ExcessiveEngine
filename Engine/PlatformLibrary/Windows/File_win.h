@@ -98,7 +98,7 @@ public:
 		fileStream.read((char*)data_out.c_str(), strLenWithTerminator * sizeof(wchar_t));
 	}
 
-	inline static i64 GetSize(const std::string& filePath)
+	 static i64 GetSize(const std::string& filePath)
 	{
 		struct stat results;
 		if (stat(filePath.c_str(), &results) == 0)
@@ -107,7 +107,7 @@ public:
 			return -1;
 	}
 
-	inline static bool IsExists(const std::string& filePath)
+	 static bool IsExists(const std::string& filePath)
 	{
 		std::fstream is(filePath.c_str(), std::ios_base::in);
 		bool isOpen = is.is_open();

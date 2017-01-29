@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\GraphicsEntity.cpp" />
+    <ClCompile Include="src\GraphicsLight.cpp" />
+    <ClCompile Include="src\PostProcessor.cpp" />
+    <ClCompile Include="src\DeferredRenderer.cpp" />
+    <ClCompile Include="src\DllMain.cpp" />
+    <ClCompile Include="src\Geometry.cpp" />
+    <ClCompile Include="src\GraphicsEngine.cpp" />
+    <ClCompile Include="src\GraphicsScene.cpp" />
+    <ClCompile Include="src\HDRProcessor.cpp" />
+    <ClCompile Include="src\InstanceGroup.cpp" />
+    <ClCompile Include="src\ResourceManager.cpp" />
+    <ClCompile Include="src\ResourceReference.cpp" />
+    <ClCompile Include="src\SceneManager.cpp" />
+    <ClCompile Include="src\Material.cpp" />
+    <ClCompile Include="src\ShadowMap.cpp" />
+    <ClCompile Include="src\ShadowRenderer.cpp" />
+    <ClCompile Include="src\UserGeometry.cpp" />
+    <ClCompile Include="src\_GeometryBuilder.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\GraphicsEntity.h" />
+    <ClInclude Include="src\GraphicsLight.h" />
+    <ClInclude Include="src\ShadowMap.h" />
+    <ClInclude Include="src\UserGeometry.h" />
+    <ClInclude Include="src\DeferredLightVolume.h" />
+    <ClInclude Include="src\Geometry.h" />
+    <ClInclude Include="src\GraphicsEngine.h" />
+    <ClInclude Include="src\InstanceGroup.h" />
+    <ClInclude Include="src\ResourceManager.h" />
+    <ClInclude Include="src\ResourceReference.h" />
+    <ClInclude Include="src\SceneManager.h" />
+    <ClInclude Include="src\Material.h" />
+    <ClInclude Include="src\_GeometryBuilder.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\TechDemo\shaders\BRDF.cg" />
+    <None Include="..\TechDemo\shaders\common_color.cginc" />
+    <None Include="..\TechDemo\shaders\deferred_gbuffer.cg" />
+    <None Include="..\TechDemo\shaders\deferred_gbuffer_material.cginc" />
+    <None Include="..\TechDemo\shaders\deferred_lightpass_cmn.cginc" />
+    <None Include="..\TechDemo\shaders\deferred_light_ambient.cg" />
+    <None Include="..\TechDemo\shaders\deferred_light_dir.cg" />
+    <None Include="..\TechDemo\shaders\deferred_light_point.cg" />
+    <None Include="..\TechDemo\shaders\deferred_light_spot.cg" />
+    <None Include="..\TechDemo\shaders\common.cginc" />
+    <None Include="..\TechDemo\shaders\dof.cg" />
+    <None Include="..\TechDemo\shaders\dof_bokeh.cg" />
+    <None Include="..\TechDemo\shaders\dof_focal_plane_adaption.cg" />
+    <None Include="..\TechDemo\shaders\fxaa.cg" />
+    <None Include="..\TechDemo\shaders\hbao.cg" />
+    <None Include="..\TechDemo\shaders\hbao_blur_hor.cg" />
+    <None Include="..\TechDemo\shaders\hbao_blur_ver.cg" />
+    <None Include="..\TechDemo\shaders\hdr_blur_horiz.cg" />
+    <None Include="..\TechDemo\shaders\hdr_blur_vert.cg" />
+    <None Include="..\TechDemo\shaders\hdr_compose.cg" />
+    <None Include="..\TechDemo\shaders\hdr_luminance_avg.cg" />
+    <None Include="..\TechDemo\shaders\hdr_luminance_sample.cg" />
+    <None Include="..\TechDemo\shaders\hdr_overbright_downsample.cg" />
+    <None Include="..\TechDemo\shaders\motion_blur.cg" />
+    <None Include="..\TechDemo\shaders\motion_blur_camera_2dvelocity.cg" />
+    <None Include="..\TechDemo\shaders\motion_blur_object_2dvelocity.cg" />
+    <None Include="..\TechDemo\shaders\sao.cg" />
+    <None Include="..\TechDemo\shaders\screen_copy.cg" />
+    <None Include="..\TechDemo\shaders\shadowmap_cmn.cginc" />
+    <None Include="..\TechDemo\shaders\shadowmap_render_dir.cg" />
+    <None Include="..\TechDemo\shaders\sky.cg" />
+    <None Include="..\TechDemo\shaders\ssao.cg" />
+    <None Include="..\TechDemo\shaders\ssar.cg" />
+    <None Include="..\TechDemo\shaders\ssdo.cg" />
+    <None Include="..\TechDemo\shaders\ssvr.cg" />
+    <None Include="..\TechDemo\shaders\tone_mapping.cginc" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{593438BA-D952-4A17-AD30-7C261AB425EC}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>GraphicsEngine</RootNamespace>
+    <ProjectName>GraphicsEngineRaster</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)\..\Externals\boost_1_55_0;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Configuration)_\</OutDir>
+    <IntDir>$(Configuration)_\</IntDir>
+    <LibraryPath>$(SolutionDir)\..\Externals\boost_1_55_0\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SolutionDir)\..\Externals\boost_1_55_0;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Configuration)_\</OutDir>
+    <IntDir>$(Configuration)_\</IntDir>
+    <LibraryPath>$(SolutionDir)\..\Externals\boost_1_55_0\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;GRAPHICSENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\Externals\</AdditionalIncludeDirectories>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <BrowseInformation>true</BrowseInformation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(OutDir)\Core.lib;$(SolutionDir)\..\Externals\ASSIMP\lib\assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <Profile>true</Profile>
+    </Link>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;GRAPHICSENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\Externals\</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <BrowseInformation>true</BrowseInformation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>$(OutDir)\Core.lib;$(SolutionDir)\..\Externals\ASSIMP\lib\assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Profile>true</Profile>
+    </Link>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

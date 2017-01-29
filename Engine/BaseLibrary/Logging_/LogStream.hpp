@@ -64,7 +64,7 @@ private:
 	/// <summary> Does exactly what you think it does. 
 	/// Okay... it creates a LogStream with specified pipe associated.
 	/// </summary>
-	inline static LogStream Construct(std::shared_ptr<LogPipe> pipe) {
+	 static LogStream Construct(std::shared_ptr<LogPipe> pipe) {
 		return LogStream(pipe);
 	}
 };
