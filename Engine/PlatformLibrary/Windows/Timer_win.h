@@ -1,6 +1,6 @@
 // Windows implementation of high resolution timer
 #pragma once
-#include "..\..\SupportLibrary\BasicTypes.h"
+#include "..\..\BaseLibrary\Types.h"
 #include <chrono>
 
 class Timer

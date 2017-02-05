@@ -2,11 +2,11 @@
 
 #include "PhysicsEngine/IRigidBodyEntity.h"
 
-#include "SupportLibrary\BasicTypes.h"
+#include "BaseLibrary\Types.h"
 
 #include "Bullet\BulletDynamics\Dynamics\btRigidBody.h"
 #include "BulletCollision/CollisionShapes/btCollisionShape.h"
-#include "SupportLibrary/VisualCpuProfiler.h"
+#include "BaseLibrary/VisualCpuProfiler.h"
 #include "BulletCollision/CollisionShapes/btConvexHullShape.h"
 #include "BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h"
 #include "BulletCollision/CollisionShapes/btCapsuleShape.h"

@@ -83,12 +83,12 @@ void cGraphicsEngine::cHDRProcessor::LoadShaders() {
 		return SafeLoadShader(gApi, shader);
 	};
 	try {
-		shaderLumSample = Create(L"shaders/hdr_luminance_sample.cg");
-		shaderLumAvg = Create(L"shaders/hdr_luminance_avg.cg");
-		shaderCompose = Create(L"shaders/hdr_compose.cg");
-		shaderBlurHoriz = Create(L"shaders/hdr_blur_horiz.cg");
-		shaderBlurVert = Create(L"shaders/hdr_blur_vert.cg");
-		shaderOverbright = Create(L"shaders/hdr_overbright_downsample.cg");
+		shaderLumSample = Create(L"Shaders/hdr_luminance_sample.cg");
+		shaderLumAvg = Create(L"Shaders/hdr_luminance_avg.cg");
+		shaderCompose = Create(L"Shaders/hdr_compose.cg");
+		shaderBlurHoriz = Create(L"Shaders/hdr_blur_horiz.cg");
+		shaderBlurVert = Create(L"Shaders/hdr_blur_vert.cg");
+		shaderOverbright = Create(L"Shaders/hdr_overbright_downsample.cg");
 	}
 	catch (...) {
 		UnloadShaders();
@@ -113,12 +113,12 @@ void cGraphicsEngine::cHDRProcessor::ReloadShaders() {
 		(*prog)->Release();
 		*prog = tmp;
 	};
-	Reload(&shaderLumSample, L"shaders/hdr_luminance_sample.cg");
-	Reload(&shaderLumAvg, L"shaders/hdr_luminance_avg.cg");
-	Reload(&shaderCompose, L"shaders/hdr_compose.cg");
-	Reload(&shaderBlurHoriz, L"shaders/hdr_blur_horiz.cg");
-	Reload(&shaderBlurVert, L"shaders/hdr_blur_vert.cg");
-	Reload(&shaderOverbright, L"shaders/hdr_overbright_downsample.cg");
+	Reload(&shaderLumSample, L"Shaders/hdr_luminance_sample.cg");
+	Reload(&shaderLumAvg, L"Shaders/hdr_luminance_avg.cg");
+	Reload(&shaderCompose, L"Shaders/hdr_compose.cg");
+	Reload(&shaderBlurHoriz, L"Shaders/hdr_blur_horiz.cg");
+	Reload(&shaderBlurVert, L"Shaders/hdr_blur_vert.cg");
+	Reload(&shaderOverbright, L"Shaders/hdr_overbright_downsample.cg");
 }
 
 
@@ -261,7 +261,7 @@ void cGraphicsEngine::cHDRProcessor::Update(float elapsedSec) {
 	// compose to destination buffer
 	shaderConstants.avgLum = pow(10.0f, adaptedLuminance);
 	// blueshift: mesopic range from -2.3 to 0.7 mcd/m2
-	shaderConstants.blueShift = 1.0f - min(mm::max((adaptedLuminance + 2.3f) / (0.7f + 2.3f), 0.0f), 1.0f);
+	shaderConstants.blueShift = 1.0f - mm::min(mm::max((adaptedLuminance + 2.3f) / (0.7f + 2.3f), 0.0f), 1.0f);
 
 	gApi->SetRenderTargets(1, &dest);
 	gApi->SetShaderProgram(shaderCompose);

@@ -281,22 +281,22 @@ void cGraphicsEngine::cDeferredRenderer::ReloadShaders() {
 	};
 
 	try {
-		Reload(&shaderGBuffer, L"shaders/deferred_gbuffer.cg");
+		Reload(&shaderGBuffer, L"Shaders/deferred_gbuffer.cg");
 
-		Reload(&shaderAmbient, L"shaders/deferred_light_ambient.cg");
-		Reload(&shaderDirectional, L"shaders/deferred_light_dir.cg");
-		Reload(&shaderPoint, L"shaders/deferred_light_point.cg");
-		Reload(&shaderSpot, L"shaders/deferred_light_spot.cg");
+		Reload(&shaderAmbient, L"Shaders/deferred_light_ambient.cg");
+		Reload(&shaderDirectional, L"Shaders/deferred_light_dir.cg");
+		Reload(&shaderPoint, L"Shaders/deferred_light_point.cg");
+		Reload(&shaderSpot, L"Shaders/deferred_light_spot.cg");
 
-		Reload(&shaderSky, L"shaders/sky.cg");
+		Reload(&shaderSky, L"Shaders/sky.cg");
 
-		Reload(&shaderSSAO, L"shaders/ssao.cg");
-		Reload(&shaderSAO, L"shaders/sao.cg");
-		Reload(&shaderHBAO, L"shaders/hbao.cg");
-		Reload(&shaderSSDO, L"shaders/ssdo.cg");
+		Reload(&shaderSSAO, L"Shaders/ssao.cg");
+		Reload(&shaderSAO, L"Shaders/sao.cg");
+		Reload(&shaderHBAO, L"Shaders/hbao.cg");
+		Reload(&shaderSSDO, L"Shaders/ssdo.cg");
 
-		Reload(&shaderHBAOblurHor, L"shaders/hbao_blur_hor.cg");
-		Reload(&shaderHBAOblurVer, L"shaders/hbao_blur_ver.cg");
+		Reload(&shaderHBAOblurHor, L"Shaders/hbao_blur_hor.cg");
+		Reload(&shaderHBAOblurVer, L"Shaders/hbao_blur_ver.cg");
 	}
 	catch (...) {
 		UnloadShaders();
@@ -442,7 +442,6 @@ void cGraphicsEngine::cDeferredRenderer::RenderComposition(Scene& scene)
 			mm::mat4 rotMat = mm::mat4(entity->GetRot());
 			mm::mat4 skewMat = mm::mat4(entity->GetSkew());
 			mm::mat4 worldMat = posMat * (rotMat * skewMat);
-			worldMat = mm::mat4::identity;
 
 			// cbuffer
 			struct {

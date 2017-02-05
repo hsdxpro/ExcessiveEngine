@@ -276,9 +276,9 @@ void cGraphicsEngine::cPostProcessor::ProcessDOF(float frameDeltaTime, const Cam
 	dofConstants.minusInvTexHeight = -dofConstants.invTexHeight;
 	dofConstants.frameDeltaTime = frameDeltaTime;
 	dofConstants.retinaLensDist = 0.019f;
-	dofConstants.aperture = 0.025f; // Linearly increases CoC
+	dofConstants.aperture = 0.025f * 100; // Linearly increases CoC
 	dofConstants.camPos = mm::vec3(cam.GetPos().x, cam.GetPos().y, cam.GetPos().z);
-	dofConstants.quality = 8;
+	dofConstants.quality = 64;
 	dofConstants.minFocalDist = 0;
 	dofConstants.maxFocalDist = 3000;
 	dofConstants.focalAdaptSpeed = 6.0f;
@@ -505,15 +505,15 @@ void cGraphicsEngine::cPostProcessor::ReloadShaders() {
 	};
 
 	try {
-		Reload(&shaderMB,					L"shaders/motion_blur.cg");
-		Reload(&shaderMBCamera2DVelocity,	L"shaders/motion_blur_camera_2dvelocity.cg");
-		Reload(&shaderMBObject2DVelocity,	L"shaders/motion_blur_object_2dvelocity.cg");
-		Reload(&shaderDOF,					L"shaders/dof.cg");
-		Reload(&shaderFocalPlaneAdaption,	L"shaders/dof_focal_plane_adaption.cg");
-		Reload(&shaderFXAA,					L"shaders/fxaa.cg");
-		Reload(&shaderSSAR,					L"shaders/ssar.cg");
-		Reload(&shaderSSVR,					L"shaders/ssvr.cg");
-		Reload(&shaderDOFBokeh,				L"shaders/dof_bokeh.cg");
+		Reload(&shaderMB,					L"Shaders/motion_blur.cg");
+		Reload(&shaderMBCamera2DVelocity,	L"Shaders/motion_blur_camera_2dvelocity.cg");
+		Reload(&shaderMBObject2DVelocity,	L"Shaders/motion_blur_object_2dvelocity.cg");
+		Reload(&shaderDOF,					L"Shaders/dof.cg");
+		Reload(&shaderFocalPlaneAdaption,	L"Shaders/dof_focal_plane_adaption.cg");
+		Reload(&shaderFXAA,					L"Shaders/fxaa.cg");
+		Reload(&shaderSSAR,					L"Shaders/ssar.cg");
+		Reload(&shaderSSVR,					L"Shaders/ssvr.cg");
+		Reload(&shaderDOFBokeh,				L"Shaders/dof_bokeh.cg");
 	}
 	catch (...) {
 		UnloadShaders();

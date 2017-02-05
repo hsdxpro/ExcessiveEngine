@@ -11,7 +11,7 @@
 #include "BulletCollision/CollisionDispatch/btCollisionWorld.h"
 #include "BulletCollision/CollisionShapes/btCollisionShape.h"
 
-#include "SupportLibrary/BasicTypes.h"
+#include "BaseLibrary/Types.h"
 #include "mymath/mymath.h"
 #include <vector>
 using namespace physics::bullet;
@@ -49,7 +49,7 @@ public:
 
 	bool RemoveEntity(physics::IRigidBodyEntity* e) override;
 
-	void SetLayeCollision(size_t ID0, size_t ID1, bool bEnableCollision) override;
+	void SetLayerCollision(size_t ID0, size_t ID1, bool bEnableCollision) override;
 
 	 bool IsLayersCanCollide(size_t ID0, size_t ID1) const override
 	{

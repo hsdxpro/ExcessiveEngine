@@ -1,67 +1,82 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Serialization_\BinarySerializer.cpp">
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Common.cpp" />
+    <ClCompile Include="Importer3D.cpp" />
+    <ClCompile Include="Transform3D.cpp" />
+    <ClCompile Include="VisualCpuProfiler.cpp" />
+    <ClCompile Include="Logging_\Event.cpp">
+      <Filter>Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="Logging_\Logger.cpp">
+      <Filter>Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="Logging_\LogNode.cpp">
+      <Filter>Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="Logging_\LogPipe.cpp">
+      <Filter>Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="Logging_\LogStream.cpp">
+      <Filter>Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="Serialization_\BinarySerializer.cpp">
       <Filter>Serialization</Filter>
     </ClCompile>
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Serialization_\BinarySerializerExtensions.cpp">
+    <ClCompile Include="Serialization_\BinarySerializerExtensions.cpp">
       <Filter>Serialization</Filter>
     </ClCompile>
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Utility_\Spinlock.cpp">
+    <ClCompile Include="Utility_\Spinlock.cpp">
       <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\Event.cpp">
-      <Filter>Logging</Filter>
-    </ClCompile>
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogNode.cpp">
-      <Filter>Logging</Filter>
-    </ClCompile>
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogPipe.cpp">
-      <Filter>Logging</Filter>
-    </ClCompile>
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogStream.cpp">
-      <Filter>Logging</Filter>
-    </ClCompile>
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\Logger.cpp">
-      <Filter>Logging</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\TypeSystem_\BasicTypes..h">
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="custom_assert.h" />
+    <ClInclude Include="ICamera.h" />
+    <ClInclude Include="Importer3D.h" />
+    <ClInclude Include="logger.h" />
+    <ClInclude Include="Transform3D.h" />
+    <ClInclude Include="Triangle.h" />
+    <ClInclude Include="VisualCpuProfiler.h" />
+    <ClInclude Include="Types.h" />
+    <ClInclude Include="Logging_\Event.hpp">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging_\EventEntry.hpp">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging_\LogCentre.hpp">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging_\Logger.hpp">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging_\LogNode.hpp">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging_\LogPipe.hpp">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging_\LogStream.hpp">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="Serialization_\BinarySerializer.hpp">
+      <Filter>Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="Serialization_\BinarySerializerExtensions.hpp">
+      <Filter>Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeSystem_\BasicTypes..h">
       <Filter>TypeSystem</Filter>
     </ClInclude>
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Serialization_\BinarySerializer.hpp">
-      <Filter>Serialization</Filter>
-    </ClInclude>
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Serialization_\BinarySerializerExtensions.hpp">
-      <Filter>Serialization</Filter>
-    </ClInclude>
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Utility_\Singleton.hpp">
+    <ClInclude Include="Utility_\Singleton.hpp">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Utility_\Spinlock.hpp">
+    <ClInclude Include="Utility_\Spinlock.hpp">
       <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\Event.hpp">
-      <Filter>Logging</Filter>
-    </ClInclude>
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\EventEntry.hpp">
-      <Filter>Logging</Filter>
-    </ClInclude>
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogCentre.hpp">
-      <Filter>Logging</Filter>
-    </ClInclude>
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogNode.hpp">
-      <Filter>Logging</Filter>
-    </ClInclude>
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogPipe.hpp">
-      <Filter>Logging</Filter>
-    </ClInclude>
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogStream.hpp">
-      <Filter>Logging</Filter>
-    </ClInclude>
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\Logger.hpp">
-      <Filter>Logging</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,5 @@
 #pragma once
-#include <SupportLibrary/BasicTypes.h>
+#include "BaseLibrary/Types.h"
 
 //http://www.opengl.org/wiki/Image_Format
 enum class eTextureFormat : uint32_t

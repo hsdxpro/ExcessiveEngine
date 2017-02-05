@@ -14,6 +14,23 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="File.h" />
+    <ClInclude Include="IFile.h" />
+    <ClInclude Include="Sys.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="Window.h" />
+    <ClInclude Include="WindowCommon.h" />
+    <ClInclude Include="Windows\File_win.h" />
+    <ClInclude Include="Windows\Timer_win.h" />
+    <ClInclude Include="Windows\Window_win.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Windows\File_win.cpp" />
+    <ClCompile Include="Windows\Sys_win.cpp" />
+    <ClCompile Include="Windows\Timer_win.cpp" />
+    <ClCompile Include="Windows\Window_win.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGUID>{B3A6A864-E1B2-3EF0-B702-EC5579C01F91}</ProjectGUID>
     <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
@@ -49,7 +66,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\ExcessiveTeam-master\Build\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\Build\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PlatformLibrary.dir\Debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PlatformLibrary</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
@@ -64,7 +81,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Externals\include;$(SolutionDir)\Externals\source;$(SolutionDir)\Externals\source\Bullet;$(SolutionDir)\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Debug/</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -76,7 +93,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;EXCESSIVE_DEBUG;EXCESSIVE_ASSET_DIR="F:/ExcessiveTeam-master/Assets/";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;EXCESSIVE_DEBUG;EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
@@ -160,21 +177,6 @@
       <AdditionalOptions> /machine:x64 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\PlatformLibrary\File.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\PlatformLibrary\IFile.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\PlatformLibrary\Sys.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\PlatformLibrary\Timer.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\PlatformLibrary\Window.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\PlatformLibrary\WindowCommon.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\PlatformLibrary\Windows\File_win.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\PlatformLibrary\Windows\Timer_win.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\PlatformLibrary\Windows\Window_win.h" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\PlatformLibrary\Windows\File_win.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\PlatformLibrary\Windows\Sys_win.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\PlatformLibrary\Windows\Timer_win.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\PlatformLibrary\Windows\Window_win.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

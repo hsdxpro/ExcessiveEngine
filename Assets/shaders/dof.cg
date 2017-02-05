@@ -164,13 +164,12 @@ float4 PS_MAIN(VS_OUT In) : COLOR0 {
 		poissonRot = float2x2(	float2(cos(poissonDisk[idx0].x + In.tex0.x), -sin(poissonDisk[idx0].y + In.tex0.y)), 
 								float2(sin(poissonDisk[idx1].x + In.tex0.x),  cos(poissonDisk[idx1].y + In.tex0.y)));
 
-		float2 ndcSpaceToTexcoordSpace =  float2(c.invTexWidth, c.invTexHeight) * (((float)i * blurCircleDiameter) * (1.0f / (float)c.quality));
+		float2 ndcSpaceToTexcoordSpace =  float2(c.invTexWidth, c.invTexHeight) * ((float)i / (float)nSamples * blurCircleDiameter);
 
 		for(int j = 0; j < 8; j++)
 		{
 			// Poisson disk based on poisson rotation sample coord :)
 			float2 poissonOffset = mul(poissonDisk[j], poissonRot) * ndcSpaceToTexcoordSpace;
-			//float2 poissonOffset = poissonDisk[j] * ndcSpaceToTexcoordSpace;
 			color += tex2D(inputTexture, In.tex0 + poissonOffset, dx, dy);
 		}
 	}

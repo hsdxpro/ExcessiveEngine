@@ -2,7 +2,7 @@
 #include "PhysicsEngine/ISoftBodyEntity.h"
 #include "BulletSoftBody\btSoftBody.h"
 
-#include "SupportLibrary\BasicTypes.h"
+#include "BaseLibrary\Types.h"
 
 class btSoftBody;
 

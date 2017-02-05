@@ -2,7 +2,7 @@
 #include "PhysicsEngine/Common.h"
 #include "PlatformLibrary/Sys.h"
 #include "PlatformLibrary/File.h"
-#include "SupportLibrary/VisualCpuProfiler.h"
+#include "BaseLibrary/VisualCpuProfiler.h"
 #include "Script.h"
 #include "Actor.h"
 #include "GraphicsApi/OpenGL/GapiGL.h"
@@ -46,29 +46,29 @@ EngineCore::~EngineCore()
 	if (soundEngine)	soundEngine->Release();
 }
 
-IGraphicsEngine* EngineCore::InitGraphicsEngineRaster(const GraphicsEngineRasterDesc& d /*= GraphicsEngineRasterDesc()*/)
-{
-	if (graphicsEngine)
-		graphicsEngine->Release();
+//IGraphicsEngine* EngineCore::InitGraphicsEngineRaster(const GraphicsEngineRasterDesc& d /*= GraphicsEngineRasterDesc()*/)
+//{
+//	if (graphicsEngine)
+//		graphicsEngine->Release();
+//
+//	graphicsEngine = new GraphicsEngineRaster(d);
+//
+//	// Load error diffuse texture, that we place on materials which fails load their own texture by path
+//	texError = graphicsEngine->CreateTexture();
+//
+//	bool bSuccess = texError->Load(GetAssetsPath() + "error.jpg");
+//	assert(bSuccess);
+//
+//	// Default scene and layer for GraphicsEngine
+//	defaultGraphicsScene = graphicsEngine->CreateScene();
+//	IGraphicsEngine::Layer layer;
+//	layer.scene = defaultGraphicsScene;
+//	graphicsEngine->AddLayer(layer);
+//
+//	return graphicsEngine;
+//}
 
-	graphicsEngine = new GraphicsEngineRaster(d);
-
-	// Load error diffuse texture, that we place on materials which fails load their own texture by path
-	texError = graphicsEngine->CreateTexture();
-
-	bool bSuccess = texError->Load(GetAssetsPath() + "error.jpg");
-	assert(bSuccess);
-
-	// Default scene and layer for GraphicsEngine
-	defaultGraphicsScene = graphicsEngine->CreateScene();
-	IGraphicsEngine::Layer layer;
-	layer.scene = defaultGraphicsScene;
-	graphicsEngine->AddLayer(layer);
-
-	return graphicsEngine;
-}
-
-IGraphicsEngine* EngineCore::InitGraphicsEngineRasterZsiros(const GraphicsEngineRasterDesc& d /*= GraphicsEngineRasterDesc()*/)
+IGraphicsEngine* EngineCore::InitGraphicsEngineRasterZsiros(const GraphicsEngineRasterZsirosDesc& d /*= GraphicsEngineRasterDesc()*/)
 {
 	if (graphicsEngine)
 		graphicsEngine->Release();
@@ -78,7 +78,7 @@ IGraphicsEngine* EngineCore::InitGraphicsEngineRasterZsiros(const GraphicsEngine
 	// Load error diffuse texture, that we place on materials which fails load their own texture by path
 	texError = graphicsEngine->CreateTexture();
 
-	bool bSuccess = texError->Load(GetAssetsPath() + "error.jpg");
+	bool bSuccess = texError->Load(GetAssetsDir() + "error.jpg");
 	assert(bSuccess);
 
 	// Default scene and layer for GraphicsEngine
@@ -90,21 +90,21 @@ IGraphicsEngine* EngineCore::InitGraphicsEngineRasterZsiros(const GraphicsEngine
 	return graphicsEngine;
 }
 
-IGraphicsEngine* EngineCore::InitGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/)
-{
-	if (graphicsEngine)
-		graphicsEngine->Release();
-
-	graphicsEngine = new GraphicsEngineRT(d);
-
-	// Default scene and layer for GraphicsEngine
-	defaultGraphicsScene = graphicsEngine->CreateScene();
-	IGraphicsEngine::Layer layer;
-	layer.scene = defaultGraphicsScene;
-	graphicsEngine->AddLayer(layer);
-
-	return graphicsEngine;
-}
+//IGraphicsEngine* EngineCore::InitGraphicsEngineRT(const rGraphicsEngineRT& d /*= rGraphicsEngineRT()*/)
+//{
+//	if (graphicsEngine)
+//		graphicsEngine->Release();
+//
+//	graphicsEngine = new GraphicsEngineRT(d);
+//
+//	// Default scene and layer for GraphicsEngine
+//	defaultGraphicsScene = graphicsEngine->CreateScene();
+//	IGraphicsEngine::Layer layer;
+//	layer.scene = defaultGraphicsScene;
+//	graphicsEngine->AddLayer(layer);
+//
+//	return graphicsEngine;
+//}
 
 IPhysicsEngine* EngineCore::InitPhysicsEngineBullet(const PhysicsEngineBulletDesc& d /*= PhysicsEngineBulletDesc()*/)
 {
@@ -134,15 +134,15 @@ ISoundEngine* EngineCore::InitSoundEngineSFML(const rSoundEngine& d /*= rSoundEn
 	return soundEngine;
 }
 
-IGuiEngine* EngineCore::InitGuiEngine()
+GuiEngine* EngineCore::InitGuiEngine()
 {
-	//if(guiEngine)
-	//	guiEngine->Release();
-	//
-	//guiEngine = new GuiEngineDx11();
-	//
-	//return guiEngine;
-
+	if(guiEngine)
+		guiEngine->Release();
+	
+	guiEngine = new GuiEngineDx11();
+	
+	return guiEngine;
+	
 	return nullptr;
 }
 
@@ -180,7 +180,7 @@ sound::IEmitter* EngineCore::CreateMonoSound(const std::string& filePath, float 
 	else
 	{
 		soundData = soundEngine->CreateSoundData();
-		if (!soundData->Load((GetAssetsPath() + filePath).c_str(), sound::StoreMode::BUFFERED))
+		if (!soundData->Load((GetAssetsDir() + filePath).c_str(), sound::StoreMode::BUFFERED))
 		{
 			soundData->Release();
 			return false;
@@ -291,19 +291,19 @@ void EngineCore::AddTask(const std::function<void()>& callb, float timeToProceed
 	tasks.push_back(task); // TODO slow
 }
 
-MeshComponent* EngineCore::AddComponent_Mesh(const std::string& modelFilePath)
+MeshComponent* EngineCore::AddComponent_Mesh(const std::string& modelAssetPath)
 {
 	// Check if model already loaded somehow
 	// Check if model already loaded somehow
 	rImporter3DData* modelDesc;
-	auto it = importedModels.find(modelFilePath);
+	auto it = importedModels.find(modelAssetPath);
 	if (it != importedModels.end())
 	{
 		modelDesc = it->second;
 	}
 	else // Not loaded, check bin format first
 	{
-		std::string binPath = GetAssetsPath() + modelFilePath.substr(0, modelFilePath.rfind('.')) + ".exm"; // Excessive Mesh
+		std::string binPath = GetAssetsDir() + modelAssetPath.substr(0, modelAssetPath.rfind('.')) + ".exm"; // Excessive Mesh
 
 		if (File::IsExists(binPath))
 		{
@@ -321,12 +321,12 @@ MeshComponent* EngineCore::AddComponent_Mesh(const std::string& modelFilePath)
 				eImporter3DFlag::PIVOT_RECENTER});
 
 			modelDesc = new rImporter3DData();
-			Importer3D::LoadModelFromFile(GetAssetsPath() + modelFilePath, cfg, *modelDesc);
+			Importer3D::LoadModelFromFile(GetAssetsDir() + modelAssetPath, cfg, *modelDesc);
 
 			modelDesc->Serialize(binPath);
 		}
 
-		importedModels[modelFilePath] = modelDesc;
+		importedModels[modelAssetPath] = modelDesc;
 	}
 
 	graphics::IEntity* graphicsEntity;
@@ -377,7 +377,7 @@ MeshComponent* EngineCore::AddComponent_Mesh(const std::string& modelFilePath)
 				else
 				{
 					texDiffuse = graphicsEngine->CreateTexture();
-					if (texDiffuse->Load(GetAssetsPath() + relPath))
+					if (texDiffuse->Load(GetAssetsDir() + relPath))
 						importedTextures[relPath] = texDiffuse;
 					else
 						texDiffuse = texError;
@@ -422,18 +422,18 @@ MeshComponent* EngineCore::AddComponent_Mesh(const std::string& modelFilePath)
 	return c;
 }
 
-RigidBodyComponent* EngineCore::AddComponent_RigidBody(const std::string& modelFilePath, float mass)
+RigidBodyComponent* EngineCore::AddComponent_RigidBody(const std::string& modelAssetPath, float mass)
 {
 	// Check if model already loaded somehow
 	rImporter3DData* modelDesc;
-	auto it = importedModels.find(modelFilePath);
+	auto it = importedModels.find(modelAssetPath);
 	if (it != importedModels.end())
 	{
 		modelDesc = it->second;
 	}
 	else // Not loaded, check bin format first
 	{
-		std::string binPath = GetAssetsPath() + modelFilePath.substr(0, modelFilePath.rfind('.')) + ".exm"; // Excessive Mesh
+		std::string binPath = GetAssetsDir() + modelAssetPath.substr(0, modelAssetPath.rfind('.')) + ".exm"; // Excessive Mesh
 
 		if (File::IsExists(binPath))
 		{
@@ -451,12 +451,12 @@ RigidBodyComponent* EngineCore::AddComponent_RigidBody(const std::string& modelF
 				eImporter3DFlag::PIVOT_RECENTER });
 
 			modelDesc = new rImporter3DData();
-			Importer3D::LoadModelFromFile(GetAssetsPath() + modelFilePath, cfg, *modelDesc);
+			Importer3D::LoadModelFromFile(GetAssetsDir() + modelAssetPath, cfg, *modelDesc);
 
 			modelDesc->Serialize(binPath);
 		}
 
-		importedModels[modelFilePath] = modelDesc;
+		importedModels[modelAssetPath] = modelDesc;
 	}
 
 	physics::IRigidBodyEntity* rigidEntity = nullptr;
@@ -511,10 +511,10 @@ Transform3DComponent* EngineCore::AddComponent_Transform3D()
 	return c;
 }
 
-void EngineCore::SetLayeCollision(size_t ID0, size_t ID1, bool bEnableCollision)
+void EngineCore::SetLayerCollision(size_t ID0, size_t ID1, bool bEnableCollision)
 {
 	assert(physicsEngine);
-	physicsEngine->SetLayeCollision(ID0, ID1, bEnableCollision);
+	physicsEngine->SetLayerCollision(ID0, ID1, bEnableCollision);
 }
 
 void EngineCore::Update(float deltaTime)

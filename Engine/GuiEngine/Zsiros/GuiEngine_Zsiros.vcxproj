@@ -112,8 +112,8 @@
   <ItemGroup>
     <ClInclude Include="..\GuiButton.h" />
     <ClInclude Include="..\GuiCanvas.h" />
+    <ClInclude Include="..\GuiEngine.h" />
     <ClInclude Include="..\GuiLayer.h" />
-    <ClInclude Include="..\IGuiEngine.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

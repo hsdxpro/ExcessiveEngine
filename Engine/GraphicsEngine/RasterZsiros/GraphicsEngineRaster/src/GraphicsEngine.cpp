@@ -45,7 +45,7 @@ const tBlendDesc cGraphicsEngine::blendDefault = [](){
 
 ////////////////////////////////////////////////////////////////////////////////
 //	Constructor of the graphics engine
-cGraphicsEngine::cGraphicsEngine(const GraphicsEngineRasterDesc& d)
+cGraphicsEngine::cGraphicsEngine(const GraphicsEngineRasterZsirosDesc& d)
 {
 	luminanceAdaptation = 0.0f;
 
@@ -160,7 +160,7 @@ eGraphicsResult cGraphicsEngine::ReloadShaders() {
 		*prog = tmp;
 	};
 	try {
-		Reload(&shaderScreenCopy, L"shaders/screen_copy.cg");
+		Reload(&shaderScreenCopy, L"Shaders/screen_copy.cg");
 		deferredRenderer->ReloadShaders();
 		hdrProcessor->ReloadShaders();
 		shadowRenderer->ReloadShaders();
@@ -397,7 +397,7 @@ void cGraphicsEngine::LoadShaders() {
 		return SafeLoadShader(gApi, shader);
 	};
 	try {
-		shaderScreenCopy = Create(L"shaders/screen_copy.cg");
+		shaderScreenCopy = Create(L"Shaders/screen_copy.cg");
 	}
 	catch (...) {
 		UnloadShaders();
@@ -465,7 +465,7 @@ cResourceManager* cGraphicsEngine::GetResourceManager() {
 auto SafeLoadShader(cGraphicsApiD3D11* gApi, const wchar_t* shader)->IShaderProgram* {
 	// create shader program
 	IShaderProgram* shaderProg;
-	auto r = gApi->CreateShaderProgram(&shaderProg, (GetAssetsPathW() + shader).c_str());
+	auto r = gApi->CreateShaderProgram(&shaderProg, (GetAssetsDirW() + shader).c_str());
 	// check results
 	switch (r) {
 		case eGapiResult::OK: {

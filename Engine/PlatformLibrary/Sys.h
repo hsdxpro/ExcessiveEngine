@@ -153,8 +153,3 @@ public:
 	static mm::ivec2	GetCursorPos();
 	static mm::uvec2	GetScreenSize();
 };
-
-std::string GetAssetsPath();
-
-// TODO REMOVE
-std::wstring GetAssetsPathW();

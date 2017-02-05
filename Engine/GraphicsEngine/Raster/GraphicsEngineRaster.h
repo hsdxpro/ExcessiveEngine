@@ -8,7 +8,7 @@
 #include "Texture.h"
 #include "GraphicsApi/IGapi.h"
 #include "GraphicsApi/IGapi.h"
-#include "SupportLibrary/Camera.h"
+#include "BaseLibrary/Camera.h"
 
 #include <unordered_set>
 #include <vector>

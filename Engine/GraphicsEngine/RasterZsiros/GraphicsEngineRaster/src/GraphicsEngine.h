@@ -28,6 +28,13 @@ enum class eGraphicsResult : signed int {
 	ERROR_INVALID_ARG
 };
 
+struct GraphicsEngineRasterZsirosDesc
+{
+	Window*		targetWindow;
+	eGapiType	gapiType;
+	RectNormed	renderRegion;
+};
+
 // scene rendering states
 struct tRenderState {
 	// hdr
@@ -135,7 +142,7 @@ class cGraphicsEngine : public IGraphicsEngine {
 public:
 	// lifecycle (creation, destruction)
 	//cGraphicsEngine(IWindow* targetWindow, unsigned screenWidth, unsigned screenHeight, tGraphicsConfig config);
-	cGraphicsEngine(const GraphicsEngineRasterDesc& d);
+	cGraphicsEngine(const GraphicsEngineRasterZsirosDesc& d);
 	cGraphicsEngine(const cGraphicsEngine&) = delete;
 	~cGraphicsEngine();
 	cGraphicsEngine& operator=(const cGraphicsEngine&) = delete;

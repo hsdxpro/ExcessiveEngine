@@ -89,7 +89,7 @@
       <PreprocessorDefinitions>EXCESSIVE_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)/Build/Debug/Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -119,15 +119,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Games\Excessive-Strike\main.cpp" />
+    <ClCompile Include="..\Games\Excessive-Strike\PlayerScript.cpp" />
+    <ClCompile Include="..\Games\Excessive-Strike\TestLevelScript.cpp" />
     <ClCompile Include="Editor.cpp" />
-    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Engine\Core\Core.vcxproj">
-      <Project>{2bd4e687-702f-31a8-8e8f-1609bca2ec1f}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="..\Games\Excessive-Strike\PlayerScript.h" />
+    <ClInclude Include="..\Games\Excessive-Strike\TestLevelScript.h" />
     <ClInclude Include="Editor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

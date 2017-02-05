@@ -5,7 +5,7 @@
 #include "GraphicsEngine/IScene.h"
 #include "GraphicsEngine/IMaterial.h"
 #include "GraphicsEngine/IMesh.h"
-#include "SupportLibrary/Camera.h"
+#include "BaseLibrary/Camera.h"
 
 struct rGraphicsEngineRT
 {

@@ -82,7 +82,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;EXCESSIVE_DEBUG;EXCESSIVE_ASSET_DIR="F:/ExcessiveTeam-master/Assets/";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;EXCESSIVE_DEBUG;EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
@@ -99,7 +99,7 @@
     </Midl>
     <Link>
       <AdditionalOptions> /machine:x64 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;..\..\Build\Debug\Core.lib;..\..\Build\Debug\GraphicsEngine_RasterZsiros.lib;..\..\Build\Debug\GraphicsEngine_RT.lib;..\..\Build\Debug\Core.lib;..\..\Build\Debug\GraphicsEngine_RT.lib;..\..\Build\Debug\GraphicsApi_OpenGL.lib;glew-d.lib;..\..\Build\Debug\GraphicsEngine_Raster.lib;..\..\Build\Debug\NetworkEngine_Raknet.lib;..\..\Build\Debug\PhysicsEngine_Bullet.lib;Bullet2FileLoader-d.lib;Bullet3Collision-d.lib;Bullet3Common-d.lib;Bullet3Dynamics-d.lib;Bullet3Geometry-d.lib;Bullet3OpenCL_clew-d.lib;BulletCollision-d.lib;BulletDynamics-d.lib;BulletSoftBody-d.lib;LinearMath-d.lib;..\..\Build\Debug\SoundEngine_SFML.lib;..\..\Build\Debug\SupportLibrary.lib;assimp-d.lib;..\..\Build\Debug\PlatformLibrary.lib;winmm.lib;gdi32.lib;opengl32.lib;freetype.lib;openal32.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;ogg-d.lib;flac-d.lib;jpeg-d.lib;sfml-audio-s-d.lib;sfml-graphics-s-d.lib;sfml-system-s-d.lib;sfml-window-s-d.lib;sfml-network-s-d.lib;Cg/cg.lib;Cg/cgD3D11.lib;Cg/cgGL.lib;DX11/d3d11.lib;DX11/d3dx11.lib;DX11/dxgi.lib;DX11/dxerr.lib;DX11/d3dcompiler.lib;DX11/dxguid.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;$(SolutionDir)/Build/Debug/Core.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>F:/ExcessiveTeam-master/Externals/lib/win_msvc14_64;F:/ExcessiveTeam-master/Externals/lib/win_msvc14_64/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>Debug</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -108,6 +108,8 @@
       <SubSystem>Console</SubSystem>
       <Version>
       </Version>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -203,23 +205,13 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="F:\ExcessiveTeam-master\Games\Excessive-Strike\ExcessiveStrikeCommon.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Games\Excessive-Strike\PlayerScript.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Games\Excessive-Strike\TestLevelScript.h" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Games\Excessive-Strike\PlayerScript.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Games\Excessive-Strike\TestLevelScript.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Games\Excessive-Strike\main.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="PlayerScript.cpp" />
+    <ClCompile Include="TestLevelScript.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/Core/Core.vcxproj">
-      <Project>2BD4E687-702F-31A8-8E8F-1609BCA2EC1F</Project>
-    </ProjectReference>
-    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/PlatformLibrary/PlatformLibrary.vcxproj">
-      <Project>B3A6A864-E1B2-3EF0-B702-EC5579C01F91</Project>
-    </ProjectReference>
-    <ProjectReference Include="F:/ExcessiveTeam-master/Engine/SupportLibrary/SupportLibrary.vcxproj">
-      <Project>09E1EC87-FE83-327F-B5BF-31BBC14DACBB</Project>
-    </ProjectReference>
+    <ClInclude Include="PlayerScript.h" />
+    <ClInclude Include="TestLevelScript.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

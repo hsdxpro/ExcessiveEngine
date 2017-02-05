@@ -12,7 +12,7 @@
 
 #include "RigidBodyEntity.h"
 #include "PhysicsEngineBulletDebugGatherer.h"
-#include "SupportLibrary/VisualCpuProfiler.h"
+#include "BaseLibrary/VisualCpuProfiler.h"
 #include "SoftBodyEntity.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -293,7 +293,7 @@ bool PhysicsEngineBullet::RemoveEntity(physics::IRigidBodyEntity* e)
 	return false;
 }
 
-void PhysicsEngineBullet::SetLayeCollision(size_t ID0, size_t ID1, bool bEnableCollision)
+void PhysicsEngineBullet::SetLayerCollision(size_t ID0, size_t ID1, bool bEnableCollision)
 {
 	if (ID0 > nLayeCollisionMatrixRows - 1 || ID1 > nLayeCollisionMatrixRows - 1)
 	{

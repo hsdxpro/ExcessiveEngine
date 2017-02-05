@@ -8,7 +8,7 @@
 
 #include <assert.h>
 #include <string>
-#include "BasicTypes.h"
+#include "Types.h"
 
 #ifndef BUILD_DLL
 	//#define PROFILE_ENGINE // TODO glew SFML glew.lib collide with Gapi glew.lib

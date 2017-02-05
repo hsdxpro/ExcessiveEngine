@@ -199,7 +199,7 @@ void cGraphicsEngine::cShadowRenderer::ReloadShaders() {
 		(*prog)->Release();
 		*prog = tmp;
 	};
-	Reload(&shaderDirectional, L"shaders/shadowmap_render_dir.cg");
+	Reload(&shaderDirectional, L"Shaders/shadowmap_render_dir.cg");
 }
 
 void cGraphicsEngine::cShadowRenderer::LoadShaders() {
@@ -207,7 +207,7 @@ void cGraphicsEngine::cShadowRenderer::LoadShaders() {
 		return SafeLoadShader(gApi, shader);
 	};
 	try {
-		shaderDirectional = Create(L"shaders/shadowmap_render_dir.cg");
+		shaderDirectional = Create(L"Shaders/shadowmap_render_dir.cg");
 	}
 	catch (...) {
 		UnloadShaders();

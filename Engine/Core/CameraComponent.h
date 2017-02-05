@@ -1,7 +1,7 @@
 #pragma once
 
 #include "WorldComponent.h"
-#include "SupportLibrary\ICamera.h"
+#include "BaseLibrary\ICamera.h"
 
 namespace graphics { class IEntity; }
 

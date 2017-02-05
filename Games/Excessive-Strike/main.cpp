@@ -37,13 +37,13 @@
 
 #include "PlatformLibrary/Timer.h"
 #include "PlatformLibrary/File.h"
-#include "SupportLibrary/VisualCpuProfiler.h"
+#include "BaseLibrary/VisualCpuProfiler.h"
 
 #include <string>
 
 Window* window;
 ISoundEngine* soundEngine;
-IGuiEngine* guiEngine;
+GuiEngine* guiEngine;
 IGraphicsEngine* graphicsEngine;
 IPhysicsEngine* physicsEngine;
 
@@ -63,7 +63,7 @@ void main()
 	soundEngine = Core.InitSoundEngineSFML();
 
 	// Init Graphics Engine
-	GraphicsEngineRasterDesc graphicsDesc;
+	GraphicsEngineRasterZsirosDesc graphicsDesc;
 	graphicsDesc.gapiType = eGapiType::DX11;
 	graphicsDesc.targetWindow = window;
 	graphicsEngine = Core.InitGraphicsEngineRasterZsiros(graphicsDesc);

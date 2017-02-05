@@ -1,7 +1,7 @@
 #pragma once
 #include "GuiCanvas.h"
 
-class IGuiEngine
+class GuiEngine
 {
 public:
 	GuiCanvas* AddCanvas(){ return 0; }

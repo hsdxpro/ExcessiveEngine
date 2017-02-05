@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SupportLibrary/BasicTypes.h>
+#include <BaseLibrary/Types.h>
 
 struct rBuffer {
 	u32 size;

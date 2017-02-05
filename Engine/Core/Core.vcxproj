@@ -76,7 +76,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;EXCESSIVE_DEBUG;EXCESSIVE_ASSET_DIR="F:/ExcessiveTeam-master/Assets/";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;EXCESSIVE_DEBUG;EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;EXCESSIVE_ASSETS_DIR=@"$(SolutionDir)Assets/";EXCESSIVE_SHADERS_DIR=@"$(SolutionDir)Shaders/";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
@@ -93,6 +93,7 @@
     </Midl>
     <Lib>
       <AdditionalOptions> /machine:x64 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>$(SolutionDir)/Build/Debug/PlatformLibrary.lib;$(SolutionDir)/Build/Debug/BaseLibrary.lib;$(SolutionDir)/Build/Debug/GraphicsEngine_RasterZsiros.lib;$(SolutionDir)/Build/Debug/GraphicsEngine_Raster.lib;$(SolutionDir)/Build/Debug/PhysicsEngine_Bullet.lib;$(SolutionDir)/Build/Debug/NetworkEngine_Raknet.lib;$(SolutionDir)/Build/Debug/SoundEngine_SFML.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">
@@ -161,48 +162,45 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\Actor.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\ActorScript.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\Behavior.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\CameraComponent.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\CoreCommon.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\EngineCore.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\GameWorld.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\GraphicsCore.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\InputCore.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\MeshComponent.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\NetworkCore.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\PhysicsCore.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\RigidBodyComponent.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\Script.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\SoftBodyComponent.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\SoundCore.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\Transform3DComponent.h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\Core\WorldComponent.h" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\Core\Actor.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\Core\ActorScript.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\Core\Behavior.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\Core\CameraComponent.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\Core\EngineCore.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\Core\GameWorld.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\Core\GraphicsCore.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\Core\InputCore.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\Core\MeshComponent.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\Core\NetworkCore.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\Core\PhysicsCore.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\Core\RigidBodyComponent.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\Core\Script.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\Core\SoftBodyComponent.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\Core\SoundCore.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\Core\WorldComponent.cpp" />
+    <ClInclude Include="Actor.h" />
+    <ClInclude Include="ActorScript.h" />
+    <ClInclude Include="Behavior.h" />
+    <ClInclude Include="CameraComponent.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="EngineCore.h" />
+    <ClInclude Include="GameWorld.h" />
+    <ClInclude Include="GraphicsCore.h" />
+    <ClInclude Include="InputCore.h" />
+    <ClInclude Include="MeshComponent.h" />
+    <ClInclude Include="NetworkCore.h" />
+    <ClInclude Include="PhysicsCore.h" />
+    <ClInclude Include="RigidBodyComponent.h" />
+    <ClInclude Include="Script.h" />
+    <ClInclude Include="SoftBodyComponent.h" />
+    <ClInclude Include="SoundCore.h" />
+    <ClInclude Include="Transform3DComponent.h" />
+    <ClInclude Include="WorldComponent.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PlatformLibrary\PlatformLibrary.vcxproj">
-      <Project>{b3a6a864-e1b2-3ef0-b702-ec5579c01f91}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\SupportLibrary\SupportLibrary.vcxproj">
-      <Project>{09e1ec87-fe83-327f-b5bf-31bbc14dacbb}</Project>
-    </ProjectReference>
+    <None Include="Core.vcxproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="ActorScript.cpp" />
+    <ClCompile Include="Behavior.cpp" />
+    <ClCompile Include="CameraComponent.cpp" />
+    <ClCompile Include="EngineCore.cpp" />
+    <ClCompile Include="GameWorld.cpp" />
+    <ClCompile Include="GraphicsCore.cpp" />
+    <ClCompile Include="InputCore.cpp" />
+    <ClCompile Include="MeshComponent.cpp" />
+    <ClCompile Include="NetworkCore.cpp" />
+    <ClCompile Include="PhysicsCore.cpp" />
+    <ClCompile Include="RigidBodyComponent.cpp" />
+    <ClCompile Include="Script.cpp" />
+    <ClCompile Include="SoftBodyComponent.cpp" />
+    <ClCompile Include="SoundCore.cpp" />
+    <ClCompile Include="WorldComponent.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

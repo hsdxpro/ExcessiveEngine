@@ -49,7 +49,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\ExcessiveTeam-master\Build\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\Build\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">BaseLibrary.dir\Debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">BaseLibrary</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
@@ -64,7 +64,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>F:\ExcessiveTeam-master\Externals\include;F:\ExcessiveTeam-master\Externals\source;F:\ExcessiveTeam-master\Externals\source\Bullet;F:\ExcessiveTeam-master\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Externals\include;$(SolutionDir)\Externals\source;$(SolutionDir)\Externals\source\Bullet;$(SolutionDir)\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Debug/</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -76,7 +76,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;EXCESSIVE_DEBUG;EXCESSIVE_ASSET_DIR="F:/ExcessiveTeam-master/Assets/";EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;EXCESSIVE_DEBUG;EXCESSIVE_64BIT;EXCESSIVE_WINDOWS;SFML_STATIC;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
@@ -93,6 +93,7 @@
     </Midl>
     <Lib>
       <AdditionalOptions> /machine:x64 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>$(SolutionDir)\Externals\lib\win_msvc14_64\assimp-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='PerfDebug|x64'">
@@ -161,26 +162,41 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\TypeSystem_\BasicTypes..h" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Serialization_\BinarySerializer.hpp" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Serialization_\BinarySerializerExtensions.hpp" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Utility_\Singleton.hpp" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Utility_\Spinlock.hpp" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\Event.hpp" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\EventEntry.hpp" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogCentre.hpp" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogNode.hpp" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogPipe.hpp" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogStream.hpp" />
-    <ClInclude Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\Logger.hpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Serialization_\BinarySerializer.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Serialization_\BinarySerializerExtensions.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Utility_\Spinlock.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\Event.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogNode.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogPipe.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\LogStream.cpp" />
-    <ClCompile Include="F:\ExcessiveTeam-master\Engine\BaseLibrary\Logging_\Logger.cpp" />
+    <ClCompile Include="Importer3D.cpp" />
+    <ClCompile Include="Logging_\Event.cpp" />
+    <ClCompile Include="Logging_\Logger.cpp" />
+    <ClCompile Include="Logging_\LogNode.cpp" />
+    <ClCompile Include="Logging_\LogPipe.cpp" />
+    <ClCompile Include="Logging_\LogStream.cpp" />
+    <ClCompile Include="Serialization_\BinarySerializer.cpp" />
+    <ClCompile Include="Serialization_\BinarySerializerExtensions.cpp" />
+    <ClCompile Include="Transform3D.cpp" />
+    <ClCompile Include="Utility_\Spinlock.cpp" />
+    <ClCompile Include="VisualCpuProfiler.cpp" />
+    <ClInclude Include="Logging_\Event.hpp" />
+    <ClInclude Include="Logging_\EventEntry.hpp" />
+    <ClInclude Include="Logging_\LogCentre.hpp" />
+    <ClInclude Include="Logging_\Logger.hpp" />
+    <ClInclude Include="Logging_\LogNode.hpp" />
+    <ClInclude Include="Logging_\LogPipe.hpp" />
+    <ClInclude Include="Logging_\LogStream.hpp" />
+    <ClInclude Include="Serialization_\BinarySerializer.hpp" />
+    <ClInclude Include="Serialization_\BinarySerializerExtensions.hpp" />
+    <ClInclude Include="Types.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="custom_assert.h" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Common.cpp" />
+    <ClInclude Include="ICamera.h" />
+    <ClInclude Include="Importer3D.h" />
+    <ClInclude Include="logger.h" />
+    <ClInclude Include="Transform3D.h" />
+    <ClInclude Include="Triangle.h" />
+    <ClInclude Include="TypeSystem_\BasicTypes..h" />
+    <ClInclude Include="Utility_\Singleton.hpp" />
+    <ClInclude Include="Utility_\Spinlock.hpp" />
+    <ClInclude Include="VisualCpuProfiler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

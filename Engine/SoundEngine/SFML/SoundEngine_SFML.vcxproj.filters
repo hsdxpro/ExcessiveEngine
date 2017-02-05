@@ -6,44 +6,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SFMLSoundWrapper.cpp">
-      <Filter>SFML</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundData.cpp">
-      <Filter>SFML</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundEngineSFML.cpp">
-      <Filter>SFML</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundScene.cpp">
-      <Filter>SFML</Filter>
-    </ClCompile>
-    <ClCompile Include="Emitter.cpp">
-      <Filter>SFML</Filter>
-    </ClCompile>
-    <ClCompile Include="Listener.cpp">
-      <Filter>SFML</Filter>
-    </ClCompile>
-    <ClCompile Include="SFMLCommonSoundData.cpp">
-      <Filter>SFML</Filter>
-    </ClCompile>
-    <ClCompile Include="SFMLCommonSoundEmitter.cpp">
-      <Filter>SFML</Filter>
-    </ClCompile>
-    <ClCompile Include="SFMLMusicData.cpp">
-      <Filter>SFML</Filter>
-    </ClCompile>
-    <ClCompile Include="SFMLMusicWrapper.cpp">
-      <Filter>SFML</Filter>
-    </ClCompile>
-    <ClCompile Include="SFMLSoundData.cpp">
-      <Filter>SFML</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="SFMLSoundWrapper.h">
-      <Filter>SFML</Filter>
-    </ClInclude>
+    <ClInclude Include="..\ISoundEngine.h" />
+    <ClInclude Include="..\IEmitter.h" />
+    <ClInclude Include="..\IListener.h" />
+    <ClInclude Include="..\IScene.h" />
+    <ClInclude Include="..\ISoundData.h" />
     <ClInclude Include="SoundData.h">
       <Filter>SFML</Filter>
     </ClInclude>
@@ -74,10 +41,43 @@
     <ClInclude Include="SFMLSoundData.h">
       <Filter>SFML</Filter>
     </ClInclude>
-    <ClInclude Include="..\ISoundEngine.h" />
-    <ClInclude Include="..\IEmitter.h" />
-    <ClInclude Include="..\IListener.h" />
-    <ClInclude Include="..\IScene.h" />
-    <ClInclude Include="..\ISoundData.h" />
+    <ClInclude Include="SFMLSoundWrapper.h">
+      <Filter>SFML</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SoundData.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundEngineSFML.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundScene.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="Emitter.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="Listener.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="SFMLCommonSoundData.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="SFMLCommonSoundEmitter.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="SFMLMusicData.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="SFMLMusicWrapper.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="SFMLSoundData.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
+    <ClCompile Include="SFMLSoundWrapper.cpp">
+      <Filter>SFML</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

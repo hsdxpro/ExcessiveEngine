@@ -52,7 +52,7 @@
 //3D GameStudio(3DGS) Terrain(.hmp)
 //Izware Nendo(.ndo)
 
-#include "BasicTypes.h"
+#include "Types.h"
 #include "mymath/mymath.h"
 #include "PlatformLibrary/File.h"
 #include "PlatformLibrary/WindowCommon.h"

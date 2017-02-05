@@ -2,14 +2,13 @@
 // The purpose of this class is to take the most minimal input from the user to (startup, use) the engine
 
 // Modules
-#include "GraphicsEngine/Raster/GraphicsEngineRaster.h"
-#include "GraphicsEngine/RT/GraphicsEngineRT.h"
+#include "GraphicsEngine/RasterZsiros/GraphicsEngineRaster/src/GraphicsEngine.h" //TODO REMOVE
 #include "PhysicsEngine/Bullet/PhysicsEngineBullet.h"
 #include "NetworkEngine/RakNet/NetworkEngineRakNet.h"
 #include "SoundEngine/SFML/SoundEngineSFML.h"
-#include "GuiEngine/IGuiEngine.h"
+#include "GuiEngine/GuiEngine.h"
 
-#include "SupportLibrary/Importer3D.h"
+#include "BaseLibrary/Importer3D.h"
 
 #include "ActorScript.h"
 #include "MeshComponent.h"
@@ -31,13 +30,13 @@ public:
 	~EngineCore();
 
 	// Init engines, old will be destroyed
-	IGraphicsEngine* InitGraphicsEngineRaster(const GraphicsEngineRasterDesc& d = GraphicsEngineRasterDesc());
-	IGraphicsEngine* InitGraphicsEngineRasterZsiros(const GraphicsEngineRasterDesc& d = GraphicsEngineRasterDesc());
-	IGraphicsEngine* InitGraphicsEngineRT(const rGraphicsEngineRT& d = rGraphicsEngineRT());
+	//IGraphicsEngine* InitGraphicsEngineRaster(const GraphicsEngineRasterDesc& d = GraphicsEngineRasterDesc());
+	IGraphicsEngine* InitGraphicsEngineRasterZsiros(const GraphicsEngineRasterZsirosDesc& d = GraphicsEngineRasterZsirosDesc());
+	//IGraphicsEngine* InitGraphicsEngineRT(const rGraphicsEngineRT& d = rGraphicsEngineRT());
 	IPhysicsEngine* InitPhysicsEngineBullet(const PhysicsEngineBulletDesc& d = PhysicsEngineBulletDesc());
 	INetworkEngine* InitNetworkEngineRakNet(const rNetworkEngine& d = rNetworkEngine());
 	ISoundEngine* InitSoundEngineSFML(const rSoundEngine& d = rSoundEngine());	
-	IGuiEngine* InitGuiEngine();
+	GuiEngine* InitGuiEngine();
 
 	bool TraceClosestPoint_Physics(const mm::vec3& from, const mm::vec3& to, PhysicsTraceResult& traceResult_out, const PhysicsTraceParams& params = PhysicsTraceParams());
 
@@ -77,13 +76,13 @@ public:
 		return p;
 	}
 	
-	MeshComponent*			AddComponent_Mesh(const std::string& modelFilePath);
-	RigidBodyComponent*		AddComponent_RigidBody(const std::string& modelFilePath, float mass);
+	MeshComponent*			AddComponent_Mesh(const std::string& modelAssetPath);
+	RigidBodyComponent*		AddComponent_RigidBody(const std::string& modelAssetPath, float mass);
 	RigidBodyComponent*		AddComponent_RigidBodyCapsule(float height, float radius, float mass = 0);
 	CameraComponent*		AddComponent_Camera();
 	Transform3DComponent*	AddComponent_Transform3D();
 	
-	void SetLayeCollision(size_t ID0, size_t ID1, bool bEnableCollision);
+	void SetLayerCollision(size_t ID0, size_t ID1, bool bEnableCollision);
 	
 	void SetCam(CameraComponent* c)
 	{ 

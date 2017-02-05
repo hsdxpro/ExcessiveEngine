@@ -1,6 +1,6 @@
 // Windows implementation of File
 #pragma once
-#include "SupportLibrary\BasicTypes.h"
+#include "BaseLibrary\Types.h"
 #include <string>
 #include <fstream>
 #include <assert.h>

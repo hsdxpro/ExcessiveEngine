@@ -1,13 +1,12 @@
 #include "MeshComponent.h"
 #include "GraphicsEngine\IEntity.h"
-#include "EngineCore.h"
 #include "PlatformLibrary\Sys.h"
-
+#include "EngineCore.h"
 
 void MeshComponent::SetTextureNormal(const std::string& contentPath)
 {
 	graphics::ITexture* texture = Core.GetGraphicsEngine()->CreateTexture();
-	texture->Load(GetAssetsPath() + contentPath);
+	texture->Load(GetAssetsDir() + contentPath);
 
 	// Load contentPath
 	graphics::IMaterial* material = entity->GetMaterial();
@@ -25,7 +24,7 @@ void MeshComponent::SetTextureNormal(const std::string& contentPath)
 void MeshComponent::SetTextureBaseColor(const std::string& contentPath)
 {
 	graphics::ITexture* texture = Core.GetGraphicsEngine()->CreateTexture();
-	texture->Load(GetAssetsPath() + contentPath);
+	texture->Load(GetAssetsDir() + contentPath);
 
 	// Load contentPath
 	graphics::IMaterial* material = entity->GetMaterial();
@@ -43,7 +42,7 @@ void MeshComponent::SetTextureBaseColor(const std::string& contentPath)
 void MeshComponent::SetTextureAO(const std::string& contentPath)
 {
 	graphics::ITexture* texture = Core.GetGraphicsEngine()->CreateTexture();
-	texture->Load(GetAssetsPath() + contentPath);
+	texture->Load(GetAssetsDir() + contentPath);
 
 	// Load contentPath
 	graphics::IMaterial* material = entity->GetMaterial();

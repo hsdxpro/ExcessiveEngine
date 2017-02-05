@@ -1,5 +1,5 @@
 #pragma once
-#include "SupportLibrary\BasicTypes.h"
+#include "BaseLibrary\Types.h"
 #include "PlatformLibrary\Window.h"
 
 class IGapi;

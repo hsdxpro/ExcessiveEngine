@@ -4,9 +4,9 @@
 class PhysicsCore
 {
 public:
-	 void SetLayeCollision(size_t ID0, size_t ID1, bool bEnableCollision) 
+	 void SetLayerCollision(size_t ID0, size_t ID1, bool bEnableCollision) 
 	{ 
-		Core.SetLayeCollision(ID0, ID1, bEnableCollision); 
+		Core.SetLayerCollision(ID0, ID1, bEnableCollision); 
 	}
 
 	 bool TraceClosestPoint(const mm::vec3& from, const mm::vec3& to, PhysicsTraceResult& traceResult_out, const PhysicsTraceParams& params = PhysicsTraceParams())

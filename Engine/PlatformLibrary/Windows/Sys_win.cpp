@@ -85,15 +85,3 @@ mm::uvec2 Sys::GetScreenSize()
 {
 	return mm::uvec2((unsigned)GetSystemMetrics(SM_CXSCREEN), (unsigned)GetSystemMetrics(SM_CYSCREEN));
 }
-
-std::string GetAssetsPath()
-{
-	return EXCESSIVE_ASSET_DIR;
-}
-
-// TODO REMOVE
-std::wstring GetAssetsPathW()
-{
-	std::string str = EXCESSIVE_ASSET_DIR;
-	return std::wstring(str.begin(), str.end());
-}

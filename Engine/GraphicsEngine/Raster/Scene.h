@@ -3,7 +3,7 @@
 #include "Light.h"
 #include "GraphicsEngine/IScene.h"
 #include "GraphicsEngine/ILight.h"
-#include "SupportLibrary/Camera.h"
+#include "BaseLibrary/Camera.h"
 
 #include <unordered_set>
 
