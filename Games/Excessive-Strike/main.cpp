@@ -74,7 +74,7 @@ void main()
 	physicsEngine = Core.InitPhysicsEngineBullet(physicsDesc);
 
 	// Init Gui Engine
-	guiEngine = Core.InitGuiEngine();
+	guiEngine = Core.InitGuiEngine(graphicsEngine);
 
 	// Init gui
 	InitGui();
@@ -175,7 +175,7 @@ void InitGui()
 	GuiLayer* layer = canvas->AddLayer();
 
 	// Test button
-	GuiButton* button = layer->AddButton();
+	GuiControl* button = layer->AddControl();
 	button->SetBackgroundToColor(Color::RED);
 	button->SetRect(0, 0, 100, 50);
 	//button->SetText("Button");

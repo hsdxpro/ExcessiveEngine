@@ -134,16 +134,14 @@ ISoundEngine* EngineCore::InitSoundEngineSFML(const rSoundEngine& d /*= rSoundEn
 	return soundEngine;
 }
 
-GuiEngine* EngineCore::InitGuiEngine()
+GuiEngine* EngineCore::InitGuiEngine(IGraphicsEngine* graphicsEngine)
 {
 	if(guiEngine)
-		guiEngine->Release();
+		delete guiEngine;
 	
-	guiEngine = new GuiEngineDx11();
+	guiEngine = new GuiEngine(graphicsEngine);
 	
 	return guiEngine;
-	
-	return nullptr;
 }
 
 bool EngineCore::TraceClosestPoint_Physics(const mm::vec3& from, const mm::vec3& to, PhysicsTraceResult& traceResult_out, const PhysicsTraceParams& params /*= PhysicsTraceParams()*/)
@@ -840,6 +838,11 @@ void EngineCore::Update(float deltaTime)
 		graphicsEngine->GetGapi()->ResetStatesToDefault(); // Jesus the profiler also uses OpenGL temporarily, and mess up the binds etc...
 #endif
 		graphicsEngine->Update(deltaTime);
+	}
+
+	if(guiEngine)
+	{
+		guiEngine->Update(deltaTime);
 	}
 
 	// Update sound

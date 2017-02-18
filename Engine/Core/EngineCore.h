@@ -36,7 +36,7 @@ public:
 	IPhysicsEngine* InitPhysicsEngineBullet(const PhysicsEngineBulletDesc& d = PhysicsEngineBulletDesc());
 	INetworkEngine* InitNetworkEngineRakNet(const rNetworkEngine& d = rNetworkEngine());
 	ISoundEngine* InitSoundEngineSFML(const rSoundEngine& d = rSoundEngine());	
-	GuiEngine* InitGuiEngine();
+	GuiEngine* InitGuiEngine(IGraphicsEngine* graphicsEngine);
 
 	bool TraceClosestPoint_Physics(const mm::vec3& from, const mm::vec3& to, PhysicsTraceResult& traceResult_out, const PhysicsTraceParams& params = PhysicsTraceParams());
 
@@ -111,6 +111,7 @@ protected:
 	IPhysicsEngine*		physicsEngine;
 	INetworkEngine*		networkEngine;
 	ISoundEngine*		soundEngine;
+	GuiEngine*			guiEngine;
 
 	// Scripts
 	std::vector<Script*> scripts;

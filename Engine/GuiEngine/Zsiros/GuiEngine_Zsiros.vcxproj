@@ -110,7 +110,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\GuiButton.h" />
+    <ClInclude Include="..\GuiControl.h" />
     <ClInclude Include="..\GuiCanvas.h" />
     <ClInclude Include="..\GuiEngine.h" />
     <ClInclude Include="..\GuiLayer.h" />

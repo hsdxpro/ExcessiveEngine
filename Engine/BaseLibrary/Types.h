@@ -31,6 +31,24 @@ static_assert(sizeof(u64) == 8, "u64 is not 8 bytes in size!");
 static_assert(sizeof(f32) == 4, "f32 is not 4 bytes in size!");
 static_assert(sizeof(f64) == 8, "f64 is not 8 bytes in size!");
 
+#define I8_MAX 127
+#define I16_MAX 32 767
+#define I32_MAX 2 147 483 647
+#define I64_MAX 9 223 372 036 854 775 807
+#define U8_MAX 255
+#define U16_MAX 65 535
+#define U32_MAX 4 294 967 295
+#define U64_MAX 18 446 744 073 709 551 615
+
+#define I8_MIN -128 
+#define I16_MIN -32 768
+#define I32_MIN -2 147 483 648
+#define I64_MIN -9 223 372 036 854 775 808
+#define U8_MIN 0 
+#define U16_MIN 0
+#define U32_MIN 0
+#define U64_MIN 0 
+
 //handle endianness
 inline u8 swapU8(u8 val)
 {
