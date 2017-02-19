@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaseLibrary", "Engine\BaseLibrary\BaseLibrary.vcxproj", "{DBD9DD58-E72E-32AE-9CF4-FE060311B0C9}"
 EndProject
@@ -35,6 +35,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SoundEngine_SFML", "Engine\SoundEngine\SFML\SoundEngine_SFML.vcxproj", "{9EAF3D34-B87A-3FB0-B55E-95596D335D85}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PhysicsEngine_Bullet", "Engine\PhysicsEngine\Bullet\PhysicsEngine_Bullet.vcxproj", "{4EA610D7-1297-3992-9F74-13FC439340D6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphicsEngine_Raster", "Engine\GraphicsEngine\Raster\GraphicsEngine_Raster.vcxproj", "{9F8CA66F-AA4E-3FEB-9B74-3D7C834FB358}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -142,6 +144,15 @@ Global
 		{4EA610D7-1297-3992-9F74-13FC439340D6}.Release|x64.ActiveCfg = Release|x64
 		{4EA610D7-1297-3992-9F74-13FC439340D6}.Release|x64.Build.0 = Release|x64
 		{4EA610D7-1297-3992-9F74-13FC439340D6}.Release|x86.ActiveCfg = Release|x64
+		{9F8CA66F-AA4E-3FEB-9B74-3D7C834FB358}.Debug|x64.ActiveCfg = Debug|x64
+		{9F8CA66F-AA4E-3FEB-9B74-3D7C834FB358}.Debug|x64.Build.0 = Debug|x64
+		{9F8CA66F-AA4E-3FEB-9B74-3D7C834FB358}.Debug|x86.ActiveCfg = Debug|x64
+		{9F8CA66F-AA4E-3FEB-9B74-3D7C834FB358}.PerfDebug|x64.ActiveCfg = PerfDebug|x64
+		{9F8CA66F-AA4E-3FEB-9B74-3D7C834FB358}.PerfDebug|x64.Build.0 = PerfDebug|x64
+		{9F8CA66F-AA4E-3FEB-9B74-3D7C834FB358}.PerfDebug|x86.ActiveCfg = PerfDebug|x64
+		{9F8CA66F-AA4E-3FEB-9B74-3D7C834FB358}.Release|x64.ActiveCfg = Release|x64
+		{9F8CA66F-AA4E-3FEB-9B74-3D7C834FB358}.Release|x64.Build.0 = Release|x64
+		{9F8CA66F-AA4E-3FEB-9B74-3D7C834FB358}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
